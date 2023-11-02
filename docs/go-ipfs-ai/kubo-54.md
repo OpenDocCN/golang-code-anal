@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 54
 
-# `/opt/kubo/test/cli/content_routing_http_test.go`
+# `test/cli/content_routing_http_test.go`
 
 该代码是一个 Go 语言编写的 CLI 工具，用于在测试中使用 libp2p 和 boxo 库。具体来说，该代码包括以下主要部分：
 
@@ -104,7 +104,7 @@ import (
 	"github.com
 
 
-```
+```go
 package cli
 
 import (
@@ -148,7 +148,7 @@ import (
 在该函数中，首先会获取一个 `sync.Mutex`，然后获取路由器中已经调用 `findPeers` 函数的次数，最后返回一个已经解析过的 `iter.ResultIter`。
 
 
-```
+```go
 type fakeHTTPContentRouter struct {
 	m                   sync.Mutex
 	provideBitswapCalls int
@@ -189,7 +189,7 @@ func (r *fakeHTTPContentRouter) FindProviders(ctx context.Context, key cid.Cid, 
 最后，函数返回一个`iter.ResultIter`类型的响应，表示用于表示查询过程中返回的记录。同时，如果执行过程中发生错误，返回一个`error`类型的错误。
 
 
-```
+```go
 func (r *fakeHTTPContentRouter) ProvideBitswap(ctx context.Context, req *server.BitswapWriteProvideRequest) (time.Duration, error) {
 	r.m.Lock()
 	defer r.m.Unlock()
@@ -233,7 +233,7 @@ func (r *fakeHTTPContentRouter) numFindProvidersCalls() int {
 最后，我们定义了一个`userAgentRecorder`类型，它是一个`http.Handler`类型的参数的`userAgent`字段的代理。
 
 
-```
+```go
 func (r *fakeHTTPContentRouter) PutIPNS(ctx context.Context, name ipns.Name, rec *ipns.Record) error {
 	return routing.ErrNotSupported
 }
@@ -266,7 +266,7 @@ The test then performs a series of tests to verify that the content router was c
 Finally, the test clears out the content router and cleans up the node.
 
 
-```
+```go
 func (r *userAgentRecorder) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	r.userAgents = append(r.userAgents, req.UserAgent())
 	r.delegate.ServeHTTP(w, req)
@@ -317,7 +317,7 @@ func TestContentRoutingHTTP(t *testing.T) {
 
 ```
 
-# `/opt/kubo/test/cli/dag_test.go`
+# `test/cli/dag_test.go`
 
 这段代码是一个 Go 语言编写的测试框架，用于测试一个名为 "cli" 的包。通过分析 code，我们可以看到它实现了以下主要功能：
 
@@ -332,7 +332,7 @@ func TestContentRoutingHTTP(t *testing.T) {
 这个测试框架的作用是测试 "cli" 包中的一些函数是否按照预期进行工作。
 
 
-```
+```go
 package cli
 
 import (
@@ -363,7 +363,7 @@ const (
 最后，在 `Data` 结构体的 `DagStats` 字段中，包含一个名为 `DagStat` 的数组，用于存储每个节点的统计信息。每个 `DagStat` 对象包含三个属性：Cid、Size 和 NumBlocks，分别表示图中的节点 ID、节点大小和块的数量。
 
 
-```
+```go
 type DagStat struct {
 	Cid       string `json:"Cid"`
 	Size      int    `json:"Size"`
@@ -390,7 +390,7 @@ The expected output of the IPFS DAG import test is that the output of the "dag" 
 The tests also check that the IPFS DAG import function uses the expected number of blocks for each node in the DAG and that the DAG data is loaded correctly.
 
 
-```
+```go
 // when traversing the DAG from the root's children (node1 and node2) we count (46 + 7)x2 bytes (counting redundant bytes) = 106
 // since both nodes share a common child of 7 bytes we actually had to read (46)x2 + 7 =  99 bytes
 // we should get a dedup ratio of 106/99 that results in approximatelly 1.0707071
@@ -462,7 +462,7 @@ func TestDag(t *testing.T) {
 
 ```
 
-# `/opt/kubo/test/cli/delegated_routing_v1_http_client_test.go`
+# `test/cli/delegated_routing_v1_http_client_test.go`
 
 This is a Go test that performs the following actions:
 
@@ -474,7 +474,7 @@ This is a Go test that performs the following actions:
 These actions are intended to verify that the HTTP router is able to correctly route traffic to the specified IP addresses and that the HTTP client is able to retrieve the router's metrics.
 
 
-```
+```go
 package cli
 
 import (
@@ -644,7 +644,7 @@ func TestHTTPDelegatedRouting(t *testing.T) {
 
 ```
 
-# `/opt/kubo/test/cli/delegated_routing_v1_http_proxy_test.go`
+# `test/cli/delegated_routing_v1_http_proxy_test.go`
 
 This is a Go test that checks if the resolved IPNS name is equal to the expected name in case of a published record. The IPFS NameFromPeer function is used to get the IPNS name from the given peer. The test sets up a cluster with 2 nodes, both of which have IPFS and publish a random string as an IPNS name. The test then retrieves the published name using the Routing V1 endpoint and another IPFS endpoint, and checks if the retrieved name is equal to the expected name.
 
@@ -657,7 +657,7 @@ The `Node0Resolve` function is a helper function that retrieves the IPNS name fo
 The `testutils` package provides some utility functions for testing IPFS. The `RandomStr` function generates a random string of 1000 characters.
 
 
-```
+```go
 package cli
 
 import (
@@ -808,7 +808,7 @@ func TestRoutingV1Proxy(t *testing.T) {
 
 ```
 
-# `/opt/kubo/test/cli/delegated_routing_v1_http_server_test.go`
+# `test/cli/delegated_routing_v1_http_server_test.go`
 
 该代码是一个名为 "cli" 的包，其中定义了一些用于测试薄片存储桶(也就是IPFS)的客户端(也就是Boxo)的函数。具体来说，该代码包括以下内容：
 
@@ -851,7 +851,7 @@ func TestRoutingV1Proxy(t *testing.T) {
 15. 定义了一个名为 "客户端" 的函数，该函数是一个 Client，用于通过IPFS协议连通IPFS的节点。具体来说，该函数使用 "box/client" 客户端库中的 "Client" 函数来创建一个IPFS的 "Client" 对象，并使用该对象来连通IPFS节点。
 
 
-```
+```go
 package cli
 
 import (
@@ -877,7 +877,7 @@ This is a test case for IPNS (Inter-Peer System), which is a decentralized, peer
 The test case starts with a lone IPNS node that is not connected to other nodes. It then puts an IPNS record (hello world text) in that node and then gets the record back from the node. Finally, it checks that the record is accepted as it is a valid record and also checks that the lonely node is able to put the record back.
 
 
-```
+```go
 func TestRoutingV1Server(t *testing.T) {
 	t.Parallel()
 
@@ -1008,7 +1008,7 @@ func TestRoutingV1Server(t *testing.T) {
 
 ```
 
-# `/opt/kubo/test/cli/dht_autoclient_test.go`
+# `test/cli/dht_autoclient_test.go`
 
 这段代码是一个 Go 语言编写的测试框架，用于测试 Kubernetes (k8s) 的自动客户端 (DHT Autoclient) 功能。Harness 是 Kubernetes 自客户机工具测试框架，提供了一个用于测试 Kubernetes 自客户机工具 Harness.。
 
@@ -1076,7 +1076,7 @@ func TestDHTAutoclient(t *testing.T) {
 
 
 
-```
+```go
 package cli
 
 import (
@@ -1120,7 +1120,7 @@ func TestDHTAutoclient(t *testing.T) {
 
 ```
 
-# `/opt/kubo/test/cli/dht_legacy_test.go`
+# `test/cli/dht_legacy_test.go`
 
 This is a Go test that tests the distributed hash table (DHT) of the IPFS (Interoperable Push-Pull Service) peer-to-peer network. It checks if the various DHT commands work as expected when running on a node that is connected to a peer network and has the peers' hashes stored in a hash table.
 
@@ -1137,7 +1137,7 @@ The tests first check that the `dht findprovs` command returns the expected node
 If any of the `dht` commands fail with an error message, the tests will not add the file to the node's local DHT and will not attempt to update the file's metadata.
 
 
-```
+```go
 package cli
 
 import (
@@ -1278,7 +1278,7 @@ func TestLegacyDHT(t *testing.T) {
 
 ```
 
-# `/opt/kubo/test/cli/dht_opt_prov_test.go`
+# `test/cli/dht_opt_prov_test.go`
 
 这段代码是一个 Go 语言编写的测试框架，用于测试 DHT 优化提供功能。它定义了一个名为 `TestDHTOptimisticProvide` 的函数，该函数对两个测试函数 `optimistic provide smoke test` 和 `optimistic provide with self-data` 起作用。
 
@@ -1298,7 +1298,7 @@ func TestLegacyDHT(t *testing.T) {
 这段代码的作用是测试 DHT 优化提供功能。通过在两个测试函数中运行相同的操作，并检查它们的输出结果是否一致，可以确保哈希表在启动多个节点后能够正确地工作，并提供一个最优的性能。
 
 
-```
+```go
 package cli
 
 import (
@@ -1332,14 +1332,14 @@ func TestDHTOptimisticProvide(t *testing.T) {
 
 ```
 
-# `/opt/kubo/test/cli/gateway_range_test.go`
+# `test/cli/gateway_range_test.go`
 
 This is a Go test that uses theHarness library to interact with the Kubernetes node that is running the Kubernetes CLI harness. TheHarness library is a simple wrapper around the `net/http` and `os` packages that makes it easier to perform common Kubernetes tasks such as fetching a list of HAMT blocks.
 
 The `TestGatewayHAMTDirectory` function tests the gateway by opening the HAMT directory that has been sharded and熙熙攘攘 it with 10k items. It then imports the fixtures from the HAMT directory and uses the gateway to fetch the minimal set of blocks that are necessary for directory listing. It asserts that the response from the gateway is an HTTP status code of 200 (OK) and that the fetch is successful.
 
 
-```
+```go
 package cli
 
 import (
@@ -1398,7 +1398,7 @@ Finally, the test checks that the server returns the correct Content-Range heade
 This test is a very basic example to check if the IPFS client can fetch the content of a file and if it can return the correct information.
 
 
-```
+```go
 func TestGatewayHAMTRanges(t *testing.T) {
 	t.Parallel()
 
@@ -1459,7 +1459,7 @@ func TestGatewayHAMTRanges(t *testing.T) {
 
 ```
 
-# `/opt/kubo/test/cli/gateway_test.go`
+# `test/cli/gateway_test.go`
 
 该代码是一个 Go 语言编写的命令行工具 cli 的包。它定义了一个名为 "cli" 的包，其中定义了一些函数和类型。
 
@@ -1483,7 +1483,7 @@ func TestGatewayHAMTRanges(t *testing.T) {
 - "github.com/stretchr/testify/require"：用于断言的客户端。
 
 
-```
+```go
 package cli
 
 import (
@@ -1518,7 +1518,7 @@ The tests include a variety of HTTP request and response checks, such as verifyi
 It appears that the harness code being tested is actually the code implementing the HTTP/IPFS interface, rather than the harness code that provides the interface.
 
 
-```
+```go
 func TestGateway(t *testing.T) {
 	t.Parallel()
 	h := harness.NewT(t)

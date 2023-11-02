@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 18
 
-# `/opt/kubo/core/commands/shutdown.go`
+# `core/commands/shutdown.go`
 
 这段代码定义了一个命令行工具 called "daemonShutdownCmd"，用于关闭 IPFS(InterPlanetary File System) 的本地 daemon 进程。
 
@@ -17,7 +17,7 @@
 此外，代码中还定义了一个辅助函数 cmdenv，该函数用于获取当前正在运行的 IPFS daemon 的节点 ID。
 
 
-```
+```go
 package commands
 
 import (
@@ -49,7 +49,7 @@ var daemonShutdownCmd = &cmds.Command{
 
 ```
 
-# `/opt/kubo/core/commands/stat.go`
+# `core/commands/stat.go`
 
 这段代码定义了一个名为“commands”的包，它属于一个名为“ipfs-io”的包。通过导入其他一些包，如“fmt”、“io”、“os”和“time”，它实现了在命令行中执行IPFS命令的一些功能。
 
@@ -63,7 +63,7 @@ var daemonShutdownCmd = &cmds.Command{
 6. 通过导入定义在“protocol”包中的“protocol”函数，实现与IPFS服务器通信的功能。
 
 
-```
+```go
 package commands
 
 import (
@@ -92,7 +92,7 @@ import (
 总的来说，这个代码定义了一个用于查询 IPFS 节点的统计信息的命令对象，可以接受一些子命令来实现不同的查询操作。
 
 
-```
+```go
 var StatsCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Query IPFS statistics.",
@@ -126,7 +126,7 @@ for your IPFS node.`,
 最后，导入了 `cmds.Group`、`cmds.Args` 和 `cmds.Color` 等 cmds 系统的类，以便在命令行中使用这些选项。
 
 
-```
+```go
 const (
 	statPeerOptionName     = "peer"
 	statProtoOptionName    = "proto"
@@ -157,7 +157,7 @@ It displays: TotalIn, TotalOut, RateIn, RateOut.
 通过“ipfs stats bw”命令，用户可以查看当前网络中所有对等节点的带宽使用情况。通过“peer”选项指定限制带宽的对等节点，通过“proto”选项指定限制显示的协议。例如，要限制带宽只显示HTTP协议，可以同时指定“peer”和“proto”选项。
 
 
-```
+```go
 By default, overall bandwidth and all protocols are shown. To limit bandwidth
 to a particular peer, use the 'peer' option along with that peer's multihash
 id. To specify a specific protocol, use the 'proto' option. The 'peer' and
@@ -197,7 +197,7 @@ The program starts by printing the statistics of all the Beats that are currentl
 If `doPoll` is `false`, the program will return immediately if it is pressed. If `doPoll` is `true`, the program will perform a Polling operation every `interval` seconds.
 
 
-```
+```go
 `,
 	},
 	Options: []cmds.Option{
@@ -319,7 +319,7 @@ If `doPoll` is `false`, the program will return immediately if it is pressed. If
 最后，函数返回了参数 `out`。
 
 
-```
+```go
 func printStats(out io.Writer, bs *metrics.Stats) {
 	fmt.Fprintln(out, "Bandwidth")
 	fmt.Fprintf(out, "TotalIn: %s\n", humanize.Bytes(uint64(bs.TotalIn)))
@@ -330,7 +330,7 @@ func printStats(out io.Writer, bs *metrics.Stats) {
 
 ```
 
-# `/opt/kubo/core/commands/stat_dht.go`
+# `core/commands/stat_dht.go`
 
 该代码的作用是定义了一个名为 "commands" 的包，其中定义了一些命令，用于在基于 IPFS 的 Kubernetes Cluster 中执行操作。
 
@@ -357,7 +357,7 @@ func printStats(out io.Writer, bs *metrics.Stats) {
 10. 实现了一个名为 "bindnet" 的命令，用于在基于 IPFS 的 Kubernetes Cluster 中创建自定义网络。
 
 
-```
+```go
 package commands
 
 import (
@@ -389,7 +389,7 @@ import (
 这个代码定义了 DHT 中的三个关键类型：对等机信息、统计信息和数据分片。这些类型以及它们所代表的含义可以帮助理解 DHT 的底层架构和数据结构。
 
 
-```
+```go
 type dhtPeerInfo struct {
 	ID            string
 	Connected     bool
@@ -413,7 +413,7 @@ type dhtBucket struct {
 This appears to be a DHT (Distributed Hash Table) status log for a Bucket. The log entries are written for each bucket and include the bucket ID, the number of peers, the timestamp of the last refresh, and a list of the peers that have been refreshed, along with information about the state of each peer (e.g. whether it is connected and what the Agent Version is). The log also includes a timestamp for when the refresh first occurred and a timestamp for when the last refresh occurred for each peer.
 
 
-```
+```go
 var statDhtCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Returns statistics about the node's DHT(s).",
@@ -627,7 +627,7 @@ This interface is not stable and may change from release to release.
 
 ```
 
-# `/opt/kubo/core/commands/stat_provide.go`
+# `core/commands/stat_provide.go`
 
 该代码的作用是定义了一个名为"cmds"的包。它使用了多个外部库：
 
@@ -649,7 +649,7 @@ This interface is not stable and may change from release to release.
 通过使用这些库和定义，该代码实现了一个功能齐全的命令行工具。
 
 
-```
+```go
 package commands
 
 import (
@@ -676,7 +676,7 @@ The program uses the ` humanNumber` and ` humanDuration` functions to display th
 The program also defines the data type for the `Provider` struct as `provider.ProviderStats`.
 
 
-```
+```go
 var statProvideCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Returns statistics about the node's (re)provider system.",
@@ -733,7 +733,7 @@ This interface is not stable and may change from release to release.
 函数 "func humanNumber[T constraints.Float | constraints.Integer](n T) string" 的作用是返回一个将 "T" 类型中的整数截断到 "humanNumber" 函数中的浮点数 "n" 并返回对应的字符串。函数的实现中，首先调用 "humanSI" 函数将 "n" 截断到 "humanNumber" 函数中的浮点数 "n"，然后调用 "fmt.Sprintf" 函数将 "n" 和对应的字符串 "str""组合在一起，最后调用 "humanFull" 函数将 "str" 中的字符串转换为字符串类型。
 
 
-```
+```go
 func humanDuration(val time.Duration) string {
 	return val.Truncate(time.Microsecond).String()
 }
@@ -762,14 +762,14 @@ func humanSI(val float64, decimals int) string {
 因此，函数 `humanFull` 的作用是将传入的 `float64` 类型的数值格式化为一个以逗号分隔的数字字符串，其中数字使用指定的精度。
 
 
-```
+```go
 func humanFull(val float64, decimals int) string {
 	return humanize.CommafWithDigits(val, decimals)
 }
 
 ```
 
-# `/opt/kubo/core/commands/swarm.go`
+# `core/commands/swarm.go`
 
 这段代码定义了一个名为 "commands" 的包，其中定义了一些与 Go-IPFS 相关的命令。
 
@@ -782,7 +782,7 @@ func humanFull(val float64, decimals int) string {
 3. 定义了一些函数：其中一些函数与 Go-IPFS 相关，其他函数则与 Go-IPFS 无关。这些函数的实现包括：addKubernetesConfig、cliEnter、cmderive、denv、do-auth、do-fetch、do-send、do-todo、fmtarg、getEnv、getStaticValue、getValue、io的write、json、makeRequest、net/http的getContext、net/http的startTLS、net/http的startTrading、net/ipfs的io等。
 
 
-```
+```go
 package commands
 
 import (
@@ -832,7 +832,7 @@ The `SwarmCmd` function signature is defined as a command with a help text of "I
 The code does not include any function or variable usage, so it is unclear what the `SwarmCmd` function or the `addrMap` type is intended to do when called.
 
 
-```
+```go
 const (
 	dnsResolveTimeout = 10 * time.Second
 )
@@ -866,7 +866,7 @@ var SwarmCmd = &cmds.Command{
 - "resources": 这个命令可以用于设置或获取与当前节点共享的资源。libp2p 网络资源管理器（swarmResourcesCmd）可能也需要使用这个命令进行设置。
 
 
-```
+```go
 'ipfs swarm' is a tool to manipulate the network swarm. The swarm is the
 component that opens, listens for, and maintains connections to other
 ipfs peers in the internet.
@@ -895,7 +895,7 @@ ipfs peers in the internet.
 `swarmStreamsOptionName`是上述定义的选项中最后一个，用于配置swarm网络的延迟选项。根据设置的值，网络将使用该延迟选项来工作，以保证网络的性能。延迟选项的值可以是`"低"`、`"medium"`或`"high"`。
 
 
-```
+```go
 const (
 	swarmVerboseOptionName           = "verbose"
 	swarmStreamsOptionName           = "streams"
@@ -928,7 +928,7 @@ type peeringResult struct {
 `swarmPeeringConfigCmd`用于设置或取消指定的`swarmPeering`节点的配置，例如设置指定节点的端口、设置标签等。
 
 
-```
+```go
 var swarmPeeringCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Modify the peering subsystem.",
@@ -951,7 +951,7 @@ The changes are not saved to the config.
 This is a command line interface (CLI) command for adding a new IPFS node address to the peering subsystem. The `ipfs swarm peering add` command takes an argument specifying the address of the new node to be added, and returns a response indicating whether the operation was successful or not. If the operation was successful, the response will include the ID of the newly added node and a message indicating that the operation was successful. If the operation was not successful, the response will include an error message.
 
 
-```
+```go
 var swarmPeeringAddCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Add peers into the peering subsystem.",
@@ -1023,7 +1023,7 @@ var swarmPeeringAddCmd = &cmds.Command{
 4. 返回 `cmds.Success` 作为结果，如果没有错误则返回 `cmds.NoOp` 作为结果。
 
 
-```
+```go
 var swarmPeeringLsCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "List peers registered in the peering subsystem.",
@@ -1103,7 +1103,7 @@ func (c *cmds.Command) Run(req *cmds.Request, res cmds.ResponseEmitter, env cmds
 * `Run`函数：实现命令行命令的实现。接收请求参数，创建或删除指定ID的`peer.AddrInfo`，然后将其从`swarm`中删除，并从`always-on connection`中删除指定的ID。最后，将结果返回给调用者。
 
 
-```
+```go
 type addrInfos struct {
 	Peers []peer.AddrInfo
 }
@@ -1160,7 +1160,7 @@ The output of the ` identifyPeer` function is compared to the input to determine
 The peers are connected to the cluster and their information is sent to the output. The peers are sorted by the `ci` struct based on the peers and the output is sent to the input.
 
 
-```
+```go
 var swarmPeersCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "List peers with open connections.",
@@ -1279,7 +1279,7 @@ The program then loops through each usage limit in the limiter configuration obj
 The program uses the `fmt.Fprintf` function to write the data to the file, and the `defer` directive to automatically flush the writer to disk when the program exits. The program also imports the `libp2p.LimitConfigsToInfo` function to help with parsing the limiter configuration object.
 
 
-```
+```go
 var swarmResourcesCmd = &cmds.Command{
 	Status: cmds.Experimental,
 	Helptext: cmds.HelpText{
@@ -1375,7 +1375,7 @@ This can output a human readable table and JSON encoding.
 另外，该代码实现了一个名为 `Less` 的函数，该函数比较两个 `connInfo` 类型的实例 `ci` 和 `i` 的 `Streams` 字段，并返回一个名为 `ci` 的实例比上 `i` 的实例更年轻。
 
 
-```
+```go
 type streamInfo struct {
 	Protocol string
 }
@@ -1417,7 +1417,7 @@ func (ci connInfos) Less(i, j int) bool {
 这个函数CI Less() 是用来比较ci.Peers 的 Addr 是否比ci.Peers 的 Addr 小。
 
 
-```
+```go
 func (ci *connInfo) Len() int {
 	return len(ci.Streams)
 }
@@ -1453,7 +1453,7 @@ func (ci connInfos) Less(i, j int) bool {
 函数`Len()`没有返回值，因为它只是返回了`ci.Peers`的长度。
 
 
-```
+```go
 func (ci connInfos) Len() int {
 	return len(ci.Peers)
 }
@@ -1508,7 +1508,7 @@ The function has a single argument of type `inet.Direction`, which represents th
 The `swarmAddrsCmd` variable is of type `cmds.Command` and has a `Helptext` field with a description of the command's purpose, and a `ShortDescription` field that is a brief description of the command. It does not seem to have any direct functionality, but it is used in the `ListKnownAddresses()` function call.
 
 
-```
+```go
 // directionString transfers to string
 func directionString(d inet.Direction) string {
 	switch d {
@@ -1534,7 +1534,7 @@ The "local" command is used to add a known data service address to the Swarm's l
 The CLI output is a map that maps Swarm node IDs to a list of available data service endpoints, with the endpoints being separated by a delimiter.
 
 
-```
+```go
 'ipfs swarm addrs' lists all addresses this node is aware of.
 `,
 	},
@@ -1595,7 +1595,7 @@ The CLI output is a map that maps Swarm node IDs to a list of available data ser
 该命令的`options`选项中包含一个名为`id`的`bool`选项。如果选中此选项，它将输出经过P2P协议的主机ID，而不是IPFS本地地址。
 
 
-```
+```go
 var swarmAddrsLocalCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "List local addresses.",
@@ -1652,7 +1652,7 @@ var swarmAddrsLocalCmd = &cmds.Command{
 这个命令的输入参数是一个`stringList`类型的参数，其中包含节点当前监听的所有接口地址。
 
 
-```
+```go
 var swarmAddrsListenCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "List interface listening addresses.",
@@ -1710,7 +1710,7 @@ The address format is a libp2p multiaddr:
 ipfs swarm connect /ip4/104.131.131.82/tcp/4001/p2p/QmaCpDMGvV2BGHeYERUEnRQAwe3N8Scb
 
 
-```
+```go
 var swarmConnectCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Open connection to a given peer.",
@@ -1777,7 +1777,7 @@ Finally, it returns a "response-emitter" that emits a list of strings based on t
 Note that the behavior of this function is not well tested and may be changed in a future release.
 
 
-```
+```go
 var swarmDisconnectCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Close connection to a given address.",
@@ -1854,7 +1854,7 @@ The function uses a goroutine that runs the `rslv.Resolve` function to resolve e
 The function also has a `main` function that creates a `select` statement that waits until the `maddrC` channel has data and returns it. This allows the main function to run before the `resolveIPFSPeerless` function, which uses `select` to wait for the `maddrC` channel to have data before returning.
 
 
-```
+```go
 // parseAddresses is a function that takes in a slice of string peer addresses
 // (multiaddr + peerid) and returns a slice of properly constructed peers
 func parseAddresses(ctx context.Context, addrs []string, rslv *madns.Resolver) ([]peer.AddrInfo, error) {
@@ -1941,7 +1941,7 @@ func resolveAddresses(ctx context.Context, addrs []string, rslv *madns.Resolver)
 通过这些方法的调用，可以方便地管理和添加/删除系统中的地址过滤器，从而对系统中的网络流量进行更加精确的控制。
 
 
-```
+```go
 var swarmFiltersCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Manipulate address filters.",
@@ -1965,7 +1965,7 @@ Where the above is equivalent to the standard CIDR:
 具体来说，这段代码定义了一个名为 "swarmFilters" 的函数，它接收一个 "req" 参数代表请求，一个 "res" 参数代表响应，一个 "env" 参数代表一个 CMD 环境。函数内部首先检查传入的 "n" 是否在线，如果不在线，则返回 "errNotOnline" 的错误。然后，函数遍历 "n.Filters.FiltersForAction(ma.ActionDeny)" 返回的过滤器，将每个过滤器的网络输入转换为字符串并添加到 "output" 数组中。最后，函数使用 "cmds.EmitOnce" 函数将 "output" 数组中的内容输出到 "res" 参数所代表的响应中，并使用 "cmds.Text" 和 "cmds.MakeTypedEncoder" 函数来对 "output" 数组中的内容进行编码。
 
 
-```
+```go
 Filters default to those specified under the "Swarm.AddrFilters" config key.
 `,
 	},
@@ -2008,7 +2008,7 @@ The command is used by running `ipfs swarm filters add <multiaddr>`. The `<multi
 To use this command, you first need to make sure that the `ipfs-SMB` daemon is running on your system. Then, you can run the command with the `ipfs swarm filters add` syntax, followed by the address(es) you want to filter by.
 
 
-```
+```go
 var swarmFiltersAddCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Add an address filter.",
@@ -2082,7 +2082,7 @@ If the initial request is successful, the function applies the same policy to th
 If any errors occur during these steps, the function returns an error and emits a response with a failure message using the `cmds.ResponseEmitter.Emit` method.
 
 
-```
+```go
 var swarmFiltersRmCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Remove an address filter.",
@@ -2165,7 +2165,7 @@ var swarmFiltersRmCmd = &cmds.Command{
 5. 返回 `addedList` 和 `nil`，分别代表添加的过滤器和设置的配置文件是否成功。
 
 
-```
+```go
 func filtersAdd(r repo.Repo, cfg *config.Config, filters []string) ([]string, error) {
 	addedMap := map[string]struct{}{}
 	addedList := make([]string, 0, len(filters))
@@ -2221,7 +2221,7 @@ filtersRemove`
 函数首先设置 `r.setConfig(cfg)` 函数，如果设置失败，将返回 `nil` 和错误。设置完成后，函数将返回移除的地址列表 `removed` 和错误 `nil`。
 
 
-```
+```go
 func filtersRemoveAll(r repo.Repo, cfg *config.Config) ([]string, error) {
 	removed := cfg.Swarm.AddrFilters
 	cfg.Swarm.AddrFilters = nil

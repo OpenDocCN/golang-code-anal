@@ -1,11 +1,11 @@
 # go-ipfs 源码解析 27
 
-# `/opt/kubo/core/corehttp/metrics_test.go`
+# `core/corehttp/metrics_test.go`
 
 这段代码是CoreHub中的一个测试，用于测试libp2p的Swarm作为客户端连接到服务器端swarm时，是否能正常工作。通过引入corehttp、testing包以及内部依赖的github.com/ipfs/kubo、github.com/libp2p/go-libp2p等库，实现了一个高可用轻量级的libp2p swarm作为服务器端网络服务，以满足各种网络应用场景的需求。
 
 
-```
+```go
 package corehttp
 
 import (
@@ -36,7 +36,7 @@ The `IpfsNodeCollector` class is used to store the data collected by the `dial` 
 The total number of peers that were found for each transport is stored in the `peersTransport` map. If the number of peers for a particular transport is less than 2, an error is raised. If the total number of peers for all transports is less than 3, an error is also raised. These tests are run for each of the four virtual hosts.
 
 
-```
+```go
 // It builds 4 nodes and connects them, one being the sole center.
 // Then it checks that the center reports the correct number of peers.
 func TestPeersTotal(t *testing.T) {
@@ -81,7 +81,7 @@ func TestPeersTotal(t *testing.T) {
 
 ```
 
-# `/opt/kubo/core/corehttp/mutex_profile.go`
+# `core/corehttp/mutex_profile.go`
 
 这段代码定义了一个名为MutexFractionOption的函数，用于通过HTTP请求设置IPFS的互斥分数。
 
@@ -95,7 +95,7 @@ func TestPeersTotal(t *testing.T) {
 4. 最后，函数返回一个`ServeOption`，用于告诉使用者的HTTP客户端如何处理这个请求。如果设置有误或者参数不正确，函数的返回值都是`nil`。
 
 
-```
+```go
 package corehttp
 
 import (
@@ -152,7 +152,7 @@ func MutexFractionOption(path string) ServeOption {
 6. 返回http.ServeMux和nil表示，使得http.ServeMux接受处理函数作为其next，从而将http request路由到函数内部处理。
 
 
-```
+```go
 // BlockProfileRateOption allows to set runtime.SetBlockProfileRate via HTTP
 // using POST request with parameter 'rate'.
 // The profiler tries to sample 1 event every <rate> nanoseconds.
@@ -190,7 +190,7 @@ func BlockProfileRateOption(path string) ServeOption {
 
 ```
 
-# `/opt/kubo/core/corehttp/option_test.go`
+# `core/corehttp/option_test.go`
 
 这段代码定义了一个名为`testcaseCheckVersion`的测试函数，属于`corehttp`包。它通过引入`net/http`和`github.com/ipfs/kubo`包，以及定义一个名为`testcasecheckversion`的结构体，实现了对HTTP协议版本处理的功能。
 
@@ -208,7 +208,7 @@ func BlockProfileRateOption(path string) ServeOption {
 5. 调用`http.Response`类型的变量，获取期望的HTTP响应，并输出响应的状态码。如果`shouldHandle`字段为`true`，则会对响应进行处理，否则不会处理。
 
 
-```
+```go
 package corehttp
 
 import (
@@ -243,7 +243,7 @@ Each test case is followed by a request to the handler using a different tool, s
 The simulation of the handler using `CheckVersionOption` is done using the `http.Handler` struct. The `CheckVersionOption` is used to check the HTTP version of the handler. If the version does not match the expected version, the handler is expected to return a 404 Not Found status code.
 
 
-```
+```go
 func (tc testcasecheckversion) body() string {
 	if !tc.shouldHandle && tc.responseBody == "" {
 		return fmt.Sprintf("%s (%s != %s)\n", errAPIVersionMismatch, version.ApiVersion, tc.userAgent)
@@ -303,7 +303,7 @@ func TestCheckVersionOption(t *testing.T) {
 
 ```
 
-# `/opt/kubo/core/corehttp/p2p_proxy.go`
+# `core/corehttp/p2p_proxy.go`
 
 这段代码定义了一个名为“corehttp”的包，并导入了几个相关的包： core、net、net/http、net/http/httputil 和net/url。
 
@@ -318,7 +318,7 @@ func TestCheckVersionOption(t *testing.T) {
 最后，它定义了一个名为“protocol”的函数，用于定义Go-libp2p中的协议。
 
 
-```
+```go
 package corehttp
 
 import (
@@ -349,7 +349,7 @@ import (
 如果解析或创建套接字时出现错误，函数将返回一个错误并输出错误信息。
 
 
-```
+```go
 // P2PProxyOption is an endpoint for proxying a HTTP request to another ipfs peer
 func P2PProxyOption() ServeOption {
 	return func(ipfsNode *core.IpfsNode, _ net.Listener, mux *http.ServeMux) (*http.ServeMux, error) {
@@ -403,7 +403,7 @@ func P2PProxyOption() ServeOption {
 5. 如果解析成功，函数将返回代理请求结构体。
 
 
-```
+```go
 type proxyRequest struct {
 	target   string
 	name     protocol.ID
@@ -450,14 +450,14 @@ func parseRequest(request *http.Request) (*proxyRequest, error) {
 函数的作用是当 "handleError" 函数接收到一个 HTTP 请求时，根据传入的参数，输出一条错误消息，并设置 HTTP 状态码。
 
 
-```
+```go
 func handleError(w http.ResponseWriter, msg string, err error, code int) {
 	http.Error(w, fmt.Sprintf("%s: %s", msg, err), code)
 }
 
 ```
 
-# `/opt/kubo/core/corehttp/p2p_proxy_test.go`
+# `core/corehttp/p2p_proxy_test.go`
 
 该代码的作用是定义一个名为`TestCase`的结构体，它代表了所有可能的测试用例。
 
@@ -477,7 +477,7 @@ func handleError(w http.ResponseWriter, msg string, err error, code int) {
 最后，导入了`assert`包，以便在测试中使用断言。
 
 
-```
+```go
 package corehttp
 
 import (
@@ -506,7 +506,7 @@ type TestCase struct {
 `parseRequest` 函数接收一个 HTTP 请求对象 `req`，其中包括 HTTP 方法、URL 和请求头。函数将解析 `req`，并返回两个值：`parsed` 和 `err`。`parsed` 表示 HTTP 路径，`err` 表示解析是否成功。
 
 
-```
+```go
 var validtestCases = []TestCase{
 	{"http://localhost:5001", "QmT8JtU54XSmC38xSb1XHFSMm775VuTeajg7LWWWTAwzxT", "/http", "path/to/index.txt"},
 	{"http://localhost:5001", "QmT8JtU54XSmC38xSb1XHFSMm775VuTeajg7LWWWTAwzxT", "/x/custom/http", "path/to/index.txt"},
@@ -541,7 +541,7 @@ func TestParseRequest(t *testing.T) {
 最后，在 `TestParseRequestInvalidPath` 函数中，如果所有测试用例均成功，那么程序将会正常退出。否则，将输出一个错误，并给出可能的错误信息，以便开发人员进一步排查问题。
 
 
-```
+```go
 var invalidtestCases = []string{
 	"http://localhost:5001/p2p/http/foobar",
 	"http://localhost:5001/p2p/QmT8JtU54XSmC38xSb1XHFSMm775VuTeajg7LWWWTAwzxT/x/custom/foobar",
@@ -561,7 +561,7 @@ func TestParseRequestInvalidPath(t *testing.T) {
 
 ```
 
-# `/opt/kubo/core/corehttp/redirect.go`
+# `core/corehttp/redirect.go`
 
 这段代码定义了一个名为"RedirectOption"的函数，用于设置HTTP重定向选项。函数接受两个参数，一个是路径参数，另一个是重定向字符串。函数返回一个ServeOption函数，用于设置HTTP请求上下文。
 
@@ -578,7 +578,7 @@ func TestParseRequestInvalidPath(t *testing.T) {
 4. 最后，将handler设置为请求的上下文中的handler，并返回该上下文，同时不执行任何其他操作。
 
 
-```
+```go
 package corehttp
 
 import (
@@ -615,7 +615,7 @@ func RedirectOption(path string, redirect string) ServeOption {
 具体而言，函数内部首先遍历`headers`字段，将所有键值对存储在`headers`Map中的值遍历并添加到`w.Header()`上。然后使用`http.Redirect`函数将生成的HTTP重定向响应发送回给客户端，同时将`path`和`status`字段设置为客户端请求的路径和HTTP状态码。
 
 
-```
+```go
 type redirectHandler struct {
 	path    string
 	headers map[string][]string
@@ -631,7 +631,7 @@ func (i *redirectHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 ```
 
-# `/opt/kubo/core/corehttp/routing.go`
+# `core/corehttp/routing.go`
 
 这段代码定义了一个名为 "corehttp" 的包。它导入了以下依赖项：
 
@@ -648,7 +648,7 @@ func (i *redirectHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 综上所述，此代码定义了一个 HTTP 服务器，可以处理 IPFS 网络中的请求，并将其路由到相应的处理程序。
 
 
-```
+```go
 package corehttp
 
 import (
@@ -674,7 +674,7 @@ import (
 函数返回一个 Mux 对象，代表 HTTP 服务器，然后使用 `mux.Handle` 方法将路由配置文件中的路由注册到 HTTP 服务器上。最后，函数返回 Mux 对象和 nil，表示成功完成了路由配置。
 
 
-```
+```go
 func RoutingOption() ServeOption {
 	return func(n *core.IpfsNode, _ net.Listener, mux *http.ServeMux) (*http.ServeMux, error) {
 		handler := server.Handler(&contentRouter{n})
@@ -711,7 +711,7 @@ func (r *contentRouter) FindProviders(ctx context.Context, key cid.Cid, limit in
 `FindPeers` 函数的作用是查询与指定 `peer.ID` 相关的路由器，并返回一个包含多个 `types.PeerRecord` 类型的结果。它使用了 `r.n.Routing` 切片，这个切片可能包含了一些已查询过的路由器，因此可以通过它来查询最新的路由器。
 
 
-```
+```go
 // nolint deprecated
 func (r *contentRouter) ProvideBitswap(ctx context.Context, req *server.BitswapWriteProvideRequest) (time.Duration, error) {
 	return 0, routing.ErrNotSupported
@@ -754,7 +754,7 @@ func (r *contentRouter) FindPeers(ctx context.Context, pid peer.ID, limit int) (
 3. 返回设置是否成功：如果设置成功，则返回 nil，否则返回错误。
 
 
-```
+```go
 func (r *contentRouter) GetIPNS(ctx context.Context, name ipns.Name) (*ipns.Record, error) {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
@@ -796,7 +796,7 @@ func (r *contentRouter) PutIPNS(ctx context.Context, name ipns.Name, record *ipn
 该代码的作用是定义了一个通道`peerChanIter`，允许通过该通道发送`peer.AddrInfo`类型的数据，并可阻止对该通道的发送操作。
 
 
-```
+```go
 type peerChanIter struct {
 	ch     <-chan peer.AddrInfo
 	cancel context.CancelFunc
@@ -822,7 +822,7 @@ func (it *peerChanIter) Next() bool {
 接着，函数遍历传入的迭代器中的每个元素，并将它们的 `Multiaddr` 字段添加到 `PeerRecord` 类型中的 `Addrs` 字段中。这样，函数返回的 `types.PeerRecord` 类型中包含了输入迭代器中的所有元素。
 
 
-```
+```go
 func (it *peerChanIter) Val() types.Record {
 	if it.next == nil {
 		return nil
@@ -851,7 +851,7 @@ func (it *peerChanIter) Val() types.Record {
 综合来看，该函数的作用是取消当前`peerChanIter`迭代器的订阅，并返回一个`nil`类型的值。
 
 
-```
+```go
 func (it *peerChanIter) Close() error {
 	it.cancel()
 	return nil
@@ -859,7 +859,7 @@ func (it *peerChanIter) Close() error {
 
 ```
 
-# `/opt/kubo/core/corehttp/webui.go`
+# `core/corehttp/webui.go`
 
 IPFS(InterPlanetary File System) is a decentralized, distributed file system that allows users to store and share files in a trustless manner over the internet. It is designed to be a peer-to-peer network, so that users can store and access their own files without relying on a centralized server or intermediary.
 
@@ -868,7 +868,7 @@ IPFS uses a cryptographic哈希函数(如RIPEMD-2041)来验证文件的完整性
 IPFS 的最主要特点是去中心化、分布式的。它是通过一个网络中的节点来存储和传输文件的，所以可以认为它是非中心化的。此外，由于它没有集中式的服务器，所以也避免了单点故障。
 
 
-```
+```go
 package corehttp
 
 // TODO: move to IPNS
@@ -940,12 +940,12 @@ var WebUIPaths = []string{
 因此，这段代码的作用是创建一个 RedirectOption 对象，用于在 WebUI 中进行选项重定向。选项重定向的具体实现可能会因 WebUI 的具体实现而有所不同。
 
 
-```
+```go
 var WebUIOption = RedirectOption("webui", WebUIPath)
 
 ```
 
-# `/opt/kubo/core/corerepo/gc.go`
+# `core/corerepo/gc.go`
 
 这段代码定义了一个名为“corerepo”的包，它提供了在IPFS（InterPlanetary File System）中执行操作的函数。IPFS是一个去中心化的点对点分布式文件系统，可以在全球范围内存储和共享文件。
 
@@ -1008,7 +1008,7 @@ var WebUIOption = RedirectOption("webui", WebUIPath)
 
 
 
-```
+```go
 package corerepo
 
 import (
@@ -1040,7 +1040,7 @@ If any of the configuration keys are not present in the repo, the function will 
 The function returns a pointer to a new Gathering Hub instance, as well as an error if any problems occurred during initialization.
 
 
-```
+```go
 var log = logging.Logger("corerepo")
 
 var ErrMaxStorageExceeded = errors.New("maximum storage limit exceeded. Try to unpin some files")
@@ -1108,7 +1108,7 @@ func NewGC(n *core.IpfsNode) (*GC, error) {
 2. `GarbageCollect` 函数的作用是收集指定 `core.IpfsNode` 实例的垃圾回收。它首先调用 `BestEffortRoots` 函数查找所有文件根，然后使用 `gc.GC` 函数将垃圾回收。`gc.GC` 函数负责回收内存中的数据，并将其释放到垃圾回收器。最后，它将收集结果返回。
 
 
-```
+```go
 func BestEffortRoots(filesRoot *mfs.Root) ([]cid.Cid, error) {
 	rootDag, err := filesRoot.GetDirectory().GetNode()
 	if err != nil {
@@ -1137,7 +1137,7 @@ func GarbageCollect(n *core.IpfsNode, ctx context.Context) error {
 最后，函数会根据 `errors` 数组长度返回一个 `MultiError` 类型的对象，其中包含所有收集到的错误。
 
 
-```
+```go
 // CollectResult collects the output of a garbage collection run and calls the
 // given callback for each object removed.  It also collects all errors into a
 // MultiError which is returned after the gc is completed.
@@ -1182,7 +1182,7 @@ loop:
 最后，函数的 `Error` 方法从 `e` 引用了 `MultiError` 对象，并遍历它的 `Errors` 和 `Summary` 字段，将它们的结果组合成一个字符串并返回。
 
 
-```
+```go
 // NewMultiError creates a new MultiError object from a given slice of errors.
 func NewMultiError(errs ...error) *MultiError {
 	return &MultiError{errs[:len(errs)-1], errs[len(errs)-1]}
@@ -1218,7 +1218,7 @@ func (e *MultiError) Error() string {
 `PeriodicGC` 函数的作用是每 `cfg.Datastore.GCPeriod` 小时执行一次垃圾回收。如果 `cfg.Datastore.GCPeriod` 配置为空，则认为垃圾回收enabled。函数的实现可能还涉及设置一些选项，例如 `datastore` 选项的 `GCPeriod` 选项。
 
 
-```
+```go
 func GarbageCollectAsync(n *core.IpfsNode, ctx context.Context) <-chan gc.Result {
 	roots, err := BestEffortRoots(n.FilesRoot)
 	if err != nil {
@@ -1287,7 +1287,7 @@ func PeriodicGC(ctx context.Context, node *core.IpfsNode) error {
 		3. 执行垃圾回收操作。
 
 
-```
+```go
 func ConditionalGC(ctx context.Context, node *core.IpfsNode, offset uint64) error {
 	gc, err := NewGC(node)
 	if err != nil {
@@ -1320,7 +1320,7 @@ func (gc *GC) maybeGC(ctx context.Context, offset uint64) error {
 
 ```
 
-# `/opt/kubo/core/corerepo/stat.go`
+# `core/corerepo/stat.go`
 
 这段代码定义了一个名为 `SizeStat` 的结构体，用于表示 Kubernetes Repo 中的文件和目录的大小和容量限制。它包含以下字段：
 
@@ -1333,7 +1333,7 @@ func (gc *GC) maybeGC(ctx context.Context, offset uint64) error {
 此外，还包含一个名为 `fmt.Printf` 的函数，用于将 `SizeStat` 中的字段格式化输出。
 
 
-```
+```go
 package corerepo
 
 import (
@@ -1360,7 +1360,7 @@ import (
 该代码接下来没有做其他事情，只是一个简单的定义，定义了两个结构体和一个常量。
 
 
-```
+```go
 type SizeStat struct {
 	RepoSize   uint64 // size in bytes
 	StorageMax uint64 // size in bytes
@@ -1388,7 +1388,7 @@ const NoLimit uint64 = math.MaxUint64
 最后，如果必要，RepoStat函数使用fsrepo.BestKnownPath函数找到Ipfs节点对象的最佳已知路径，并返回该路径。函数的返回值是Stat对象，其中包含SizeStat、NumObjects、RepoPath和Version字段。
 
 
-```
+```go
 // RepoStat returns a *Stat object with all the fields set.
 func RepoStat(ctx context.Context, n *core.IpfsNode) (Stat, error) {
 	sizeStat, err := RepoSize(ctx, n)
@@ -1431,7 +1431,7 @@ func RepoStat(ctx context.Context, n *core.IpfsNode) (Stat, error) {
 3. 返回计算得到的SizeStat对象，若计算过程中出现错误，返回NoSizeStat表示没有可输出的大小信息。
 
 
-```
+```go
 // RepoSize returns a *Stat object with the RepoSize and StorageMax fields set.
 func RepoSize(ctx context.Context, n *core.IpfsNode) (SizeStat, error) {
 	r := n.Repo
@@ -1462,7 +1462,7 @@ func RepoSize(ctx context.Context, n *core.IpfsNode) (SizeStat, error) {
 
 ```
 
-# `/opt/kubo/core/coreunix/add.go`
+# `core/coreunix/add.go`
 
 该代码是一个 Go 语言项目，名为 "coreunix"，旨在提供对 IPFS（InterPlanetary File System）的本地化支持。IPFS 是一个分布式文件系统，可以在全球范围内提供高效的文件存储和访问。
 
@@ -1484,7 +1484,7 @@ func RepoSize(ctx context.Context, n *core.IpfsNode) (SizeStat, error) {
 通过这些组件，该项目可以提供一个完整的 IPFS 文件系统支持，使得开发人员可以在自己的本地环境或全球分布式环境中更轻松地使用 IPFS。
 
 
-```
+```go
 package coreunix
 
 import (
@@ -1538,7 +1538,7 @@ import (
 9. “var reader = log.Logger("coreunix")”。至此，这段代码的完整实现已经完整地解释出来。
 
 
-```
+```go
 var log = logging.Logger("coreunix")
 
 // how many bytes of progress to wait before sending a progress update message
@@ -1560,7 +1560,7 @@ type syncer interface {
 这段代码定义了一个名为 `NewAdder` 的函数，它返回一个用于文件添加操作的新 Adder 对象。函数接受三个参数：一个上下文上下文 `ctx`，一个验证 `pin`，以及一个 `bs` 类型的锁套筒 `bs`。此外，它还接受一个 `ds` 类型的 IPLDaagService 对象 `ds`。函数返回一个指向 `Adder` 类型的引用，如果函数创建或返回的任何值是 `nil`，则表示操作失败。
 
 
-```
+```go
 // NewAdder Returns a new Adder used for a file add operation.
 func NewAdder(ctx context.Context, p pin.Pinner, bs bstore.GCLocker, ds ipld.DAGService) (*Adder, error) {
 	bufferedDS := ipld.NewBufferedDAG(ctx, ds)
@@ -1606,7 +1606,7 @@ func NewAdder(ctx context.Context, p pin.Pinner, bs bstore.GCLocker, ds ipld.DAG
 该结构体的实现可能需要根据具体需求和环境进行调整。
 
 
-```
+```go
 // Adder holds the switches passed to the `add` command.
 type Adder struct {
 	ctx        context.Context
@@ -1638,7 +1638,7 @@ type Adder struct {
 函数返回值为根节点，如果没有错误则返回"nil"。
 
 
-```
+```go
 func (adder *Adder) mfsRoot() (*mfs.Root, error) {
 	if adder.mroot != nil {
 		return adder.mroot, nil
@@ -1668,7 +1668,7 @@ func (adder *Adder) mfsRoot() (*mfs.Root, error) {
 除了 `ipld` 库，这段代码还可能使用了其他库或者自己实现了某些功能。
 
 
-```
+```go
 // SetMfsRoot sets `r` as the root for Adder.
 func (adder *Adder) SetMfsRoot(r *mfs.Root) {
 	adder.mroot = r
@@ -1717,7 +1717,7 @@ func (adder *Adder) add(reader io.Reader) (ipld.Node, error) {
 5. 返回根节点，如果获取到错误则返回err。
 
 
-```
+```go
 // RootNode returns the mfs root node
 func (adder *Adder) curRootNode() (ipld.Node, error) {
 	mr, err := adder.mfsRoot()
@@ -1757,7 +1757,7 @@ func (adder *Adder) curRootNode() (ipld.Node, error) {
 通过这些函数，作者解决了一个可能导致延迟和不确定的问题，使得Addrino的应用程序更加可靠和高效。
 
 
-```
+```go
 // Recursively pins the root node of Adder and
 // writes the pin state to the backing datastore.
 func (adder *Adder) PinRoot(ctx context.Context, root ipld.Node) error {
@@ -1809,7 +1809,7 @@ c. 在递归过程中，如果遇到错误，返回错误信息。
 函数的实现遵循了递归的安全模式，即在递归过程中保证安全。因为函数在递归过程中使用了 `fsn.ListNames` 和 `outputDirs` 函数，这两个函数都使用了安全模式，所以在递归过程中对输入进行了检查和过滤，避免了潜在的安全风险。
 
 
-```
+```go
 func (adder *Adder) outputDirs(path string, fsn mfs.FSNode) error {
 	switch fsn := fsn.(type) {
 	case *mfs.File:
@@ -1850,7 +1850,7 @@ func (adder *Adder) outputDirs(path string, fsn mfs.FSNode) error {
 该函数的作用是添加一个节点到给定的路径中。如果路径为空，则将节点ID设置为该节点的CID，然后将其设置为根节点。如果节点实现为posinfo.FilestoreNode，则会将其调用mfsRoot()方法，并将其节点设置为当前节点。如果添加节点失败，则返回错误。
 
 
-```
+```go
 func (adder *Adder) addNode(node ipld.Node, path string) error {
 	// patch it into the root
 	if path == "" {
@@ -1900,7 +1900,7 @@ Finally, the program outputs the names of the directories in the same directory 
 The program uses the `filesystem` package to perform the file operations, and the `node` package to handle the Node.js HTTPFS Pin's synchronization with the HTTPFS root node.
 
 
-```
+```go
 // AddAllAndPin adds the given request's files and pin them.
 func (adder *Adder) AddAllAndPin(ctx context.Context, file files.Node) (ipld.Node, error) {
 	ctx, span := tracing.Span(ctx, "CoreUnix.Adder", "AddAllAndPin")
@@ -1997,7 +1997,7 @@ func (adder *Adder) AddAllAndPin(ctx context.Context, file files.Node) (ipld.Nod
 如果调用 "addFileNode" 函数时出现任何错误，函数将返回该错误。否则，函数返回 void 表示成功。
 
 
-```
+```go
 func (adder *Adder) addFileNode(ctx context.Context, path string, file files.Node, toplevel bool) error {
 	ctx, span := tracing.Span(ctx, "CoreUnix.Adder", "AddFileNode")
 	defer span.End()
@@ -2044,7 +2044,7 @@ func (adder *Adder) addFileNode(ctx context.Context, path string, file files.Nod
 函数的返回值类型为`error`。
 
 
-```
+```go
 func (adder *Adder) addSymlink(path string, l *files.Symlink) error {
 	sdata, err := unixfs.SymlinkData(l.Target)
 	if err != nil {
@@ -2077,7 +2077,7 @@ func (adder *Adder) addSymlink(path string, l *files.Symlink) error {
 函数的实现主要围绕着两个主要点：一个是如何读取文件，另一个是如何将追加操作的结果添加到树中。
 
 
-```
+```go
 func (adder *Adder) addFile(path string, file files.File) error {
 	// if the progress flag was specified, wrap the file so that we can send
 	// progress updates to the client (over the output channel)
@@ -2117,7 +2117,7 @@ func (adder *Adder) addFile(path string, file files.File) error {
 函数的返回值是目录工作的错误。
 
 
-```
+```go
 func (adder *Adder) addDir(ctx context.Context, path string, dir files.Directory, toplevel bool) error {
 	log.Infof("adding directory: %s", path)
 
@@ -2164,7 +2164,7 @@ func (adder *Adder) addDir(ctx context.Context, path string, dir files.Directory
 这段代码的主要目的是让添加器在 GC 期间暂停操作，以便在 GC 完成后继续执行。如果添加器在 GC 期间发生错误，可以暂停操作并输出调试信息，以便进行调试和故障排查。
 
 
-```
+```go
 func (adder *Adder) maybePauseForGC(ctx context.Context) error {
 	ctx, span := tracing.Span(ctx, "CoreUnix.Adder", "MaybePauseForGC")
 	defer span.End()
@@ -2193,7 +2193,7 @@ func (adder *Adder) maybePauseForGC(ctx context.Context) error {
 函数的作用是向名为 `outputDagnode` 的输出通道发送 `dn` 节点的信息，包括输出路径、名称和大小。代码首先检查 `out` 是否为空，如果是，则返回 `nil`。然后，代码调用名为 `getOutput` 的函数，并将 `dn` 作为参数传递给该函数。如果 `getOutput` 返回时出现错误，函数将返回该错误。如果 `getOutput` 返回时没有错误，代码将在调用 `out` 通道时发送 `dn` 节点的信息，并返回 `nil`以表示成功。
 
 
-```
+```go
 // outputDagnode sends dagnode info over the output channel
 func outputDagnode(out chan<- interface{}, name string, dn ipld.Node) error {
 	if out == nil {
@@ -2225,7 +2225,7 @@ func outputDagnode(out chan<- interface{}, name string, dn ipld.Node) error {
 最后，函数返回刚刚创建的 `output` 结构体，如果调用过程中没有错误。
 
 
-```
+```go
 // from core/commands/object.go
 func getOutput(dagnode ipld.Node) (*coreiface.AddEvent, error) {
 	c := dagnode.Cid()
@@ -2253,7 +2253,7 @@ func getOutput(dagnode ipld.Node) (*coreiface.AddEvent, error) {
 "progressReader"的"Read"方法的具体实现可以被理解为读取文件并定期向通道中发送数据的过程。这种模式的应用通常用于并发或异步处理中，例如用于处理大量的I/O操作或网络请求。
 
 
-```
+```go
 type progressReader struct {
 	file         io.Reader
 	path         string
@@ -2286,7 +2286,7 @@ func (i *progressReader) Read(p []byte) (int, error) {
 在"progressReader2"的"Read"函数中，首先通过指针变量"i"访问一个"progressReader"实例，然后调用该实例的"Read"函数，将读取到的数据存储到缓冲区中。最后，通过返回值类型整数和错误类型错误来表示读取过程的进展和结果。
 
 
-```
+```go
 type progressReader2 struct {
 	*progressReader
 	files.FileInfo

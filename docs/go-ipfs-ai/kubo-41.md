@@ -18,7 +18,7 @@ Previously go-ipfs generated 2048 bit RSA keys for new nodes, but it will now us
 
 Along with switching the default, we've added support for rotating keys. If you would like to change the key type of your IPFS node, you can now do so with the rotate command. **NOTE: This will affect your Peer Id, so be sure you want to do this!** Your existing identity key will be backed up in the Keystore.
 
-```bash
+```gobash
 ipfs key rotate -o my-old-key -t ed25519
 ```
 
@@ -26,7 +26,7 @@ ipfs key rotate -o my-old-key -t ed25519
 
 We've added commands to allow you to export and import keys from the IPFS Keystore to a local .key file. This does not apply to the IPFS identity key, `self`.
 
-```bash
+```gobash
 ipfs key gen mykey
 ipfs key export -o mykey.key mykey # ./<name>.key is the default path
 ipfs key import mykey mykey.key # on another node
@@ -46,7 +46,7 @@ In preparation for eventually changing the default PeerID representation multiad
 
 Initial support has been added for the `ipfs dag stat` command. Running this command will traverse the DAG for the given root CID and report statistics. By default, progress will be shown as the DAG is traversed. Supported statistics currently include DAG size and number of blocks.
 
-```bash
+```gobash
 ipfs dag stat bafybeihpetclqvwb4qnmumvcn7nh4pxrtugrlpw4jgjpqicdxsv7opdm6e # the IPFS webui
 Size: 30362191, NumBlocks: 346
 ```
@@ -564,7 +564,7 @@ This remote pinning service comes with a redesign of how we're thinking about pi
 
 
 Examples include:
-```
+```go
 ipfs pin remote service add myservice https://myservice.tld:1234/api/path myaccess key
 
 ipfs pin remote add /ipfs/bafymydata --service=myservice --name=myfile
@@ -1222,7 +1222,7 @@ This work is quite new and still under development, however, the results so far 
 
 As described in the experimental features [documentation](https://github.com/ipfs/go-ipfs/blob/master/docs/experimental-features.md#accelerated-dht-client) the experimental client can be enabled using the command below (or modifying the config file).
 
-```
+```go
 ipfs config --json Experimental.AcceleratedDHTClient true
 ```
 

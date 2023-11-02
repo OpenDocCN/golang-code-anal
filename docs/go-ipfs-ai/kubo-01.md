@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 1
 
-# `/opt/kubo/client/rpc/api_test.go`
+# `client/rpc/api_test.go`
 
 这段代码是一个RPC（远程过程调用）框架，它允许客户端与服务器之间通过网络进行通信和交互。它包含了一个名为"rpc"的包，以及一些用于实现RPC框架的组件。
 
@@ -11,7 +11,7 @@
 1. `const (` 是一个字符串，用于表示常量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `const (` 是一个字符串，用于表示常量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `const (` 是一个字符串，用于表示常量 )、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，用于表示变量 ）、 `var (` 是一个字符串，
 
 
-```
+```go
 package rpc
 
 import (
@@ -46,7 +46,7 @@ The program also appears to be using the GoL刑罚系统 to create and manage th
 The program also appears to be using the GoL刑罚系统的 pin feature to pin the nodes to the IPFS network, which will prevent the node from being removed if the network becomes unavailable.
 
 
-```
+```go
 type NodeProvider struct{}
 
 func (np NodeProvider) MakeAPISwarm(t *testing.T, ctx context.Context, fullIdentity, online bool, n int) ([]iface.CoreAPI, error) {
@@ -129,7 +129,7 @@ func (np NodeProvider) MakeAPISwarm(t *testing.T, ctx context.Context, fullIdent
 1. 测试函数内部的新路
 
 
-```
+```go
 func TestHttpApi(t *testing.T) {
 	t.Parallel()
 
@@ -188,7 +188,7 @@ func Test_NewURLApiWithClient_With_Headers(t *testing.T) {
 如果 API 的 URL 与预期的 HTTP 请求不一致，函数会通过 t.Errorf 函数输出错误信息，并指出期望的 URL 和实际上获取到的 URL。如果所有测试用例的 API URL 都是一致的，函数不会输出任何错误信息，而是返回一个代表测试通过了的逻辑值。
 
 
-```
+```go
 func Test_NewURLApiWithClient_HTTP_Variant(t *testing.T) {
 	t.Parallel()
 
@@ -221,7 +221,7 @@ func Test_NewURLApiWithClient_HTTP_Variant(t *testing.T) {
 
 ```
 
-# `/opt/kubo/client/rpc/block.go`
+# `client/rpc/block.go`
 
 这段代码定义了一个名为"rpc"的包，包含了与RPC(远程过程调用)相关的接口、路径和工具函数。
 
@@ -235,7 +235,7 @@ func Test_NewURLApiWithClient_HTTP_Variant(t *testing.T) {
 通过这些依赖，这个包使得我们可以轻松地实现 RPC 相关功能，例如通过 Boxo 文件系统支持远程调用，通过文件路径操作支持本地文件操作，通过 CID 文件操作支持数据持久化等等。
 
 
-```
+```go
 package rpc
 
 import (
@@ -265,7 +265,7 @@ blockStat结构体包含一个名为Key的公共字符串字段，一个名为BS
 此代码定义了一个BlockAPI类型，该类型包含一个块的统计信息，如大小和路径。这个类型可能用于记录块的信息，以使系统可以跟踪和统计有关块的数据。
 
 
-```
+```go
 type BlockAPI HttpApi
 
 type blockStat struct {
@@ -292,7 +292,7 @@ func (s *blockStat) Path() path.ImmutablePath {
 接下来，函数检查传入的 `mh` 实例是否已存在，如果不存在，函数返回 `nil` 和错误信息。如果已存在，函数解析传入的 `cid` 选项键（CidPutOption）中的 `mhType` 字段，并检查传入的 `mhlen` 和 `pin` 选项是否正确。然后，函数创建一个名为 `req` 的 `api.core.Request` 实例，并设置请求的 URL 为 "block/put"，同时设置请求参数中的 `mhtype` 字段为传入的 `mh` 实例的 `mhType` 字段的值，`mhlen` 字段的值为传入的 `mh` 实例的 `mhLength` 字段的值，`pin` 选项中的 `pin` 字段为 `options.Pin`。最后，函数创建一个名为 `out` 的 `block.BlockStat` 实例，解码传入的 `cid` 选项数据，然后解析块设备的编码类型。如果解码成功，函数返回 `out` 和 `nil`，否则返回 `nil` 和错误信息。
 
 
-```
+```go
 func (api *BlockAPI) Put(ctx context.Context, r io.Reader, opts ...caopts.BlockPutOption) (iface.BlockStat, error) {
 	options, err := caopts.BlockPutOptions(opts...)
 	px := options.CidPrefix
@@ -345,7 +345,7 @@ func (api *BlockAPI) Put(ctx context.Context, r io.Reader, opts ...caopts.BlockP
 如果请求返回的是一些数据，则函数会将其复制到一个名为b的缓冲区中。然后，函数返回b，如果调用方在传递参数时遇到任何错误，则返回nil。
 
 
-```
+```go
 func (api *BlockAPI) Get(ctx context.Context, p path.Path) (io.Reader, error) {
 	resp, err := api.core().Request("block/get", p.String()).Send(ctx)
 	if err != nil {
@@ -376,7 +376,7 @@ func (api *BlockAPI) Get(ctx context.Context, p path.Path) (io.Reader, error) {
 最后，如果请求成功，函数使用 parseErrNotFoundWithFallbackToMSG 函数，如果请求失败，函数将调用 parseErrNotFoundWithFallbackToMSG 函数，并使用 removesBlock.Error 作为错误消息。
 
 
-```
+```go
 func (api *BlockAPI) Rm(ctx context.Context, p path.Path, opts ...caopts.BlockRmOption) error {
 	options, err := caopts.BlockRmOptions(opts...)
 	if err != nil {
@@ -412,7 +412,7 @@ func (api *BlockAPI) Rm(ctx context.Context, p path.Path, opts ...caopts.BlockRm
 该函数的作用是获取BlockAPI的Stat结果，并可能将其存储在`out`变量中。如果执行过程中出现错误，则返回错误，否则返回成功返回的结果。
 
 
-```
+```go
 func (api *BlockAPI) Stat(ctx context.Context, p path.Path) (iface.BlockStat, error) {
 	var out blockStat
 	err := api.core().Request("block/stat", p.String()).Exec(ctx, &out)
@@ -433,7 +433,7 @@ func (api *BlockAPI) core() *HttpApi {
 
 ```
 
-# `/opt/kubo/client/rpc/dag.go`
+# `client/rpc/dag.go`
 
 这段代码定义了一个名为 `rpc` 的包，包含了一些可以用于实现分布式系统中的客户端与服务端交互的函数和类型定义。
 
@@ -444,7 +444,7 @@ func (api *BlockAPI) core() *HttpApi {
 最后，该包通过导入 `blocks`、`io`、`github.com/ipfs/boxo/coreiface/options`、`github.com/ipfs/boxo/path`、`github.com/ipfs/go-block-format`、`github.com/ipfs/go-cid` 和 `github.com/ipfs/go-ipld-format` 来支持对 IPFS 对象进行客户端和客户端之间的交互操作。
 
 
-```
+```go
 package rpc
 
 import (
@@ -470,7 +470,7 @@ import (
 如果`Get`函数成功，函数将返回一个`format.Node`类型和一个`error`类型。其中`format.Node`类型表示成功，而`error`类型表示在调用`api.ipldDecoder.DecodeNode`函数时失败。如果`DecodeNode`函数有错误，将返回`error`。
 
 
-```
+```go
 type (
 	httpNodeAdder        HttpApi
 	HttpDagServ          httpNodeAdder
@@ -507,7 +507,7 @@ func (api *HttpDagServ) Get(ctx context.Context, c cid.Cid) (format.Node, error)
 最后，函数返回 out 通道，其中包含格式化后的进度信息。
 
 
-```
+```go
 func (api *HttpDagServ) GetMany(ctx context.Context, cids []cid.Cid) <-chan *format.NodeOption {
 	out := make(chan *format.NodeOption)
 
@@ -534,7 +534,7 @@ func (api *HttpDagServ) GetMany(ctx context.Context, cids []cid.Cid) <-chan *for
 如果`options.Block.Pin`为`true`，它将在请求中发送一个Pin节点。最后，函数返回一个非`nil`的错误。
 
 
-```
+```go
 func (api *httpNodeAdder) add(ctx context.Context, nd format.Node, pin bool) error {
 	c := nd.Cid()
 	prefix := c.Prefix()
@@ -575,7 +575,7 @@ func (api *httpNodeAdder) add(ctx context.Context, nd format.Node, pin bool) err
 我们可以推断出函数的具体实现会在 "httpNodeAdder" 类型的实现中进行优化，例如使用高效的算法来完成添加操作。
 
 
-```
+```go
 func (api *httpNodeAdder) addMany(ctx context.Context, nds []format.Node, pin bool) error {
 	for _, nd := range nds {
 		// TODO: optimize
@@ -601,7 +601,7 @@ func (api *HttpDagServ) Add(ctx context.Context, nd format.Node) error {
 具体来说，这段代码实现了一个 HTTP 代理服务器，可以对传入的请求进行处理，包括添加节点和删除节点等操作。在实现中，主要使用了场景为 HTTP/1.1 节点的添加和删除，因此 HTTP/1.1 节点添加器（pinningHttpNodeAdder）的实现主要针对这一场景进行优化。另外，由于 HTTP/1.1 节点在添加和删除时需要保证请求的顺序，因此使用了双重循环的方式来处理请求队列，保证请求的流畅性。
 
 
-```
+```go
 func (api *pinningHttpNodeAdder) Add(ctx context.Context, nd format.Node) error {
 	return (*httpNodeAdder)(api).add(ctx, nd, true)
 }
@@ -625,7 +625,7 @@ func (api *HttpDagServ) Remove(ctx context.Context, c cid.Cid) error {
 函数内部遍历 cids 并执行 api.Remove 函数。如果执行成功，则返回 nil。如果执行失败，则返回错误。优化部分未实现。
 
 
-```
+```go
 func (api *HttpDagServ) RemoveMany(ctx context.Context, cids []cid.Cid) error {
 	for _, c := range cids {
 		// TODO: optimize
@@ -646,7 +646,7 @@ func (api *HttpDagServ) core() *HttpApi {
 
 ```
 
-# `/opt/kubo/client/rpc/dht.go`
+# `client/rpc/dht.go`
 
 该代码是一个名为"rpc"的包，其中定义了一个名为"DhtAPI"的Http API。
 
@@ -671,7 +671,7 @@ f. 如果所有的JSON响应都是有效的，它将返回包含"Type"字段的"
 g. 如果任何请求失败，它将返回一个非空"error"类型的变量。
 
 
-```
+```go
 package rpc
 
 import (
@@ -715,7 +715,7 @@ func (api *DhtAPI) FindPeer(ctx context.Context, p peer.ID) (peer.AddrInfo, erro
 This is a function that uses the DHT (Distributed Hash Table) API to find the DHT providers (peer
 
 
-```
+```go
 func (api *DhtAPI) FindProviders(ctx context.Context, p path.Path, opts ...caopts.DhtFindProvidersOption) (<-chan peer.AddrInfo, error) {
 	options, err := caopts.DhtFindProvidersOptions(opts...)
 	if err != nil {
@@ -783,7 +783,7 @@ func (api *DhtAPI) FindProviders(ctx context.Context, p path.Path, opts ...caopt
 最后，函数使用api.core().Request函数向DhtAPI提供 "dht/provide" 请求，传递路径和选项，然后设置Option("recursive", options.Recursive)选项以使函数递归。最后，函数使用ctx设置上下文并返回结果。
 
 
-```
+```go
 func (api *DhtAPI) Provide(ctx context.Context, p path.Path, opts ...caopts.DhtProvideOption) error {
 	options, err := caopts.DhtProvideOptions(opts...)
 	if err != nil {
@@ -814,14 +814,14 @@ func (api *DhtAPI) Provide(ctx context.Context, p path.Path, opts ...caopts.DhtP
 这段代码的作用是将一个`DhtAPI`类型的对象转换为`HttpApi`类型，生成的`HttpApi`类型指针可以用来调用`DhtAPI`类型中提供的`core`方法。
 
 
-```
+```go
 func (api *DhtAPI) core() *HttpApi {
 	return (*HttpApi)(api)
 }
 
 ```
 
-# `/opt/kubo/client/rpc/errors.go`
+# `client/rpc/errors.go`
 
 这段代码是一个RPC（远程过程调用）库，定义了一个名为“prePostWrappedNotFoundError”的结构体类型来表示错误。这个错误类型在函数签名中使用，表示在调用者传来的错误信息中，类名和函数名与实际不存在的函数或类不匹配，从而导致产生了错误。
 
@@ -838,7 +838,7 @@ func (api *DhtAPI) core() *HttpApi {
 5. 在函数“parseFromMultiErrorCode”中，创建了一个新的“prePostWrappedNotFoundError”类型的实例，设置其“wrapped”字段的值，然后使用该实例的“pre”和“post”字段来查找类名和函数名，如果找到，则执行“notFound”方法，抛出一个“prePostWrappedNotFoundError”类型的错误。如果没有找到，则执行普通错误处理流程，抛出一个“未定义的错误”错误。
 
 
-```
+```go
 package rpc
 
 import (
@@ -872,7 +872,7 @@ type prePostWrappedNotFoundError struct {
 4. `func parseErrNotFoundWithFallbackToMSG(msg string) error` 定义了一个名为`parseErrNotFoundWithFallbackToMSG`的函数，它接收一个`msg`参数，表示错误消息。函数的作用是处理`msg`这个错误消息，如果已经定义了一个名为`handleError`的函数，则将其包装成一个`prePostWrappedNotFoundError`类型的对象，并返回该对象。如果尚未定义`handleError`函数，则返回一个自定义类型的错误对象，包含原始错误对象的`Error`方法的`Error`类型转换为字符串类型并返回。
 
 
-```
+```go
 func (e prePostWrappedNotFoundError) String() string {
 	return e.Error()
 }
@@ -905,7 +905,7 @@ func parseErrNotFoundWithFallbackToMSG(msg string) error {
 最后，如果以上两种情况中的任意一种都没有成功解析 `msg` 中的错误对象，函数将返回 `nil` 作为第一个参数，并将 `handled` 变量设置为 `false`。
 
 
-```
+```go
 func parseErrNotFoundWithFallbackToError(msg error) error {
 	err, handled := parseErrNotFound(msg.Error())
 	if handled {
@@ -940,7 +940,7 @@ If the postindex is found, the function decodes the given CID string using the `
 If the `ipld.ErrNotFound.Error` function is called with the `Cid` field set, the function returns `nil` and a boolean value indicating that the CID was not found. If either the `postIndex` or the `postEntity` field is given, the function returns the error with the appropriate message.
 
 
-```
+```go
 // Assume CIDs break on:
 // - Whitespaces: " \t\n\r\v\f"
 // - Semicolon: ";" this is to parse ipld.ErrNotFound wrapped in multierr
@@ -1021,7 +1021,7 @@ func parseIPLDErrNotFound(msg string) (error, bool) {
 另外，该结构体还包含一个名为`String()`的静态方法，用于将`e`的`Error()`方法的返回值作为字符串返回。
 
 
-```
+```go
 // This is a simple error type that just return msg as Error().
 // But that also match ipld.ErrNotFound when called with Is(err).
 // That is needed to keep compatiblity with code that use string.Contains(err.Error(), "blockstore: block not found")
@@ -1046,7 +1046,7 @@ func (e blockstoreNotFoundMatchingIPLDErrNotFound) Error() string {
 2. `func parseBlockstoreNotFound(msg string) (error, bool)` 的作用是判断 `msg` 参数是否包含 `"blockstore: block not found"`，如果是，返回 `blockstoreNotFoundMatchingIPLDErrNotFound` 和 `true`，否则返回 `nil` 和 `false`。首先，使用 `strings.Contains` 函数检查 `msg` 参数是否包含 `"blockstore: block not found"`，如果是，执行 `blockstoreNotFoundMatchingIPLDErrNotFound` 和 `true` 的代码块。
 
 
-```
+```go
 func (e blockstoreNotFoundMatchingIPLDErrNotFound) Is(err error) bool {
 	_, ok := err.(ipld.ErrNotFound)
 	return ok
@@ -1062,7 +1062,7 @@ func parseBlockstoreNotFound(msg string) (error, bool) {
 
 ```
 
-# `/opt/kubo/client/rpc/errors_test.go`
+# `client/rpc/errors_test.go`
 
 该代码定义了一个名为“rpc”的包，并导入了多个外部库，包括“errors”、“fmt”和“testing”。
 
@@ -1143,7 +1143,7 @@ func parseBlockstoreNotFound(msg string) (error, bool) {
 最后，还有一句“螯合负载RPC消息”的注释。
 
 
-```
+```go
 package rpc
 
 import (
@@ -1172,7 +1172,7 @@ var randomSha256MH = mh.Multihash{0x12, 0x20, 0x88, 0x82, 0x73, 0x37, 0x7c, 0xc1
 最后，函数使用 if 语句检查原始错误和重建的错误是否相等。如果不相等，函数将会创建一个错误消息并使用 "t.Errorf" 函数打印错误消息，这将导致函数的测试失败。
 
 
-```
+```go
 func doParseIpldNotFoundTest(t *testing.T, original error) {
 	originalMsg := original.Error()
 
@@ -1200,7 +1200,7 @@ The function starts by creating an array of wraps for each CID in the CID set. I
 It is worth noting that the function also includes a block of commented out code indicating that it was added to try to fix issues with the original code that this function was added to.
 
 
-```
+```go
 func TestParseIPLDNotFound(t *testing.T) {
 	t.Parallel()
 
@@ -1258,7 +1258,7 @@ func TestParseIPLDNotFound(t *testing.T) {
 3. 重复执行步骤 1-2，直到所有错误信息都被打印出来并进行了 `%w` 字段的格式化。
 
 
-```
+```go
 func TestBlockstoreNotFoundMatchingIPLDErrNotFound(t *testing.T) {
 	t.Parallel()
 
@@ -1287,7 +1287,7 @@ func TestBlockstoreNotFoundMatchingIPLDErrNotFound(t *testing.T) {
 
 ```
 
-# `/opt/kubo/client/rpc/key.go`
+# `client/rpc/key.go`
 
 这段代码定义了一个名为 "KeyAPI" 的 HTTP API，通过使用 libp2p 库实现。它使用了 libp2p 的Peer API 来与对等网络中的其他节点进行通信。下面是这段代码的一些主要部分：
 
@@ -1300,7 +1300,7 @@ func TestBlockstoreNotFoundMatchingIPLDErrNotFound(t *testing.T) {
 7. 没有其他明显的部分。
 
 
-```
+```go
 package rpc
 
 import (
@@ -1323,7 +1323,7 @@ type KeyAPI HttpApi
 接着，该代码实现了一个名为“newKey”的函数，该函数接收两个参数，一个是“name”字符串类型，另一个是“pid”字符串类型。函数先将“pid”参数解码为“pid”ID类型，然后创建一个路径类型的“path”，该路径是“/ipns/”目录下的子路径，该路径将包含一个由“ipns”名称从“pid”ID获取的名称。最后，函数创建一个名为“key”的结构体实例，该实例包含一个名为“name”的字符串类型变量和一个名为“pid”的“pid”ID类型变量，以及一个名为“path”的路径类型变量。如果函数在创建“path”时出现错误，则会返回一个空结构体“nil”或者一个非空错误“err”。如果函数在创建“key”实例时出现错误，则会返回一个空结构体“nil”或者一个非空错误“err”。
 
 
-```
+```go
 type key struct {
 	name string
 	pid  peer.ID
@@ -1353,7 +1353,7 @@ func newKey(name, pidStr string) (*key, error) {
 总的来说，这段代码定义了一个 `key` 接口类型，以及多个函数，用于获取和设置 `key` 对象的属性。
 
 
-```
+```go
 func (k *key) Name() string {
 	return k.name
 }
@@ -1384,7 +1384,7 @@ type keyOutput struct {
 函数返回的 `newKey` 函数会根据生成的密钥的名称和 ID 创建一个新的 `Key` 对象，可供后续使用。
 
 
-```
+```go
 func (api *KeyAPI) Generate(ctx context.Context, name string, opts ...caopts.KeyGenerateOption) (iface.Key, error) {
 	options, err := caopts.KeyGenerateOptions(opts...)
 	if err != nil {
@@ -1426,7 +1426,7 @@ func (api *KeyAPI) Generate(ctx context.Context, name string, opts ...caopts.Key
 5. 函数返回结果，以便后续使用。
 
 
-```
+```go
 func (api *KeyAPI) Rename(ctx context.Context, oldName string, newName string, opts ...caopts.KeyRenameOption) (iface.Key, bool, error) {
 	options, err := caopts.KeyRenameOptions(opts...)
 	if err != nil {
@@ -1459,7 +1459,7 @@ func (api *KeyAPI) Rename(ctx context.Context, oldName string, newName string, o
 该函数的作用是获取API的`key/list`endpoint的输出结构体，并返回它。函数接收一个`KeyAPI`类型的参数`api`，并使用该参数的`core().Request`方法发送请求。如果请求成功，函数使用`ctx.Context().Standard(http.Request)`设置的上下文执行回调函数体，并返回一个包含所请求键的输出结构体`res`。如果请求失败，函数返回一个包含错误信息的空字符串`nil`。
 
 
-```
+```go
 func (api *KeyAPI) List(ctx context.Context) ([]iface.Key, error) {
 	var out struct {
 		Keys []keyOutput
@@ -1498,7 +1498,7 @@ func (api *KeyAPI) List(ctx context.Context) ([]iface.Key, error) {
 4. 如果请求失败，返回 `nil` 和相应的错误。
 
 
-```
+```go
 func (api *KeyAPI) Self(ctx context.Context) (iface.Key, error) {
 	var id struct{ ID string }
 	if err := api.core().Request("id").Exec(ctx, &id); err != nil {
@@ -1531,7 +1531,7 @@ func (api *KeyAPI) Remove(ctx context.Context, name string) (iface.Key, error) {
 该函数的作用是实现了一个通用的函数，接收一个整数类型的指针变量，返回一个整数类型的指针变量，用于将整数类型的指针变量转换为对应的HttpApi类型。
 
 
-```
+```go
 func (api *KeyAPI) core() *HttpApi {
 	return (*HttpApi)(api)
 }

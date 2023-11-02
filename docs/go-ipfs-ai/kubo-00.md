@@ -36,12 +36,12 @@ We appreciate your time and attention for going over these. Please open an issue
 Thank you.
 
 
-# `/opt/kubo/doc.go`
+# `doc.go`
 
 这段代码定义了一个名为"ipfs"的包，表示它是一个全球、版本ed的点对点文件系统。该文件系统使用区块链技术来存储和共享文件，允许用户直接获取文件，无需通过中央服务器。
 
 
-```
+```go
 /*
 IPFS is a global, versioned, peer-to-peer filesystem
 */
@@ -203,19 +203,19 @@ codebase. To install `ipfs-update` tool, [download it here](https://dist.ipfs.te
 
 List the available versions of Kubo (go-ipfs) implementation:
 
-```console
+```goconsole
 $ ipfs cat /ipns/dist.ipfs.tech/kubo/versions
 ```
 
 Then, to view available builds for a version from the previous command (`$VERSION`):
 
-```console
+```goconsole
 $ ipfs ls /ipns/dist.ipfs.tech/kubo/$VERSION
 ```
 
 To download a given build of a version:
 
-```console
+```goconsole
 $ ipfs get /ipns/dist.ipfs.tech/kubo/$VERSION/kubo_$VERSION_darwin-386.tar.gz    # darwin 32-bit build
 $ ipfs get /ipns/dist.ipfs.tech/kubo/$VERSION/kubo_$VERSION_darwin-amd64.tar.gz  # darwin 64-bit build
 $ ipfs get /ipns/dist.ipfs.tech/kubo/$VERSION/kubo_$VERSION_freebsd-amd64.tar.gz # freebsd 64-bit build
@@ -242,7 +242,7 @@ $ ipfs get /ipns/dist.ipfs.tech/kubo/$VERSION/kubo_$VERSION_windows-amd64.zip   
 
 [![kubo via Community Repo](https://img.shields.io/archlinux/v/community/x86_64/kubo?color=1793d1&label=kubo&logo=arch-linux&style=flat-square&cacheSeconds=3600)](https://wiki.archlinux.org/title/IPFS)
 
-```bash
+```gobash
 # pacman -S kubo
 ```
 
@@ -252,7 +252,7 @@ $ ipfs get /ipns/dist.ipfs.tech/kubo/$VERSION/kubo_$VERSION_windows-amd64.zip   
 
 With the purely functional package manager [Nix](https://nixos.org/nix/) you can install kubo (go-ipfs) like this:
 
-```
+```go
 $ nix-env -i kubo
 ```
 
@@ -262,7 +262,7 @@ You can also install the Package by using its attribute name, which is also `kub
 
 [Package for Solus](https://dev.getsol.us/source/kubo/repository/master/)
 
-```
+```go
 $ sudo eopkg install kubo
 ```
 
@@ -293,7 +293,7 @@ No longer supported, see rationale in [kubo#9341](https://github.com/ipfs/kubo/i
 
 Scoop provides kubo as `kubo` in its 'extras' bucket.
 
-```Powershell
+```goPowershell
 PS> scoop bucket add extras
 PS> scoop install kubo
 ```
@@ -308,7 +308,7 @@ PS> scoop install kubo
 
 The package [ipfs](https://ports.macports.org/port/ipfs) currently points to kubo (go-ipfs) and is being maintained.
 
-```
+```go
 $ sudo port install ipfs
 ```
 
@@ -316,7 +316,7 @@ $ sudo port install ipfs
 
 In macOS you can use the purely functional package manager [Nix](https://nixos.org/nix/):
 
-```
+```go
 $ nix-env -i kubo
 ```
 
@@ -326,7 +326,7 @@ You can also install the Package by using its attribute name, which is also `kub
 
 A Homebrew formula [ipfs](https://formulae.brew.sh/formula/ipfs) is maintained too.
 
-```
+```go
 $ brew install --formula ipfs
 ```
 
@@ -350,7 +350,7 @@ If you need to update: [Download latest version of Go](https://golang.org/dl/).
 
 You'll need to add Go's bin directories to your `$PATH` environment variable e.g., by adding these lines to your `/etc/profile` (for a system-wide installation) or `$HOME/.profile`:
 
-```
+```go
 export PATH=$PATH:/usr/local/go/bin
 export PATH=$PATH:$GOPATH/bin
 ```
@@ -359,7 +359,7 @@ export PATH=$PATH:$GOPATH/bin
 
 #### Download and Compile IPFS
 
-```
+```go
 $ git clone https://github.com/ipfs/kubo.git
 
 $ cd kubo
@@ -374,7 +374,7 @@ Alternatively, you can run `make build` to build the go-ipfs binary (storing it 
 
 Compiling for a different platform is as simple as running:
 
-```
+```go
 make build GOOS=myTargetOS GOARCH=myTargetArchitecture
 ```
 
@@ -453,7 +453,7 @@ Description: Dotted means "likely going away". The "Legacy" parts are thin wrapp
 
 ### Testing
 
-```
+```go
 make test
 ```
 
@@ -511,7 +511,7 @@ something not yet deployed, just discuss it openly.
 For non-security bugs, please simply file a GitHub [issue](https://github.com/ipfs/go-ipfs/issues/new/choose).
 
 
-# `/opt/kubo/version.go`
+# `version.go`
 
 这段代码是一个 Go 语言编写的 IPFS (InterPlanetary File System) 库中的函数。它主要用于设置 IPFS 库的一些默认值和提供用于打印输出信息的函数。以下是这段代码的作用：
 
@@ -530,7 +530,7 @@ For non-security bugs, please simply file a GitHub [issue](https://github.com/ip
 13. 设置 IPFS 库的 "用于搜索的 API 版本"（用于搜索的 API 版本的 Git 引用）为 "2.3"。
 
 
-```
+```go
 package ipfs
 
 import (
@@ -553,7 +553,7 @@ const CurrentVersionNumber = "0.23.0"
 通过计算，该代码会获取当前版本号和当前提交数的组合，作为用户代理的名称。如果当前提交数不是空，则会将该名称添加了一个"/"字段。然后，代码会获取当前提交数的 commit 分支。最后，将所有这些字符串组合在一起，并返回给调用者一个字符串类型的用户代理版本。
 
 
-```
+```go
 const ApiVersion = "/kubo/" + CurrentVersionNumber + "/" //nolint
 
 // GetUserAgentVersion is the libp2p user agent used by go-ipfs.
@@ -581,7 +581,7 @@ func GetUserAgentVersion() string {
 最后，在函数内部使用“// TODO: Precise version here”注释指出需要添加的代码，但未提供具体实现，因此在运行时可能会导致不正确的结果。
 
 
-```
+```go
 var userAgentSuffix string
 
 func SetUserAgentSuffix(suffix string) {
@@ -615,7 +615,7 @@ Please update docs/changelogs/ if you're modifying Go files. If your change does
 -->
 
 
-# `/opt/kubo/assets/assets.go`
+# `assets/assets.go`
 
 这段代码是一个 Go 语言编写的库，包含了以下主要部分：
 
@@ -641,7 +641,7 @@ Please update docs/changelogs/ if you're modifying Go files. If your change does
 这段代码的作用可能与 Go 语言的 Kubernetes 库或网络相关服务有关。
 
 
-```
+```go
 package assets
 
 import (
@@ -673,7 +673,7 @@ import (
 在代码中，首先定义了一个名为"Asset"的变量，其类型为"embed.FS"。然后，定义了一个名为"initDocPaths"的变量，它是一个字符串数组，包含多个文档路径。接下来，代码使用gopath.Join()函数将这些路径拼接为一个字符串，作为一个键，并将其存储到"initDocPaths"中。最后，代码通过调用"SeedInitDocs"函数将"initDocPaths"中的键值对添加到FS中，并返回根键。这个函数将每个键值对作为单个文档节点添加到FS中，并将其嵌套在当前FS中。
 
 
-```
+```go
 //go:embed init-doc
 var Asset embed.FS
 
@@ -696,7 +696,7 @@ var initDocPaths = []string{
 具体来说，函数首先通过调用coreapi.NewCoreAPI和api.Object().New方法建立与IpfsNode的上下文连接，然后通过for循环遍历预定义的文档文件夹列表l。在循环中，函数使用Asset.ReadFile方法读取每个文档文件夹的内容，并将其递归地添加到对应的资产列表中。接着，函数使用api.Unixfs().Add和api.Pin().Add方法将文档文件夹添加到IpfsNode的资产列表中。最后，如果函数在添加文档文件夹的过程中出现任何错误，它会返回一个cid.Cid类型的错误。
 
 
-```
+```go
 func SeedInitDocs(nd *core.IpfsNode) (cid.Cid, error) {
 	return addAssetList(nd, initDocPaths)
 }
@@ -749,7 +749,7 @@ This directory contains the go-ipfs assets:
 * Getting started documentation (`init-doc`).
 
 
-# `/opt/kubo/blocks/blockstoreutil/remove.go`
+# `blocks/blockstoreutil/remove.go`
 
 这段代码定义了一个名为`RemovedBlock`的结构体，它代表了一个已经从Blockstore中移除的块的结果。这个结构体包含了以下字段：
 
@@ -762,7 +762,7 @@ This directory contains the go-ipfs assets:
 这个函数的作用是在异步操作中，保证块被成功删除，并且在同步操作中，块也可以被正确地移除。
 
 
-```
+```go
 // Package blockstoreutil provides utility functions for Blockstores.
 package blockstoreutil
 
@@ -789,7 +789,7 @@ import (
 整段代码的作用是定义了两个不同类型的结构体，一个是"RemovedBlock"，用来记录在RmBlocks()函数中被删除的块的信息；另一个是"RmBlocksOpts"，用来传递RmBlocks()函数所需要的选项。
 
 
-```
+```go
 // If a block was removed successfully, then the Error will be empty.
 // If a block could not be removed, then Error will contain the
 // reason the block could not be removed.  If the removal was aborted
@@ -812,7 +812,7 @@ type RmBlocksOpts struct {
 这段代码的作用是移除 cids 切片中的内容。它返回一个名为 ChannelRemovedBlock 的 channel，其中包含类型为 RemovedBlock 的对象。如果没有使用静默选项，代码会尝试异步地移除 cids，并在移除过程中跳过任何被钉住的块。
 
 
-```
+```go
 // RmBlocks removes the blocks provided in the cids slice.
 // It returns a channel where objects of type RemovedBlock are placed, when
 // not using the Quiet option. Block removal is asynchronous and will
@@ -865,7 +865,7 @@ func RmBlocks(ctx context.Context, blocks bs.GCBlockstore, pins pin.Pinner, cids
 4. 返回stillOkay，即被pin的cid的slice。
 
 
-```
+```go
 // FilterPinned takes a slice of Cids and returns it with the pinned Cids
 // removed. If a Cid is pinned, it will place RemovedBlock objects in the given
 // out channel, with an error which indicates that the Cid is pinned.
@@ -893,7 +893,7 @@ func FilterPinned(ctx context.Context, pins pin.Pinner, out chan<- interface{}, 
 
 ```
 
-# `/opt/kubo/client/rpc/api.go`
+# `client/rpc/api.go`
 
 该代码的作用是实现一个基于IPFS的RPC服务。它包括了以下主要组件：
 
@@ -909,7 +909,7 @@ func FilterPinned(ctx context.Context, pins pin.Pinner, out chan<- interface{}, 
 10. 通过定义了一些函数，可以实现一些辅助功能，例如格式化 JSON 字面量类型。
 
 
-```
+```go
 package rpc
 
 import (
@@ -950,7 +950,7 @@ import (
 最后，定义了一个名为 "HttpApi" 的var字段，其初始值为一个名为 "github.com/ipfs/interface-go-ipfs-core/CoreAPI" 的错误类，并且使用 "ipfs HTTP API" 来实现在 github.com/ipfs/interface-go-ipfs-core/CoreAPI 中获取运行的守护进程。
 
 
-```
+```go
 const (
 	DefaultPathName = ".ipfs"
 	DefaultPathRoot = "~/" + DefaultPathName
@@ -981,7 +981,7 @@ var ErrApiNotFound = errors.New("ipfs api address could not be found")
 该结构体表示一个HTTP API代理，通过URL与用户或本地IPFS代理进行通信。在初始化时，它会设置请求头、读取JSON数据并将其转换为IPLD数据、以及一个用于记录不同版本号同步的mutex。此外，它还提供了一个函数applyGlobal，该函数可以接受一个请求构建器，并将其应用到整个请求上。
 
 
-```
+```go
 type HttpApi struct {
 	url         string
 	httpcli     http.Client
@@ -1012,7 +1012,7 @@ type HttpApi struct {
 4. 返回新创建的 `HttpApi` 对象，如果出错则返回 `nil`。
 
 
-```
+```go
 func NewLocalApi() (*HttpApi, error) {
 	baseDir := os.Getenv(EnvDir)
 	if baseDir == "" {
@@ -1067,7 +1067,7 @@ func ApiAddr(ipfspath string) (ma.Multiaddr, error) {
 如果 "ApiFile" 存在时，函数将返回一个多地址对象，否则返回一个表示错误的错误对象。
 
 
-```
+```go
 // ApiAddr reads api file in specified ipfs path.
 func ApiAddr(ipfspath string) (ma.Multiaddr, error) {
 	baseDir, err := homedir.Expand(ipfspath)
@@ -1096,7 +1096,7 @@ func ApiAddr(ipfspath string) (ma.Multiaddr, error) {
 这两个函数都使用了`manet`库来处理网络连接。`manet`是一个基于Linux的现代网络代理和重定向工具，可以支持通过代理或重定向连接到HTTP或HTTPS资源。
 
 
-```
+```go
 // NewApi constructs HttpApi with specified endpoint.
 func NewApi(a ma.Multiaddr) (*HttpApi, error) {
 	c := &http.Client{
@@ -1159,7 +1159,7 @@ func NewApiWithClient(a ma.Multiaddr, c *http.Client) (*HttpApi, error) {
 最后，函数返回API对象和错误对象。
 
 
-```
+```go
 func NewURLApiWithClient(url string, c *http.Client) (*HttpApi, error) {
 	decoder := legacy.NewDecoder()
 	// Add support for these codecs to match what is done in the merkledag library
@@ -1197,7 +1197,7 @@ func NewURLApiWithClient(url string, c *http.Client) (*HttpApi, error) {
 5. 将 subApi 返回。
 
 
-```
+```go
 func (api *HttpApi) WithOptions(opts ...caopts.ApiOption) (iface.CoreAPI, error) {
 	options, err := caopts.ApiOptions(opts...)
 	if err != nil {
@@ -1236,7 +1236,7 @@ func (api *HttpApi) WithOptions(opts ...caopts.ApiOption) (iface.CoreAPI, error)
 总体而言，此函数的作用是为给定的 *HttpApi 对象发起 HTTP 请求，设置请求头部以获取缓存的 HTTP 头部，从而提高 API 的性能。
 
 
-```
+```go
 func (api *HttpApi) Request(command string, args ...string) RequestBuilder {
 	headers := make(map[string]string)
 	if api.Headers != nil {
@@ -1267,7 +1267,7 @@ func (api *HttpApi) Request(command string, args ...string) RequestBuilder {
 这些函数通过`api`和函数返回值的类型进行参数绑定，使得在函数调用时可以很方便地访问这些接口类型的对象。通过使用这种抽象层编程方式，可以方便地定义接口类型，让不同的调用者可以更专注于如何使用这些接口，而不必关注具体的实现细节。
 
 
-```
+```go
 func (api *HttpApi) Unixfs() iface.UnixfsAPI {
 	return (*UnixfsAPI)(api)
 }
@@ -1293,7 +1293,7 @@ func (api *HttpApi) Name() iface.NameAPI {
 这些函数都接受一个参数`api`，它是一个指向`HttpApi`类型的引用。这些函数通过`api`引用实现了接口的函数，然后返回接口类型中的指针来返回这些接口类型。
 
 
-```
+```go
 func (api *HttpApi) Key() iface.KeyAPI {
 	return (*KeyAPI)(api)
 }
@@ -1319,7 +1319,7 @@ func (api *HttpApi) Dht() iface.DhtAPI {
 另外，还定义了一个名为loadRemoteVersion的函数，该函数首先对api的version字段进行锁定，然后向api发送请求并获取远程版本，如果失败则返回错误。在获取远程版本后，将版本存储在api的version字段中，并返回版本对象。
 
 
-```
+```go
 func (api *HttpApi) Swarm() iface.SwarmAPI {
 	return (*SwarmAPI)(api)
 }
@@ -1367,7 +1367,7 @@ func (api *HttpApi) loadRemoteVersion() (*semver.Version, error) {
 
 ```
 
-# `/opt/kubo/client/rpc/apifile.go`
+# `client/rpc/apifile.go`
 
 该代码是一个RPC（远程过程调用）库，实现了HTTP-API风格的接口。它包括以下主要功能：
 
@@ -1381,7 +1381,7 @@ func (api *HttpApi) loadRemoteVersion() (*semver.Version, error) {
 8. 实现了RPC的相关设置，如通过环境变量指定服务的地址，设置连接参数等。
 
 
-```
+```go
 package rpc
 
 import (
@@ -1411,7 +1411,7 @@ const forwardSeekLimit = 1 << 14 // 16k
 最后，根据文件的类型（通过 `stat.Type` 字段）来返回文件系统中的文件或目录，如果文件类型不支持文件，函数将返回一个错误。
 
 
-```
+```go
 func (api *UnixfsAPI) Get(ctx context.Context, p path.Path) (files.Node, error) {
 	if p.Mutable() { // use resolved path in case we are dealing with IPNS / MFS
 		var err error
@@ -1460,7 +1460,7 @@ func (api *UnixfsAPI) Get(ctx context.Context, p path.Path) (files.Node, error) 
 此代码的作用是定义一个API文件的结构体类型，该类型可以用于在Context中调用一个代表HTTP API的实
 
 
-```
+```go
 type apiFile struct {
 	ctx  context.Context
 	core *HttpApi
@@ -1500,7 +1500,7 @@ func (f *apiFile) reset() error {
 第二个函数 `func (f *apiFile) ReadAt(p []byte, off int64) (int, error)` 接收一个字节切片和一个int类型和一个int类型参数off，然后尝试使用f.core.Request("cat", f.path.String()).Option("offset", off).Option("length", len(p)).Send(f.ctx)方法来读取文件内容。如果读取成功，则将读取的字节数累加到f.at变量中。如果读取失败，将返回一个int类型的错误。在这个函数中，使用了`offset`和`length`两个参数，它们分别指定从文件中读取多少字节和读取字符串的长度。
 
 
-```
+```go
 func (f *apiFile) Read(p []byte) (int, error) {
 	n, err := f.r.Output.Read(p)
 	if n > 0 {
@@ -1541,7 +1541,7 @@ func (f *apiFile) ReadAt(p []byte, off int64) (int, error) {
 如果 `whence` 值不正确，或者偏移量超出了函数能够处理的最大范围，函数将引发一个错误并返回 `-1`。
 
 
-```
+```go
 func (f *apiFile) Seek(offset int64, whence int) (int64, error) {
 	switch whence {
 	case io.SeekEnd:
@@ -1572,7 +1572,7 @@ func (f *apiFile) Seek(offset int64, whence int) (int64, error) {
 函数`getFile`接收一个路径`p`和一个文件大小`size`，并返回一个`files.Node`类型的文件`f`和一个错误。函数使用`api`对象的`getFile`方法，传递给`ctx`上下文并传递路径`p`和文件大小`size`。函数尝试调用`api`对象的`getFile`方法，并使用上下文上下文传递文件`f`。函数返回文件`f`的`Size`方法返回的值和错误。如果函数无法获取文件，它将返回`nil`。
 
 
-```
+```go
 func (f *apiFile) Close() error {
 	if f.r != nil {
 		return f.r.Cancel()
@@ -1604,7 +1604,7 @@ func (api *UnixfsAPI) getFile(ctx context.Context, p path.Path, size int64) (fil
 在`apiIter`的`Err`函数中，首先使用`it.ctx`访问`ctx`上下文中的当前引用，然后使用`it.core`访问`UnixfsAPI`类型变量中的当前引用。接下来，代码使用`dec`指针变量解引用当前JSON文档的当前字段。如果解引用当前字段的值导致出现任何错误，那么将返回`err`的值，否则将返回0。
 
 
-```
+```go
 type apiIter struct {
 	ctx  context.Context
 	core *UnixfsAPI
@@ -1637,7 +1637,7 @@ The function then advances to the next file in the directory.
 It appears that there is some error handling in place, but it's not clear what goes wrong in each case. If you could provide more context, it might help to diagnose any issues.
 
 
-```
+```go
 func (it *apiIter) Name() string {
 	return it.cur.Name
 }
@@ -1700,7 +1700,7 @@ func (it *apiIter) Next() bool {
 该函数 "Close" 函数的接受者是一个指向 "apiIter" 类型对象的指针 "it"，函数的作用是关闭 "apiDir" 实例的 "core" 变量，并返回一个 nil 错误，确保不会关闭已有的文件系统上下文。
 
 
-```
+```go
 func (it *apiIter) Node() files.Node {
 	return it.curFile
 }
@@ -1727,7 +1727,7 @@ func (d *apiDir) Close() error {
 第二个函数名为 `Entries()`，它接收一个指向 API 目录对象的指针（*apiDir），并返回目录中的文件枚举器。函数的实现比较复杂，通过设置 `apiIter` 对象的一个字段来获取当前目录下的文件枚举器，然后将枚举器设置为当前目录下的 API 目录对象的子目录枚举器，最后输出文件枚举器的结果。
 
 
-```
+```go
 func (d *apiDir) Size() (int64, error) {
 	return d.size, nil
 }
@@ -1772,7 +1772,7 @@ func (api *UnixfsAPI) getDir(ctx context.Context, p path.Path, size int64) (file
 这个代码的作用是创建了两个变量，并且将它们都绑定到了一个元组中，这个元组可能是一个包含了文件和目录的API请求中。这样，这两个变量就可以被用来操作API请求了。
 
 
-```
+```go
 var (
 	_ files.File      = &apiFile{}
 	_ files.Directory = &apiDir{}

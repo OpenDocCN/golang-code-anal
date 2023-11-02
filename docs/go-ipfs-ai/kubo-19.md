@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 19
 
-# `/opt/kubo/core/commands/sysdiag.go`
+# `core/commands/sysdiag.go`
 
 这段代码定义了一个名为"commands"的包，它包含了用于管理IPFS(InterPlanetary File System)命令的实现。IPFS是一个去中心化的点对点分布式文件系统，可以在本地计算机或节点上创建。
 
@@ -27,7 +27,7 @@
 10. 在IPFS的"sysi"子系统中，设置了一个名为"网络跟踪"的选项，它的值是"google"，这意味着使用Google的IPFS服务器。
 
 
-```
+```go
 package commands
 
 import (
@@ -58,7 +58,7 @@ import (
 总结起来，该代码的作用是打印系统 diagnostic information，帮助用户进行 easier debugging。
 
 
-```
+```go
 var sysDiagCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Print system diagnostic information.",
@@ -97,7 +97,7 @@ Prints out information about your computer to aid in easier debugging.
 如果所有调用均成功，函数将返回一个包含键值对`info`的`map`类型，其中`info["ipfs_version"]`的值为当前IPFS版本，`info["ipfs_commit"]`的值为当前IPFS提交。如果函数在调用过程中出现错误，函数将返回一个`nil`的`map`类型，其中包含键值对`info`的键为错误类型。
 
 
-```
+```go
 func getInfo(nd *core.IpfsNode) (map[string]interface{}, error) {
 	info := make(map[string]interface{})
 	err := runtimeInfo(info)
@@ -143,7 +143,7 @@ func getInfo(nd *core.IpfsNode) (map[string]interface{}, error) {
 这个函数的主要目的是获取运行时环境变量信息并将其存储在 `out`  map 中。它通过获取 `GOPATH` 和 `IPFS_PATH` 环境变量并将其存储在 `ev` map 中。该函数的实现是正确的，因此没有错误。
 
 
-```
+```go
 func runtimeInfo(out map[string]interface{}) error {
 	rt := make(map[string]interface{})
 	rt["os"] = runtime.GOOS
@@ -199,7 +199,7 @@ func diskSpaceInfo(out map[string]interface{}) error {
 在diskSpaceInfo函数中，首先创建一个名为di的map，用于存储计算得到的disk usage信息。然后使用sysi.DiskUsage函数获取disk usage信息，并将结果存储到di中。最后，将di存储的键值对作为参数传递给output，并返回0。如果计算过程中出现错误，则返回错误。
 
 
-```
+```go
 func ipfsPath() string {
 	p := os.Getenv("IPFS_PATH")
 	if p == "" {
@@ -234,7 +234,7 @@ func diskSpaceInfo(out map[string]interface{}) error {
 这两个函数的主要目的是收集系统内存和网络信息，并将其存储在名为`map[string]interface{}`的输出结构中。
 
 
-```
+```go
 func memInfo(out map[string]interface{}) error {
 	m := make(map[string]interface{})
 
@@ -269,7 +269,7 @@ func netInfo(online bool, out map[string]interface{}) error {
 
 ```
 
-# `/opt/kubo/core/commands/tar.go`
+# `core/commands/tar.go`
 
 这段代码定义了一个名为"commands"的包，并导入了三个相关的命令：cmds.Command、tar.Command和dag.Command。
 
@@ -282,7 +282,7 @@ cmds.Command 是 ipfs-cmds库中的一个命令，它提供了一些与tar文件
 整个package的作用是定义了一个命令行工具，用于在IPFS（InterPlanetary File System）网络中操作tar文件。
 
 
-```
+```go
 package commands
 
 import (
@@ -320,7 +320,7 @@ The "Run" function is responsible for parsing the arguments, executing the comma
 The encoders section is used to specify the encoding to use when converting the tar file to a CID (Cigned Indirect Document) format, which is a standard format for representing signed and flattened tar files.
 
 
-```
+```go
 var tarAddCmd = &cmds.Command{
 	Status: cmds.Deprecated, // https://github.com/ipfs/kubo/issues/7951
 	Helptext: cmds.HelpText{
@@ -389,7 +389,7 @@ represent it.
 5. 通过 res.Emit 函数将导出的 tar 文件返回给用户。
 
 
-```
+```go
 var tarCatCmd = &cmds.Command{
 	Status: cmds.Deprecated, // https://github.com/ipfs/kubo/issues/7951
 	Helptext: cmds.HelpText{
@@ -434,7 +434,7 @@ var tarCatCmd = &cmds.Command{
 
 ```
 
-# `/opt/kubo/core/commands/urlstore.go`
+# `core/commands/urlstore.go`
 
 该代码是一个 Go 语言库中的命令行工具 "boxo" 的根目录。该库提供了一个方便的方式来管理和操作 Internet 上的文件和操作系统资源。
 
@@ -453,7 +453,7 @@ var tarCatCmd = &cmds.Command{
 综上所述，该代码定义了一个用于管理文件和操作系统资源的可行命令行工具 "boxo"。通过使用 "boxo"，用户可以方便地管理和操作文件和操作系统资源，并支持多种操作命令。
 
 
-```
+```go
 package commands
 
 import (
@@ -480,7 +480,7 @@ import (
 3. "add" 子命令的实现，它包含了一个 "status" 字段，表示命令是 deprecated(过时)，因为它需要使用一个已经过时的方法 "ipfs add --nocopy --cid-version=1 URL"，而正确的实现应该使用 "ipfs add --no-cid --url"。这个子命令还包含一个 "longDescription" 字段，其中包含一个长期的描述信息，告诉用户应该如何使用这个子命令。
 
 
-```
+```go
 var urlStoreCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Interact with urlstore.",
@@ -506,7 +506,7 @@ The function first parses the URL string to determine the base URL and any requi
 Finally, it creates a new file and returns the block statement based on the API endpoint. The block statement includes the base URL, the content type, and the content length.
 
 
-```
+```go
 Add URLs to ipfs without storing the data locally.
 
 The URL provided must be stable and ideally on a web server under your
@@ -584,7 +584,7 @@ settings for 'ipfs add'.
 
 ```
 
-# `/opt/kubo/core/commands/version.go`
+# `core/commands/version.go`
 
 这段代码定义了一个名为“commit-commit-pool”的命令行工具，它用于在 IPFS 集群中执行批量提交操作。它通过三个选项来配置提交：数量、提交内容和仓库。
 
@@ -607,7 +607,7 @@ Usage: login-commit-pool [-u, --username=USERNAME [-p, --password=PASSWORD] [-n,
 该命令行工具的文档和选项说明提供了更多的选项和信息，用户可以根据自己的需要使用不同的选项。
 
 
-```
+```go
 package commands
 
 import (
@@ -643,7 +643,7 @@ The function uses the "Encoders" method of the "cmds.EncoderMap" to map the enco
 The "Encoders" method specifies the "text" encoder as the encoder for the "kubo version" command. The "text" encoder is responsible for returning the version information in a human-readable format.
 
 
-```
+```go
 var VersionCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline:          "Show IPFS version information.",
@@ -717,7 +717,7 @@ The `debug.ReadBuildInfo` function is called to retrieve the information about t
 Finally, the code emits the information about the dependencies using the `res.Emit` method. This is done using the `toDependency` function, which generates the information for each dependency in the build and emits it. The `pkgVersionFmt` function is used to format the version information in a pre-defined pattern for each dependency.
 
 
-```
+```go
 type Dependency struct {
 	Path       string
 	Version    string
@@ -773,7 +773,7 @@ Print out all dependencies and their versions.`,
 
 ```
 
-# `/opt/kubo/core/commands/cmdenv/cidbase.go`
+# `core/commands/cmdenv/cidbase.go`
 
 该代码是一个 Go 语言package，其中包含了一些导入语句、一些变量定义以及一些函数声明。
 
@@ -784,7 +784,7 @@ Print out all dependencies and their versions.`,
 最后，该package中定义了一些函数，包括形式的化字符串、从文件中读取 CID 文件并输出、将 CID 文件中的 CID 转换为 Multibase 编码格式等。
 
 
-```
+```go
 package cmdenv
 
 import (
@@ -811,7 +811,7 @@ var (
 第二个函数 `GetLowLevelCidEncoder` 与 `GetCidEncoder` 类似，不同之处在于它不使用 `cid-base` 选项，并且默认情况下不会升级到 `cidv1`。它接收一个 `cmds.Request` 对象作为参数，然后调用 `getCidBase` 函数，并将 `false` 作为参数传递给该函数。如果 `getCidBase` 函数在尝试获取参数时出现错误，则返回一个 `nil` 值。
 
 
-```
+```go
 // GetCidEncoder processes the `cid-base` and `output-cidv1` options and
 // returns a encoder to use based on those parameters.
 func GetCidEncoder(req *cmds.Request) (cidenc.Encoder, error) {
@@ -863,7 +863,7 @@ func getCidBase(req *cmds.Request, autoUpgrade bool) (cidenc.Encoder, error) {
 总之，该函数的作用是实现了一个通用的 Cid 编码器，可以根据不同的 `cid-base` 选项选择不同的编码器，并支持复杂的 Cid 样式的匹配。
 
 
-```
+```go
 // CidBaseDefined returns true if the `cid-base` option is specified
 // on the command line
 func CidBaseDefined(req *cmds.Request) bool {
@@ -884,7 +884,7 @@ func CidBaseDefined(req *cmds.Request) bool {
 This function appears to implement a function that takes a path containing a CID ( Control-集成电路) string, and returns an `cidenc.Encoder` object. It parses the CID string and, if it is not a valid CID, returns an error. If the CID is valid, it uses the ` cid.Decode()` function to decode the CID string and, if the decoding is successful, returns an instance of `cidenc.Encoder` with a base of 1302 ( see: https://en.wikipedia.org/wiki/ISO_7816-4:2016 for details ) and the capability to upgrade to the next version when available.
 
 
-```
+```go
 // For example:
 //
 // * Qm...
@@ -927,12 +927,12 @@ func CidEncoderFromPath(p string) (cidenc.Encoder, error) {
 
 ```
 
-# `/opt/kubo/core/commands/cmdenv/cidbase_test.go`
+# `core/commands/cmdenv/cidbase_test.go`
 
 This looks like a unit test for the CidEncoder class in the CidencoderC人也似乎完全没有什么用处 可以看看代码里有没有实现对BadUri做了有效的改進毒呢？
 
 
-```
+```go
 package cmdenv
 
 import (
@@ -1009,7 +1009,7 @@ func TestEncoderFromPath(t *testing.T) {
 
 ```
 
-# `/opt/kubo/core/commands/cmdenv/env.go`
+# `core/commands/cmdenv/env.go`
 
 这段代码是一个 Go 语言编写的 cmds 包。cmds 包是 Go 语言的标准库中的一个命令行工具，用于管理 IPFS（InterPlanetary File System）对象。它提供了方便的命令行操作，包括创建、复制、查看和删除文件以及目录等。
 
@@ -1056,7 +1056,7 @@ func TestEncoderFromPath(t *testing.T) {
 20. 实现了 "github.com/ipfs/boxo/core" 中的 "uq" 函数，用于原子更新一个锁。
 
 
-```
+```go
 package cmdenv
 
 import (
@@ -1082,7 +1082,7 @@ import (
 `GetApi`函数接收一个 `cmds.Environment` 类型的环境参数，并获取一个 `options.Api` 类型的 CoreAPI 实例。如果环境不支持 `options.Api`，或者 `options.Api` 本身为 `nil`，函数将输出错误。如果环境支持 `options.Api`，函数会尝试使用 `ctx.GetAPI` 方法获取 CoreAPI 实例，如果失败，则输出错误。如果环境支持 `options.Api`，函数会尝试使用 `options.Api.Offline` 方法将 `options.Api` 的 `offline` 选项设置为 `true`，如果设置 `offline` 为 `true`，函数将输出一条日志信息。最后，函数返回 `options.Api` 类型的 CoreAPI 实例，或者输出错误。
 
 
-```
+```go
 var log = logging.Logger("core/commands/cmdenv")
 
 // GetNode extracts the node from the environment.
@@ -1177,7 +1177,7 @@ func EscNonPrint(s string) string {
 2. `EscNonPrint` 函数接收一个字符串（`s`），将其中的非打印字符和回车转义（`/`）字符转换成 Go 中的 escape sequence，并返回转换后的字符串。函数根据需要转义字符串，使其可以被显示。
 
 
-```
+```go
 // GetConfigRoot extracts the config root from the environment
 func GetConfigRoot(env cmds.Environment) (string, error) {
 	ctx, ok := env.(*commands.Context)
@@ -1213,7 +1213,7 @@ func EscNonPrint(s string) string {
 由于在函数内部没有对输入参数 `s` 进行任何验证，因此无法确保函数不会被恶意用户利用返回 `true` 的情况。因此，在实际应用中，需要对输入参数 `s` 进行更加严格的验证和过滤，以避免潜在的安全漏洞。
 
 
-```
+```go
 func needEscape(s string) bool {
 	if strings.ContainsRune(s, '\\') {
 		return true
@@ -1228,7 +1228,7 @@ func needEscape(s string) bool {
 
 ```
 
-# `/opt/kubo/core/commands/cmdenv/env_test.go`
+# `core/commands/cmdenv/env_test.go`
 
 该代码是一个测试用例，用于测试是否需要对传入的字符串进行转义。函数`TestEscNonPrint`接受一个字符串参数`s`，并尝试使用不同的方法对其进行转义。
 
@@ -1254,7 +1254,7 @@ func needEscape(s string) bool {
 最后，函数使用双反斜杠`"`将原始字符串`s`中的所有字符进行转义，得到转义后的字符串`"hel\\"lo"`。检查转义后的字符串是否与原始字符串`s`等价。如果不等价，则函数将打印错误消息并退出。
 
 
-```
+```go
 package cmdenv
 
 import (
@@ -1304,7 +1304,7 @@ func TestEscNonPrint(t *testing.T) {
 由于不可打印的字符不会被输出，因此这段代码实际上实现了一个字符串处理函数，它会判断给定的字符串是否包含不可打印的字符，并返回一个布尔值。
 
 
-```
+```go
 func hasNonPrintable(s string) bool {
 	for _, r := range s {
 		if !strconv.IsPrint(r) {
@@ -1316,7 +1316,7 @@ func hasNonPrintable(s string) bool {
 
 ```
 
-# `/opt/kubo/core/commands/cmdenv/file.go`
+# `core/commands/cmdenv/file.go`
 
 这段代码定义了一个名为 "cmdenv" 的 package，其中包含了一个名为 "GetFileArg" 的函数。
 
@@ -1335,7 +1335,7 @@ func hasNonPrintable(s string) bool {
 6. 在 "GetFileArg" 函数中，去掉了注释，但注释的内容似乎没有被使用到。
 
 
-```
+```go
 package cmdenv
 
 import (
@@ -1362,7 +1362,7 @@ func GetFileArg(it files.DirIterator) (files.File, error) {
 
 ```
 
-# `/opt/kubo/core/commands/cmdutils/utils.go`
+# `core/commands/cmdutils/utils.go`
 
 这段代码定义了一个名为 "cmdutils" 的包，其中定义了一些常量和变量，以及一些导入的依赖项。
 
@@ -1377,7 +1377,7 @@ func GetFileArg(it files.DirIterator) (files.File, error) {
 - "github.com/ipfs/go-cid": 通过 IPFS-GO 库提供有关 CID 对象的引用
 
 
-```
+```go
 package cmdutils
 
 import (
@@ -1404,7 +1404,7 @@ const (
 总结起来，这段代码定义了一个名为"AllowBigBlockOption"的选项，以及一个名为"CheckCIDSize"的函数，该函数用于检查传入的请求是否满足某种块大小，如果满足则返回成功，如果不满足则返回错误。
 
 
-```
+```go
 var AllowBigBlockOption cmds.Option
 
 func init() {
@@ -1440,7 +1440,7 @@ func CheckCIDSize(req *cmds.Request, c cid.Cid, dagAPI coreiface.APIDagService) 
 此外，函数还实现了一个预处理函数，用于在函数调用时检查`SoftBlockLimit`是否已知的`uint64`类型变量。
 
 
-```
+```go
 func CheckBlockSize(req *cmds.Request, size uint64) error {
 	allowAnyBlockSize, _ := req.Options[AllowBigBlockOptionName].(bool)
 	if allowAnyBlockSize {
@@ -1471,7 +1471,7 @@ func CheckBlockSize(req *cmds.Request, size uint64) error {
 函数的实现遵循了 RFC3688 规范中的路径 Or course ID 原则，它返回了一个有效的路径，即使输入参数 `str` 不是有效的 CID 字符串。
 
 
-```
+```go
 // PathOrCidPath returns a path.Path built from the argument. It keeps the old
 // behaviour by building a path from a CID string.
 func PathOrCidPath(str string) (path.Path, error) {
@@ -1490,7 +1490,7 @@ func PathOrCidPath(str string) (path.Path, error) {
 
 ```
 
-# `/opt/kubo/core/commands/dag/dag.go`
+# `core/commands/dag/dag.go`
 
 这段代码是一个 Go 语言编写的 DAG（有向无环图）命令行工具的包。它主要实现了以下功能：
 
@@ -1507,7 +1507,7 @@ func PathOrCidPath(str string) (path.Path, error) {
 6. 导入了 `github.com/ipfs/go-cid` 和 `github.com/ipfs/go-cidutil/cidenc`，这两个库实现了 CID（元数据）的创建、修改和解析等功能，方便在 DAG 文件中使用。
 
 
-```
+```go
 package dagcmd
 
 import (
@@ -1534,7 +1534,7 @@ The 'ipfs dag' command provides a subset of commands for interacting with IPLD D
 This subcommand is intended to deprecate and replace <https://github.com/
 
 
-```
+```go
 const (
 	pinRootsOptionName = "pin-roots"
 	progressOptionName = "progress"
@@ -1557,7 +1557,7 @@ This subcommand is intended to deprecate and replace
 ipfs object命令的主要作用是操作分布式文件系统(DFS)中的对象，包括上传、下载、查询和修改对象等操作。这个命令行工具的子命令行命令的具体实现包括使用dag和cmds包提供的各种命令，以方便用户方便地操作DFS中的对象。
 
 
-```
+```go
 the existing 'ipfs object' command moving forward.
 `,
 	},
@@ -1587,7 +1587,7 @@ type OutputObject struct {
 该代码中还定义了一个名为"dag translate"的函数，该函数的作用是将一个DAG翻译成JSON格式的字符串。该函数使用了Go标准库中的"strings"和"bytes"函数，以及"golint"工具的"assert"函数。
 
 
-```
+```go
 // ResolveOutput is the output type of 'dag resolve' command
 type ResolveOutput struct {
 	Cid     cid.Cid
@@ -1616,7 +1616,7 @@ type CarImportOutput struct {
 最后，在函数内部，使用cmdenv.GetLowLevelCidEncoder函数获取了一个Cid编码器，并将其余函数中使用的所有选项设置为默认值。然后将该编码器用于将Cid字段编码为二进制格式，并将其输出到标准输出。
 
 
-```
+```go
 // RootMeta is the metadata for a root pinning response
 type RootMeta struct {
 	Cid         cid.Cid
@@ -1667,7 +1667,7 @@ into an object of the specified format.
 最后，该命令在定义后通过dagGet函数来调用，该函数将获取指定dag对象并输出其内容。
 
 
-```
+```go
 // DagGetCmd is a command for getting a dag node from IPFS
 var DagGetCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
@@ -1697,7 +1697,7 @@ format.
 "DagResolveCmd" 的函数类型为 "ResolveOutput"，意味着它返回一个 DAG 节点的地址和剩余路径。
 
 
-```
+```go
 // DagResolveCmd returns address of highest block within a path and a path remainder
 var DagResolveCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
@@ -1752,7 +1752,7 @@ var DagResolveCmd = &cmds.Command{
 DagImportCmd的帮助文本解释了命令的用途，即导入汽车文件中的所有内容，并允许在导入过程中将可到达的根目录中的根目录也一并钉到IPFS系统中。注意，这个命令不会仅仅导入汽车文件中的所有块，而是只会导入那些可以在当前目录中访问到的块。
 
 
-```
+```go
 // DagImportCmd is a command for importing a car to ipfs
 var DagImportCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
@@ -1790,7 +1790,7 @@ The `MakeTypedEncoder` function is used to encode the `CarImportOutput` type as 
 The `Text` command is used to run the program, and the `--stats` option is used to display more detailed information about the imported blocks.
 
 
-```
+```go
 Maximum supported CAR version: 2
 Specification of CAR formats: https://ipld.io/specs/transport/car/
 `,
@@ -1868,7 +1868,7 @@ Specification of CAR formats: https://ipld.io/specs/transport/car/
 该命令的输出是CAR格式的文件，遵循CARv1规范。
 
 
-```
+```go
 // DagExportCmd is a command for exporting an ipfs dag to a car
 var DagExportCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
@@ -1903,7 +1903,7 @@ CAR file follows the CARv1 format: https://ipld.io/specs/transport/car/carv1/
 `MarshalJSON()` 方法的实现中，首先将创建时间、大小、创建的块数封装成一个 JSON 对象的 `struct` 类型，这个对象包含三个字段 `Cid`、`Size` 和 `NumBlocks`，分别对应 `DagStat` 结构体中的 `Cid`、`Size` 和 `NumBlocks` 字段。然后，将这个 JSON 对象的 `*Alias` 字段设置为 `struct` 类型的 `DagStat` 类型的实例，从而将 `DagStat` 结构体转换成 JSON 数组。最后，将 JSON 数组字节返回，同时将转换过程中的错误处理返回。
 
 
-```
+```go
 // DagStat is a dag stat command response
 type DagStat struct {
 	Cid       cid.Cid `json:",omitempty"`
@@ -1936,7 +1936,7 @@ func (s *DagStat) MarshalJSON() ([]byte, error) {
 此函数的作用是解析JSON数据并将其转换为DagStat类型的结构体。函数接收一个字节数组`data`，作为JSON数据的输入。函数内部首先定义了一个名为`Alias`的结构体，用于存储数据中的"/"键的别名。然后，函数尝试使用`json.Unmarshal`函数将字节数组`data`解析为JSON结构体，如果解析失败，则返回错误。如果解析成功，函数将尝试使用`cid.Parse`函数将JSON结构体转换为`DagStat`结构体，如果转换失败，则返回错误。最后，函数将`DagStat`结构体的`Cid`字段设置为解析得到的`Cid`值。
 
 
-```
+```go
 func (s *DagStat) UnmarshalJSON(data []byte) error {
 	/*
 		We can't rely on cid.Cid.UnmarshalJSON since it uses the {"/": "..."}
@@ -1977,7 +1977,7 @@ func (s *DagStat) UnmarshalJSON(data []byte) error {
 该结构体还包含一个名为 `String` 的方法，用于打印 DAG 统计信息，并包含一个名为 `incrementTotalSize` 的方法，用于手动增加 `TotalSize` 字段的值。
 
 
-```
+```go
 type DagStatSummary struct {
 	redundantSize uint64     `json:"-"`
 	UniqueBlocks  int        `json:",omitempty"`
@@ -2008,7 +2008,7 @@ The third function `calculateSummary` calculates and returns the ratio of the `r
 The `DagStatCmd` variable is defined as an instance of the `cmds.Command` struct and contains the command's helptext, short description, and other metadata.
 
 
-```
+```go
 func (s *DagStatSummary) incrementRedundantSize(size uint64) {
 	s.redundantSize += size
 }
@@ -2038,7 +2038,7 @@ The `JSONEncoderMap` field is a map of JSON encoder functions, with the key bein
 Overall, this struct is used to configure the encoding for commands that can be executed with the CMDS or JSON encoders.
 
 
-```
+```go
 'ipfs dag stat' fetches a DAG and returns various statistics about it.
 Statistics include size and number of blocks.
 

@@ -112,7 +112,7 @@ Tooling is limited at the moment, but we are working on [go-libipfs](https://git
 
 ##### Example: fetch IPNS record over HTTP and inspect it with `ipfs name inspect --verify`
 
-```console
+```goconsole
 $ FILE_CID=$(echo "Hello IPFS" | ipfs add --cid-version 1 -q)
 $ IPNS_KEY=$(ipfs key gen test)
 $ ipfs name publish /ipfs/$FILE_CID --key=test --ttl=30m
@@ -1335,7 +1335,7 @@ target subdomain.
 The HTTP 301 body now includes human-readable `text/html` message
 for clients that do not follow redirects by default:
 
-```console
+```goconsole
 $ curl "https://subdomain-gw.example.net/ipfs/${cid}/"
 <a href="https://${cid}.ipfs.subdomain-gw.example.net/">Moved Permanently</a>.
 ```
@@ -1357,7 +1357,7 @@ resolution.
 `ipfs dat stat` now accept multiple CIDs and will dump advanced statistics
 on the number of shared blocks and size of each CID.
 
-```console
+```goconsole
 $ ipfs dag stat --progress=false QmfXuRxzyVy5H2LssLgtXrKCrNvDY8UBvMp2aoW8LS8AYA QmfZDyu2UFfUhL4VdHaw7Hofivmn5D4DdQj38Lwo86RsnB
 
 CID                                           	Blocks         	Size

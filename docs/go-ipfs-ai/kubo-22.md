@@ -1,13 +1,13 @@
 # go-ipfs 源码解析 22
 
-# `/opt/kubo/core/commands/object/patch.go`
+# `core/commands/object/patch.go`
 
 This code defines a new command in the "objectcmd" package, called "ObjectPatchCmd". This command appears to be used for creating a new merkledag object based on an existing one. However, it is marked as "deprecated" and is not intended for use.
 
 Instead of using this command, the code suggests using the "files cp\*|rm" command to create a new object from existing ones using the "MFS" (Multi-File System) system.
 
 
-```
+```go
 package objectcmd
 
 import (
@@ -33,7 +33,7 @@ var ObjectPatchCmd = &cmds.Command{
 注意：此命令已过时，不建议使用。建议使用MFS及其`files`命令。
 
 
-```
+```go
 'ipfs object patch <root> <cmd> <args>' is a plumbing command used to
 build custom dag-pb objects. It mutates objects, creating new objects as a
 result. This is the Merkle-DAG version of modifying an object.
@@ -65,7 +65,7 @@ For modern use cases, use MFS with 'files' commands: 'ipfs files --help'.
 这些命令行工具可以用来在Kubernetes集群中操作数据段。例如，可以使用`append-data`命令将数据附加到某个数据段，使用`add-link`命令创建一个新的链接，使用`rm-link`命令删除指定的链接，或者使用`set-data`命令修改某个数据段的值。
 
 
-```
+```go
 `,
 	},
 	Arguments: []cmds.Argument{},
@@ -96,7 +96,7 @@ To use the `ipfs files` command, you first need to ensure that you have the IPFS
 Keep in mind that modifying data in a DAG-PB object can have a significant impact on the integrity and reliability of the data. It is important to carefully consider the implications of any modifications you make and to test your changes thoroughly before deploying them to production.
 
 
-```
+```go
 Append data to what already exists in the data segment in the given object.
 
 Example:
@@ -163,7 +163,7 @@ Alternatively, if you have the data file and you want to set the data of the IPF
 Please note that this command is provided for legacy reasons and is deprecated. Use the `files cp` and `dag put` commands instead.
 
 
-```
+```go
 var patchSetDataCmd = &cmds.Command{
 	Status: cmds.Deprecated, // https://github.com/ipfs/kubo/issues/7936
 	Helptext: cmds.HelpText{
@@ -223,7 +223,7 @@ DEPRECATED and provided for legacy reasons. Use 'files cp' and 'dag put' instead
 This is a deprecated command in Kubo, a Kubernetes DAG file viewer. The command is used to remove a Merkle-link from the given object and return the hash of the result. However, it has been deprecated and is provided for legacy reasons. Please use 'files rm' instead of this command.
 
 
-```
+```go
 var patchRmLinkCmd = &cmds.Command{
 	Status: cmds.Deprecated, // https://github.com/ipfs/kubo/issues/7936
 	Helptext: cmds.HelpText{
@@ -283,7 +283,7 @@ DEPRECATED and provided for legacy reasons. Use 'files rm' instead.
 上述命令将在/some-dir目录下添加名为"added-file.jpg"的文件，并返回目录的CID(CompactID)。'files cp' 命令仅下载根块，因此可以用于构建自定义目录树，而不需要将目录全部下载到本地节点。
 
 
-```
+```go
 const (
 	createOptionName = "create"
 )
@@ -324,7 +324,7 @@ If the option is set to `p`, it will create intermediate nodes. When this option
 This plugin can be used with the Go framework using the following command: `go run link-creator.go <link-creator.cmd>`.
 
 
-```
+```go
 `,
 	},
 	Arguments: []cmds.Argument{
@@ -381,7 +381,7 @@ This plugin can be used with the Go framework using the following command: `go r
 
 ```
 
-# `/opt/kubo/core/commands/pin/pin.go`
+# `core/commands/pin/pin.go`
 
 这段代码是一个 Go 语言编写的 Pin 包。Pin 是一个高性能的 IPFS 客户端库，它支持在 IPFS 网络中进行 Atomic 操作。下面是这段代码的一些作用：
 
@@ -428,7 +428,7 @@ This plugin can be used with the Go framework using the following command: `go r
 21. 定义 PIN 服务
 
 
-```
+```go
 package pin
 
 import (
@@ -478,7 +478,7 @@ updatePinCmd：使用该方法可以更新已挂载的对象的属性。
 remotePinCmd：使用该方法可以将一个远程对象挂载到本地存储中。
 
 
-```
+```go
 var PinCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Pin (and unpin) objects to local storage.",
@@ -503,7 +503,7 @@ The program has a number of configuration options that can be used when running 
 The program also has a logging mechanism in place, which logs any errors that occur when processing the input text.
 
 
-```
+```go
 type PinOutput struct {
 	Pins []string
 }
@@ -653,7 +653,7 @@ var addPinCmd = &cmds.Command{
 函数接收的参数中，ctx 是上下文，api 是 API 客户端，enc 是编码器，paths 是路径列表，recursive 是递归模式。函数内部首先定义了一个和路径列表大小相同的添加列表 added。然后使用 for 循环遍历路径列表，对于每个路径，首先尝试从上下文上下文上下文上下文上下文上下文上下文路径，然后调用 API 的 pinAdd 操作，并将 API 返回的结果添加到添加列表中。最后，函数返回添加列表和 nil 错误。
 
 
-```
+```go
 func pinAddMany(ctx context.Context, api coreiface.CoreAPI, enc cidenc.Encoder, paths []string, recursive bool) ([]string, error) {
 	added := make([]string, len(paths))
 	for i, b := range paths {
@@ -687,7 +687,7 @@ The function then parses the body arguments of the request, sets the encoder for
 If any errors occur during the execution of the function, they are propagated back to the response object.
 
 
-```
+```go
 var rmPinCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Remove object from pin-list.",
@@ -771,7 +771,7 @@ ipfs pin ls -t indirect <cid>
 最后，该代码还使用了三元组变量 pinTypeOptionName、pinQuietOptionName 和 pinStreamOptionName，这些变量在后续命令行操作中可能会被使用，例如在调用 cmds.Command{...} 时传递特定的选项。
 
 
-```
+```go
 const (
 	pinTypeOptionName   = "type"
 	pinQuietOptionName  = "quiet"
@@ -802,7 +802,7 @@ respectively.
 如果传递的`--type`参数不是有效的锁定类型，或者如果传递的参数不正确，该命令行工具将会失败并输出错误信息。
 
 
-```
+```go
 Returns a list of objects that are pinned locally.
 By default, all pinned objects are returned, but the '--type' flag or
 arguments can restrict that to a specific pin type or to some specific objects
@@ -825,7 +825,7 @@ object. And if --type=<type> is additionally used, the command will also fail
 具体来说，这段代码的作用是判断给定的命令行参数是否符合 ipfs 添加链接（-q）的指定类型。如果不符合，代码会输出 "Error: any of the arguments is not of the specified type."，并可能导致 ipfs 命令行脚本无法正常执行。
 
 
-```
+```go
 if any of the arguments is not of the specified type.
 
 Example:
@@ -851,7 +851,7 @@ The `Encoders` field is map of encoders, one for each of the supported encoded f
 The `PinLsOutputWrapper` type is also defined, but it is not clear what it represents. It seems to be used to wrap the output of the `pin` package for `PinLsList` object.
 
 
-```
+```go
 `,
 	},
 
@@ -960,7 +960,7 @@ PinLsOutputWrapper 是这个结构体的实例化类型。它包含一个 PinLsL
 PinLsObject 类型包含一个 PinLsList 类型的 field，用于存储输出数据，以及一个包含两个字段结构的 field，分别表示数据流的方向（streamed）和数据类型（type）。这里的数据类型可以是 streamed 或 non-streamed，通过这个 field 来控制输出数据类型。
 
 
-```
+```go
 // PinLsOutputWrapper is the output type of the pin ls command.
 // Pin ls needs to output two different type depending on if it's streamed or not.
 // We use this to bypass the cmds lib refusing to have interface{}
@@ -998,7 +998,7 @@ The function supports several pinning types:
 When a `pinType` other than "indirect through" or "recursive" is specified, the function automatically infers that a "through" pin is required, and the user must explicitly configure it in their options.
 
 
-```
+```go
 // PinLsObject contains the description of a pin
 type PinLsObject struct {
 	Cid  string `json:",omitempty"`
@@ -1075,7 +1075,7 @@ func pinLsKeys(req *cmds.Request, typeStr string, api coreiface.CoreAPI, emit fu
 5. 在处理完所有`PinLs`对象之后，函数返回一个`nil`表示没有错误。
 
 
-```
+```go
 func pinLsAll(req *cmds.Request, typeStr string, api coreiface.CoreAPI, emit func(value PinLsOutputWrapper) error) error {
 	enc, err := cmdenv.GetCidEncoder(req)
 	if err != nil {
@@ -1126,7 +1126,7 @@ func pinLsAll(req *cmds.Request, typeStr string, api coreiface.CoreAPI, emit fun
 具体来说，该命令会执行以下操作：首先，根据新节点和现有节点之间的差异，创建一个新的节点或者更新现有的一个节点。然后，将新的节点或者更新的节点连接到调用该命令的函数中指定的树节点上。最后，如果需要，该命令会自动删除旧的节点。
 
 
-```
+```go
 const (
 	pinUnpinOptionName = "unpin"
 )
@@ -1153,7 +1153,7 @@ The function uses the `api.ResolvePath` method to resolve the paths to the CIDs.
 The function uses the `api.Pin` property to update the pins of the response emitter. It also uses the `options.Pin.Unpin` property to specify that the CID should be pinned even if it is not specified in the request.
 
 
-```
+```go
 pin.
 `,
 	},
@@ -1229,7 +1229,7 @@ The `pinVerifyOpts` struct represents the pin verify options. It has two fields:
 The `pinVerifyRes` type represents the output of the `pinVerify` function. It is a `PinVerifyRes` object that has several fields, including `Cid`, `Hash`, and `Msg`. The `Cid` field represents the unique ID of the pin, the `Hash` field represents the hash of the pin, and the `Msg` field represents any error messages associated with the `pinVerify` function.
 
 
-```
+```go
 const (
 	pinVerboseOptionName = "verbose"
 )
@@ -1297,7 +1297,7 @@ PinVerifyRes 结构体中还包含一个名为 PinStatus 的字段，该字段�
 最后，该代码定义了一个名为 "pin verify" 的函数，该函数接收一个整数类型的参数，表示要验证的 "pin"。函数返回一个 PinVerifyRes 类型的结果，其中包含有关该 "pin" 的信息，包括它的状态、错误信息以及出现该错误的节点列表。
 
 
-```
+```go
 // PinVerifyRes is the result returned for each pin checked in "pin verify"
 type PinVerifyRes struct {
 	Cid string `json:",omitempty"`
@@ -1335,7 +1335,7 @@ The program has several functions:
 The program has several more functions, such as `Pin.MarkPin` and `Pin.UnmarkPin`, which are used to mark and unmark a pin, respectively.
 
 
-```
+```go
 type pinVerifyOpts struct {
 	explain   bool
 	includeOk bool
@@ -1425,7 +1425,7 @@ func pinVerify(ctx context.Context, n *core.IpfsNode, opts pinVerifyOpts, enc ci
 4. 最后，在所有失败信息的输出结束后，再输出一个空行，用于分隔不同的信息。
 
 
-```
+```go
 // Format formats PinVerifyRes
 func (r PinVerifyRes) Format(out io.Writer) {
 	if r.Err != "" {
@@ -1446,7 +1446,7 @@ func (r PinVerifyRes) Format(out io.Writer) {
 
 ```
 
-# `/opt/kubo/core/commands/pin/remotepin.go`
+# `core/commands/pin/remotepin.go`
 
 该代码是一个 Go 语言 package，名为 "pin"，用于在 Go 环境中操作 IPFS 内容分发网络 (CDN) 中的内容。它实现了以下功能：
 
@@ -1465,7 +1465,7 @@ func (r PinVerifyRes) Format(out io.Writer) {
 7. 通过一些日志输出：在下载过程中，将每一步的输出记录到 Pinning 客户端的日志中，方便用户查看。
 
 
-```
+```go
 package pin
 
 import (
@@ -1506,7 +1506,7 @@ import (
 最后，代码通过调用 CMDS 库中的 "logging.Logger" 函数来创建一个名为 "core/commands/cmdenv" 的日志输出上下文，并将刚刚定义的 "remotePinCmd" 中的命令作为参数传递给该函数，以将日志输出到该上下文中。
 
 
-```
+```go
 var log = logging.Logger("core/commands/cmdenv")
 
 var remotePinCmd = &cmds.Command{
@@ -1529,7 +1529,7 @@ var remotePinCmd = &cmds.Command{
 具体来说，这段代码定义了一个用于配置远程映射服务的命令行工具，可以用来添加、列出和删除远程映射服务，并允许用户指定要配置的远程映射服务的名称、CID、状态、服务端点、密钥、统计信息以及使用背景服务模式和强制配置选项。
 
 
-```
+```go
 var remotePinServiceCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Configure remote pinning services.",
@@ -1564,7 +1564,7 @@ const (
 printRemotePinDetails() 函数接受一个 write 类型的 I/O  writer 和一个 RemotePinOutput 类型的结构体变量 out。这个函数将RemotePinOutput 类型中的成员变量打印到 writer 上。
 
 
-```
+```go
 type RemotePinOutput struct {
 	Status string
 	Cid    string
@@ -1599,7 +1599,7 @@ func printRemotePinDetails(w io.Writer, out *RemotePinOutput) {
 最后，通过调用 "cmds.Command.Add()" 方法将添加远程 PIN 命令行选项到 "remotePinCmd" 对象中，从而使该命令行对象具有将 PIN 对象从 IPFS 对象推送到指定远程 PIN 服务的功能。
 
 
-```
+```go
 // remote pin commands
 
 var pinServiceNameOption = cmds.StringOption(pinServiceNameOptionName, "Name of the remote pinning service to use (mandatory).")
@@ -1628,7 +1628,7 @@ To pin CID 'bafkqaaa' to service named 'mysrv' under a pin named 'mypin':
 “--status=queued”和“--status=pinning”和“--status=failed”参数用于列出“pinned”和“pinning”状态下的所有pin。
 
 
-```
+```go
 The above command will block until remote service returns 'pinned' status,
 which may take time depending on the size and available providers of the pinned
 data.
@@ -1656,7 +1656,7 @@ If there are no issues with the remote pin status, the function attempts to bind
 If there is an error with the remote pin or the background check, the function prints an error message and returns an error with the details of the failure.
 
 
-```
+```go
 NOTE: a comma-separated notation is supported in CLI for convenience:
 
   $ ipfs pin remote ls --service=mysrv --cid=bafkqaaa --status=queued,pinning,pinned,failed
@@ -1801,7 +1801,7 @@ The service has an implementation called `getRemotePinServiceFromRequest` that r
 The `res` parameter in the `run` function of the RemotePinOutput service is an instance of the `cmds.ResponseEmitter` type, which allows it to emit a response to the request when one of its methods returns an error. The `ctx` parameter is a context that is used to cancel the operation when the response is sent.
 
 
-```
+```go
 var listRemotePinCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "List objects pinned to remote pinning service.",
@@ -1860,7 +1860,7 @@ Pass '--status=queued,pinning,pinned,failed' to list pins in all states.
 This function appears to be part of a `pinclient` package that provides a client for interacting with the AWS API. It takes a `Request` object and an `Response` object as
 
 
-```
+```go
 // Executes GET /pins/?query-with-filters
 func lsRemote(ctx context.Context, req *cmds.Request, c *pinclient.Client) (chan pinclient.PinStatusGetter, chan error, error) {
 	opts := []pinclient.LsOption{}
@@ -1906,7 +1906,7 @@ func lsRemote(ctx context.Context, req *cmds.Request, c *pinclient.Client) (chan
 具体来说，这个命令接受一个远程端口编号，并使用"ipfs pin"命令来列出指定的端口。接下来，使用"ls"命令来确认要删除的端口列表。最后，使用"rm"命令来删除这些端口。服务的名称和客户端ID在命令中作为参数传递，用于确保正确地执行命令。这个命令的作用是删除远程端口上的连接，以便在需要时进行垃圾回收。
 
 
-```
+```go
 var rmRemotePinCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline:          "Remove pins from remote pinning service.",
@@ -1933,7 +1933,7 @@ If an error occurs while listing remote pins, the option will return an error me
 If the user does not provide the required argument `--force`, the option will return an error message. If the user provides a non-empty argument, the option will return no error.
 
 
-```
+```go
 When more than one pin matches the query on the remote service, an error is
 returned.  To confirm the removal of multiple pins, pass '--force':
 
@@ -2004,7 +2004,7 @@ To list and then remove all pending pin requests, pass an explicit status list:
 通过在代码中，我们还可以看到一个包含了三个服务的遥控命令，通过这些命令，可以测试这些服务的遥控信息。
 
 
-```
+```go
 // remote service commands
 
 var addRemotePinServiceCmd = &cmds.Command{
@@ -2036,7 +2036,7 @@ The program checks whether the required arguments are present, and if not, retur
 It is important to note that the program uses the `f分享的`-`fsc`-golang.github库来提供对fosetool的访问。
 
 
-```
+```go
 `,
 	},
 	Arguments: []cmds.Argument{
@@ -2106,7 +2106,7 @@ It is important to note that the program uses the `f分享的`-`fsc`-golang.gith
 该代码通过使用 "fsrepo" 和 "cmdenv" 包来与远程服务器进行交互，并使用 "cmds" 包来定义命令对象。通过使用 "arg" 和 "option" 选项，用户可以选择远程命名空间服务器的名称作为命令行参数。
 
 
-```
+```go
 var rmRemotePinServiceCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline:          "Remove remote pinning service.",
@@ -2153,7 +2153,7 @@ var rmRemotePinServiceCmd = &cmds.Command{
 如果传递`--stat`，命令将输出每个端点的pin计数。测试端点可以通过传递`--enc=json`选项来获得更详细的JSON输出。
 
 
-```
+```go
 var lsRemotePinServiceCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline:          "List remote pinning services.",
@@ -2208,7 +2208,7 @@ The `status` function takes a request object and returns a boolean indicating wh
 The `svc` field is a pointer to the `PinService` struct, and the `svcDetails` function is a function that returns the `PinService` struct with the `remoteServices` field set to `nil`. If an error occurs, it returns an error message.
 
 
-```
+```go
 `,
 	},
 	Arguments: []cmds.Argument{},
@@ -2341,7 +2341,7 @@ The `svc` field is a pointer to the `PinService` struct, and the `svcDetails` fu
 整段代码的作用是定义了三个结构体，用于表示服务的详细信息、服务状态和预约信息，以及提供了 JSON 格式输出，可以根据不同的参数提供不同的输出。
 
 
-```
+```go
 type ServiceDetails struct {
 	Service     string
 	ApiEndpoint string //nolint
@@ -2371,7 +2371,7 @@ type PinCount struct {
 该代码的主要目的是对 `ServiceDetails` 类型的数据结构 `RemoteServices` 进行操作，这可能与 Pinata 库或 IPFS 相关。不过，具体是为什么，以及操作的具体内容并没有给出，所以无法提供更详细的解释。
 
 
-```
+```go
 // Struct returned by ipfs pin remote service ls --enc=json | jq
 type PinServicesList struct {
 	RemoteServices []ServiceDetails
@@ -2403,7 +2403,7 @@ func (l PinServicesList) Less(i, j int) bool {
 4. 最后，函数将返回客户端对象和空错误消息。
 
 
-```
+```go
 func getRemotePinServiceFromRequest(req *cmds.Request, env cmds.Environment) (*pinclient.Client, error) {
 	service, serviceFound := req.Options[pinServiceNameOptionName]
 	if !serviceFound {
@@ -2431,7 +2431,7 @@ func getRemotePinServiceFromRequest(req *cmds.Request, env cmds.Environment) (*p
 接下来，函数内部使用 `normalizeEndpoint` 函数将远程令牌服务器生成的 API 端点格式化为一个字符串，该字符串将作为 `pinclient.NewClient` 函数的第二个参数。最后，函数使用 `nil` 避免返回一个空指针。
 
 
-```
+```go
 func getRemotePinService(env cmds.Environment, name string) (*pinclient.Client, error) {
 	if name == "" {
 		return nil, fmt.Errorf("remote pinning service name not specified")
@@ -2476,7 +2476,7 @@ func getRemotePinServiceInfo(env cmds.Environment, name string) (endpoint, key s
 此函数的作用是验证传入的 ENDPOINT 是否为有效的 HTTP URL。如果传入的 ENDPOINT 有误，函数将返回一个错误信息。在函数内部，首先使用 neturl.ParseRequestURI 解析传入的 ENDPOINT。如果解析成功，则检查是否为 HTTP URL（通过检查其Scheme）。如果是 HTTP URL，则执行一系列清理操作，如删除 trailing 和 duplicate slashes（https://github.com/ipfs/kubo/issues/7826）。接下来，如果 RAW QUERY 字段不为空，则返回一个错误信息。最后，如果 ENDPOINT 包含 /pins  suffix，则返回一个错误信息。函数的返回值是一个包含清理后 ENDPOINT 和错误信息的元组。
 
 
-```
+```go
 func normalizeEndpoint(endpoint string) (string, error) {
 	uri, err := neturl.ParseRequestURI(endpoint)
 	if err != nil || !(uri.Scheme == "http" || uri.Scheme == "https") {

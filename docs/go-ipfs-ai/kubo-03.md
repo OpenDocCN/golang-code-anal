@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 3
 
-# `/opt/kubo/client/rpc/requestbuilder.go`
+# `client/rpc/requestbuilder.go`
 
 这段代码定义了一个名为“rpc”的包，包含了用于构建请求的接口和类。
 
@@ -9,7 +9,7 @@
 整段代码的作用是定义了一个RequestBuilder接口，用于构建HTTP请求。通过使用RequestBuilder接口，可以方便地构建请求并发送给服务器，然后处理响应。这个包在HTTP包中起到了关键的作用，允许开发者使用同一个代码构建HTTP请求的不同部分，从而简化开发流程。
 
 
-```
+```go
 package rpc
 
 import (
@@ -55,7 +55,7 @@ type RequestBuilder interface {
 该代码的主要目的是定义一个代表 IPFS 请求构建器的接口，以提供构建请求所需的各种设置选项和参数。
 
 
-```
+```go
 // encodedAbsolutePathVersion is the version from which the absolute path header in
 // multipart requests is %-encoded. Before this version, its sent raw.
 var encodedAbsolutePathVersion = semver.MustParse("0.23.0-dev")
@@ -85,7 +85,7 @@ type requestBuilder struct {
 这三个函数共同构成了一个简单的用于设置请求参数的RequestBuilder类。通过使用这三个函数，开发者可以很方便地将请求参数添加到请求中，从而实现更灵活的请求组合。
 
 
-```
+```go
 // Arguments adds the arguments to the args.
 func (r *requestBuilder) Arguments(args ...string) RequestBuilder {
 	r.args = append(r.args, args...)
@@ -111,7 +111,7 @@ func (r *requestBuilder) BodyBytes(body []byte) RequestBuilder {
 这两个函数可以单独使用，其中第一个函数将读取一个IO.Reader对象并将其赋值给RequestBuilder实例，而第二个函数将一个IO.Reader对象传递给RequestBuilder构造函数创建一个新的RequestBuilder实例。它们的实现基于requestBuilder.Body函数，该函数将创建一个新的RequestBuilder实例，设置其body字段为传入的IO.Reader对象，并返回该RequestBuilder实例。
 
 
-```
+```go
 // Body sets the request body to the given reader.
 func (r *requestBuilder) Body(body io.Reader) RequestBuilder {
 	r.body = body
@@ -149,7 +149,7 @@ func (r *requestBuilder) FileBody(body io.Reader) RequestBuilder {
 函数返回`requestBuilder`，这样就可以将设置好的选项传递给下一个`Option()`函数调用。
 
 
-```
+```go
 // Option sets the given option.
 func (r *requestBuilder) Option(key string, value interface{}) RequestBuilder {
 	var s string
@@ -180,7 +180,7 @@ func (r *requestBuilder) Option(key string, value interface{}) RequestBuilder {
 `Send` 函数接收一个 `context.Context`，然后发送请求并返回响应。如果请求构建器构建出现错误，返回结果。函数创建一个新请求构建器实例，并应用 `shell.applyGlobal` 函数于请求构建器。然后设置请求构建器的请求配置、请求头部和请求体，并返回请求构建器实例，然后调用 `request.Send` 函数发送请求。
 
 
-```
+```go
 // Header sets the given header.
 func (r *requestBuilder) Header(name, value string) RequestBuilder {
 	if r.headers == nil {
@@ -219,7 +219,7 @@ func (r *requestBuilder) Send(ctx context.Context) (*Response, error) {
 此函数的作用是为客户提供一个用于执行HTTP请求并获取响应的接口。在调用此函数时，请确保提供上下文并传递正确的接口类型，以获得最佳结果。
 
 
-```
+```go
 // Exec sends the request a request and decodes the response.
 func (r *requestBuilder) Exec(ctx context.Context, res interface{}) error {
 	httpRes, err := r.Send(ctx)
@@ -243,12 +243,12 @@ func (r *requestBuilder) Exec(ctx context.Context, res interface{}) error {
 这段代码创建了一个名为`_RequestBuilder`的引用，该引用类型为`&requestBuilder{}`。它可能是为了在代码中方便地引用`requestBuilder{}`而存在的。但是，如果没有其他代码来明确说明`requestBuilder{}`的作用，那么我们无法判断这段代码的具体作用。
 
 
-```
+```go
 var _ RequestBuilder = &requestBuilder{}
 
 ```
 
-# `/opt/kubo/client/rpc/response.go`
+# `client/rpc/response.go`
 
 这段代码是一个RPC（远程过程调用）框架，它实现了通过网络远程调用函数（也称为远程方法）的功能。它可以让客户端调用一个名为"do something"的函数，并且可以设置一些选项，如请求的URL、请求方法、请求头和请求参数等。
 
@@ -269,7 +269,7 @@ var _ RequestBuilder = &requestBuilder{}
 7. 最后，把所有选项组合在一起，实现了一个远程过程调用框架，客户端可以调用这个框架，来远程执行一个名为"do something"的函数，并设置一些选项。
 
 
-```
+```go
 package rpc
 
 import (
@@ -298,7 +298,7 @@ import (
 最后，该方法返回读取的字节数和可能的错误。
 
 
-```
+```go
 type Error = cmds.Error
 
 type trailerReader struct {
@@ -324,7 +324,7 @@ func (r *trailerReader) Read(b []byte) (int, error) {
 Response 类型定义了一个名为 Response 的结构体，该结构体包含一个输出流（io.ReadCloser）和一个错误（Error）类型。函数 (r *Response) Close() 用于关闭响应体，如果响应体已配置为输出流，则会调用该函数并确保其关闭。
 
 
-```
+```go
 func (r *trailerReader) Close() error {
 	return r.resp.Body.Close()
 }
@@ -373,7 +373,7 @@ func (r *Response) Close() error {
 4. 如果正在运行的请求包含一个输出缓冲区，则调用“Close”函数关闭输出缓冲区。
 
 
-```
+```go
 // Cancel aborts running request (without draining request body).
 func (r *Response) Cancel() error {
 	if r.Output != nil {
@@ -409,7 +409,7 @@ If the response body contains data that cannot be decoded, the function logs a w
 The function returns the error response and the response body, if it was read. If the response body is not readable or cannot be decoded, the function returns an error.
 
 
-```
+```go
 func (r *Request) Send(c *http.Client) (*Response, error) {
 	url := r.getURL()
 	req, err := http.NewRequest("POST", url, r.Body)
@@ -493,7 +493,7 @@ func (r *Request) Send(c *http.Client) (*Response, error) {
 该函数接收一个名为 `r` 的 `Request` 对象作为参数，并返回一个 HTTP 请求的 URL。函数首先将传递给 `r.Args` 的参数列表中的每个参数作为一个 `url.Values` 对象添加到 `values` 数组中。然后，函数将传递给 `r.Opts` 的键值对作为另一个 `url.Values` 对象添加到 `values` 数组中。最后，函数使用 `fmt.Sprintf` 函数将 API 基础URL和参数列表编码后的字符串组合成指定的 URL。函数的实现有助于在传递参数和选项时保持一致性，并且使代码更易于理解和维护。
 
 
-```
+```go
 func (r *Request) getURL() string {
 	values := make(url.Values)
 	for _, arg := range r.Args {
@@ -508,7 +508,7 @@ func (r *Request) getURL() string {
 
 ```
 
-# `/opt/kubo/client/rpc/routing.go`
+# `client/rpc/routing.go`
 
 这段代码定义了一个名为 `RoutingAPI` 的类，该类实现了一个 HTTP API，用于通过在 P2P 网络中进行路由来访问数据。该 API 采用了一种称为 "libp2p routing" 的技术，该技术允许用户在路由器上定义路由，并将数据路由到指定的目标。
 
@@ -527,7 +527,7 @@ func (r *Request) getURL() string {
 6. 返回响应和解析后的 JSON 数据。
 
 
-```
+```go
 package rpc
 
 import (
@@ -578,7 +578,7 @@ func (api *RoutingAPI) Get(ctx context.Context, key string) ([]byte, error) {
 最后，检查`Request`返回的错误是否为空，如果不为空，则说明数据存储成功，返回零。如果错误不为空，则返回错误。
 
 
-```
+```go
 func (api *RoutingAPI) Put(ctx context.Context, key string, value []byte, opts ...options.RoutingPutOption) error {
 	var cfg options.RoutingPutSettings
 	for _, o := range opts {
@@ -605,14 +605,14 @@ func (api *RoutingAPI) Put(ctx context.Context, key string, value []byte, opts .
 这是一段 JavaScript 代码，定义了一个名为 "func" 的函数，接收一个名为 "api" 的参数，并返回一个名为 "*HttpApi" 的类型。函数的核心作用是调用 "api" 所指向的 "HttpApi" 类型的别
 
 
-```
+```go
 func (api *RoutingAPI) core() *HttpApi {
 	return (*HttpApi)(api)
 }
 
 ```
 
-# `/opt/kubo/client/rpc/swarm.go`
+# `client/rpc/swarm.go`
 
 该代码定义了一个名为"SwarmAPI"的HTTP API，使用了"libp2p"库，旨在实现分布式系统中的数据传输和通信。
 
@@ -642,7 +642,7 @@ func (api *RoutingAPI) core() *HttpApi {
 综上所述，该代码定义了一个 Swarm API，用于实现分布式系统中数据传输和通信的功能。
 
 
-```
+```go
 package rpc
 
 import (
@@ -667,7 +667,7 @@ func Connect函数接收一个 PeerInfo 类型的参数，然后使用 multiaddr
 func Disconnect函数接收一个 MultiAddr 类型的参数，然后使用 SwarmAPI 的 `core().Request` 方法请求 "swarm/disconnect" 路由，并传递 MultiAddr 对象作为参数。如果该请求成功，函数返回 nil。
 
 
-```
+```go
 func (api *SwarmAPI) Connect(ctx context.Context, pi peer.AddrInfo) error {
 	pidma, err := multiaddr.NewComponent("p2p", pi.ID.String())
 	if err != nil {
@@ -704,7 +704,7 @@ func (api *SwarmAPI) Disconnect(ctx context.Context, addr multiaddr.Multiaddr) e
 在函数 `(c) Address()` 中，将 `c` 中的 `addr` 字段转换为 `multiaddr.Multiaddr` 类型，并将其返回。
 
 
-```
+```go
 type connInfo struct {
 	addr      multiaddr.Multiaddr
 	peer      peer.ID
@@ -733,7 +733,7 @@ Finally, the article describes how to use the `swarm/peers` endpoint to get a li
 Overall, the article provides a comprehensive overview of the Swarm API and its capabilities, including the ability to interact with the API using various endpoints and flags.
 
 
-```
+```go
 func (c *connInfo) Direction() network.Direction {
 	return c.direction
 }
@@ -809,7 +809,7 @@ func (api *SwarmAPI) Peers(ctx context.Context) ([]iface.ConnectionInfo, error) 
 最后，函数返回res，表示已获取到的地址映射，如果没有错误发生，则表示没有返回错误。
 
 
-```
+```go
 func (api *SwarmAPI) KnownAddrs(ctx context.Context) (map[peer.ID][]multiaddr.Multiaddr, error) {
 	var out struct {
 		Addrs map[string][]string
@@ -847,7 +847,7 @@ func (api *SwarmAPI) KnownAddrs(ctx context.Context) (map[peer.ID][]multiaddr.Mu
 函数首先检查是否存在任何错误，然后使用 `api.core().Request("swarm/addrs/local")` 发送请求并获取一个名为 `out` 的元组。如果请求成功，函数遍历 `out.Strings` 并解析每个字符串，然后使用 `multiaddr.NewMultiaddr` 创建一个指向地址的 `Multiaddr` 实例，并将其添加到结果列表 `res` 中。最后，函数返回结果列表 `res` 和任何错误。
 
 
-```
+```go
 func (api *SwarmAPI) LocalAddrs(ctx context.Context) ([]multiaddr.Multiaddr, error) {
 	var out struct {
 		Strings []string
@@ -875,7 +875,7 @@ func (api *SwarmAPI) LocalAddrs(ctx context.Context) ([]multiaddr.Multiaddr, err
 接下来，函数将遍历`out.Strings`切片，创建一个名为`ma`的多地址结构体，并将其添加到名为`res`的切片结构体中。`res`切片包含与`out.Strings`切片中的每个地址相关联的`ma`结构体。最后，函数返回`res`切片和一个非`nil`的错误。
 
 
-```
+```go
 func (api *SwarmAPI) ListenAddrs(ctx context.Context) ([]multiaddr.Multiaddr, error) {
 	var out struct {
 		Strings []string
@@ -901,14 +901,14 @@ func (api *SwarmAPI) ListenAddrs(ctx context.Context) ([]multiaddr.Multiaddr, er
 这是一段 Go 语言中的函数指针类型。函数指针是一种特殊的类型，它可以指向一个函数，同时也可以是一个指向接口类型的变量。在这段代码中，我们创建了一个名为 SwarmAPI 的结构体，它包含一个名为 api 的成员。然后，我们定义了一个名为 core 的函数，该函数接收一个 SwarmAPI 类型的参数，并返回一个指向 HttpApi 类型对象的指针。这个函数指针将代表一个 HTTP API，它可以在 SwarmAPI 中注册和使用。通过调用这个函数指针，我们可以使用 SwarmAPI 中的 HTTP API 了。
 
 
-```
+```go
 func (api *SwarmAPI) core() *HttpApi {
 	return (*HttpApi)(api)
 }
 
 ```
 
-# `/opt/kubo/client/rpc/unixfs.go`
+# `client/rpc/unixfs.go`
 
 该代码的作用是定义了一个名为"rpc"的包，其中定义了一些可以用来进行远程过程调用(RPC)的函数和结构体。
 
@@ -921,7 +921,7 @@ func (api *SwarmAPI) core() *HttpApi {
 最后，该包还定义了一些来自第三方库的引用，包括"github.com/ipfs/boxo/coreiface"、"github.com/ipfs/boxo/coreiface/options"、"github.com/ipfs/boxo/files"、"github.com/ipfs/boxo/ipld/unixfs"和"github.com/ipfs/boxo/ipld/unixfs/pb"。
 
 
-```
+```go
 package rpc
 
 import (
@@ -950,7 +950,7 @@ The function, `addEvent` appears to be handling the case where a file has been a
 The function uses the `files.NewMapDirectory` method to create a new directory in the file system, and then uses `api.core().loadRemoteVersion()` to retrieve the version of the remote API that the file system is using. If an error occurs, it returns an error message containing the details of the error. If the request is successful, it returns a `path.ImmutablePath` object containing information about the added file, or an error message if there was an issue.
 
 
-```
+```go
 type addEvent struct {
 	Name  string
 	Hash  string `json:",omitempty"`
@@ -1025,7 +1025,7 @@ func (api *UnixfsAPI) Add(ctx context.Context, f files.Node, opts ...caopts.Unix
 最后，如果解析事件“out”时出现错误，则返回错误信息。事件解析完成后，如果解析事件“out”成功，则返回输出事件的相关信息。
 
 
-```
+```go
 loop:
 	for {
 		var evt addEvent
@@ -1083,7 +1083,7 @@ lsOutput 是一个结构体，它包含多个 lsObject（也就是所有可能�
 这段代码的作用是定义了一个用于存储文件系统对象的抽象类型。它将不同类型的文件系统对象组合成一个 lsObject 结构体，然后将多个 lsObject 结构体存储到一个 lsOutput 结构体中。lsLink 和 lsObject 类型用于存储文件系统对象的元数据，而 lsOutput 用于存储元数据的总和。
 
 
-```
+```go
 type lsLink struct {
 	Name, Hash string
 	Size       uint64
@@ -1105,7 +1105,7 @@ type lsOutput struct {
 This looks like a function that handles the case when a certain directory entry with a "dir" and "mode" bit sets a file to be a directory. It first checks if the object is a directory entry itself, and if it is not, it checks if it is a link object. If it is a link object, it checks if the object has only one linked file. If it does not have only one linked file, it checks if the linked file is a directory entry. If it is a directory entry, it checks the file type and performs some additional operations. If there are any errors, it returns an error and halts the process.
 
 
-```
+```go
 func (api *UnixfsAPI) Ls(ctx context.Context, p path.Path, opts ...caopts.UnixfsLsOption) (<-chan iface.DirEntry, error) {
 	options, err := caopts.UnixfsLsOptions(opts...)
 	if err != nil {
@@ -1204,14 +1204,14 @@ func (api *UnixfsAPI) Ls(ctx context.Context, p path.Path, opts ...caopts.Unixfs
 函数体内部先执行一个名为 "(*HttpApi)(api)" 的解引用操作，将 "api" 的值作为参数传递给 "HttpApi" 函数，得到一个指向 "HttpApi" 的指针。然后，函数返回这个指针，即实现了将 Unix 文件系统客户端与 HTTP API 分离的作用。
 
 
-```
+```go
 func (api *UnixfsAPI) core() *HttpApi {
 	return (*HttpApi)(api)
 }
 
 ```
 
-# `/opt/kubo/cmd/ipfs/add_migrations.go`
+# `cmd/ipfs/add_migrations.go`
 
 该代码实现了一个基于IPFS的文件系统，其中包括一个文件操作API和相应的选项，以及一个IPFS文件服务器和相应的服务器选项。
 
@@ -1229,7 +1229,7 @@ func (api *UnixfsAPI) core() *HttpApi {
 10. 实现了文件系统的trash和rm功能，可以删除文件系统和IPFS文件系统中的垃圾文件。
 
 
-```
+```go
 package main
 
 import (
@@ -1258,7 +1258,7 @@ This is a function that takes in an `IpfsNode` object from the `ipfsfetcher` pac
 The function first initializes a variable called `fetchers
 
 
-```
+```go
 // addMigrations adds any migration downloaded by the fetcher to the IPFS node.
 func addMigrations(ctx context.Context, node *core.IpfsNode, fetcher migrations.Fetcher, pin bool) error {
 	var fetchers []migrations.Fetcher
@@ -1317,7 +1317,7 @@ func addMigrations(ctx context.Context, node *core.IpfsNode, fetcher migrations.
 从代码中可以看出，添加的文件后缀是`.ipfs`，因此文件会被添加到IPFS系统的根节点上。
 
 
-```
+```go
 // addMigrationFiles adds the files at paths to IPFS, optionally pinning them.
 func addMigrationFiles(ctx context.Context, node *core.IpfsNode, paths []string, pin bool) error {
 	if len(paths) == 0 {
@@ -1365,7 +1365,7 @@ func addMigrationFiles(ctx context.Context, node *core.IpfsNode, paths []string,
 它详细的注释解释了上述所说的每一步。
 
 
-```
+```go
 // addMigrationPaths adds the files at paths to IPFS, optionally pinning
 // them. This is done after connecting to the peer.
 func addMigrationPaths(ctx context.Context, node *core.IpfsNode, peerInfo peer.AddrInfo, paths []path.Path, pin bool) error {
@@ -1425,7 +1425,7 @@ func addMigrationPaths(ctx context.Context, node *core.IpfsNode, peerInfo peer.A
 5. 返回 `nil`，表示操作成功。
 
 
-```
+```go
 func ipfsGet(ctx context.Context, ufs coreiface.UnixfsAPI, ipfsPath path.Path) error {
 	nd, err := ufs.Get(ctx, ipfsPath)
 	if err != nil {
@@ -1447,7 +1447,7 @@ func ipfsGet(ctx context.Context, ufs coreiface.UnixfsAPI, ipfsPath path.Path) e
 
 ```
 
-# `/opt/kubo/cmd/ipfs/daemon.go`
+# `cmd/ipfs/daemon.go`
 
 This is a list of used constants for the IPFS-Kubernetes project.
 
@@ -1479,7 +1479,7 @@ const (
 	P2P_HTTP      = "dba4a124b4c4e2cb3940562202e4c68f4582000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 
 
-```
+```go
 package main
 
 import (
@@ -1534,7 +1534,7 @@ import (
 这些选项用于配置Go集群的一些选项，例如调整文件大小限制，启用了DHT（分布式哈希）服务，并配置了Routing等选项。
 
 
-```
+```go
 const (
 	adjustFDLimitKwd           = "manage-fdlimit"
 	enableGCKwd                = "enable-gc"
@@ -1596,7 +1596,7 @@ const (
   例如，要更改“Gateway”端口，在ipfs config Addresses.Gateway中输入新端口，然后运行该命令。
 
 
-```
+```go
 var daemonCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Run a network-connected IPFS node.",
@@ -1625,7 +1625,7 @@ For example, to change the 'Gateway' port:
 最后，提到了一个安全注意事项：如果暴露了RPC（Remote Procedure Call，远程过程调用）API，就存在被远程攻击的风险。因此，如果需要控制节点，务必采取相应的安全措施，比如使用IPFS的子节点、设置访问权限等。
 
 
-```
+```go
 The RPC API address can be changed the same way:
 
   ipfs config Addresses.API /ip4/127.0.0.1/tcp/5002
@@ -1649,7 +1649,7 @@ make sure to protect the port as you would other services or database
 具体来说，这段代码会将`API.HTTPHeaders.X-Special-Header`和`Gateway.HTTPHeaders.X-Special-Header`配置为`"so special :)"`。这样，在任何HTTP请求或响应中，都可以通过设置这些配置文件中的键来传递任意HTTP头。需要注意的是，这些键的值是一个字符串数组，因为HTTP头可能具有多个值，而这段代码方便地通过一个变量来传递它们。
 
 
-```
+```go
 HTTP Headers
 
 ipfs supports passing arbitrary headers to the RPC API and Gateway. You can
@@ -1674,7 +1674,7 @@ CORS Headers (for API)
 最后，它设置了一个名为 "Shutdown" 的服务来关闭 IPFS 守护进程，并且在停止时需要发送一个信号（通常是 SIGINT 或 SIGTERM）。
 
 
-```
+```go
 You can setup CORS headers the same way:
 
   ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin "[\"example.com\"]"
@@ -1699,7 +1699,7 @@ IPFS_PATH environment variable
 此外，该代码还提到了IPFS的依赖关系，提到了以前版本中使用环境变量来设置API原始内容，但该功能已被弃用，建议使用HTTP头来进行设置。
 
 
-```
+```go
 ipfs uses a repository in the local file system. By default, the repo is
 located at ~/.ipfs. To change the repo location, set the $IPFS_PATH
 environment variable:
@@ -1732,7 +1732,7 @@ The `代理人版本`设置可以通过`--init`选项来覆盖。
 如果用户希望通过`--init`选项来指定多个设置，则必须将它们都设置为`true`，否则会导致错误。
 
 
-```
+```go
 `,
 	},
 
@@ -1791,7 +1791,7 @@ text
 通过设置 `%H` 和 `%P` 选项，我们可以获得有关路由器详细的信息。
 
 
-```
+```go
 // defaultMux tells mux to serve path using the default muxer. This is
 // mostly useful to hook up things that register in the default muxer,
 // and don't provide a convenient http.Handler entry point, such as
@@ -2081,7 +2081,7 @@ Finally, it tries to connect to the IPFS swarm and, if it succeeds, it does some
 It also includes a deprecation notice for IPFS_REUSEPORT, and tells you to use LIBP2P_TCP_REUSEPORT instead.
 
 
-```
+```go
 Warning: You are using an RSA Peer ID, which was replaced by Ed25519
 as the default recommended in Kubo since September 2020. Signing with
 RSA Peer IDs is more CPU-intensive than with other key types.
@@ -2276,7 +2276,7 @@ It also has a option to enable the webapi, which is a web interface for this mid
 The last option is the option of the MutexFraction option of the corehttp.MutexFractionOption, which is used to enqueue the request in the queue according to the queue size.
 
 
-```
+```go
 // serveHTTPApi collects options, creates listener, prints status message and starts serving requests.
 func serveHTTPApi(req *cmds.Request, cctx *oldcmds.Context) (<-chan error, error) {
 	cfg, err := cctx.GetConfig()
@@ -2400,7 +2400,7 @@ func serveHTTPApi(req *cmds.Request, cctx *oldcmds.Context) (<-chan error, error
 这两个函数是通过 `core` 和 `ipfs` 包实现的。
 
 
-```
+```go
 func rewriteMaddrToUseLocalhostIfItsAny(maddr ma.Multiaddr) ma.Multiaddr {
 	first, rest := ma.SplitFirst(maddr)
 
@@ -2462,7 +2462,7 @@ Here's how it works:
 This function is using the `corehttp` and `manet` packages to handle HTTP, and is written in the Pug/Python style.
 
 
-```
+```go
 // serveHTTPGateway collects options, creates listener, prints status message and starts serving requests.
 func serveHTTPGateway(req *cmds.Request, cctx *oldcmds.Context) (<-chan error, error) {
 	cfg, err := cctx.GetConfig()
@@ -2600,7 +2600,7 @@ Here's a high-level overview of what happens:
 The error handling in this function is not very dr肉质， and the function appears to be very carefully written to minimize the risk of errors.
 
 
-```
+```go
 const gatewayProtocolID protocol.ID = "/ipfs/gateway" // FIXME: specify https://github.com/ipfs/specs/issues/433
 
 func serveTrustlessGatewayOverLibp2p(cctx *oldcmds.Context) (<-chan error, error) {
@@ -2661,7 +2661,7 @@ func serveTrustlessGatewayOverLibp2p(cctx *oldcmds.Context) (<-chan error, error
 这段代码的作用是挂载FUSE驱动器。它首先读取存储在`req.Options`[ipfsMountKwd]和`req.Options`[ipnsMountKwd]`上的配置参数，如果失败，则返回一个错误消息。然后，它尝试从`cfg.Mounts.IPFS`和`cfg.Mounts.IPNS`中获取FUSE驱动器的挂载点。如果这些路径中的任何一个存在，它将挂载FUSE驱动器到指定的目录。最后，它打印出FUSE和IPFS挂载点的路径。
 
 
-```
+```go
 // collects options and opens the fuse mountpoint.
 func mountFuse(req *cmds.Request, cctx *oldcmds.Context) error {
 	cfg, err := cctx.GetConfig()
@@ -2704,7 +2704,7 @@ func mountFuse(req *cmds.Request, cctx *oldcmds.Context) error {
 另外，函数内部还定义了一个名为 `merge` 的函数，该函数接受多个只读的错误通道。函数的作用是合并这些错误通道，使得所有错误都只读，然后关闭所有错误通道。
 
 
-```
+```go
 func maybeRunGC(req *cmds.Request, node *core.IpfsNode) (<-chan error, error) {
 	enableGC, _ := req.Options[enableGCKwd].(bool)
 	if !enableGC {
@@ -2736,7 +2736,7 @@ func maybeRunGC(req *cmds.Request, node *core.IpfsNode) (<-chan error, error) {
 8. 返回输入通道中所有错误消息的集合。
 
 
-```
+```go
 // taken from http://blog.golang.org/pipelines
 func merge(cs ...<-chan error) <-chan error {
 	var wg sync.WaitGroup
@@ -2777,7 +2777,7 @@ func merge(cs ...<-chan error) <-chan error {
 具体来说，如果用户输入的字符串是 "是"（`y`）或 "否"（`N`），函数将返回 `true`，否则返回 `false`。最后，每次循环提醒用户输入一个字符，直到用户不再输入字符串为止。
 
 
-```
+```go
 func YesNoPrompt(prompt string) bool {
 	var s string
 	for i := 0; i < 3; i++ {
@@ -2811,7 +2811,7 @@ func YesNoPrompt(prompt string) bool {
 最后，函数使用 `fmt.Printf` 函数将所有打印内容拼接成一个字符串，并输出到控制台。
 
 
-```
+```go
 func printVersion() {
 	v := version.CurrentVersionNumber
 	if version.CurrentCommit != "" {

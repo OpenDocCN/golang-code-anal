@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 42
 
-# `/opt/kubo/docs/examples/kubo-as-a-library/main.go`
+# `docs/examples/kubo-as-a-library/main.go`
 
 这段代码是一个名为 "main" 的包，它包含了在 Kubernetes 中管理多重签名（multi-signature）和文件系统的工具。
 
@@ -36,7 +36,7 @@
 综上所述，这段代码的作用是定义了一个在 Kubernetes 中管理多重签名和文件系统的工具。
 
 
-```
+```go
 package main
 
 import (
@@ -76,7 +76,7 @@ import (
 这段代码的作用是设置 IPFS 仓库的插件，以便在初始化时能够使用预加载的和外部插件。
 
 
-```
+```go
 /// ------ Setting up the IPFS Repo
 
 func setupPlugins(externalPluginsPath string) error {
@@ -144,7 +144,7 @@ func initRepo(repoPath string, cfg config.Configuration) error {
 The function has a parameter of type `string` and a parameter of type `config.Configuration
 
 
-```
+```go
 func createTempRepo() (string, error) {
 	repoPath, err := os.MkdirTemp("", "ipfs-shell")
 	if err != nil {
@@ -203,7 +203,7 @@ d. 选项还设置了新节点应该连接的 IPFS 仓库。这个选项通过 f
 3. 函数返回：新创建的 IPFS 节点的核心 API，或者错误。
 
 
-```
+```go
 /// ------ Spawning the node
 
 // Creates an IPFS node and returns its coreAPI.
@@ -251,7 +251,7 @@ func createNode(ctx context.Context, repoPath string) (*core.IpfsNode, error) {
 最后，函数使用coreapi.NewCoreAPI函数返回一个名为api的API对象，该对象用于与Core API进行通信。然后，函数使用do...return语句返回已经创建的API和节点，如果曾经出现错误，则返回一个非空 error。
 
 
-```
+```go
 var loadPluginsOnce sync.Once
 
 // Spawns a node to be used just for this run (i.e. creates a tmp repo).
@@ -305,7 +305,7 @@ c. 如果连接成功，设置 `defer` 变量为 `wg.Done`，以确保 `wg` 等�
 5. 函数返回一个 `nil`，表示没有错误。
 
 
-```
+```go
 func connectToPeers(ctx context.Context, ipfs icore.CoreAPI, peers []string) error {
 	var wg sync.WaitGroup
 	peerInfos := make(map[peer.ID]*peer.AddrInfo, len(peers))
@@ -349,7 +349,7 @@ func connectToPeers(ctx context.Context, ipfs icore.CoreAPI, peers []string) err
 最后，函数返回输入文件 `f` 和一个错误对象 `err`。
 
 
-```
+```go
 func getUnixfsNode(path string) (files.Node, error) {
 	st, err := os.Stat(path)
 	if err != nil {
@@ -371,7 +371,7 @@ func getUnixfsNode(path string) (files.Node, error) {
 Hello! How can I assist you today?
 
 
-```
+```go
 var flagExp = flag.Bool("experimental", false, "enable experimental features")
 
 func main() {
@@ -532,7 +532,7 @@ func main() {
 
 ```
 
-# `/opt/kubo/docs/examples/kubo-as-a-library/main_test.go`
+# `docs/examples/kubo-as-a-library/main_test.go`
 
 这段代码是一个 Go 语言编写的测试用例，主要作用是测试一个名为 "main.go" 的 Go 语言文件是否能够正确运行。
 
@@ -543,7 +543,7 @@ func main() {
 最后，函数使用了 "testing.T" 类型的 "Test" 函数来运行测试，该函数会在测试开始时执行 "TestExample" 函数，如果函数输出的结果与 "example did not run successfully" 的预期不符，则会执行 "t.Errorf" 函数并输出错误信息。
 
 
-```
+```go
 package main
 
 import (
@@ -594,7 +594,7 @@ In order to complete this tutorial, you will need:
 
 Download Kubo and jump into the example folder:
 
-```console
+```goconsole
 $ git clone https://github.com/ipfs/kubo.git
 $ cd kubo/docs/examples/kubo-as-a-library
 ```
@@ -603,13 +603,13 @@ $ cd kubo/docs/examples/kubo-as-a-library
 
 To run the example, simply do:
 
-```console
+```goconsole
 $ go run main.go
 ```
 
 You should see the following as output:
 
-```
+```go
 -- Getting an IPFS node running --
 Spawning Kubo node on a temporary repo
 IPFS node is running
@@ -747,7 +747,7 @@ TODO: Reverse proxies and the subdomain gateway.
 TODO: discuss load balancing based on the CID versus the source IP.
 
 
-# `/opt/kubo/fuse/ipns/common.go`
+# `fuse/ipns/common.go`
 
 这段代码定义了一个名为"ipns"的包，它用于管理IPFS网络中的节点和目录。具体来说，它实现了以下功能：
 
@@ -769,7 +769,7 @@ TODO: discuss load balancing based on the CID versus the source IP.
 通过这些库，ipns实现了通过名称空间对IPFS节点进行编辑和发布，使得IPFS网络更加灵活和易于使用。
 
 
-```
+```go
 package ipns
 
 import (
@@ -807,14 +807,14 @@ func InitializeKeyspace(n *core.IpfsNode, key ci.PrivKey) error {
 
 ```
 
-# `/opt/kubo/fuse/ipns/ipns_test.go`
+# `fuse/ipns/ipns_test.go`
 
 这段代码是一个 Go 语言编写的工具链，用于构建 Go 语言项目。它通过结合几个工具链（ipns、fuse、coreapi、fstest、u、ci）来确保构建过程的顺利进行。ipns 是用于构建 IPNS（InterPlanetary System）系统的工具，fuse 是用于创建自定义 FUSE（Filesystem in Userspace）系统的工具，coreapi 是用于与 IPFS（InterPlanetary System）系统的 API 进行交互的工具，而 fstest 是用于测试工具。
 
 具体来说，这段代码的作用是确保在构建 Go 语言项目时，所有必要的构建工具都已经被安装并且配置正确。它通过运行一系列的测试来检测是否支持一些特定的工具链，如 ipns、fuse、coreapi，并在测试成功后构建项目。如果其中任何一个测试失败，工具链将会被清除并重新安装。
 
 
-```
+```go
 //go:build !nofuse && !openbsd && !netbsd && !plan9
 // +build !nofuse,!openbsd,!netbsd,!plan9
 
@@ -852,7 +852,7 @@ import (
 2. 第二段代码，定义了一个名为 "func randBytes" 的函数，该函数接收一个名为 "size" 的整数参数。函数的作用是从一个名为 "u" 的缓冲区（Buffer）中生成随机大小字节，并返回生成的字节数组。函数使用了一个名为 "io.ReadFull" 的 io 函数和一个名为 "u.NewTimeSeededRand" 的新生成随机数种子函数作为实现。
 
 
-```
+```go
 func maybeSkipFuseTests(t *testing.T) {
 	if ci.NoFuse() {
 		t.Skip("Skipping FUSE tests")
@@ -892,7 +892,7 @@ func randBytes(size int) []byte {
 这段代码定义了一个名为 `writeFileOrFail` 的函数，接受两个参数 `t` 和 `size` 和 `path`。函数的作用是 writingFile 函数的补充版本，可以同时成功写入文件并返回数据。函数抛出错误，当调用时，如果没有错误发生，则表示文件已成功写入。
 
 
-```
+```go
 func mkdir(t *testing.T, path string) {
 	err := os.Mkdir(path, os.ModeDir)
 	if err != nil {
@@ -921,7 +921,7 @@ func writeFileOrFail(t *testing.T, size int, path string) []byte {
 “verifyFile”函数用于验证从文件中读取的数据是否与预期数据相等。它使用os.ReadFile函数从文件中读取数据，并将其与一个已知的预期数据切片进行比较。如果读取的数据与预期数据不匹配，函数将打印错误并返回错误对象。
 
 
-```
+```go
 func writeFile(size int, path string) ([]byte, error) {
 	data := randBytes(size)
 	err := os.WriteFile(path, data, 0o666)
@@ -949,7 +949,7 @@ func verifyFile(t *testing.T, path string, wantData []byte) {
 2. `closeMount` 函数的作用是关闭已经挂载的文件系统。它接收一个 `mountWrap` 类型的参数，并使用 `if err := recover(); err != nil` 代码来捕获任何 panics that may occur during the process. 如果 panics occur，函数会崩溃并记录错误信息。然后，函数关闭挂载的文件系统，并调用 `mnt.Close()` 函数关闭已经挂载的文件系统。
 
 
-```
+```go
 func checkExists(t *testing.T, path string) {
 	_, err := os.Stat(path)
 	if err != nil {
@@ -976,7 +976,7 @@ func closeMount(mnt *mountWrap) {
 最后，在 IpfsNode 上使用了 mount 函数，并返回了一个指向 fstest.Mount 类型和 fs 类型对象的引用。
 
 
-```
+```go
 type mountWrap struct {
 	*fstest.Mount
 	Fs *FileSystem
@@ -1043,7 +1043,7 @@ func setupIpnsTest(t *testing.T, node *core.IpfsNode) (*core.IpfsNode, *mountWra
 由于上下文和测试函数都没有提供更多的信息，因此无法提供更多有关代码如何工作的背景。
 
 
-```
+```go
 func TestIpnsLocalLink(t *testing.T) {
 	nd, mnt := setupIpnsTest(t, nil)
 	defer mnt.Close()
@@ -1072,7 +1072,7 @@ func TestIpnsLocalLink(t *testing.T) {
 最后，它比较 "rbuf" 和 "rbuf2" 中的数据是否相等。如果不相等，它就会输出 "Incorrect Read!" 错误并跳过当前测试。否则，它将不会输出任何错误信息，而是继续执行之前的操作。
 
 
-```
+```go
 // Test writing a file and reading it back.
 func TestIpnsBasicIO(t *testing.T) {
 	if testing.Short() {
@@ -1115,7 +1115,7 @@ func TestIpnsBasicIO(t *testing.T) {
 具体来说，代码首先创建一个名为"/local/atestfile"的文件，并向其中写入127个字节的数据。然后，代码挂载IPNS并关闭了之前打开的文件。接着，代码再次尝试挂载IPNS并打开之前创建的文件。如果IPNS在两次挂载之间成功读取并写入了文件数据，那么它们的 contents应该相同。否则，如果它们的内容不同，那么测试就会失败。
 
 
-```
+```go
 // Test to make sure file changes persist over mounts of ipns.
 func TestFilePersistence(t *testing.T) {
 	if testing.Short() {
@@ -1159,7 +1159,7 @@ func TestFilePersistence(t *testing.T) {
 最后，函数会再次调用 "setupIpnsTest" 函数来关闭 "node" 对象。
 
 
-```
+```go
 func TestMultipleDirs(t *testing.T) {
 	node, mnt := setupIpnsTest(t, nil)
 
@@ -1212,7 +1212,7 @@ func TestMultipleDirs(t *testing.T) {
 这段代码的作用是确保文件系统能够正确地报告文件大小，可以用于测试文件系统功能正常运行。
 
 
-```
+```go
 // Test to make sure the filesystem reports file sizes correctly.
 func TestFileSizeReporting(t *testing.T) {
 	if testing.Short() {
@@ -1250,7 +1250,7 @@ func TestFileSizeReporting(t *testing.T) {
 如果测试时间小于设置为short，则会执行步骤3至6，即创建目录并测试它是否可以创建多个具有相同名字的entry。如果实验失败，函数将打印错误信息并退出。
 
 
-```
+```go
 // Test to make sure you can't create multiple entries with the same name.
 func TestDoubleEntryFailure(t *testing.T) {
 	if testing.Short() {
@@ -1300,7 +1300,7 @@ func TestDoubleEntryFailure(t *testing.T) {
 10. 如果所有操作都成功，则不输出任何信息，并跳过当前测试。
 
 
-```
+```go
 func TestAppendFile(t *testing.T) {
 	if testing.Short() {
 		t.SkipNow()
@@ -1361,7 +1361,7 @@ func TestAppendFile(t *testing.T) {
 11. 循环遍历每个文件数组，调用 `verifyFile` 函数，比较当前 `data` 数组中的元素和 `out` 数组中的元素，并输出结果。
 
 
-```
+```go
 func TestConcurrentWrites(t *testing.T) {
 	if testing.Short() {
 		t.SkipNow()
@@ -1425,7 +1425,7 @@ The program is structured as follows:
 8. Finally, the program reads the data from the new files and checks if it matches what was written. If it doesn't, an error is printed.
 
 
-```
+```go
 func TestFSThrash(t *testing.T) {
 	files := make(map[string][]byte)
 
@@ -1519,7 +1519,7 @@ func TestFSThrash(t *testing.T) {
 如果`fi.Write`函数在调用过程中出现错误，例如写入数据时写入的内存不足或者写入数据时出现错误，那么该代码会记录错误并跳过该次测试。如果所有测试都通过，那么测试将通过，并输出测试的名称。否则，测试将失败，并输出错误信息。
 
 
-```
+```go
 // Test writing a medium sized file one byte at a time.
 func TestMultiWrite(t *testing.T) {
 	if testing.Short() {

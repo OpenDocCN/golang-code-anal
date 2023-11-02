@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 14
 
-# `/opt/kubo/core/commands/filestore.go`
+# `core/commands/filestore.go`
 
 该代码是一个 Go 语言package 项目，它定义了一个名为“commands”的命令行工具。通过导入其他依赖包，它实现了将文件存储在 IPFS（InterPlanetary File System）上的命令行工具。以下是它主要实现的功能：
 
@@ -19,7 +19,7 @@
 7. 将文件从 IPFS 下载到本地：通过 `core` 和 `e` 包实现的文件系统操作，从 IPFS 下载文件到本地执行。
 
 
-```
+```go
 package commands
 
 import (
@@ -51,7 +51,7 @@ import (
 该命令对象还包含一个名为FileStoreCmd的子命令列表，该列表包含用于与FileStore对象交互的命令。其中，ls命令用于列出FileStore对象中指定目录下的文件列表，verify命令用于验证FileStore对象中指定目录下的文件是否有效，dup命令用于删除FileStore对象中指定目录下的重复文件。
 
 
-```
+```go
 var FileStoreCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Interact with filestore objects.",
@@ -82,7 +82,7 @@ The program also provides a `ListAll` function that retrieves the contents of th
 The program uses several helper functions, including `getFilestore`, `filestore.ListAll`, and `streamResult`, to perform various tasks, such as retrieving the file store, listing all contents, and printing the results.
 
 
-```
+```go
 var lsFileStore = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "List objects in filestore.",
@@ -159,7 +159,7 @@ The output is:
 输出结果中包含四个字段，分别是 status、hash、size 和 path，它们按照顺序描述了验证过程中状态的变化。其中，status 字段输出一个字符串，指示当前验证过程中的状态，它可能包括诸如 "ok" 或 "not found" 等。
 
 
-```
+```go
 var verifyFileStore = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Verify objects in filestore.",
@@ -186,7 +186,7 @@ The server also has a handler for the `/help` URL, which displays the available 
 The server uses the `filestore` package to handle the file system operations and the `io/ioutil` package to handle the file paths. The `filestore.ListRes` type represents the response from the file store, which includes the list of files and the format of each file.
 
 
-```
+```go
 changed:  the contents of the backing file have changed
 no-file:  the backing file could not be found
 error:    there was some other problem reading the file
@@ -272,7 +272,7 @@ For ERROR entries the error will also be printed to stderr.
 该命令行程序还定义了一个辅助函数`refsEncoderMap`，它返回一个映射，其中键是文件系统中的块ID，而值是辅助函数`res.Emitter.Add`使用的输出流类型。
 
 
-```
+```go
 var dupsFileStore = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "List blocks that are both in the filestore and standard block storage.",
@@ -320,7 +320,7 @@ var dupsFileStore = &cmds.Command{
 `listByArgs`函数的作用是接收一个字符串数组和一个 `filestore.Filestore` 对象。它通过解码每个字符串参数，并将其与 `filestore.Verify` 函数一起传递给 `res.Emit` 函数。如果 `filestore.Verify` 函数返回一个错误，它将被包含在 `ret` 字段中，并继续传播错误。如果所有传递给 `res.Emit` 函数的参数都通过了验证，那么 `res.Emit` 函数将正常返回。
 
 
-```
+```go
 func getFilestore(env cmds.Environment) (*core.IpfsNode, *filestore.Filestore, error) {
 	n, err := cmdenv.GetNode(env)
 	if err != nil {
@@ -357,7 +357,7 @@ func listByArgs(ctx context.Context, res cmds.ResponseEmitter, fs *filestore.Fil
 
 ```
 
-# `/opt/kubo/core/commands/get.go`
+# `core/commands/get.go`
 
 该代码是一个 Go 语言编写的命令行工具，它主要用于在 Kubernetes 中管理命令行工具（如 "kubectl"）。通过使用 "compress/gzip" 和 "strings" 包，可以将文件和输出内容进行压缩和处理字符串。
 
@@ -384,7 +384,7 @@ func listByArgs(ctx context.Context, res cmds.ResponseEmitter, fs *filestore.Fil
 10. 通过 "cmds" 包，将所有功能组合成一个 "main" 函数，该函数使用前面定义的 "fmt" 函数将结果打印为 "stdout"，然后将 "options" 设置为 "stdout"，以便将结果保存到 "options" 变量中，最后将它们传递给 "main" 函数。
 
 
-```
+```go
 package commands
 
 import (
@@ -417,7 +417,7 @@ import (
 最后，该代码定义了一个名为“GetCmd”的变量，它是一个名为“cmds.Command”的函数创建的命令行对象。该命令行对象将输出帮助信息，用于下载IPFS或IPNS对象。
 
 
-```
+```go
 var ErrInvalidCompressionLevel = errors.New("compression level must be between 1 and 9")
 
 const (
@@ -448,7 +448,7 @@ The program also has a function that returns a response object, which can be emi
 The program uses a closure to perform the writing to the file, which is closed when the response is emitted.
 
 
-```
+```go
 By default, the output will be stored at './<ipfs-path>', but an alternate
 path can be specified with '--output=<path>' or '-o=<path>'.
 
@@ -564,7 +564,7 @@ may also specify the level of compression by specifying '-l=<1-9>'.
 该结构的 `progressBarForReader` 函数用于创建一个 `io.ProgressBar` 对象，该对象使用 `clearlineReader` 中的 `barR` 作为 `io.Reader`。`barR` 通过 `bar.NewProxyReader(r)` 创建了一个 `io.Reader` 类型的 `r` 和 `io.ProgressBar` 类型的 `bar` 之间的代理 `barR`。函数将返回一个 `io.ProgressBar` 对象和相应的 `clearlineReader` 对象。
 
 
-```
+```go
 type clearlineReader struct {
 	io.Reader
 	out io.Writer
@@ -596,7 +596,7 @@ func progressBarForReader(out io.Writer, r io.Reader, l int64) (*pb.ProgressBar,
 最后，函数返回了一个名为 "bar" 的 progress bar 对象。
 
 
-```
+```go
 func makeProgressBar(out io.Writer, l int64) *pb.ProgressBar {
 	// setup bar reader
 	// TODO: get total length of files
@@ -635,7 +635,7 @@ func makeProgressBar(out io.Writer, l int64) *pb.ProgressBar {
 3. 在getWriter结构体中，定义了两个名为Out和Err的io.Writer类型的成员变量，用于不同的输出。还定义了一个名为Archive的布尔类型的成员变量，表示是否启用归档，以及一个名为Compression的int类型的成员变量，表示压缩算法。另外，还定义了一个名为Size的int64类型的成员变量，表示文件大小，以及一个名为Progress的布尔类型的成员变量，表示是否显示进度条。最后，在函数实现中，通过设置这些成员变量的值，来控制getOutPath函数的行为。
 
 
-```
+```go
 func getOutPath(req *cmds.Request) string {
 	outPath, _ := req.Options[outputOptionName].(string)
 	if outPath == "" {
@@ -667,7 +667,7 @@ type getWriter struct {
 接下来，函数会创建一个新的文件并关闭文件的输入和输出流。然后，调用 `fmt.Fprintf` 函数将压缩器名称存储到 `gw.Out` 变量中，并使用 ` progressBarForReader` 函数在写入过程中进行进度条显示。最后，调用 `io.Copy` 函数将压缩器对象的内容复制到新生成的文件中，并返回任何错误。
 
 
-```
+```go
 func (gw *getWriter) Write(r io.Reader, fpath string) error {
 	if gw.Archive || gw.Compression != gzip.NoCompression {
 		return gw.writeArchive(r, fpath)
@@ -726,7 +726,7 @@ func (gw *getWriter) writeArchive(r io.Reader, fpath string) error {
 5. 如果任何错误发生在写入过程中，函数将返回一个相应的错误。
 
 
-```
+```go
 func (gw *getWriter) writeExtracted(r io.Reader, fpath string) error {
 	fmt.Fprintf(gw.Out, "Saving file(s) to %s\n", fpath)
 	var progressCb func(int64) int64
@@ -757,7 +757,7 @@ func (gw *getWriter) writeExtracted(r io.Reader, fpath string) error {
 4. 最后，函数返回 `compressionLevelOptionName` 设置的压缩级别，并输出错误信息（如果发生错误）。
 
 
-```
+```go
 func getCompressOptions(req *cmds.Request) (int, error) {
 	cmprs, _ := req.Options[compressOptionName].(bool)
 	cmplvl, cmplvlFound := req.Options[compressionLevelOptionName].(int)
@@ -782,7 +782,7 @@ func getCompressOptions(req *cmds.Request) (int, error) {
 这里需要注意的是，由于没有提供具体的配置选项，所以这个缓冲区大小可能无法根据需要进行调整。
 
 
-```
+```go
 // TODO: does this need to be configurable?
 var DefaultBufSize = 1048576
 
@@ -813,7 +813,7 @@ The function then calls the `CloseGzAndPipe` function, which closes the `MaybeGz
 If the `archive` value is `True`, the function writes the TAR file to the `MaybeGzWriter` using tar's `WriteFile` method. If the `archive` value is `False` or `None`, the function will not compress the TAR file and will use it as is, without any compression.
 
 
-```
+```go
 func fileArchive(f files.Node, name string, archive bool, compression int) (io.ReadCloser, error) {
 	cleaned := gopath.Clean(name)
 	_, filename := gopath.Split(cleaned)
@@ -891,7 +891,7 @@ func fileArchive(f files.Node, name string, archive bool, compression int) (io.R
 函数的实现使用了 Go 标准库中的 `io` 和 `error` 包，`io.WriteCloser` 类型表示一个可以关闭写入器的接口，`io.identityWriteCloser` 类型表示一个简单的写入器，它不会对数据进行压缩。
 
 
-```
+```go
 func newMaybeGzWriter(w io.Writer, compression int) (io.WriteCloser, error) {
 	if compression != gzip.NoCompression {
 		return gzip.NewWriterLevel(w, compression)
@@ -901,7 +901,7 @@ func newMaybeGzWriter(w io.Writer, compression int) (io.WriteCloser, error) {
 
 ```
 
-# `/opt/kubo/core/commands/get_test.go`
+# `core/commands/get_test.go`
 
 This appears to be a testing framework for command-line interfaces (CLI) that uses the CMD shell and a set of test cases to verify the behavior of different commands.
 
@@ -919,7 +919,7 @@ Each test case is structured as follows:
 This testing framework appears to be designed to verify that the CLI behaves correctly in a wide range of situations and that commands can be easily understood and used.
 
 
-```
+```go
 package commands
 
 import (
@@ -991,7 +991,7 @@ func TestGetOutputPath(t *testing.T) {
 
 ```
 
-# `/opt/kubo/core/commands/helptext_test.go`
+# `core/commands/helptext_test.go`
 
 这段代码定义了一个名为“commands”的包，其中定义了一个名为“checkHelptextRecursive”的函数。该函数接收两个参数：一个字符串数组“name”和一个名为“c”的cmds.Command类型的变量。
 
@@ -1007,7 +1007,7 @@ func TestGetOutputPath(t *testing.T) {
 6. 循环遍历定义中的所有子命令，递归调用“checkHelptextRecursive”函数，对每个子命令的结果进行测试。
 
 
-```
+```go
 package commands
 
 import (
@@ -1069,7 +1069,7 @@ func checkHelptextRecursive(t *testing.T, name []string, c *cmds.Command) {
 3. 调用 "testing.T.Print" 函数，这个函数的作用是输出 "Root.ProcessHelp()" 和 "checkHelptextRecursive" 的函数名，作为示例输出的结果。
 
 
-```
+```go
 func TestHelptexts(t *testing.T) {
 	Root.ProcessHelp()
 	checkHelptextRecursive(t, []string{"ipfs"}, Root)
@@ -1077,7 +1077,7 @@ func TestHelptexts(t *testing.T) {
 
 ```
 
-# `/opt/kubo/core/commands/id.go`
+# `core/commands/id.go`
 
 该代码是一个 Go 语言编写的库命令行工具，用于在 IPFS（InterPlanetary File System）网络中执行操作。它提供了与 IPFS 网络进行交互的常用命令，如创建分片、提取片段、查看快照等。
 
@@ -1114,7 +1114,7 @@ func TestHelptexts(t *testing.T) {
 15. 在 "import" 语句中，定义了 "import (version)"、"import (cmds)"、"import (ke)"、"import (kb)"、"import (ic)"、"import (host)"、"import (peer)" 和 "import (pstore)" 等 9 个导入语句。这些导入语句告诉 Go 语言编译器，哪些库和包在 IPFS 网络中使用，以便编译器进行类型检查和警告。
 
 
-```
+```go
 package commands
 
 import (
@@ -1155,7 +1155,7 @@ import (
 此外，还有一对大括号 `{}`，里面包含了一些变量，但并没有对它们进行定义或赋值。
 
 
-```
+```go
 const offlineIDErrorMessage = "'ipfs id' cannot query information on remote peers without a running daemon; if you only want to convert --peerid-base, pass --offline option"
 
 type IdOutput struct { // nolint
@@ -1186,7 +1186,7 @@ const (
 最后，在代码的最后，通过调用 8 字节的 'var IDCmd = &cmds.Command{' 来创建一个名为 IDCmd 的命令对象，并返回该对象，以便将其用于后续的命令行操作。
 
 
-```
+```go
 var IDCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Show IPFS node id info.",
@@ -1207,7 +1207,7 @@ If no peer is specified, prints out information for local peers.
 Go back
 
 
-```
+```go
 EXAMPLE:
 
     ipfs id Qmece2RkXhsKe5CRooNisBTh4SK119KrXXGmoK6V3kb8aH -f="<addrs>\n"
@@ -1316,7 +1316,7 @@ EXAMPLE:
 函数返回一个`info`类型和一个`nil`，表示打印成功。
 
 
-```
+```go
 func printPeer(keyEnc ke.KeyEncoder, ps pstore.Peerstore, p peer.ID) (interface{}, error) {
 	if p == "" {
 		return nil, errors.New("attempted to print nil peer")
@@ -1374,7 +1374,7 @@ func printPeer(keyEnc ke.KeyEncoder, ps pstore.Peerstore, p peer.ID) (interface{
 函数最终返回一个名为 `info` 的输出对象，其中包含 Self 标识的字符串表示，以及 Agent 版本的可读版本。
 
 
-```
+```go
 // printing self is special cased as we get values differently.
 func printSelf(keyEnc ke.KeyEncoder, node *core.IpfsNode) (interface{}, error) {
 	info := new(IdOutput)
@@ -1405,7 +1405,7 @@ func printSelf(keyEnc ke.KeyEncoder, node *core.IpfsNode) (interface{}, error) {
 
 ```
 
-# `/opt/kubo/core/commands/keystore.go`
+# `core/commands/keystore.go`
 
 这段代码定义了一个名为 "commands" 的包，其中定义了一些与加密和哈希相关的函数和命令。
 
@@ -1451,7 +1451,7 @@ func printSelf(keyEnc ke.KeyEncoder, node *core.IpfsNode) (interface{}, error) {
 	* "哈希/网络安全"：实现了网络安全相关函数
 
 
-```
+```go
 package commands
 
 import (
@@ -1493,7 +1493,7 @@ import (
 `rmCmd` 和 `rotateCmd` 这两个子命令都接受一个名为 `String` 参数，这些参数用于指定要删除或旋转的键对。这些子命令都使用 `keyRmCmd` 和 `keyRotateCmd` 命令作为其 `rm` 和 `rotate` 参数，这些命令通过 `keyRenameCmd` 命令实现。
 
 
-```
+```go
 var KeyCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Create and list IPNS name keypairs",
@@ -1531,7 +1531,7 @@ publish'.
 最后，在函数和方法中，对 `keyRenameCmd` 和 `keyRenameOutput` 类型进行了使用和定义，用于实现对数据结构中键的 renamed（修改）操作。
 
 
-```
+```go
 type KeyOutput struct {
 	Name string
 	Id   string //nolint
@@ -1554,7 +1554,7 @@ type KeyRenameOutput struct {
 This is a Go code that generates a new key in a KV-store, such as a JSON store or a file store. The key is generated with the specified key type and size, and it is named with the specified name. The key is generated using the `keygen` command-line tool, which generates a new key with the specified key type and size, or a specified key type if the `--type` option is not specified.
 
 
-```
+```go
 const (
 	keyStoreAlgorithmDefault = options.Ed25519Key
 	keyStoreTypeOptionName   = "type"
@@ -1648,7 +1648,7 @@ var keyGenCmd = &cmds.Command{
 }
 
 
-```
+```go
 const (
 	// Key format options used both for importing and exporting.
 	keyFormatOptionName            = "format"
@@ -1675,7 +1675,7 @@ The function then performs the requested action based on the `output` option. Fo
 If any errors occur during the process, the function returns an error message.
 
 
-```
+```go
 path can be specified with '--output=<path>' or '-o=<path>'.
 
 It is possible to export a private key to interoperable PEM PKCS8 format by explicitly
@@ -1832,7 +1832,7 @@ It also appears to be using the `cmds` package, which is a part of the Go progra
 Another question, is this file the same as the one you've provided or it's a read-only file?
 
 
-```
+```go
 var keyImportCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Import a key and prints imported key id",
@@ -1987,7 +1987,7 @@ The PEM format allows for key generation outside of the IPFS node:
 在运行函数中，首先从请求中获取所有选项，然后使用一组键编码器将每个选项转换为相应的键对。接着，使用一组键对列表来打印所有本地键对。最后，将键对列表编码为 `KeyOutputList` 类型，以便以期望的方式返回给用户。
 
 
-```
+```go
 var keyListCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "List all local keypairs.",
@@ -2047,7 +2047,7 @@ The `Run` function is the main function that implements the CLI. It retrieves th
 If the API call fails, the `Run` function returns an error.
 
 
-```
+```go
 const (
 	keyStoreForceOptionName = "force"
 )
@@ -2119,7 +2119,7 @@ var keyRenameCmd = &cmds.Command{
 该命令还定义了一个名为`keyRmCmd`的结构体，该结构体定义了命令的选项、参数和编码器。该命令使用`keyRmCmd`结构体来定义命令行参数和选项，以及定义命令的行为。
 
 
-```
+```go
 var keyRmCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Remove a keypair.",
@@ -2172,7 +2172,7 @@ The identity is generated using the specified key store type and the specified k
 Please make sure the identity is not running before running this command.
 
 
-```
+```go
 var keyRotateCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Rotates the IPFS identity.",
@@ -2227,7 +2227,7 @@ Here's a breakdown of the parameters and their possible usage:
 The function first opens the repo and reads the config file from it. If it can't read the config file, it will return an error. Next, it generates a new identity using the `createIdentity` method and saves it to the keystore. If the `createIdentity` method fails, it will return an error. Then, it updates the identity and saves the new identity to the keystore. If the `setConfig` method fails, it will return an error. Finally, it returns from the function.
 
 
-```
+```go
 func doRotate(out io.Writer, repoRoot string, oldKey string, algorithm string, nBitsForKeypair int, nBitsGiven bool) error {
 	// Open repo
 	repo, err := fsrepo.Open(repoRoot)
@@ -2293,7 +2293,7 @@ func doRotate(out io.Writer, repoRoot string, oldKey string, algorithm string, n
 最后，函数返回一个 `nil` 表示成功。
 
 
-```
+```go
 func keyOutputListEncoders() cmds.EncoderFunc {
 	return cmds.MakeTypedEncoder(func(req *cmds.Request, w io.Writer, list *KeyOutputList) error {
 		withID, _ := req.Options["l"].(bool)
@@ -2321,7 +2321,7 @@ func keyOutputListEncoders() cmds.EncoderFunc {
 代码的作用是判断 DAemon 进程是否正在运行，如果 DAemon 进程正在运行，则会输出错误并返回错误。
 
 
-```
+```go
 // DaemonNotRunning checks to see if the ipfs repo is locked, indicating that
 // the daemon is running, and returns and error if the daemon is running.
 func DaemonNotRunning(req *cmds.Request, env cmds.Environment) error {

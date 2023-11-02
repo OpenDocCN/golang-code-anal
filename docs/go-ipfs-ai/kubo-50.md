@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 50
 
-# `/opt/kubo/repo/fsrepo/migrations/fetcher.go`
+# `repo/fsrepo/migrations/fetcher.go`
 
 这段代码定义了一个名为"migrations"的包。它包含了一些常量和变量，用于配置和管理基于IPFS(InterPlanetary File System)的分布。
 
@@ -17,7 +17,7 @@
 5. 在函数下载的过程中，使用了一个Go- multierror错误处理类，用于处理下载失败的情况。如果下载失败，会根据错误信息给出不同的错误提示。
 
 
-```
+```go
 package migrations
 
 import (
@@ -50,7 +50,7 @@ const (
 总结起来，该代码定义了一个用于在IPFS路径中获取文件的接口，以及一个用于多个文件读取的有多个Fetcher的`MultiFetcher`类型。
 
 
-```
+```go
 type Fetcher interface {
 	// Fetch attempts to fetch the file at the given ipfs path.
 	Fetch(ctx context.Context, filePath string) ([]byte, error)
@@ -82,7 +82,7 @@ type limitReadCloser struct {
 如果所有Fetcher函数都返回错误，那么函数将返回一个非 nil的错误对象。
 
 
-```
+```go
 // NewMultiFetcher creates a MultiFetcher with the given Fetchers.  The
 // Fetchers are tried in order, then passed to this function.
 func NewMultiFetcher(f ...Fetcher) *MultiFetcher {
@@ -118,7 +118,7 @@ func (f *MultiFetcher) Fetch(ctx context.Context, ipfsPath string) ([]byte, erro
 `Fetchers()` 函数返回一个 slice 类型的 `MultiFetcher` 类型的参数 `f` 中的 fetcher。这个函数的实现比较简单，直接将 `f.fetchers` 返回即可。
 
 
-```
+```go
 func (f *MultiFetcher) Close() error {
 	var errs error
 	for _, fetcher := range f.fetchers {
@@ -146,7 +146,7 @@ func (f *MultiFetcher) Fetchers() []Fetcher {
 函数内部使用了`Reader`类型的`rc`作为`Reader`的源，并将其缓冲区设置为`limit`，创建了一个`io.LimitReader`，然后将其作为`Reader`的`rc`参数传递给`limitReadCloser`，最后将`rc`作为`Closer`的参数传递给`limitReadCloser`，实现了对读写操作的限制。
 
 
-```
+```go
 // NewLimitReadCloser returns a new io.ReadCloser with the reader wrappen in a
 // io.LimitedReader limited to reading the amount specified.
 func NewLimitReadCloser(rc io.ReadCloser, limit int64) io.ReadCloser {
@@ -171,7 +171,7 @@ func NewLimitReadCloser(rc io.ReadCloser, limit int64) io.ReadCloser {
 最后，函数的实现还使用了一个名为 `func` 的函数类型，但这个类型似乎没有被使用。
 
 
-```
+```go
 // environ variable: GetDistPathEnv(CurrentIpfsDist).
 func GetDistPathEnv(distPath string) string {
 	if dist := os.Getenv(envIpfsDistPath); dist != "" {
@@ -185,7 +185,7 @@ func GetDistPathEnv(distPath string) string {
 
 ```
 
-# `/opt/kubo/repo/fsrepo/migrations/fetch_test.go`
+# `repo/fsrepo/migrations/fetch_test.go`
 
 这段代码定义了一个名为"migrations"的包。它导入了多个外部组件，包括"bufio"、"bytes"、"context"、"fmt"、"io"、"net/http"、"net/http/httptest"、"os"、"path"、"path/filepath"、"runtime"和"strings"。
 
@@ -196,7 +196,7 @@ func GetDistPathEnv(distPath string) string {
 在测试过程中，这些函数会模拟各种情况，包括请求和响应的延迟、带宽、错误率等。这些模拟结果会被记录下来，并用于后续的测试分析。
 
 
-```
+```go
 package migrations
 
 import (
@@ -226,7 +226,7 @@ import (
 createFakeArchive函数用于创建虚拟的归档文件。在函数中，如果接收到请求的路径中包含".tar.gz"，则使用递归函数createFakeArchive创建虚拟归档文件并返回文件名；如果接收到的是".zip"，则直接返回对应的文件名。
 
 
-```
+```go
 func createTestServer() *httptest.Server {
 	reqHandler := func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
@@ -252,7 +252,7 @@ func createTestServer() *httptest.Server {
 函数内部首先根据文件名划分文件名和路径，然后根据文件名获取或者是 "ipfs" 的文件名。接下来，实现两种情况：如果参数 `archZip` 为 true，则执行写入 ZIP 文件的逻辑，否则执行写入 TAR 文件的逻辑。最后，如果执行过程中出现错误，函数会输出一个错误并自动关闭当前的输入输出流。
 
 
-```
+```go
 func createFakeArchive(name string, archZip bool, w io.Writer) {
 	fileName := strings.Split(path.Base(name), "_")[0]
 	root := path.Base(path.Dir(path.Dir(name)))
@@ -292,7 +292,7 @@ func createFakeArchive(name string, archZip bool, w io.Writer) {
 该函数的作用是测试 `SetDistPathEnv` 函数在设置正确的环境变量 `distPath` 时，函数是否能够正确地返回。如果返回值与设置的环境变量不相等，则可能会导致函数行为与预期不符，从而触发错误信息输出和测试失败。
 
 
-```
+```go
 func TestGetDistPath(t *testing.T) {
 	os.Unsetenv(envIpfsDistPath)
 	distPath := GetDistPathEnv("")
@@ -346,7 +346,7 @@ func TestGetDistPath(t *testing.T) {
 3. 如果 HTTP 请求失败，那么输出失败信息。
 
 
-```
+```go
 func TestHttpFetch(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -390,7 +390,7 @@ func TestHttpFetch(t *testing.T) {
 This is a Go program that performs a file upload using the IPFS (InterPlanetary File System) protocol. It first checks if the operating system is Windows, and if it is not, it creates a temporary download directory and sets the TMPDIR environment variable. It then fetches the IPFS binary and performs the file upload, checking for errors such as a missing binary or a file that cannot be found.
 
 
-```
+```go
 func TestFetchBinary(t *testing.T) {
 	tmpDir := t.TempDir()
 
@@ -494,7 +494,7 @@ func TestFetchBinary(t *testing.T) {
 最后，函数发送了一个 HTTP 请求到 `/versions`，并检查返回的响应是否包含至少 45 个数据块。如果返回的响应数据不足 45 个数据块，函数将会输出 "unexpected more data"。
 
 
-```
+```go
 func TestMultiFetcher(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -519,7 +519,7 @@ func TestMultiFetcher(t *testing.T) {
 
 ```
 
-# `/opt/kubo/repo/fsrepo/migrations/httpfetcher.go`
+# `repo/fsrepo/migrations/httpfetcher.go`
 
 这段代码定义了一个名为 "migrations" 的包，其中包含了一些通用的工具函数和常量。
 
@@ -532,7 +532,7 @@ func TestMultiFetcher(t *testing.T) {
 最后，定义了一个名为 "convertIpfsUrl" 的函数，将 IPSL 格式的 URL 格式化为一个字符串，其中 "defaultGatewayURL" 替换了 "dweb.link"，用 "ipfs.io" 替换了 "ipfs.io"，将字符串中的 "ipfs.io" 转义，避免了转义出错。
 
 
-```
+```go
 package migrations
 
 import (
@@ -567,7 +567,7 @@ const (
 最后，该`HttpFetcher`结构体还包含一个名为`NewHttpFetcher`的函数，用于创建一个新的`HttpFetcher`实例。
 
 
-```
+```go
 // HttpFetcher fetches files over HTTP.
 type HttpFetcher struct { //nolint
 	distPath  string
@@ -607,7 +607,7 @@ var _ Fetcher = (*HttpFetcher)(nil)
 最后，函数返回 `f` 实例，以便后续使用。
 
 
-```
+```go
 func NewHttpFetcher(distPath, gateway, userAgent string, fetchLimit int64) *HttpFetcher { //nolint
 	f := &HttpFetcher{
 		distPath: LatestIpfsDist,
@@ -694,7 +694,7 @@ func (f *HttpFetcher) Fetch(ctx context.Context, filePath string) ([]byte, error
 6. 返回响应内容。
 
 
-```
+```go
 // Fetch attempts to fetch the file at the given path, from the distribution
 // site configured for this HttpFetcher.
 func (f *HttpFetcher) Fetch(ctx context.Context, filePath string) ([]byte, error) {
@@ -746,14 +746,14 @@ func (f *HttpFetcher) Fetch(ctx context.Context, filePath string) ([]byte, error
 因此，此代码的作用是确保 `HttpFetcher` 类型的对象在使用完毕后能够正确关闭，以避免潜在的程序崩溃或不可预期的行为。
 
 
-```
+```go
 func (f *HttpFetcher) Close() error {
 	return nil
 }
 
 ```
 
-# `/opt/kubo/repo/fsrepo/migrations/ipfsdir.go`
+# `repo/fsrepo/migrations/ipfsdir.go`
 
 这段代码定义了一个名为"migrations"的包，其中定义了一些常量和变量，以及一些函数和导入的第三方组件。
 
@@ -768,7 +768,7 @@ func (f *HttpFetcher) Close() error {
 - "strings.Replace"：在字符串中查找子字符串，并用新的字符串替换它们。
 
 
-```
+```go
 package migrations
 
 import (
@@ -797,7 +797,7 @@ const (
 如果指定了目录但返回了一个空字符串，则表示IPFS目录未设置，需要执行“Expand”函数并返回设置的目录。如果指定了目录并且返回了一个非空字符串，则返回该目录和错误信息。
 
 
-```
+```go
 func init() {
 	homedir.DisableCache = true
 }
@@ -841,7 +841,7 @@ func IpfsDir(dir string) (string, error) {
 最后，函数返回 "dir" 和错误信息，但如果函数成功执行并且没有错误，它将返回目录的名称，否则返回 nil。
 
 
-```
+```go
 // CheckIpfsDir gets the ipfs directory and checks that the directory exists.
 func CheckIpfsDir(dir string) (string, error) {
 	var err error
@@ -871,7 +871,7 @@ func CheckIpfsDir(dir string) (string, error) {
 函数的输入参数为ipfsDir，表示repo所在的目录，输出参数为(int, error)，表示repo版本号，错误输出为(int, error)。
 
 
-```
+```go
 // RepoVersion returns the version of the repo in the ipfs directory.  If the
 // ipfs directory is not specified then the default location is used.
 func RepoVersion(ipfsDir string) (int, error) {
@@ -905,7 +905,7 @@ func WriteRepoVersion(ipfsDir string, version int) error {
 函数返回一个错误对象，如果转换过程中出现错误，将抛出这个错误。错误对象包含一个字符串，描述了错误的原因。
 
 
-```
+```go
 func repoVersion(ipfsDir string) (int, error) {
 	c, err := os.ReadFile(filepath.Join(ipfsDir, versionFile))
 	if err != nil {
@@ -921,7 +921,7 @@ func repoVersion(ipfsDir string) (int, error) {
 
 ```
 
-# `/opt/kubo/repo/fsrepo/migrations/ipfsdir_test.go`
+# `repo/fsrepo/migrations/ipfsdir_test.go`
 
 这段代码是一个 Go 语言 package，名为 "migrations"，用于测试一些与 IPFS(InterPlanetary File System) 相关的功能。
 
@@ -957,7 +957,7 @@ func repoVersion(ipfsDir string) (int, error) {
 	* 接着，使用 `testing.T` 函数输出测试结果。
 
 
-```
+```go
 package migrations
 
 import (
@@ -994,7 +994,7 @@ The testing.Run() function also tests whether the `IpfsDir` function can correct
 If the testing.Run() function calls the `IpfsDir` function with a valid user-specific home directory and then calls the function again with a path that is not the user's home directory, it is expected that the function will return an error. This is because the user-specific home directory should only be used as the home directory for the `Ipfs` system, and using it for anything else can cause unexpected results.
 
 
-```
+```go
 func testIpfsDir(t *testing.T) {
 	_, err := CheckIpfsDir("")
 	if err == nil {
@@ -1068,7 +1068,7 @@ func testIpfsDir(t *testing.T) {
 最后，在 `CheckIpfsDir` 函数内部，会使用 `t.Fatal` 来输出错误信息，如果没有错误，则 `t.Fatal` 不会产生任何输出，从而使函数能够正确工作。
 
 
-```
+```go
 func testCheckIpfsDir(t *testing.T) {
 	_, err := CheckIpfsDir("~somesuer/foo")
 	if err == nil {
@@ -1102,7 +1102,7 @@ func testCheckIpfsDir(t *testing.T) {
 * 如果 `WriteRepoVersion` 函数调用时出现异常，函数会输出该异常。
 
 
-```
+```go
 func testRepoVersion(t *testing.T) {
 	badDir := "~somesuer/foo"
 	_, err := RepoVersion(badDir)
@@ -1156,7 +1156,7 @@ func testRepoVersion(t *testing.T) {
 
 ```
 
-# `/opt/kubo/repo/fsrepo/migrations/migrations.go`
+# `repo/fsrepo/migrations/migrations.go`
 
 这段代码是一个 Go 语言package 项目，用于管理 Kubernetes（K8s）中的移民（migration）。项目的作用是确保对所有工作负载的及时迁移，以避免对服务造成不可预测的破坏。以下是代码的功能和主要组件：
 
@@ -1173,7 +1173,7 @@ func testRepoVersion(t *testing.T) {
 总之，这段代码的主要目的是定义了一个用于管理 Kubernetes 移民的 Go 语言 package。通过定义了一系列的函数和常量，可以确保对所有工作负载进行及时迁移，从而保证服务的可靠性和稳定性。
 
 
-```
+```go
 package migrations
 
 import (
@@ -1219,7 +1219,7 @@ The function assumes that the following dependencies are available:
 It also assumes that the target file system has been set up correctly and that the `ipfs-io` tool has been properly configured.
 
 
-```
+```go
 const (
 	// Migrations subdirectory in distribution. Empty for root (no subdir).
 	distMigsRoot = ""
@@ -1307,7 +1307,7 @@ func RunMigration(ctx context.Context, fetcher Fetcher, targetVer int, ipfsDir s
 函数`ExeName`的参数是一个字符串`name`代表程序的文件名。函数返回程序的文件名。如果运行环境是Windows，函数将在文件名后加上`.exe`扩展名。函数使用了` runtime.GOOS`来获取当前运行环境的操作系统。
 
 
-```
+```go
 func NeedMigration(target int) (bool, error) {
 	vnum, err := RepoVersion("")
 	if err != nil {
@@ -1335,7 +1335,7 @@ func ExeName(name string) string {
 最后，函数还检查下载源文件是否为空，如果为空，则函数将使用默认的下载源文件。总之，函数读取并返回Migration配置文件中的Migration变量。
 
 
-```
+```go
 // ReadMigrationConfig reads the Migration section of the IPFS config, avoiding
 // reading anything other than the Migration section. That way, we're free to
 // make arbitrary changes to all _other_ sections in migrations.
@@ -1380,7 +1380,7 @@ func ReadMigrationConfig(repoRoot string, userConfigFile string) (*config.Migrat
 This is a function that takes in several parameters and returns a `Fetcher` function that can be used to download files. The function takes a list of source URLs, a directory path for storing the downloaded files
 
 
-```
+```go
 // GetMigrationFetcher creates one or more fetchers according to
 // downloadSources,.
 func GetMigrationFetcher(downloadSources []string, distPath string, newIpfsFetcher func(string) Fetcher) (Fetcher, error) {
@@ -1435,7 +1435,7 @@ func GetMigrationFetcher(downloadSources []string, distPath string, newIpfsFetch
 函数 `findMigrations` 接收一个上下文 `ctx` 和两个整数参数 `from` 和 `to`，并返回一个包含已找到的迁移名称、已找到的镜像文件位置的映射，以及错误。函数实现了一个循环，使用步长 `step` 遍历从 `from` 到 `to` 的所有可能的迁移，并使用 `migrationName` 函数计算每个迁移的名称。然后，使用 `exec.LookPath` 函数查找并返回每个迁移的二进制文件位置。函数使用了 `make` 函数来创建一个空的迁移列表、一个包含每个迁移名称和二进制文件位置的映射，以及一个错误。
 
 
-```
+```go
 func migrationName(from, to int) string {
 	return fmt.Sprintf("fs-repo-%d-to-%d", from, to)
 }
@@ -1483,7 +1483,7 @@ func findMigrations(ctx context.Context, from, to int) ([]string, map[string]str
 最后，函数返回 `cmd.Run()` 的返回值，它尝试调用 `cmd.Run()` 来运行命令并返回一个非零 exit 状态的错误。
 
 
-```
+```go
 func runMigration(ctx context.Context, binPath, ipfsDir string, revert bool, logger *log.Logger) error {
 	pathArg := fmt.Sprintf("-path=%s", ipfsDir)
 	var cmd *exec.Cmd
@@ -1512,7 +1512,7 @@ The function uses a ` for` loop to download and unpack all the migrations concur
 If there are any issues with the downloads or unloads, the function returns an error and includes it in the list of fails. The function also returns an error if the download or unload fails and the error message is not defined in the context.
 
 
-```
+```go
 // fetchMigrations downloads the requested migrations, and returns a slice with
 // the paths of each binary, in the same order specified by needed.
 func fetchMigrations(ctx context.Context, fetcher Fetcher, needed []string, destDir string, logger *log.Logger) ([]string, error) {

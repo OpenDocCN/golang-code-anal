@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 28
 
-# `/opt/kubo/core/coreunix/add_test.go`
+# `core/coreunix/add_test.go`
 
 该代码的作用是定义了一个名为 "coreunix" 的包。这个包提供了对 IPFS(InterPlanetary File System) 对象的操作，包括创建、读取、写入和删除子目录等。它还提供了一些与测试相关的工具，如 Math.random() 函数来生成随机数，以及 Filepath.
 
@@ -27,7 +27,7 @@
 10. 通过导入 "github.com/ipfs/boxo/pkg/haven" 包，可以访问 Boxo 相关用于测试的模块。
 
 
-```
+```go
 package coreunix
 
 import (
@@ -68,7 +68,7 @@ The function then reads the data from the data source, finishes reading the data
 Finally, the function checks if the asset's hash has already been added to the Pinning node by checking if the hash is present in the removedHashes map, and then writing the data to the Pinning node's data store.
 
 
-```
+```go
 const testPeerID = "QmTFauExutTsy4XP6JbMFcw2Wa9645HJt2bTqL6qYDCKfe"
 
 func TestAddMultipleGCLive(t *testing.T) {
@@ -196,7 +196,7 @@ Finally, the code sets up a loop to read the data from the repository, and updat
 It also uses `cid.Decode` function to decode the cid.FPDecode error.
 
 
-```
+```go
 func TestAddGCLive(t *testing.T) {
 	r := &repo.Mock{
 		C: config.Config{
@@ -323,7 +323,7 @@ The program reads the pickle file and applies the blocker to it. It then reads t
 The program also reads the file's index and usage information and uses this to check if the blocker should add the file to the adder's blockers. If the blocker has a progress bar, the program checks if it has reached the specified limit and should stop. If the blocker has a raw leaves flag, the program checks if the blocker has made multiple copies and should stop.
 
 
-```
+```go
 func testAddWPosInfo(t *testing.T, rawLeaves bool) {
 	r := &repo.Mock{
 		C: config.Config{
@@ -537,7 +537,7 @@ func TestAddWPosInfo(t *testing.T) {
 		
 
 
-```
+```go
 func TestAddWPosInfo(t *testing.T) {
 	testAddWPosInfo(t, false)
 }
@@ -567,7 +567,7 @@ type testBlockstore struct {
 函数CheckForPosInfo还统计给定块在尝试中的文件存储器节点位置计数器。如果给定块的文件存储器节点位置计数器不为零，或者尝试将块存储到块存储器中时，函数将统计失败（countAtOffsetNonZero）。
 
 
-```
+```go
 func (bs *testBlockstore) Put(ctx context.Context, block blocks.Block) error {
 	bs.CheckForPosInfo(block)
 	return bs.GCBlockstore.Put(ctx, block)
@@ -608,7 +608,7 @@ func (bs *testBlockstore) CheckForPosInfo(block blocks.Block) {
 该代码的目的是提供一个简单的文件信息结构体，该结构体可以用于操作系统中的文件系统功能，例如文件操作系统的 `Stat` 函数等。
 
 
-```
+```go
 type dummyFileInfo struct {
 	name    string
 	size    int64
@@ -624,7 +624,7 @@ func (fi *dummyFileInfo) Sys() interface{}   { return nil }
 
 ```
 
-# `/opt/kubo/core/coreunix/metadata.go`
+# `core/coreunix/metadata.go`
 
 这段代码定义了一个名为AddMetadataTo的函数，它接收三个参数：一个表示IPFS节点对象的`n`，一个表示元数据的`skey`，以及一个表示元数据的`m`。
 
@@ -635,7 +635,7 @@ func (fi *dummyFileInfo) Sys() interface{}   { return nil }
 如果函数在计算或创建元数据链时出现错误，它将返回错误信息并将其作为输入参数传递给调用者。
 
 
-```
+```go
 package coreunix
 
 import (
@@ -688,7 +688,7 @@ func AddMetadataTo(n *core.IpfsNode, skey string, m *ft.Metadata) (string, error
 因此，该函数的主要作用是获取给定键的值并返回对应的 Metadata 类型或错误。
 
 
-```
+```go
 func Metadata(n *core.IpfsNode, skey string) (*ft.Metadata, error) {
 	c, err := cid.Decode(skey)
 	if err != nil {
@@ -710,7 +710,7 @@ func Metadata(n *core.IpfsNode, skey string) (*ft.Metadata, error) {
 
 ```
 
-# `/opt/kubo/core/coreunix/metadata_test.go`
+# `core/coreunix/metadata_test.go`
 
 该代码是一个 Go 语言项目，它定义了一个名为 "coreunix" 的包。通过导入其他 package，它实现了 Unix 文件系统的功能，包括文件操作、块设备访问和数据存储等。
 
@@ -724,7 +724,7 @@ func Metadata(n *core.IpfsNode, skey string) (*ft.Metadata, error) {
 总体的来说，该代码定义了一个 Unix 文件系统客户端库，可以方便地在各种 Unix 系统上实现文件和数据存储操作。
 
 
-```
+```go
 package coreunix
 
 import (
@@ -761,7 +761,7 @@ The function checks if the process was successful by checking if the root node c
 Finally, the function reads the output of the root node and checks if it matches the expected data. If the data does not match, the function panics.
 
 
-```
+```go
 func getDagserv(t *testing.T) ipld.DAGService {
 	db := dssync.MutexWrap(ds.NewMapDatastore())
 	bs := bstore.NewBlockstore(db)
@@ -837,7 +837,7 @@ func TestMetadata(t *testing.T) {
 
 ```
 
-# `/opt/kubo/core/mock/mock.go`
+# `core/mock/mock.go`
 
 这段代码是一个用于测试libp2p包中进行CoreMock的库。其中，CoreMock是用来模拟libp2p的基本功能，而该测试库则是对其进行测试。
 
@@ -854,7 +854,7 @@ func TestMetadata(t *testing.T) {
 通过这些模拟，可以测试libp2p在不同情况下的行为，包括Core网络、Peer、P2P网络、存储等功能。
 
 
-```
+```go
 package coremock
 
 import (
@@ -890,7 +890,7 @@ import (
 最后，该代码定义了一个名为NewMockNode测试函数，该函数使用该名为NewMockNode的函数来创建一个IpfsNode实例，并输出其返回值。
 
 
-```
+```go
 // NewMockNode constructs an IpfsNode for use in tests.
 func NewMockNode() (*core.IpfsNode, error) {
 	// effectively offline, only peer in its network
@@ -933,7 +933,7 @@ config.Config={
 4. 最后，通过调用 `core.NewNode` 和 `core.BuildCfg` 函数，创建了一个 `core.IpfsNode` 类型的实例，并将其作为参数传递给 `commands.Context.ConstructNode` 函数，实现将模拟的 `commands.Context` 包装为 `core.IpfsNode` 类型。
 
 
-```
+```go
 func MockCmdsCtx() (commands.Context, error) {
 	// Generate Identity
 	ident, err := testutil.RandIdentity()
@@ -987,7 +987,7 @@ func MockCmdsCtx() (commands.Context, error) {
 如果调用 `func MockPublicNode(ctx context.Context, mn mocknet.Mocknet) (*core.IpfsNode, error)` 时出现错误，该函数将返回非空错误并打印堆栈跟踪。
 
 
-```
+```go
 func MockPublicNode(ctx context.Context, mn mocknet.Mocknet) (*core.IpfsNode, error) {
 	ds := syncds.MutexWrap(datastore.NewMapDatastore())
 	cfg, err := config.Init(io.Discard, 2048)
@@ -1012,7 +1012,7 @@ func MockPublicNode(ctx context.Context, mn mocknet.Mocknet) (*core.IpfsNode, er
 
 ```
 
-# `/opt/kubo/core/node/bitswap.go`
+# `core/node/bitswap.go`
 
 该代码是一个 Go 语言编写的 Node.js package，它实现了名为 "node" 的包。通过导入不同的库，它实现了在 IPFS（InterPlanetary File System）网络中执行 "boxo" 命令行工具的一些功能。下面是实现的一些关键部分的注释：
 
@@ -1049,7 +1049,7 @@ func MockPublicNode(ctx context.Context, mn mocknet.Mocknet) (*core.IpfsNode, er
 16. `github.com/ipfs/boxo/util`：这个包的导出函数为 "util"，但其中包含的函数并没有具体的名字。这些函数可能是在 IPFS 网络中执行与 "bitswap" 和 "network" 包的上下文相关的操作时需要的。
 
 
-```
+```go
 package node
 
 import (
@@ -1083,7 +1083,7 @@ import (
 此外，`bitswapOptionsOut`结构体还定义了一个包含一个或多个`bitswap.Option`的`BitswapOpts`字段，但该字段没有定义具体的选项。
 
 
-```
+```go
 // Docs: https://github.com/ipfs/kubo/blob/master/docs/config.md#internalbitswap
 const (
 	DefaultEngineBlockstoreWorkerCount = 128
@@ -1110,7 +1110,7 @@ type bitswapOptionsOut struct {
 最后，函数返回一个实现了`bitswapOptionsOut`接口的函数，这个函数使用了`bitswap.Option`列表的所有设置，并且如果没有提供数据，则返回一个空的`bitswapOptionsOut`结构体。
 
 
-```
+```go
 // BitswapOptions creates configuration options for Bitswap from the config file
 // and whether to provide data.
 func BitswapOptions(cfg *config.Config, provide bool) interface{} {
@@ -1149,7 +1149,7 @@ func BitswapOptions(cfg *config.Config, provide bool) interface{} {
 此外，该结构体还定义了一个名为 `OnlineExchange`的函数，该函数接收一个 `bitswapIn` 实例和一个生命周期钩子(Lc)，并返回一个 libp2p 兼容的块交换机实例。该函数使用了 `bitswapNetwork` 实例，该实例是从 NameNode 和路由器实例中选择的主机，通过 `bitswap` 管理 libp2p 兼容数据流。函数实现了 `exchange.Interface` 接口，因此可以作为其他 struct 的字段类型。
 
 
-```
+```go
 type onlineExchangeIn struct {
 	fx.In
 
@@ -1179,7 +1179,7 @@ func OnlineExchange() interface{} {
 
 ```
 
-# `/opt/kubo/core/node/builder.go`
+# `core/node/builder.go`
 
 这段代码是一个基于Go语言构建的Node.js库，它主要用于在IPFS（InterPlanetary File System）网络中实现一个名为“kubo”的P2P网络服务。
 
@@ -1210,7 +1210,7 @@ func OnlineExchange() interface{} {
 7. 通过使用libp2p实现的Peer通信，使得Kubernetes集群中的节点可以相互通信，并实现数据在Kubernetes集群和IPFS网络之间的交互。
 
 
-```
+```go
 package node
 
 import (
@@ -1268,7 +1268,7 @@ type BuildCfg struct {
 这个结构体定义了五个字段，包括 `Online`、`ExtraOpts`、`Permanent`、`DisableEncryptedConnections` 和 `NilRepo`。其中，`ExtraOpts` 和 `Routing` 是 map 类型的字段，`Host` 和 `Repo` 是 struct 类型的字段。
 
 
-```
+```go
 type BuildCfg struct {
 	// If online is set, the node will have networking enabled
 	Online bool
@@ -1301,7 +1301,7 @@ type BuildCfg struct {
 第二个函数名为fillDefaults，它接收一个BuildCfg结构体并返回一个错误。函数首先检查cfg结构体中是否设置了一个名为Repo的选项，如果没有设置，则尝试设置一个名为nilrepo的选项。如果既没有设置Repo，也没有设置nilrepo，则函数会创建一个默认的Repo，并将其设置为cfg结构体中的Repo。接下来函数会检查是否设置了一个名为Routing的选项，如果没有设置，则将Routing设置为libp2p.DHTOption。然后函数会检查是否设置了一个名为Host的选项，如果没有设置，则将Host设置为libp2p.DefaultHostOption。最后函数会检查是否发生了其他错误，如果没有发生错误，则返回一个nil表示。如果发生了错误，函数返回一个非nil值，并使用err函数返回该错误。
 
 
-```
+```go
 func (cfg *BuildCfg) getOpt(key string) bool {
 	if cfg.ExtraOpts == nil {
 		return false
@@ -1351,7 +1351,7 @@ func (cfg *BuildCfg) fillDefaults() error {
 最后，函数调用`fx.Options`函数，传递选项组和配置选项作为参数，并返回一个包含选项组和配置选项的`*cfg.Config`。
 
 
-```
+```go
 // options creates fx option group from this build config
 func (cfg *BuildCfg) options(ctx context.Context) (fx.Option, *cfg.Config) {
 	err := cfg.fillDefaults()
@@ -1405,7 +1405,7 @@ func (cfg *BuildCfg) options(ctx context.Context) (fx.Option, *cfg.Config) {
 函数返回一个名为`repo.Mock`的实例，其中包含一个数据存储`dstore`和一个表示函数执行上下文的`c`。没有错误发生。
 
 
-```
+```go
 func defaultRepo(dstore repo.Datastore) (repo.Repo, error) {
 	c := cfg.Config{}
 	priv, pub, err := crypto.GenerateKeyPairWithReader(crypto.RSA, 2048, rand.Reader)
@@ -1436,7 +1436,7 @@ func defaultRepo(dstore repo.Datastore) (repo.Repo, error) {
 
 ```
 
-# `/opt/kubo/core/node/core.go`
+# `core/node/core.go`
 
 该代码是一个 Go 语言编写的 Node.js package，它提供了在 IPFS 区块链上执行操作的库。具体来说，它实现了以下功能：
 
@@ -1464,7 +1464,7 @@ func defaultRepo(dstore repo.Datastore) (repo.Repo, error) {
 该代码主要作用是提供一个定序存储器，用于在 IPFS 区块链上执行操作，包括将数据写入和读取。通过使用 blockstore、exchange、offline、fetcher、blockservice、filestore 等库，可以实现与 IPFS 区块链的交互，并支持在本地存储库中存储数据。
 
 
-```
+```go
 package node
 
 import (
@@ -1520,7 +1520,7 @@ a. 如果设置的 `ds` 参数为 ` nil`，那么 `Pinning` 将直接返回 `nil
 b. 如果设置的 `ds` 参数为 `blockstore.Blockstore` 实例，那么它将调用 `ds.Sync` 方法来同步块存储器。
 
 
-```
+```go
 // BlockService creates new blockservice which provides an interface to fetch content-addressable blocks
 func BlockService(lc fx.Lifecycle, bs blockstore.Blockstore, rem exchange.Interface) blockservice.BlockService {
 	bsvc := blockservice.New(bs, rem)
@@ -1565,7 +1565,7 @@ syncDagService 是一个实现了 sync.DAGService 接口的 struct，它包含�
 在给定的代码中，syncDagService 的 syncFn 函数接收一个 context.Context 类型的参数，这个上下文将会被传递给 DAGService 的 Sync 函数。因此，可以认为 syncDagService 的 syncFn 函数是一个使用 DAGService 实现同步数据操作的函数。
 
 
-```
+```go
 var (
 	_ merkledag.SessionMaker = new(syncDagService)
 	_ format.DAGService      = new(syncDagService)
@@ -1592,7 +1592,7 @@ func (s *syncDagService) Sync(ctx context.Context) error {
 最后，函数内部创建了一个 `ipldFetcher`、`unixfsFetcher` 和 `offlineIpldFetcher` 类型的变量 `fets`，并将它们作为 `fetcher.Factory` 类型的接口，用于从不同存储介质获取数据。这些变量将通过 ` FetchersIn` 类型的实例进行注入，所以 `FetchersIn` 类型变量将自动填充 `fets` 类型的变量。
 
 
-```
+```go
 func (s *syncDagService) Session(ctx context.Context) format.NodeGetter {
 	return merkledag.NewSession(ctx, s.DAGService)
 }
@@ -1628,7 +1628,7 @@ type FetchersIn struct {
 最后，`FetcherConfig`函数返回一个`Fetcher`实例，其中包含`IPLDFetcher`、`UnixfsFetcher`和`OfflineIPLDFetcher`，分别表示支持异步数据下载、支持数据下载到本地磁盘和支持数据下载到本地磁盘的下载器实例。
 
 
-```
+```go
 // FetcherConfig returns a fetcher config that can build new fetcher instances
 func FetcherConfig(bs blockservice.BlockService) FetchersOut {
 	ipldFetcher := bsfetcher.NewFetcherConfig(bs)
@@ -1661,7 +1661,7 @@ func FetcherConfig(bs blockservice.BlockService) FetchersOut {
 总结一下，这段代码定义了一个PathResolversOut类型，它包含了多个用于路径解析的Fetcher实例，以及用于创建PathResolversOut实例的函数PathResolverConfig。这个函数允许将Fetcher实例注入PathResolversOut实例，使得PathResolversOut可以更加灵活地设置用于路径解析的Fetcher。
 
 
-```
+```go
 // PathResolversOut allows injection of path resolvers
 type PathResolversOut struct {
 	fx.Out
@@ -1703,7 +1703,7 @@ The function uses several helper functions to set up the lifecycle of the Merkle
 The function returns an error if the file is not found or there is an issue with the file system, or if there is an error when writing to the file system.
 
 
-```
+```go
 // Dag creates new DAGService
 func Dag(bs blockservice.BlockService) format.DAGService {
 	return merkledag.NewDAGService(bs)

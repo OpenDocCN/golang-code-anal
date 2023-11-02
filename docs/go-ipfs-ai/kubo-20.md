@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 20
 
-# `/opt/kubo/core/commands/dag/export.go`
+# `core/commands/dag/export.go`
 
 该代码是一个 Go 语言编写的 DAG（有向无环图）命令行工具的代码。它主要用于在 IPFS（InterPlanetary File System）网络中执行 DAG 操作。下面是该代码的一些关键部分的功能解释：
 
@@ -187,7 +187,7 @@ func (c *Context) CreateDAG(
 		
 
 
-```
+```go
 package dagcmd
 
 import (
@@ -233,7 +233,7 @@ The function uses the following error handling:
 * If the file was not removed successfully, an error is returned with details about the failure.
 
 
-```
+```go
 func dagExport(req *cmds.Request, res cmds.ResponseEmitter, env cmds.Environment) error {
 	// Accept CID or a content path
 	p, err := cmdutils.PathOrCidPath(req.Arguments[0])
@@ -310,7 +310,7 @@ If an error occurs during the response processing, the function returns and clos
 The function also handles an encoded response that is passed to PostRun. If the response is not expected to be a stream, the function returns an error.
 
 
-```
+```go
 func finishCLIExport(res cmds.Response, re cmds.ResponseEmitter) error {
 	var showProgress bool
 	val, specified := res.Request().Options[progressOptionName]
@@ -375,7 +375,7 @@ func finishCLIExport(res cmds.Response, re cmds.ResponseEmitter) error {
 `dagStore.Get` 方法使用 `dag` 字段的 `Get` 方法来获取指定 `ctx` 上下文中指定的 `Cid` 类型的数据。这个方法返回一个 `blocks.Block` 类型的数据，代表了一个数据块，以及一个可能的错误。
 
 
-```
+```go
 // FIXME(@Jorropo): https://github.com/ipld/go-car/issues/315
 type dagStore struct {
 	dag iface.APIDagService
@@ -388,14 +388,14 @@ func (ds dagStore) Get(_ context.Context, c cid.Cid) (blocks.Block, error) {
 
 ```
 
-# `/opt/kubo/core/commands/dag/get.go`
+# `core/commands/dag/get.go`
 
 该代码的作用是定义了一个名为 "dagcmd" 的包。这个包通过使用 "fmt"、"io"、"github.com/ipfs/boxo/path"、"github.com/ipfs/go-ipld-legacy"、"github.com/ipfs/kubo/core/commands/cmdenv"、"github.com/ipfs/kubo/core/commands/cmdutils"、"github.com/ipfs/kubo/core/commands/ipsf湿质"、"github.com/ipfs/kubo/core/params"、"github.com/ipfs/kubo/private/kthash/sortings" 和 "github.com/ipfs/kubo/private/kthash/tree" 这几个库来实现。
 
 具体来说，这个包的作用是创建和操作 DAG（有向无环图）数据结构。它包括对 DAG 数据的读取、写入、修改等操作。通过使用 "ipldlegacy"、"github.com/ipfs/boxo/path" 和 "github.com/ipfs/kubo/core/commands/ipsf湿质" 等库，可以方便地处理 DAG 数据。
 
 
-```
+```go
 package dagcmd
 
 import (
@@ -428,7 +428,7 @@ The function also defines a codec for encoding/decoding the universal node, whic
 The function is part of a library that provides a unified interface for working with IPLD (Inter-Platform Portable Document) data, such as晴空（zhangkong.example.com，开出枝）..
 
 
-```
+```go
 func dagGet(req *cmds.Request, res cmds.ResponseEmitter, env cmds.Environment) error {
 	api, err := cmdenv.GetApi(env, req)
 	if err != nil {
@@ -490,7 +490,7 @@ func dagGet(req *cmds.Request, res cmds.ResponseEmitter, env cmds.Environment) e
 
 ```
 
-# `/opt/kubo/core/commands/dag/import.go`
+# `core/commands/dag/import.go`
 
 该代码是一个 Go 语言编写的 DAG（有向无环图）命令行工具 "boxo" 的依赖关系文件。通过导入不同的库 "github.com/ipfs/boxo/coreiface/options" 和 "github.com/ipfs/boxo/files"，该代码定义了一个 DAG 对象模型的函数和变量。
 
@@ -507,7 +507,7 @@ func dagGet(req *cmds.Request, res cmds.ResponseEmitter, env cmds.Environment) e
 该代码是 `boxo` 命令行工具的主要依赖项之一，可以在不需要配置文件的情况下，对 DAG 对象执行各种操作。
 
 
-```
+```go
 package dagcmd
 
 import (
@@ -539,7 +539,7 @@ The function returns an error if any errors occur, or an error if the pinning op
 The function also includes some additional logging and error handling. If the repository is not well-formed, the function will attempt to notify the user. If there are any errors during the pinning process, the function will log the error and return an error.
 
 
-```
+```go
 func dagImport(req *cmds.Request, res cmds.ResponseEmitter, env cmds.Environment) error {
 	node, err := cmdenv.GetNode(env)
 	if err != nil {
@@ -705,7 +705,7 @@ func dagImport(req *cmds.Request, res cmds.ResponseEmitter, env cmds.Environment
 
 ```
 
-# `/opt/kubo/core/commands/dag/put.go`
+# `core/commands/dag/put.go`
 
 这段代码定义了一个名为 "dagcmd" 的包。它从以下依赖中导入了一些必要的库：
 
@@ -725,7 +725,7 @@ func dagImport(req *cmds.Request, res cmds.ResponseEmitter, env cmds.Environment
 最后，该代码通过导入一些库，定义了一些常量和函数，用于在 IPFS 系统中执行 DAG 命令。
 
 
-```
+```go
 package dagcmd
 
 import (
@@ -763,7 +763,7 @@ The function reads the contents of the file and adds it to a `ipldlegacy.LegacyN
 If an error occurs during the operation, such as a file not being found or an error in the encoder or blockCoder, the function returns it.
 
 
-```
+```go
 func dagPut(req *cmds.Request, res cmds.ResponseEmitter, env cmds.Environment) error {
 	api, err := cmdenv.GetApi(env, req)
 	if err != nil {
@@ -867,7 +867,7 @@ func dagPut(req *cmds.Request, res cmds.ResponseEmitter, env cmds.Environment) e
 
 ```
 
-# `/opt/kubo/core/commands/dag/resolve.go`
+# `core/commands/dag/resolve.go`
 
 这段代码定义了一个名为 `dagResolve` 的函数，属于名为 `dagcmd` 的包。函数接受一个名为 `req` 的 cmds.Request 对象，一个名为 `res` 的 cmds.ResponseEmitter 对象和一个名为 `env` 的 cmds.Environment 对象作为参数。函数的作用是：通过调用 api.ResolvePath 函数，解决指定路径的两大问题，然后返回调用结果。
 
@@ -882,7 +882,7 @@ func dagPut(req *cmds.Request, res cmds.ResponseEmitter, env cmds.Environment) e
 7. 返回调用结果，使用 res.Emit` 方法确保只调用一次函数内部的方法。
 
 
-```
+```go
 package dagcmd
 
 import (
@@ -917,7 +917,7 @@ func dagResolve(req *cmds.Request, res cmds.ResponseEmitter, env cmds.Environmen
 
 ```
 
-# `/opt/kubo/core/commands/dag/stat.go`
+# `core/commands/dag/stat.go`
 
 这段代码是一个 Go 语言编写的 DAG（有向无环图）命令行工具的源代码。具体来说，它实现了通过 DAG 数据结构对存储在本地文件夹中的数据进行树状结构化，并提供了命令行界面来展示和操作这些树状结构。
 
@@ -958,7 +958,7 @@ func dagResolve(req *cmds.Request, res cmds.ResponseEmitter, env cmds.Environmen
 通过这些函数，使用者可以对本地文件夹中的数据进行树状结构化，并从不同的路径引用这些数据。
 
 
-```
+```go
 package dagcmd
 
 import (
@@ -980,7 +980,7 @@ import (
 This is a Go function that traverses a DAG and calculates the statistics of the DAG. The function takes a request object with a root DID and
 
 
-```
+```go
 // TODO cache every cid traversal in a dp cache
 // if the cid exists in the cache, don't traverse it, and use the cached result
 // to compute the new state
@@ -1059,7 +1059,7 @@ func dagStat(req *cmds.Request, res cmds.ResponseEmitter, env cmds.Environment) 
 在循环体内部，定义了一个 switch 语句，根据输入结果的类型进行判断。若结果为 *DagStatSummary，则输出相关信息；若不是，则返回错误。在循环结束后，函数使用 responseEmitter 参数的 Emit() 方法将 dagStats 输出。
 
 
-```
+```go
 func finishCLIStat(res cmds.Response, re cmds.ResponseEmitter) error {
 	var dagStats *DagStatSummary
 	for {
@@ -1090,7 +1090,7 @@ func finishCLIStat(res cmds.Response, re cmds.ResponseEmitter) error {
 
 ```
 
-# `/opt/kubo/core/commands/e/error.go`
+# `core/commands/e/error.go`
 
 这段代码定义了一个名为“e”的包，其中包含一个名为“TypeErr”的函数，以及一个名为“_”的变量。
 
@@ -1101,7 +1101,7 @@ func finishCLIStat(res cmds.Response, re cmds.ResponseEmitter) error {
 此外，函数“compile time type check that HandlerError is an error”对HandlerError类型进行类型检查，确保该类型实现了Error接口。这个函数创建了一个名为“HandlerError”的类型，如果该类型实现了Error接口，那么创建的实例就是一个实现了该接口的错误对象。
 
 
-```
+```go
 package e
 
 import (
@@ -1128,7 +1128,7 @@ var _ error = New(nil)
 最后，该代码没有定义其他的函数或变量，但是使用了 HandlerError 的定义，因此在输出堆栈跟踪时会自动添加错误信息。
 
 
-```
+```go
 // HandlerError adds a stack trace to an error
 type HandlerError struct {
 	Err   error
@@ -1147,7 +1147,7 @@ func New(err error) HandlerError {
 
 ```
 
-# `/opt/kubo/core/commands/keyencode/keyencode.go`
+# `core/commands/keyencode/keyencode.go`
 
 这段代码定义了一个名为“keyencode”的包，并导入了三个依赖项：
 
@@ -1162,7 +1162,7 @@ func New(err error) HandlerError {
 最后，定义了一个“KeyEncoder”结构体，该结构体将“baseEnc”字段以及一个名为“peer.Stream”的字段作为其依赖项。
 
 
-```
+```go
 package keyencode
 
 import (
@@ -1188,7 +1188,7 @@ type KeyEncoder struct {
 函数`(KeyEncoder) FormatID`的作用是将一个`peer.ID`对象`id`转换为字符串形式，并将转换后的字符串返回。函数首先检查给定的`enc`字段是否为`nil`，如果是，函数将直接返回`id`的`String()`方法返回的`string`。否则，函数将尝试使用`peer.ToCid()`函数将`ID`对象转换为`ToCid()`函数返回的`ToCid`对象，并使用`ToCid().StringOfBase()`函数将`ToCid`对象的字符串编码为`baseEnc`字段中的字符串。此时，如果编码过程中出现错误，函数将返回一个`err`。否则，函数将返回`id`的`String()`方法返回的`string`。
 
 
-```
+```go
 func KeyEncoderFromString(formatLabel string) (KeyEncoder, error) {
 	switch formatLabel {
 	case "b58mh", "v0":
@@ -1215,7 +1215,7 @@ func (enc KeyEncoder) FormatID(id peer.ID) string {
 
 ```
 
-# `/opt/kubo/core/commands/name/ipns.go`
+# `core/commands/name/ipns.go`
 
 这段代码是一个 Go 语言package，它定义了一系列用于从 IPFS 存储桶中读取和写入文件以及设置目录的命令。它主要作用于在 IPFS 存储桶中进行文件操作。
 
@@ -1238,7 +1238,7 @@ func (enc KeyEncoder) FormatID(id peer.ID) string {
 5. 设置了一个名为 "cmdenv" 的命令类，用于管理 IPFS 存储桶的连接和配置。
 
 
-```
+```go
 package name
 
 import (
@@ -1267,7 +1267,7 @@ import (
 最后，它创建了一个名为 IpnsCmd 的结构体，该结构体代表 ipns 命令行工具的上下文，包括命令行帮助文本、短描述和内置命令。
 
 
-```
+```go
 var log = logging.Logger("core/commands/ipns")
 
 type ResolvedPath struct {
@@ -1293,7 +1293,7 @@ var IpnsCmd = &cmds.Command{
 此代码的作用是定义了一个用于存储和发布IPNS命名空间中的公共钥哈希值的命名空间。它还允许使用'ipfs key'命令来列出并生成更多名称及其对应的密钥。
 
 
-```
+```go
 IPNS is a PKI namespace, where names are the hashes of public keys, and
 the private key enables publishing new (signed) values. In both publish
 and resolve, the default name used is the node's own PeerID,
@@ -1327,7 +1327,7 @@ Examples:
   > ipfs name resolve ipfs.io：将输入dnslink（如 "ipfs.io"）转换为 ISDR 值，用于标识该dnslink在 IPFS 系统中的位置。
 
 
-```
+```go
 Resolve the value of your name:
 
   > ipfs name resolve
@@ -1356,7 +1356,7 @@ Finally, the function emits any changes to the output and returns an error if an
 The function uses the "cmds.EmitOnce" method to handle the output of the "api.Name().Search" method, which returns a slice of resolve entries. The function iterates over the entries and emits each one using "cmds.ResolvedPath.Emit" method.
 
 
-```
+```go
 `,
 	},
 
@@ -1461,7 +1461,7 @@ The function uses the "cmds.EmitOnce" method to handle the output of the "api.Na
 
 ```
 
-# `/opt/kubo/core/commands/name/ipnsps.go`
+# `core/commands/name/ipnsps.go`
 
 这段代码定义了一个名为“ipnsPubsubState”的结构体，表示 IPNS 发布/订阅状态。它可能用于表示一些关于 IPNS 发布/订阅操作的信息。
 
@@ -1503,7 +1503,7 @@ ipnsPubsubState := true
 
 
 
-```
+```go
 package name
 
 import (
@@ -1533,7 +1533,7 @@ stringList表示一个字符串列表类型，可以存储多个字符串。
 接下来的行定义了一个名为"IpnsPubsubCmd"的命令类型变量，它是一个具有实验性status的cmds.Command对象。该命令用于管理IPNS pubsub系统，并输出帮助文本"IPNS pubsub management"，描述了如何使用该命令。
 
 
-```
+```go
 type ipnsPubsubCancel struct {
 	Canceled bool
 }
@@ -1599,7 +1599,7 @@ Manage and inspect the state of the IPNS pubsub resolver.
 `ipnspsStateCmd` 是一个实现了 `ipnsps` 命令的 `ipnsps.Command` 实例。它的 `Run` 函数用于实际运行命令，如果出现错误，将返回一个 `ipnsps.ResponseEmitter`。该 `Command` 的 `Status` 字段指定了该命令的实验性状态，`Helptext` 字段定义了该命令的可用帮助文本，`Type` 字段指定了命令的数据类型，`Encoders` 字段定义了命令可以使用的编码器。
 
 
-```
+```go
 Note: this command is experimental and subject to change as the system is refined
 `,
 	},
@@ -1658,7 +1658,7 @@ var ipnspsStateCmd = &cmds.Command{
 如果PSRouter中存在订阅者，函数将返回一个字符串列表，其中包含每个订阅者的路径。
 
 
-```
+```go
 var ipnspsSubsCmd = &cmds.Command{
 	Status: cmds.Experimental,
 	Helptext: cmds.HelpText{
@@ -1717,7 +1717,7 @@ The function then takes the name of the subscription to cancel as an argument an
 If the cancellation was successful, the response emitter will return an `ipnsPubsubCancel` object with a `ok` field.
 
 
-```
+```go
 var ipnspsCancelCmd = &cmds.Command{
 	Status: cmds.Experimental,
 	Helptext: cmds.HelpText{
@@ -1776,7 +1776,7 @@ var ipnspsCancelCmd = &cmds.Command{
 `stringListEncoder`函数返回一个没有输出错误并且返回`nil`的`<go-cmp>`值，表示函数没有返回任何值。
 
 
-```
+```go
 func stringListEncoder() cmds.EncoderFunc {
 	return cmds.MakeTypedEncoder(func(req *cmds.Request, w io.Writer, list *stringList) error {
 		for _, s := range list.Strings {

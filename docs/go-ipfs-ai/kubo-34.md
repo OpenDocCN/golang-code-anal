@@ -15,7 +15,7 @@ node you want to get the file to node 'B'. On node A, add the file to ipfs
 using the `ipfs add` command. This will print out the multihash of the content
 you added. Now, on node B, you can fetch the content using `ipfs get <hash>`.
 
-```
+```go
 # On A
 > ipfs add myfile.txt
 added QmZJ1xT1T9KYkHhgRhbv8D7mYrbemaXwYUkg7CeHdrk1Ye myfile.txt
@@ -42,7 +42,7 @@ The first thing to do is to double check that both nodes are in fact running
 and online. To do this, run `ipfs id` on each machine. If both nodes show some
 addresses (like the example below), then your nodes are online.
 
-```json
+```gojson
 {
         "ID": "QmTNwsFkLAed15kQEC1ZJWPfoNbBQnMFojfJKQ9sZj1dk8",
         "PublicKey": "CAASpgIwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDZb6znj3LQZKP1+X81exf+vbnqNCMtHjZ5RKTCm7Fytnfe+AI1fhs9YbZdkgFkM1HLxmIOLQj2bMXPIGxUM+EnewN8tWurx4B3+lR/LWNwNYcCFL+jF2ltc6SE6BC8kMLEZd4zidOLPZ8lIRpd0x3qmsjhGefuRwrKeKlR4tQ3C76ziOms47uLdiVVkl5LyJ5+mn4rXOjNKt/oy2O4m1St7X7/yNt8qQgYsPfe/hCOywxCEIHEkqmil+vn7bu4RpAtsUzCcBDoLUIWuU3i6qfytD05hP8Clo+at+l//ctjMxylf3IQ5qyP+yfvazk+WHcsB0tWueEmiU5P2nfUUIR3AgMBAAE=",
@@ -92,7 +92,7 @@ return a list of addresses for node A. If it doesn't return any addresses, then
 you should try running the manual providing command from the previous steps. 
 Example output of addresses might look something like this:
 
-```
+```go
 /ip4/127.0.0.1/tcp/4001
 /ip4/127.0.0.1/udp/4001/quic-v1
 /ip4/192.168.2.133/tcp/4001
@@ -140,13 +140,13 @@ Note: while this guide should work for most distributions, you may need to refer
 to your distribution manual to get things working.
 
 Install `fuse` with your favorite package manager:
-```
+```go
 sudo apt-get install fuse
 ```
 
 On some older Linux distributions, you may need to add yourself to the `fuse` group.  
 (If no such group exists, you can probably skip this step)
-```sh
+```gosh
 sudo usermod -a -G fuse <username>
 ```
 
@@ -166,7 +166,7 @@ from shooting yourself in the foot if you have pre `2.7.0`. Since checking the
 OSXFUSE version [is more complicated than it should be], running `ipfs mount`
 may require you to install another binary:
 
-```sh
+```gosh
 go get github.com/jbenet/go-fuse-version/fuse-version
 ```
 
@@ -179,7 +179,7 @@ By default ipfs uses `/ipfs` and `/ipns` directories for mounting, this can be
 changed in config. You will have to create the `/ipfs` and `/ipns` directories
 explicitly. Note that modifying root requires sudo permissions.
 
-```sh
+```gosh
 # make the directories
 sudo mkdir /ipfs
 sudo mkdir /ipns
@@ -195,7 +195,7 @@ Depending on whether you are using OSX or Linux, follow the proceeding instructi
 
 You'll need to stop the IPFS daemon if you have it started, otherwise the mount will complain. 
 
-```
+```go
 # Check to see if IPFS daemon is running
 ps aux | grep ipfs
 
@@ -207,13 +207,13 @@ pkill -f ipfs
 
 ## Mounting IPFS
 
-```sh
+```gosh
 ipfs daemon --mount
 ```
 
 If you wish to allow other users to use the mount points, edit `/etc/fuse.conf`
 to enable non-root users, i.e.:
-```sh
+```gosh
 # /etc/fuse.conf - Configuration file for Filesystem in Userspace (FUSE)
 
 # Set the maximum number of FUSE mounts allowed to non-root users.
@@ -225,7 +225,7 @@ user_allow_other
 ```
 
 Next set `Mounts.FuseAllowOther` config option to `true`:
-```sh
+```gosh
 ipfs config --json Mounts.FuseAllowOther true
 ipfs daemon --mount
 ```
@@ -235,25 +235,25 @@ ipfs daemon --mount
 #### `Permission denied` or `fusermount: user has no write access to mountpoint` error in Linux
 
 Verify that the config file can be read by your user:
-```sh
+```gosh
 sudo ls -l /etc/fuse.conf
 -rw-r----- 1 root fuse 216 Jan  2  2013 /etc/fuse.conf
 ```
 In most distributions, the group named `fuse` will be created during fuse
 installation. You can check this with:
 
-```sh
+```gosh
 sudo grep -q fuse /etc/group && echo fuse_group_present || echo fuse_group_missing
 ```
 
 If the group is present, just add your regular user to the `fuse` group:
-```sh
+```gosh
 sudo usermod -G fuse -a <username>
 ```
 
 If the group didn't exist, create `fuse` group (add your regular user to it) and
 set necessary permissions, for example:
-```sh
+```gosh
 sudo chgrp fuse /etc/fuse.conf
 sudo chmod g+r  /etc/fuse.conf
 ```
@@ -267,7 +267,7 @@ set for user running `ipfs mount` command.
 
 #### Mount command crashes and mountpoint gets stuck
 
-```
+```go
 sudo umount /ipfs
 sudo umount /ipns
 ```
@@ -309,7 +309,7 @@ documentation, including a list of common [gateway recipes](https://github.com/i
 
 ### Debug
 The gateway's log level can be changed with this command:
-```
+```go
 > ipfs log level core/server debug
 ```
 
@@ -491,7 +491,7 @@ Despite all the generalization spoken about above, the IPFS API is actually very
 simple. You can inspect all the requests made with `nc` and the `--api` option
 (as of [this PR](https://github.com/ipfs/kubo/pull/1598), or `0.3.8`):
 
-```
+```go
 > nc -l 5002 &
 > ipfs --api /ip4/127.0.0.1/tcp/5002 swarm addrs local --enc=json
 POST /api/v0/version?enc=json&stream-channels=true HTTP/1.1
@@ -508,7 +508,7 @@ The only hard part is getting the file streaming right. It is (now) fairly easy
 to stream files to kubo using multipart. Basically, we end up with HTTP
 requests like this:
 
-```
+```go
 > nc -l 5002 &
 > ipfs --api /ip4/127.0.0.1/tcp/5002 add -r ~/demo/basic/test
 POST /api/v0/add?encoding=json&progress=true&r=true&stream-channels=true HTTP/1.1
@@ -843,7 +843,7 @@ plugins can be:
 
 Example:
 
-```js
+```gojs
 {
   // ...
   "Plugins": {
@@ -895,14 +895,14 @@ To build plugins included in
 [plugin/plugins](https://github.com/ipfs/kubo/tree/master/plugin/plugins),
 run:
 
-```bash
+```gobash
 kubo$ make build_plugins
 kubo$ ls plugin/plugins/*.so
 ```
 
 To install, copy desired plugins to `$IPFS_PATH/plugins`. For example:
 
-```bash
+```gobash
 kubo$ mkdir -p ~/.ipfs/plugins/
 kubo$ cp plugin/plugins/git.so ~/.ipfs/plugins/
 kubo$ chmod +x ~/.ipfs/plugins/git.so # ensure plugin is executable
@@ -915,7 +915,7 @@ Finally, restart daemon if it is running.
 To build out-of-tree plugins, use the plugin's Makefile if provided. Otherwise,
 you can manually build the plugin by running:
 
-```bash
+```gobash
 myplugin$ go build -buildmode=plugin -o myplugin.so myplugin.go
 ```
 
@@ -936,14 +936,14 @@ To preload a Kubo plugin:
 
 1. Add the plugin to the preload list: `plugin/loader/preload_list`
 2. Build ipfs
-```bash
+```gobash
 kubo$ make build
 ```
 
 You can also preload an in-tree but disabled-by-default plugin by adding it to
 the IPFS_PLUGINS variable. For example, to enable plugins foo, bar, and baz:
 
-```bash
+```gobash
 kubo$ make build IPFS_PLUGINS="foo bar baz"
 ```
 
@@ -1138,7 +1138,7 @@ For background information about how Thunderdome works, see: https://github.com/
 
 Create a new release configuration JSON in the `experiments/` directory, based on the most recent `kubo-release` configuration, and tweak as necessary. Generally we setup the targets to run a commit against the tag of the last release, such as:
 
-```json
+```gojson
 	"targets": [
 		{
 			"name": "kubo190-4283b9",
@@ -1161,7 +1161,7 @@ Create a new release configuration JSON in the `experiments/` directory, based o
   
 Run the experiment (where `$EXPERIMENT_CONFIG_JSON` is a path to the config JSON created above):
 
-```shell
+```goshell
 AWS_PROFILE=thunderdome ./thunderdome deploy --verbose --duration 120 $EXPERIMENT_CONFIG_JSON
 ```
 
@@ -1444,7 +1444,7 @@ This section assumes you have a working version of `go` and `git` already setup.
 1. Install msys2 (http://www.msys2.org)  
 2. Run the following inside a normal `cmd` prompt (Not the MSYS2 prompt, we only need MSYS2's tools).  
 An explanation of this block is below.
-```
+```go
 SET PATH=%PATH%;\msys64\usr\bin
 pacman --noconfirm -S  git make unzip
 go get -u github.com/ipfs/kubo
@@ -1466,14 +1466,14 @@ If `ipfs.exe` executes and the version string matches, then building was success
 |`%GOPATH%\bin\ipfs.exe version --all`     |Test the built binary|
 
 To build again after making changes to the source, run:
-```
+```go
 SET PATH=%PATH%;\msys64\usr\bin
 cd %GOPATH%\src\github.com\ipfs\kubo
 make install
 ```
 
 **Tip:** To avoid setting `PATH` every time (`SET PATH=%PATH%;\msys64\usr\bin`), you can lock it in permanently using `setx` after it's been set once:
-```
+```go
 SETX PATH %PATH%
 ```
 
@@ -1489,7 +1489,7 @@ SETX PATH %PATH%
         - `curl`  
 3. Run the following inside a normal `cmd` prompt (Not the Cygwin prompt, we only need Cygwin's tools)  
 An explanation of this block is below.
-```
+```go
 SET PATH=%PATH%;\cygwin64\bin
 mkdir %GOPATH%\src\github.com\ipfs
 cd %GOPATH%\src\github.com\ipfs
@@ -1511,14 +1511,14 @@ If `ipfs.exe` executes and the version string matches, then building was success
 |`%GOPATH%\bin\ipfs.exe version --all`     |Test the built binary|
 
 To build again after making changes to the source, run:
-```
+```go
 SET PATH=%PATH%;\cygwin64\bin
 cd %GOPATH%\src\github.com\ipfs\kubo
 make install
 ```
 
 **Tip:** To avoid setting `PATH` every time (`SET PATH=%PATH%;\cygwin64\bin`), you can lock it in permanently using `setx` after it's been set once:
-```
+```go
 SETX PATH %PATH%
 ```
 
@@ -1533,13 +1533,13 @@ You can use whichever version of `git` you wish but we recommend the Windows bui
 Clone and change directory to the source code, if you haven't already:
 
 CMD:
-```bat
+```gobat
 git clone https://github.com/ipfs/kubo %GOPATH%/src/github.com/ipfs/kubo
 cd %GOPATH%/src/github.com/ipfs/kubo/cmd/ipfs
 ```
 
 PowerShell:
-```powershell
+```gopowershell
 git clone https://github.com/ipfs/kubo $env:GOPATH/src/github.com/ipfs/kubo
 cd $env:GOPATH/src/github.com/ipfs/kubo/cmd/ipfs
 ```
@@ -1551,13 +1551,13 @@ We need the `git` commit hash to be included in our build so that in the extreme
 Finally, we'll build and test `ipfs` itself.
 
 CMD:
-```bat
+```gobat
 go install -ldflags="-X "github.com/ipfs/kubo".CurrentCommit=%SHA%"
 %GOPATH%\bin\ipfs.exe version --all
 ```
 
 PowerShell:
-```powershell
+```gopowershell
 go install -ldflags="-X "github.com/ipfs/kubo".CurrentCommit=$env:SHA"
 cp ./ipfs.exe $env:GOPATH/bin/ipfs.exe -force
 . $env:GOPATH/bin/ipfs.exe version --all

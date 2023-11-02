@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 15
 
-# `/opt/kubo/core/commands/log.go`
+# `core/commands/log.go`
 
 这段代码定义了一个名为"cmds"的包，其中包含了以下功能：
 
@@ -17,7 +17,7 @@
 总体的作用是，定义了一个命令行工具"cmds"，用于在用户目录下遍历文件并执行目录操作，并输出日志信息。
 
 
-```
+```go
 package commands
 
 import (
@@ -38,7 +38,7 @@ import (
 这段代码定义了一个名为 "logAllKeyword" 的字符串变量，并将其设置为 "all"。接下来，定义了一个名为 "LogCmd" 的命令对象，其 `Helptext` 属性使用了 `cmds.HelpText` 类，指定了该命令的短描述信息。`LogCmd` 对象还定义了两个环境变量 `IPFS_LOGGING` 和 `IPFS_LOGGING_FMT`，它们用于设置日志输出的一系列选项。这些选项可以用来控制日志输出的粒度、格式以及颜色等。
 
 
-```
+```go
 var logAllKeyword = "all"
 
 var LogCmd = &cmds.Command{
@@ -129,7 +129,7 @@ For example, to show the last 10 lines of the log output, you would run "tail -1
 - `logTailCmd` 的帮助文本是 `"Show the last 10 lines of the log output."`，短描述是 `"The "tail" command shows the last 10 lines of the log output."`,LongDescription 是 `"This command shows the last 10 lines of the log output."`,
 
 
-```
+```go
 `,
 	},
 
@@ -158,7 +158,7 @@ Change the verbosity of one or all subsystems log output. This does not affect
 最后，该工具使用 "cmds.EmitOnce" 函数向响应对象发送一条消息，并使用 "fmt.Fprint" 函数将消息输出到 "w" 字输出流中。
 
 
-```
+```go
 the event log.
 `,
 	},
@@ -211,7 +211,7 @@ the event log.
 最后，该命令定义了一个`stringList`类型的变量`logLsCmd`，用于保存该命令的名称，以便在运行时进行显示。
 
 
-```
+```go
 var logLsCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "List the logging subsystems.",
@@ -247,7 +247,7 @@ subsystems of a running daemon.
 这个命令的作用是读取事件日志并输出，只有事件日志会被输出，而不是其他日志信息。它是一个实验性的命令，目前可能无法正常工作。建议关注相关更新。
 
 
-```
+```go
 var logTailCmd = &cmds.Command{
 	Status: cmds.Experimental,
 	Helptext: cmds.HelpText{
@@ -273,7 +273,7 @@ Currently broken. Follow https://github.com/ipfs/kubo/issues/9245 for updates.
 
 ```
 
-# `/opt/kubo/core/commands/ls.go`
+# `core/commands/ls.go`
 
 这段代码定义了一个名为 "commands" 的包，其中定义了一些用于与 IPFS(即 interPlanetary File System)交互的命令。
 
@@ -294,7 +294,7 @@ Currently broken. Follow https://github.com/ipfs/kubo/issues/9245 for updates.
 7. 最后，定义了一个名为 "main" 的函数，该函数用于创建一个 IPFS 根目录并设置一些额外的选项，然后输出 "sort order" 给 IPFS 对象。
 
 
-```
+```go
 package commands
 
 import (
@@ -330,7 +330,7 @@ LsObject是一个元素，代表一个目录中的所有或部分目录。它包
 LsLink和LsObject一起用于在ls输出中根据哈希值打印出目录中的链接，使得用户可以了解目录中存在哪些链接以及链接的详细信息。
 
 
-```
+```go
 // LsLink contains printable data for a single ipld link in ls output
 type LsLink struct {
 	Name, Hash string
@@ -355,7 +355,7 @@ The `const` variables define several constants for the different options defined
 The `var` variable is a pointer to a `cmds.Command` struct, which is used to store the command-line interface (CLI) for the `LsOutput` struct. This struct allows for the `LsCmd` struct to be used to list the contents of a directory for Unix file systems.
 
 
-```
+```go
 // LsOutput is a set of printable data for directories,
 // it can be complete or partial
 type LsOutput struct {
@@ -386,7 +386,7 @@ The program uses a `for` loop to process each directory and its contents, and th
 Overall, the program appears to be well-structured and easy to read.
 
 
-```
+```go
 Displays the contents of an IPFS or IPNS object(s) at the given path, with
 the following format:
 
@@ -554,7 +554,7 @@ The TOC is rendered using a formatted string that includes the email's hash, siz
 The function uses the " lastObjectHash " variable to store the hash of the last email in the list, which is used to determine whether to include the last email in the TOC. This variable is updated each time a non-empty email is processed.
 
 
-```
+```go
 func tabularOutput(req *cmds.Request, w io.Writer, out *LsOutput, lastObjectHash string, ignoreBreaks bool) string {
 	headers, _ := req.Options[lsHeadersOptionNameTime].(bool)
 	stream, _ := req.Options[lsStreamOptionName].(bool)
@@ -617,7 +617,7 @@ func tabularOutput(req *cmds.Request, w io.Writer, out *LsOutput, lastObjectHash
 
 ```
 
-# `/opt/kubo/core/commands/mount_nofuse.go`
+# `core/commands/mount_nofuse.go`
 
 This code is a Go code that creates a new command in the ipfs package, which allows you to mount ipfs to the filesystem.
 
@@ -660,7 +660,7 @@ The last block of code, which is indented to the next line, is the definition of
 This defines the `MountCmd` variable as an instance of the `cmds.Command` struct, with a `Status` field set to `cmds.Experimental` and a `Helptext` field containing the command's description.
 
 
-```
+```go
 //go:build !windows && nofuse
 // +build !windows,nofuse
 
@@ -683,7 +683,7 @@ This version of ipfs is compiled without fuse support, which is required
 这段代码首先安装 Go-IPFS，如果您的系统没有 FUSE，它将自动安装。然后，它设置一个条件，如果您的系统上已经有了 Go-IPFS，则不需要再次安装。最后，它输出一条消息，告诉您如何获取最新的 Go-IPFS 安装指南。
 
 
-```
+```go
 for mounting. If you'd like to be able to mount, please use a version of
 ipfs compiled with fuse.
 
@@ -695,7 +695,7 @@ For the latest instructions, please check the project's repository:
 
 ```
 
-# `/opt/kubo/core/commands/mount_unix.go`
+# `core/commands/mount_unix.go`
 
 这段代码是一个 Go 语言编写的跨平台命令行工具，用于在支持使用 Go 语言的环境和不支持使用 Go 语言的环境之间切换。它通过设置两个环境变量来设置为使用 Go 语言的环境，并在运行时检查是否为 Windows 操作系统。
 
@@ -716,7 +716,7 @@ For the latest instructions, please check the project's repository:
 最后，`//go:build !windows && !nofuse` 和 `// +build !windows,!nofuse` 是注释，用于告诉 Go 编译器如何构建此工具，并且在运行时如何执行。
 
 
-```
+```go
 //go:build !windows && !nofuse
 // +build !windows,!nofuse
 
@@ -743,7 +743,7 @@ import (
 在 Helptext 元数据中，定义了该命令的短描述信息，指出如何使用该命令将 IPFS 文件系统挂载到文件系统上。同时指出了如何使用该命令的已知路径，以及注意虚拟根目录不会列出。
 
 
-```
+```go
 const (
 	mountIPFSPathOptionName = "ipfs-path"
 	mountIPNSPathOptionName = "ipns-path"
@@ -769,7 +769,7 @@ You may have to create /ipfs and /ipns before using 'ipfs mount':
 第三行 `ipfs daemon &` 运行 ipfs 命令，并将结果复制到后台，以便在后台运行时仍然能够访问。第四行 `ipfs mount` 将 /ipfs 目录挂载到当前目录，并使得该目录中的所有 IPFS 对象都能够被访问。注意，因为 /ipfs 目录是只读的，所以这步操作是必需的，否则可能会导致对 /ipfs 目录的不可读访问。
 
 
-```
+```go
 > sudo mkdir /ipfs /ipns
 > sudo chown $(whoami) /ipfs /ipns
 > ipfs daemon &
@@ -798,7 +798,7 @@ IPFS 是一个分布式文件系统，可以在多个计算机上共享文件，
 "ipfs cat QmWLdkp93sNxGRjnFHPaYg8tCQ35NBY3XPn6KiETd3Z4WR baz"命令可以读取并输出 "foo" 目录下的一个名为 "baz" 的文件的内容。
 
 
-```
+```go
 > ipfs daemon &
 > ipfs mount
 
@@ -832,7 +832,7 @@ The function first checks if the environment is a valid one, and if not, returns
 Note: The function also uses the `makeTypedEncoder` from the `cmds.EncoderMap` to convert the `request. mounts` to a type-safe format, in this case a map with string keys.
 
 
-```
+```go
 # mount
 > ipfs daemon &
 > ipfs mount
@@ -903,7 +903,7 @@ baz
 
 ```
 
-# `/opt/kubo/core/commands/mount_windows.go`
+# `core/commands/mount_windows.go`
 
 这段代码定义了一个名为"mountcmd"的命令行工具。该工具使用Go语言库"github.com/ipfs/go-ipfs-cmds"来提供IPFS（InterPlanetary File System）文件系统的相关命令。
 
@@ -938,7 +938,7 @@ i. 创建一个名为"Uploader"的函数，该函数接收一个表示IPFS文件
 ii.使用"Uploader"函数的"Run"函数的"err"参数获取错误，并使用"strings"库的"Split"函数将错误字符串
 
 
-```
+```go
 package commands
 
 import (
@@ -960,7 +960,7 @@ var MountCmd = &cmds.Command{
 
 ```
 
-# `/opt/kubo/core/commands/multibase.go`
+# `core/commands/multibase.go`
 
 这段代码定义了一个名为“commands”的包，其中包含了一些命令，用于将文件或标准输入进行多基化编码和解码，并允许用户通过结合多个命令行参数来执行单个操作。
 
@@ -973,7 +973,7 @@ var MountCmd = &cmds.Command{
 最后，该包设置了一个名为“MbaseCmd”的结构体，该结构体指定了命令的 Helptext、所需的依赖项以及任何其他相关设置。
 
 
-```
+```go
 package commands
 
 import (
@@ -1032,7 +1032,7 @@ echo "data to encode" | ipfs add output_file --level 9
 This will create a compressed copy of the encoded data using the IPFS `add` command with the `-l 9` option.
 
 
-```
+```go
 const (
 	mbaseOptionName = "b"
 )
@@ -1094,7 +1094,7 @@ but one can customize used base with -b:
 接下来，该代码会使用 "ipfs multibase decode" 命令将文件或者从标准输入中读取的字节序列转换为原始 multibase 字符串，结果存储到一个名为 "file" 的变量中。最后，该代码会输出 "hello" 字符串，其中使用了 "ipfs multibase decode" 命令将 multibase 字符串转换为可读的字符。
 
 
-```
+```go
 var mbaseDecodeCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Decode multibase string",
@@ -1121,7 +1121,7 @@ This command expects multibase inside of a file or via stdin:
 该工具使用了Go标准库中的argparse模块来解析命令行参数。
 
 
-```
+```go
 `,
 	},
 	Arguments: []cmds.Argument{
@@ -1160,7 +1160,7 @@ This command expects multibase inside of a file or via stdin:
 如果您使用"ipfs multibase transcode file -b base16 > transcribed_file"命令，则mbaseTranscodeCmd将使用base16编码将多基素文件"file"转录为base16编码，并将转录后的结果输出到名为"transcribed_file"的文件中。
 
 
-```
+```go
 var mbaseTranscodeCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Transcode multibase string between bases",
@@ -1188,7 +1188,7 @@ but one can customize used base with -b:
 对于每个输入文件，工具会首先尝试从标准输入中读取数据。如果读取成功，则会将其解码为multibase编码。如果multibase编码解码成功，则会将其编码为base64url格式，并将编码后的数据作为响应发送回标准输入。
 
 
-```
+```go
 `,
 	},
 	Arguments: []cmds.Argument{
@@ -1227,7 +1227,7 @@ but one can customize used base with -b:
 
 ```
 
-# `/opt/kubo/core/commands/p2p.go`
+# `core/commands/p2p.go`
 
 这段代码定义了一个名为“commands”的包，其中定义了一些与 Go-IPFS 客户端库(ipfs-cmds)有关的命令。
 
@@ -1248,7 +1248,7 @@ but one can customize used base with -b:
 12. 在导入了所有必要的包之后，没有定义任何函数或变量，直接跳出了导出层的代码。
 
 
-```
+```go
 package commands
 
 import (
@@ -1282,7 +1282,7 @@ P2PListenerInfoOutput结构体用于输出P2P协议的P2PListener信息。其字
 P2PStreamInfoOutput结构体用于输出P2P协议的P2PStream信息。其字段包括HandlerID、Protocol和OriginAddress，分别表示处理程序ID、协议类型和源地址。
 
 
-```
+```go
 // P2PProtoPrefix is the default required prefix for protocol names
 const P2PProtoPrefix = "/x/"
 
@@ -1314,7 +1314,7 @@ P2PStreamsOutput 表示流媒体输出，它包含一个名为 Streams 的切片
 另外，两个结构体还包含一个名为 reportPeerIDOption 的常量，它的值为 true，表示是否报道对等ID。
 
 
-```
+```go
 // P2PLsOutput is output type of ls command
 type P2PLsOutput struct {
 	Listeners []P2PListenerInfoOutput
@@ -1341,7 +1341,7 @@ const (
 `resolveTimeout`变量用于确保在尝试调用`stream`子命令之前，命令行工具已经准备好了。如果`resolveTimeout`超过了一定的时间，则会触发超时，并输出一条错误消息。
 
 
-```
+```go
 var resolveTimeout = 10 * time.Second
 
 // P2PCmd is the 'ipfs p2p' command
@@ -1386,7 +1386,7 @@ The program takes several arguments to configure the network:
 Once the program is running, it starts listening for incoming connections on port `4567` and sending connections to the specified target address. It also supports forwarding connections to the specified IP address and port number for the Permissioned AJAX/JSON-RPC protocol.
 
 
-```
+```go
 var p2pForwardCmd = &cmds.Command{
 	Status: cmds.Experimental,
 	Helptext: cmds.HelpText{
@@ -1463,7 +1463,7 @@ Example:
 总之，此函数的作用是解析IPFS地址，并将其转换为`peer.AddrInfo`结构体。
 
 
-```
+```go
 // parseIpfsAddr is a function that takes in addr string and return ipfsAddrs
 func parseIpfsAddr(addr string) (*peer.AddrInfo, error) {
 	multiaddr, err := ma.NewMultiaddr(addr)
@@ -1517,7 +1517,7 @@ This is a Go language implementation of a Go-pf/2穿越Cluster 2.0港的tcp连�
 首先，通过p2pGetNode函数获取主节点。然后，根据第一个命令行参数(protocol名称)和第二个命令行参数(目标地址)，建立一个名为"myproto"的libp2p服务器的forward连接。
 
 
-```
+```go
 var p2pListenCmd = &cmds.Command{
 	Status: cmds.Experimental,
 	Helptext: cmds.HelpText{
@@ -1587,7 +1587,7 @@ Example:
 5. 函数返回一个表示错误信息的空字符串（如果有错误）或一个非空字符串（端口号）。
 
 
-```
+```go
 // checkPort checks whether target multiaddr contains tcp or udp protocol
 // and whether the port is equal to 0
 func checkPort(target ma.Multiaddr) error {
@@ -1649,7 +1649,7 @@ The Listener object also has an Encode field, which maps the stream type and fie
 Finally, the program has an output stream that is emitted once when a connection is made to the P2P system. When a new listener is discovered, the program adds the necessary information to the output stream and metadata.
 
 
-```
+```go
 // forwardLocal forwards local connections to a libp2p service
 func forwardLocal(ctx context.Context, p *p2p.P2P, ps pstore.Peerstore, proto protocol.ID, bindAddr ma.Multiaddr, addr *peer.AddrInfo) error {
 	ps.AddAddrs(addr.ID, addr.Addrs, pstore.TempAddrTTL)
@@ -1740,7 +1740,7 @@ The `Close` method takes no arguments and returns a stream that will close all o
 The `ClosedStream_go` package defines the `ClosedStream` message field and implements the `Close` method for the `ClosedStream` message.
 
 
-```
+```go
 const (
 	p2pAllOptionName           = "all"
 	p2pProtocolOptionName      = "protocol"
@@ -1840,7 +1840,7 @@ var p2pCloseCmd = &cmds.Command{
 这些子命令都使用 `p2pStreamCmd` 作为它们的执行函数，并且需要在运行时分别调用 `p2pStreamCmd.Subcommands["ls"]` 和 `p2pStreamCmd.Subcommands["close"]` 来实际执行这些命令。
 
 
-```
+```go
 ///////
 // Stream
 //
@@ -1870,7 +1870,7 @@ The program uses the `tw` package to write the response to the client, which pro
 Overall, this program appears to be a simple and straightforward implementation of a p2p network for audio and video sharing.
 
 
-```
+```go
 var p2pStreamLsCmd = &cmds.Command{
 	Status: cmds.Experimental,
 	Helptext: cmds.HelpText{
@@ -1926,7 +1926,7 @@ var p2pStreamLsCmd = &cmds.Command{
 This is a Go语言中的命令行工具函数，用于关闭正在进行的P2P流。它接受一个标识符（id）和一个选项（p2pAllOptionName）作为参数。如果未指定标识符，则会抛出错误。如果关闭所有流，则会跳过关闭。函数的实现基于P2P库中的函数，可能需要根据具体情况进行修改。
 
 
-```
+```go
 var p2pStreamCloseCmd = &cmds.Command{
 	Status: cmds.Experimental,
 	Helptext: cmds.HelpText{
@@ -1994,7 +1994,7 @@ var p2pStreamCloseCmd = &cmds.Command{
 该函数的作用是判断 ipfs 节点是否可以用来作为 libp2p 流仓储节点，在本地有 ipfs 节点并且配置了 ipfs 流并且端口映射开启的情况下返回 true，否则返回错误。
 
 
-```
+```go
 func p2pGetNode(env cmds.Environment) (*core.IpfsNode, error) {
 	nd, err := cmdenv.GetNode(env)
 	if err != nil {

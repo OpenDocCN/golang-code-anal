@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 47
 
-# `/opt/kubo/plugin/plugins/fxtest/fxtest.go`
+# `plugin/plugins/fxtest/fxtest.go`
 
 这段代码定义了一个名为“fxtestpackage”的包，该包包含以下内容：
 
@@ -15,7 +15,7 @@
 总之，这段代码定义了一个用于测试IPFS文件系统的 fxtestPlugin，通过导入多个IPFS插件，使得您可以使用 fxtestPlugin 提供的API 构建自定义的测试生态系统。
 
 
-```
+```go
 package fxtest
 
 import (
@@ -50,7 +50,7 @@ var Plugins = []plugin.Plugin{
 该插件仅用于在测试中验证 `fx` 插件是否正常工作。它的作用是添加一个日志输出选项，以便在插件初始化时记录调试信息。
 
 
-```
+```go
 // fxtestPlugin is used for testing the fx plugin.
 // It merely adds an fx option that logs a debug statement, so we can verify that it works in tests.
 type fxtestPlugin struct{}
@@ -82,7 +82,7 @@ func (p *fxtestPlugin) Init(env *plugin.Environment) error {
 函数的实现并没有做任何实际的逻辑，它只是一个定义函数的声明。
 
 
-```
+```go
 func (p *fxtestPlugin) Options(info core.FXNodeInfo) ([]fx.Option, error) {
 	opts := info.FXOptions
 	if os.Getenv("TEST_FX_PLUGIN") != "" {
@@ -95,7 +95,7 @@ func (p *fxtestPlugin) Options(info core.FXNodeInfo) ([]fx.Option, error) {
 
 ```
 
-# `/opt/kubo/plugin/plugins/git/git.go`
+# `plugin/plugins/git/git.go`
 
 这段代码是一个使用Go语言编写的Git插件，主要作用是压缩Kubernetes(K8s) Repo文件的编码类型。它将K8s Repo文件编码为IPFS(InterPlanetary File System)支持的编码类型，并允许通过IPFS本地存储库。
 
@@ -112,7 +112,7 @@ func (p *fxtestPlugin) Options(info core.FXNodeInfo) ([]fx.Option, error) {
 5. 去压缩Kubernetes Repo文件：最后，它使用multicodec库将IPFS编码类型应用于Kubernetes Repo文件中，这将解压缩文件并允许将Kubernetes Repo文件从IPFS本地存储库中读取。
 
 
-```
+```go
 package git
 
 import (
@@ -141,7 +141,7 @@ import (
 另外，通过将结构体指针类型赋值给"gitPlugin"，可以实现在运行时对IPLD插件的初始化。
 
 
-```
+```go
 // Plugins is exported list of plugins that will be loaded.
 var Plugins = []plugin.Plugin{
 	&gitPlugin{},
@@ -174,7 +174,7 @@ func (*gitPlugin) Version() string {
 总结一下，该代码定义了一个名为“gitPlugin”的函数，用于注册一个自定义标识，并使用“ipld.NodeAssembler”解码器将数据解码为“zlib-encoded git objects”。
 
 
-```
+```go
 func (*gitPlugin) Init(_ *plugin.Environment) error {
 	return nil
 }
@@ -200,7 +200,7 @@ func decodeZlibGit(na ipld.NodeAssembler, r io.Reader) error {
 
 ```
 
-# `/opt/kubo/plugin/plugins/levelds/levelds.go`
+# `plugin/plugins/levelds/levelds.go`
 
 这段代码定义了一个名为 "levelds" 的包，并导入了几个外部的库。接下来，该包定义了一个名为 "Plugins" 的结构体，该结构体指定了将加载哪些插件。
 
@@ -209,7 +209,7 @@ func decodeZlibGit(na ipld.NodeAssembler, r io.Reader) error {
 另外，该包还定义了一个名为 "levelds.制表符" 的常量，该常量指定了要加载的 LevelDB 数据库的路径。
 
 
-```
+```go
 package levelds
 
 import (
@@ -236,7 +236,7 @@ leveldsPlugin是一个匿名类型，它表示一个实现了plugin.Plugin的接
 该代码的最后两行定义了一个函数，该函数的签名为(leveldsPlugin)紧跟着一个星号，然后是一个空括号。该函数接收一个plugin.Plugin类型的参数，并返回一个指向实现了leveldsPlugin接口的对象的指针。
 
 
-```
+```go
 var Plugins = []plugin.Plugin{
 	&leveldsPlugin{},
 }
@@ -266,7 +266,7 @@ func (*leveldsPlugin) Version() string {
 `BadgerdsDatastoreConfig`是`datastoreConfig`的别名，用于在调用`Init`方法时自动设置数据存储类型参数。`BadgerdsDatastoreConfig`通过检查`compression`参数的值来确定是否使用`BadgerdsDatastoreConfig`，如果`compression`的值为`ldbopts.Compression.Default`，则使用`BadgerdsDatastoreConfig`，否则使用`leveldsPlugin`的`DatastoreTypeName`返回的数据存储类型。
 
 
-```
+```go
 func (*leveldsPlugin) Init(_ *plugin.Environment) error {
 	return nil
 }
@@ -295,7 +295,7 @@ type datastoreConfig struct {
 最后，函数会返回`params`映射中的`compression`字段和`c`变量，其中`c`是一个`fsrepo.DatastoreConfig`类型，表示 Datastore 配置的实例。如果函数没有返回任何值，它会在调用时等待。
 
 
-```
+```go
 func (*leveldsPlugin) DatastoreConfigParser() fsrepo.ConfigFromMap {
 	return func(params map[string]interface{}) (fsrepo.DatastoreConfig, error) {
 		var c datastoreConfig
@@ -330,7 +330,7 @@ func (*leveldsPlugin) DatastoreConfigParser() fsrepo.ConfigFromMap {
 第二个函数`func (c *datastoreConfig) Create(path string) (repo.Datastore, error)`的作用是创建一个新的`Datastore`实例。函数接收一个字符串类型的参数`path`，首先检查`path`是否已经是一个绝对路径。如果是，那么将其作为`compression`参数传递给`NewDatastore`函数。否则，将`path`和`compression`作为参数传递给`levelds.NewDatastore`函数，并返回`null`表示失败。
 
 
-```
+```go
 func (c *datastoreConfig) DiskSpec() fsrepo.DiskSpec {
 	return map[string]interface{}{
 		"type": "levelds",
@@ -351,7 +351,7 @@ func (c *datastoreConfig) Create(path string) (repo.Datastore, error) {
 
 ```
 
-# `/opt/kubo/plugin/plugins/nopfs/nopfs.go`
+# `plugin/plugins/nopfs/nopfs.go`
 
 这段代码定义了一个名为"nopfs"的包，它实现了IPFS(InterPlanetary File System)的节点文件系统。IPFS是一个去中心化的点对点分布式文件系统，可以用来构建分布式网络存储系统。
 
@@ -372,7 +372,7 @@ func (c *datastoreConfig) Create(path string) (repo.Datastore, error) {
 7. 通过nopfs包的API，实现了一个IPFS节点文件系统的文件系统：在nopfs包中，定义了一个名为FileSystem的类，它实现了IPFS节点文件系统的API。
 
 
-```
+```go
 package nopfs
 
 import (
@@ -397,7 +397,7 @@ import (
 由于`<nopfsPlugin>`实现了`plugin.PluginFx`接口，因此它包含了一个`fxtestPlugin`方法。这个方法添加了一个`fx`选项，并打印出一个debug级别的日志，用于验证其在测试中的行为是否正确。
 
 
-```
+```go
 // Plugins sets the list of plugins to be loaded.
 var Plugins = []plugin.Plugin{
 	&nopfsPlugin{},
@@ -434,7 +434,7 @@ func (p *nopfsPlugin) Name() string {
 4. 返回新创建的块器。
 
 
-```
+```go
 func (p *nopfsPlugin) Version() string {
 	return "0.0.10"
 }
@@ -476,7 +476,7 @@ func MakeBlocker() (*nopfs.Blocker, error) {
 函数最后使用 "fx.Append" 函数将 "PathResolversOut" 对象的定义添加到 "opts" 数组中，并返回该 "opts" 数组和 " nil" 作为最后一个 "fx.Option" 的参数，这样就可以将 "PathResolvers" 函数作为 "nopfsPlugin" 实例的一个选项。
 
 
-```
+```go
 // PathResolvers returns wrapped PathResolvers for Kubo.
 func PathResolvers(fetchers node.FetchersIn, blocker *nopfs.Blocker) node.PathResolversOut {
 	res := node.PathResolverConfig(fetchers)
@@ -505,7 +505,7 @@ func (p *nopfsPlugin) Options(info core.FXNodeInfo) ([]fx.Option, error) {
 
 ```
 
-# `/opt/kubo/plugin/plugins/peerlog/peerlog.go`
+# `plugin/plugins/peerlog/peerlog.go`
 
 这段代码定义了一个名为 "peerlog" 的 package，其中包含了以下几个主要组件：
 
@@ -523,7 +523,7 @@ func (p *nopfsPlugin) Options(info core.FXNodeInfo) ([]fx.Option, error) {
 整个 "peerlog" 包的作用是提供了一个简单的、基于 libp2p 库的、用于记录和输出 peers 活动的工具链。通过定义了上述几个组件，可以实现记录和输出 peers 的活动、获取当前时间戳、记录事件、记录网络通信、记录 peersstore 中的数据、记录时间轴等。
 
 
-```
+```go
 package peerlog
 
 import (
@@ -552,7 +552,7 @@ import (
 根据描述，这段代码的主要作用是创建一个事件日志组件，允许在组件繁忙时将一定数量的的事件从事件队列中删除，并将这些事件数量的八分之一留作冗余。具体来说，它通过日志组件将事件队列中的事件身份标记为 "eventIdentify" 类型，然后通过事件队列大小和 "busyDropAmount" 变量来计算在繁忙时需要删除多少事件。当组件的繁忙程度达到预设的 "busyDropAmount" 时，它将删除事件队列中身份标记为 "eventConnect" 类型的事件。
 
 
-```
+```go
 var log = logging.Logger("plugin/peerlog")
 
 type eventType int
@@ -586,7 +586,7 @@ const (
 最后，函数将`plEvent`结构体中的`eventType`和`peer`字段添加到文件中的相应位置，然后将文件写入到文件系统中。
 
 
-```
+```go
 type plEvent struct {
 	kind eventType
 	peer peer.ID
@@ -615,7 +615,7 @@ type plEvent struct {
 最后，一个包含一个`peerLogPlugin`类型的列表被定义。
 
 
-```
+```go
 type peerLogPlugin struct {
 	enabled      bool
 	droppedCount uint64
@@ -651,7 +651,7 @@ func (*peerLogPlugin) Name() string {
 最后，函数返回 `enabled` 的值，作为 "Plugin" 接口定义的版本号， satisfaction "Plugin" 接口的要求。
 
 
-```
+```go
 // Version returns the plugin's version, satisfying the plugin.Plugin interface.
 func (*peerLogPlugin) Version() string {
 	return "0.1.0"
@@ -697,7 +697,7 @@ The program uses a busy-drop mechanism to avoidThrottling and茅盾法雨伞利�
 如果e是一个plEvent，那么我们将接收来自pl.events的消息。
 
 
-```
+```go
 // Init initializes plugin.
 func (pl *peerLogPlugin) Init(env *plugin.Environment) error {
 	pl.events = make(chan plEvent, eventQueueSize)
@@ -791,7 +791,7 @@ func (pl *peerLogPlugin) collectEvents(node *core.IpfsNode) {
 6. 如果给定`peer`的事件不存在，则循环检查给定`peer`的`events`通道中的所有事件。如果是`event.EvtPeerIdentificationCompleted`类型的事件，则设置`pl.droppedCount`计数器为1，意味着给定`peer`的事件已经被订阅。
 
 
-```
+```go
 func (pl *peerLogPlugin) emit(evt eventType, p peer.ID) {
 	select {
 	case pl.events <- plEvent{kind: evt, peer: p}:
@@ -845,14 +845,14 @@ func (pl *peerLogPlugin) Start(node *core.IpfsNode) error {
 然而，需要指出的是，由于这段代码中没有对"Close"函数进行完好的定义，并且也没有在代码的其他部分使用该函数，因此无法确定"Close"函数的实际作用。
 
 
-```
+```go
 func (*peerLogPlugin) Close() error {
 	return nil
 }
 
 ```
 
-# `/opt/kubo/plugin/plugins/peerlog/peerlog_test.go`
+# `plugin/plugins/peerlog/peerlog_test.go`
 
 这段代码定义了一个名为`peerlog`的包，其中包含一个名为`TestExtractEnabled`的测试函数。该测试函数使用了`testing`包的`for`循环，该循环包含一系列测试用例。
 
@@ -861,7 +861,7 @@ func (*peerLogPlugin) Close() error {
 接下来，比较`isEnabled`和输入的`expected`字段，如果它们不匹配，就打印错误消息并退出测试。在所有测试用例都通过了之后，该函数将打印所有测试用例都成功通过了的的消息，然后退出测试。
 
 
-```
+```go
 package peerlog
 
 import "testing"
@@ -914,7 +914,7 @@ func TestExtractEnabled(t *testing.T) {
 
 ```
 
-# `/opt/kubo/profile/goroutines.go`
+# `profile/goroutines.go`
 
 该代码定义了一个名为 "profile" 的包，其中包含一个名为 "WriteAllGoroutineStacks" 的函数，用于将当前所有 Goroutine 的堆栈信息写入到一个指定的Writer。
 
@@ -931,7 +931,7 @@ func TestExtractEnabled(t *testing.T) {
 4. 返回写入过程中发生的错误。
 
 
-```
+```go
 package profile
 
 import (
@@ -962,7 +962,7 @@ func WriteAllGoroutineStacks(w io.Writer) error {
 
 ```
 
-# `/opt/kubo/profile/profile.go`
+# `profile/profile.go`
 
 该代码是一个 Go 语言编写的包 profile，它主要用于提供用于高可用性分布式系统中的资源定义和创建工具。下面是该代码的一些主要功能和用途：
 
@@ -989,7 +989,7 @@ func WriteAllGoroutineStacks(w io.Writer) error {
 总之，该代码是一个用于提供高可用性分布式系统中的资源定义和创建工具的 Go 语言程序。
 
 
-```
+```go
 package profile
 
 import (
@@ -1018,7 +1018,7 @@ import (
 最后，该代码还定义了一个名为 logger 的变量，它的值为 log.Logger("profile")，另外还定义了一个名为 runtime 的名为 "goos" 的变量。
 
 
-```
+```go
 const (
 	CollectorGoroutinesStack = "goroutines-stack"
 	CollectorGoroutinesPprof = "goroutines-pprof"
@@ -1081,7 +1081,7 @@ func (c *collector) Enable() bool {
 `enabledFunc()` 函数将根据传递给它的 `opts` 选项是否启用 `collectFunc()` 来返回一个布尔值。
 
 
-```
+```go
 type collector struct {
 	outputFile   string
 	isExecutable bool
@@ -1108,7 +1108,7 @@ The `CollectorGoroutinesPprof` option enables the Collector to generate performa
 The `CollectorDisabled` function returns a boolean indicating whether the Collector should be enabled or disabled. The `CollectorEnabled` function returns a boolean indicating whether the Collector should be enabled or disabled.
 
 
-```
+```go
 var collectors = map[string]collector{
 	CollectorGoroutinesStack: {
 		outputFile:  "goroutines.stacks",
@@ -1174,7 +1174,7 @@ var collectors = map[string]collector{
 在 runProfile 方法中，将 Options struct 中的所有字段传递给 archiver.WriteProfile 函数，并设置其实例的 options 参数，这样写入的配置文件就会使用 Options 中定义的配置。
 
 
-```
+```go
 type Options struct {
 	Collectors           []string
 	ProfileDuration      time.Duration
@@ -1205,7 +1205,7 @@ The program then creates a new CloudWatch Profiler report with the specified opt
 Finally, the program waits for any results to be written to the `results` channel and returns any errors that occurred during profiling.
 
 
-```
+```go
 // profiler runs the collectors concurrently and writes the results to the zip archive.
 type profiler struct {
 	archive *zip.Writer
@@ -1296,7 +1296,7 @@ func (p *profiler) runProfile(ctx context.Context) error {
 这些函数都是使用psf库中的pprof库来实现的。它们生成的输出信息可以用于分析Java应用程序的性能，包括goroutine和heap使用情况。
 
 
-```
+```go
 func goroutineStacksText(ctx context.Context, _ Options, w io.Writer) error {
 	return WriteAllGoroutineStacks(w)
 }
@@ -1322,7 +1322,7 @@ func allocsProfile(ctx context.Context, _ Options, w io.Writer) error {
 第二个函数 `binary` 同样接收一个 `Context`、一个 `Options` 参数和一个 `Writer` 类型的接口，然后根据操作系统（Linux或Windows）类型选择不同的执行文件路径，并使用 `os.Open` 和 `io.Copy` 函数读取二进制文件内容并将其写入到Writer中。如果过程中出现错误，函数会返回相应的错误信息。
 
 
-```
+```go
 func versionInfo(ctx context.Context, _ Options, w io.Writer) error {
 	return json.NewEncoder(w).Encode(version.GetVersionInfo())
 }
@@ -1362,7 +1362,7 @@ mutexProfile() 函数会在函数开始时设置一个 mutex，并返回一个 e
 blockProfile() 函数会在函数开始时设置一个 block  profile，并返回一个 error。函数内部会执行一个长期的运行时调用以设置所需的申请，以在代码中的申请失败时进行取消。最后，函数会向 [io.Writer] 类型的 w 输出两个由 pprof.Lookup 生成并穿透跨越设置的申请限制的并行值。
 
 
-```
+```go
 func mutexProfile(ctx context.Context, opts Options, w io.Writer) error {
 	prev := runtime.SetMutexProfileFraction(opts.MutexProfileFraction)
 	defer runtime.SetMutexProfileFraction(prev)
@@ -1396,7 +1396,7 @@ func blockProfile(ctx context.Context, opts Options, w io.Writer) error {
 5. 如果 `ctx.Done` 成为主要关注点，函数将返回非空错误。否则，函数将继续等待。
 
 
-```
+```go
 func profileCPU(ctx context.Context, opts Options, w io.Writer) error {
 	err := pprof.StartCPUProfile(w)
 	if err != nil {
@@ -1419,7 +1419,7 @@ func waitOrCancel(ctx context.Context, d time.Duration) error {
 
 ```
 
-# `/opt/kubo/profile/profile_test.go`
+# `profile/profile_test.go`
 
 This appears to be a unit test suite for a program that uses the `zip` package to store and retrieve profiling information for a Go program. The test suite includes several cases, each of which tests a different aspect of the program's behavior.
 
@@ -1434,7 +1434,7 @@ The cases are:
 The test suite uses the Go testing framework to run the tests.
 
 
-```
+```go
 package profile
 
 import (

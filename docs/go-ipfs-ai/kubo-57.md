@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 57
 
-# `/opt/kubo/test/cli/harness/http_client.go`
+# `test/cli/harness/http_client.go`
 
 这段代码是一个名为“harness”的包，它定义了一个HTTP客户端和一个URL解析器。它的作用是帮助开发者测试HTTP客户端应用程序。
 
@@ -9,7 +9,7 @@
 总的来说，这段代码主要作用是为开发者提供一个简单而强大的工具，以便在测试中构建HTTP客户端应用程序，并使应用程序在遇到内部错误时能够正常运行而不必关心错误细节。
 
 
-```
+```go
 package harness
 
 import (
@@ -34,7 +34,7 @@ import (
 整段代码的作用是定义了一个 HTTPClient 类型的 struct，它用于表示 HTTP 客户端，该 struct 中包含了一些与 HTTP 客户端相关的字段和类型，以及一个 HTTPResponse 类型的字段，用于存储 HTTP 响应的对象。该 struct 可以用于创建 HTTP 客户端对象，并通过一些字段设置 HTTP 客户端的一些参数，如超时时间、模板数据等。然后，定义了一个 HTTPResponse 类型，用于存储 HTTP 响应的对象，该类型包含了一些与 HTTP 响应相关的字段和类型，如响应的原始内容、状态码和 headers 等。最后，通过创建 HTTPClient 类型的实例，并设置其中的字段，可以创建一个 HTTP 客户端对象，并通过一些字段来设置该对象的参数，如超时时间、模板数据等，然后，该对象可以用来发送 HTTP 请求，并获取 HTTP 响应，其中 HTTPResponse 类型的字段用于存储 HTTP 响应的对象。
 
 
-```
+```go
 type HTTPClient struct {
 	Client  *http.Client
 	BaseURL string
@@ -63,7 +63,7 @@ type HTTPResponse struct {
 总的来说，这两个函数主要作用于设置HTTP请求头和客户端的行为。
 
 
-```
+```go
 func (c *HTTPClient) WithHeader(k, v string) func(h *http.Request) {
 	return func(h *http.Request) {
 		h.Header.Add(k, v)
@@ -109,7 +109,7 @@ func (c *HTTPClient) Do(req *http.Request) *HTTPResponse {
 该代码片段的具体作用是，在向客户端发送请求之前，将请求的URL构建为将要发送的请求的URL。这样，客户端在构建URL之后，就可以将`url`参数传递给`Get`函数，请求将会根据传递的URL来发送请求。
 
 
-```
+```go
 // BuildURL constructs a request URL from the given path by interpolating the string and then appending it to the base URL.
 func (c *HTTPClient) BuildURL(urlPath string) string {
 	sb := &strings.Builder{}
@@ -143,7 +143,7 @@ func (c *HTTPClient) Get(urlPath string, opts ...func(*http.Request)) *HTTPRespo
 在这两个函数中，都可以看到一个名为"opts..."的参数数组，但并没有定义该数组的下标或者类型，因此无法确定该数组的内容是什么。
 
 
-```
+```go
 func (c *HTTPClient) Post(urlPath string, body io.Reader, opts ...func(*http.Request)) *HTTPResponse {
 	req, err := http.NewRequest(http.MethodPost, c.BuildURL(urlPath), body)
 	if err != nil {
@@ -179,7 +179,7 @@ func (c *HTTPClient) PostStr(urlpath, body string, opts ...func(*http.Request)) 
 因此，该函数的作用是创建一个HTTP请求并返回一个HTTP响应。
 
 
-```
+```go
 func (c *HTTPClient) Head(urlPath string, opts ...func(*http.Request)) *HTTPResponse {
 	req, err := http.NewRequest(http.MethodHead, c.BuildURL(urlPath), nil)
 	if err != nil {
@@ -193,7 +193,7 @@ func (c *HTTPClient) Head(urlPath string, opts ...func(*http.Request)) *HTTPResp
 
 ```
 
-# `/opt/kubo/test/cli/harness/ipfs.go`
+# `test/cli/harness/ipfs.go`
 
 这段代码是一个 Go 语言编写的测试 harness，用于在测试过程中运行 IPFS 命令行工具。具体来说，它实现了以下功能：
 
@@ -204,7 +204,7 @@ func (c *HTTPClient) Head(urlPath string, opts ...func(*http.Request)) *HTTPResp
 5. 返回 "cmds" 数组，其中包含了所有在 IPFS 输出结果中出现的命令。
 
 
-```
+```go
 package harness
 
 import (
@@ -239,7 +239,7 @@ func (n *Node) IPFSCommands() []string {
 此函数的目的是在给定的键上设置IPFS的配置参数，然后在另一个函数中检查是否已经设置了正确的配置值。如果设置的值与获取的新的配置值不同，则函数将记录错误并输出。
 
 
-```
+```go
 func (n *Node) SetIPFSConfig(key string, val interface{}, flags ...string) {
 	valBytes, err := json.Marshal(val)
 	if err != nil {
@@ -273,7 +273,7 @@ func (n *Node) SetIPFSConfig(key string, val interface{}, flags ...string) {
 最后，函数使用json.Unmarshal函数将结果JSON对象解包为原始类型，并返回结果。如果解包过程中出现错误，函数会打印错误消息并返回一个错误。
 
 
-```
+```go
 func (n *Node) GetIPFSConfig(key string, val interface{}) {
 	res := n.IPFS("config", key)
 	valStr := strings.TrimSpace(res.Stdout.String())
@@ -296,7 +296,7 @@ func (n *Node) GetIPFSConfig(key string, val interface{}) {
 具体来说，这两函数的作用是将接收到的内容字符串`content`作为参数传递给第二函数，第二函数在这个基础上执行了IPFS文件系统的`add`命令，以添加所选内容到IPFS文件系统中。然后，第二函数将返回所选内容的元数据，第一函数在这里获取了这个元数据并输出它。
 
 
-```
+```go
 func (n *Node) IPFSAddStr(content string, args ...string) string {
 	log.Debugf("node %d adding content '%s' with args: %v", n.ID, PreviewStr(content), args)
 	return n.IPFSAdd(strings.NewReader(content), args...)
@@ -331,7 +331,7 @@ func (n *Node) IPFSAdd(content io.Reader, args ...string) string {
 函数的实现基于 `io.Reader`、`io.Error` 和 `os.Run` 包，以及 `github.com/ethereum/go-ipfs/v3/log` 包中的 `log.Debugf` 函数。
 
 
-```
+```go
 func (n *Node) IPFSDagImport(content io.Reader, cid string, args ...string) error {
 	log.Debugf("node %d dag import with args: %v", n.ID, args)
 	fullArgs := []string{"dag", "import", "--pin-roots=false"}
@@ -353,7 +353,7 @@ func (n *Node) IPFSDagImport(content io.Reader, cid string, args ...string) erro
 
 ```
 
-# `/opt/kubo/test/cli/harness/log.go`
+# `test/cli/harness/log.go`
 
 该代码包名为“harness”，其中包含了以下功能：
 
@@ -376,7 +376,7 @@ func (n *Node) IPFSDagImport(content io.Reader, cid string, args ...string) erro
 17. 最后，通过调用一个名为“runtime.Wait”的函数，来等待当前操作系统的命令行窗口加载完毕，然后返回一个布尔值，表明所有的测试都已完成，函数不会继续执行。
 
 
-```
+```go
 package harness
 
 import (
@@ -416,7 +416,7 @@ type event struct {
 该代码的目的是实现一个简单的日志记录器，用于在Go测试中记录测试过程中发生的事件。
 
 
-```
+```go
 type events []*event
 
 func (e events) Len() int           { return len(e) }
@@ -454,7 +454,7 @@ func (e events) Swap(i, j int)      { e[i], e[j] = e[j], e[i] }
 该logger的主要作用是在测试过程中记录日志，并提供了方法来设置和清空日志缓冲区。通过使用这些方法，可以方便地在测试过程中记录和查看日志，以便更好地调试和解决问题。
 
 
-```
+```go
 //
 // Obviously this logger should never be used in production systems.
 type TestLogger struct {
@@ -490,7 +490,7 @@ func NewTestLogger(t *testing.T) *TestLogger {
 8. 根据步骤4的`file`路径，调用`t.log`函数，并将`d`、`caller`和`e`作为参数传递给`t.log`函数。
 
 
-```
+```go
 func (t *TestLogger) buildPrefix(timestamp time.Time) string {
 	d := timestamp.Format("2006-01-02T15:04:05.999999")
 	_, file, lineno, _ := runtime.Caller(2)
@@ -535,7 +535,7 @@ func (t *TestLogger) Log(args ...any) {
 7. 如果 `t.t.Logger` 实例已经设置 `output` 选项为 `null`，则不输出任何信息。
 
 
-```
+```go
 func (t *TestLogger) Logf(format string, args ...any) {
 	timestamp := time.Now()
 	e := t.buildPrefix(timestamp) + fmt.Sprintf(format, args...)
@@ -565,7 +565,7 @@ func (t *TestLogger) Fatalf(format string, args ...any) {
 第二段代码 `func (t *TestLogger) AddPrefix(prefix string) *TestLogger` 接收一个前缀字符串 `prefix`，并使用 `t.m.Lock()` 函数获取线程安全锁。在这个函数内部，使用 `t.prefixes` 和 `t.prefixesIface` 数组将前缀字符串存储到 `t.prefixes` 和 `t.prefixesIface` 中，并将它们与当前的日志信息合并。接着，创建一个新的 `TestLogger` 对象 `l`，并将 `l` 存储到 `t.children` 数组中，`t.t.Cleanup(l.flush)` 函数确保在日志信息中不会保留父日志信息。最后，返回新创建的 `l` 对象。
 
 
-```
+```go
 func (t *TestLogger) add(e *event) {
 	t.m.Lock()
 	defer t.m.Unlock()
@@ -598,7 +598,7 @@ func (t *TestLogger) AddPrefix(prefix string) *TestLogger {
 函数还打印出`t`对象当前拥有的`children`数量，然后遍历`t`的`children`链，检查每个子对象是否启用了`logsEnabled`字段，如果子对象未启用，则调用子对象的`EnableLogs()`函数。
 
 
-```
+```go
 func (t *TestLogger) EnableLogs() {
 	t.m.Lock()
 	defer t.m.Unlock()
@@ -629,7 +629,7 @@ c. 如果 `t.parent` 为空或者 `t.buf` 为空，则执行以下操作：
    - 如果 `t.logsEnabled` 为真，则先使用 `sort.Sort(t.buf)` 对 `t.buf` 中的事件进行排序，然后打印排序后的所有事件。接着，打印链式调用 `t.parent` 中的 `add()` 方法添加的事件，并调用 `fmt.Println()` 输出事件信息。最后，输出结束后将 `t.buf` 中的所有事件清空。
 
 
-```
+```go
 func (t *TestLogger) flush() {
 	if t.t.Failed() || t.logsEnabled {
 		t.m.Lock()
@@ -656,7 +656,7 @@ func (t *TestLogger) flush() {
 
 ```
 
-# `/opt/kubo/test/cli/harness/node.go`
+# `test/cli/harness/node.go`
 
 该代码包是一个用于管理命令行工具的工具，名为" harness"。它主要实现了以下功能：
 
@@ -685,7 +685,7 @@ func (t *TestLogger) flush() {
 12. 通过封装实现了 HTTP命令行工具的内部处理，包括解析命令行参数、执行下载、上传、查询等操作。
 
 
-```
+```go
 package harness
 
 import (
@@ -719,7 +719,7 @@ import (
 这段代码创建了一个名为 "testharness" 的日志输出器，并将其注册到该输出器中。这个输出器将记录 Node 结构的每个字段，包括 ID、目录和一些系统信息。此外，还记录了每个 Node 实例的配置和状态，例如 API、Gateway 和 Swarm 服务器的地址，以及是否启用了 MDNS 注册。最后，创建了一个 "Runner" 类型的实例，用于运行在 Node 上的测试。
 
 
-```
+```go
 var log = logging.Logger("testharness")
 
 // Node is a single Kubo node.
@@ -748,7 +748,7 @@ type Node struct {
 最后，函数创建了一个名为 "Runner" 的匿名函数作为参数，并传递给该匿名函数的 Env 和 Dir 字段。通过传递的 runner.Runner 构造了一个 Runner 对象，该对象实现了 os.Run 函数。通过 Runner.Start 方法启动 runner，通过 runner.Once 方法获取 runner 对象 once，然后函数返回一个指向 Node 对象的引用。
 
 
-```
+```go
 func BuildNode(ipfsBin, baseDir string, id int) *Node {
 	dir := filepath.Join(baseDir, strconv.Itoa(id))
 	if err := os.MkdirAll(dir, 0o755); err != nil {
@@ -780,7 +780,7 @@ func BuildNode(ipfsBin, baseDir string, id int) *Node {
 这两个函数都在尝试从文件系统中读取或写入文件。为了确保文件操作的可靠性，它们使用了错误处理和异常处理。如果出现错误，函数会输出相应的错误信息并终止执行，以帮助开发人员更好地理解问题。
 
 
-```
+```go
 func (n *Node) WriteBytes(filename string, b []byte) {
 	f, err := os.Create(filepath.Join(n.Dir, filename))
 	if err != nil {
@@ -817,7 +817,7 @@ func (n *Node) ReadFile(filename string) string {
 第三个函数 `WriteConfig` 接收一个整型指针变量 `c` 和一个字符串路径 `path`，并返回一个整型指针变量，表示文件是否成功写入。这个函数将 `c` 的值作为参数，并使用 `filepath.Join` 函数将文件路径和文件名连接起来，然后使用 `serial.WriteConfigFile` 函数将配置信息写入到文件中。如果写入过程中出现错误，函数将引发一个异常并返回一个空指针。如果写入成功，函数返回 `true`。
 
 
-```
+```go
 func (n *Node) ConfigFile() string {
 	return filepath.Join(n.Dir, "config")
 }
@@ -846,7 +846,7 @@ func (n *Node) WriteConfig(c *config.Config) {
 第二段代码定义了一个名为ReadUserResourceOverrides的函数，函数接收一个rcmgr.PartialLimitConfig类型的指针，函数的作用是从用户资源限制配置文件中读取用户资源限制，并返回一个rcmgr.PartialLimitConfig类型的指针。函数首先从用户资源限制配置文件中读取相关配置，然后返回一个rcmgr.PartialLimitConfig类型的指针，表示用户资源限制的配置。
 
 
-```
+```go
 func (n *Node) UpdateConfig(f func(cfg *config.Config)) {
 	cfg := n.ReadConfig()
 	f(cfg)
@@ -878,7 +878,7 @@ func (n *Node) ReadUserResourceOverrides() *rcmgr.PartialLimitConfig {
 这个函数的作用是执行 `IPFS` 操作并返回结果。具体来说，这个函数接受多个参数 `args`，表示 `IPFS` 操作需要使用的命令行参数，然后执行 `n.RunIPFS` 函数，并将 `args` 中的参数传递给 `n.RunIPFS` 函数进行处理，最后将处理后的结果返回给 `*RunResult` 类型的变量 `res`。
 
 
-```
+```go
 func (n *Node) WriteUserSuppliedResourceOverrides(c *rcmgr.PartialLimitConfig) {
 	err := serial.WriteConfigFile(filepath.Join(n.Dir, "libp2p-resource-limit-overrides.json"), c)
 	if err != nil {
@@ -909,7 +909,7 @@ func (n *Node) IPFS(args ...string) *RunResult {
 最后，代码实现了一个名为 "RunPipeToIPFS" 的函数，它接收一个 "Reader" 类型的参数 "reader"，以及一个或多个参数 "args"，并将这些参数传递给 "RunWithStdin" 函数，然后调用 IPFS 库的 "Run" 函数，并将结果返回给调用者。
 
 
-```
+```go
 func (n *Node) PipeStrToIPFS(s string, args ...string) *RunResult {
 	return n.PipeToIPFS(strings.NewReader(s), args...)
 }
@@ -933,7 +933,7 @@ func (n *Node) RunPipeToIPFS(reader io.Reader, args ...string) *RunResult {
 This code looks like it initializes and configures an IPFS node. The IPFS node has a specific IP address, a mechanism for connecting to it, and a mechanism for reaching it from outside the node. It also initializes a swarm of IPFS nodes and a gateway for connecting to the outside world. The node can also be configured through a `config.Config` struct, which specifies various details of how the node should behave.
 
 
-```
+```go
 func (n *Node) RunIPFS(args ...string) *RunResult {
 	return n.Runner.Run(RunRequest{
 		Path: n.IPFSBin,
@@ -988,7 +988,7 @@ func (n *Node) Init(ipfsArgs ...string) *Node {
 这段代码的作用是创建并运行一个Kubernetes（daemon）daemon，该daemon以指定的请求启动。具体来说，它通过调用`node.StartDaemonWithReq`函数来创建一个`RunRequest`对象，该对象包含运行Kubernetes daemon所需的参数、CMD选项以及运行函数。然后，它将该请求设置为给定的请求，并使用`n.Runner`字段所提供的`MustRun`方法来运行该请求。在函数内部，它使用`log.Debugf`和`log.Panicf`函数来输出调试信息。
 
 
-```
+```go
 // StartDaemonWithReq runs a Kubo daemon with the given request.
 // This overwrites the request Path with the Kubo bin path.
 //
@@ -1031,7 +1031,7 @@ func (n *Node) StartDaemonWithReq(req RunRequest) *Node {
 这两个函数的具体实现没有给出，但从函数的名称来看，`StartDaemon` 函数用于启动一个DAO节点并返回，而 `signalAndWait` 函数用于等待给定信号并超时。
 
 
-```
+```go
 func (n *Node) StartDaemon(ipfsArgs ...string) *Node {
 	return n.StartDaemonWithReq(RunRequest{
 		Args: ipfsArgs,
@@ -1068,7 +1068,7 @@ If the Node.js server has a daemon running, the program uses the `signalAndWait`
 If the server stops, the program logs a message and returns the Node.js server. If the server does not stop or if it takes longer than 5 seconds, the program panics and returns.
 
 
-```
+```go
 func (n *Node) StopDaemon() *Node {
 	log.Debugf("stopping node %d", n.ID)
 	if n.Daemon == nil {
@@ -1118,7 +1118,7 @@ func (n *Node) StopDaemon() *Node {
 第二个函数名为 `func (n *Node) APIURL() string`，函数接收一个 `*Node` 类型的参数 `n`，并尝试通过调用 `n.APIAddr()` 函数获取到 `n` 的 `APIAddr()` 值。如果这个尝试失败，函数将会崩溃并输出一个错误。然后，函数使用 `manet.ToNetAddr()` 函数将 `n.APIAddr()` 返回的值转换为一个 `netaddr.NetAddress` 类型，并返回一个字符串，该字符串表示 API 服务的 URL。
 
 
-```
+```go
 func (n *Node) APIAddr() multiaddr.Multiaddr {
 	ma, err := n.TryAPIAddr()
 	if err != nil {
@@ -1145,7 +1145,7 @@ This function appears to be part of a networked NodeP风华实，用于向聚合
 函数使用了`log`函数来输出一些调试信息，如果注册失败，则会输出错误信息。
 
 
-```
+```go
 func (n *Node) TryAPIAddr() (multiaddr.Multiaddr, error) {
 	b, err := os.ReadFile(filepath.Join(n.Dir, "api"))
 	if err != nil {
@@ -1223,7 +1223,7 @@ func (n *Node) checkAPI() bool {
 2. `func (n *Node) WaitOnAPI() *Node` 函数接收一个 `Node` 类型的参数 `n`，并使用一个循环来等待服务器响应。每次循环检查 `n` 是否已经连接到服务器。如果 `n` 已经连接到服务器，则返回 `n`。如果 `n` 没有连接到服务器，则会尝试使用 `peer.Decode` 函数将 `PeerID` 编码为字符串，并尝试使用 `io.ioutil.Subsystem` 函数来读取服务器返回的 `stdout` 和 `stderr` 内容。如果 `n` 正确地连接到服务器，则返回 `n`。如果 `n` 无法连接到服务器，则会输出一条错误信息并返回 `n`。
 
 
-```
+```go
 func (n *Node) PeerID() peer.ID {
 	cfg := n.ReadConfig()
 	id, err := peer.Decode(cfg.Identity.PeerID)
@@ -1279,7 +1279,7 @@ func (n *Node) WaitOnAPI() *Node {
 		+ `signal(<0)`：向指定的 <0> 信号发送，并返回。
 
 
-```
+```go
 func (n *Node) IsAlive() bool {
 	if n.Daemon == nil || n.Daemon.Cmd == nil || n.Daemon.Cmd.Process == nil {
 		return false
@@ -1323,7 +1323,7 @@ func (n *Node) SwarmAddrs() []multiaddr.Multiaddr {
 最后，函数返回结果数组。
 
 
-```
+```go
 func (n *Node) SwarmAddrsWithPeerIDs() []multiaddr.Multiaddr {
 	ipfsProtocol := multiaddr.ProtocolWithCode(multiaddr.P_IPFS).Name
 	peerID := n.PeerID()
@@ -1352,7 +1352,7 @@ func (n *Node) SwarmAddrsWithPeerIDs() []multiaddr.Multiaddr {
 最后，函数将 `addrs` 数组中的地址连接成一个 `multiaddr.Multiaddr` 类型的实例并返回。
 
 
-```
+```go
 func (n *Node) SwarmAddrsWithoutPeerIDs() []multiaddr.Multiaddr {
 	var addrs []multiaddr.Multiaddr
 	for _, ma := range n.SwarmAddrs() {
@@ -1379,7 +1379,7 @@ func (n *Node) SwarmAddrsWithoutPeerIDs() []multiaddr.Multiaddr {
 第二个函数 `Peers` 同样接收两个参数：一个 `Node` 类型的变量 `n` 和一个 `multiaddr.Multiaddr` 类型的变量 `res`。函数的作用是运行一个 `RunRequest` 类型，其中 `Path` 字段指定 `n` 的 IPFSBin 文件，`Args` 字段包含一个字符串数组，包含一个名为 "peers" 的参数。然后从 `res.Stdout.Lines()` 方法中读取所有内容，并将其转换为 `multiaddr.Multiaddr` 类型，然后将其添加到 `addrs` 数组中。最后，函数返回 `addrs` 数组。
 
 
-```
+```go
 func (n *Node) Connect(other *Node) *Node {
 	n.Runner.MustRun(RunRequest{
 		Path: n.IPFSBin,
@@ -1423,7 +1423,7 @@ Addrs：`cfg.Peering.Peers`字段中`addrs`切片包含的所有`multiaddr.Multi
 函数的作用是允许两个`Node`之间建立连接，并允许连接的节点将自己的地址添加到连接中。
 
 
-```
+```go
 func (n *Node) PeerWith(other *Node) {
 	n.UpdateConfig(func(cfg *config.Config) {
 		var addrs []multiaddr.Multiaddr
@@ -1458,7 +1458,7 @@ func (n *Node) PeerWith(other *Node) {
 这个函数的作用是获取当前节点的GatewayURL，如果当前节点不存在Gateway，函数会尝试从其父节点或根节点获取Gateway。如果从父节点或根节点获取成功，函数返回当前节点的GatewayURL；如果从父节点或根节点获取失败，函数会超时并输出"timeout waiting for gateway file"。
 
 
-```
+```go
 func (n *Node) Disconnect(other *Node) {
 	n.IPFS("swarm", "disconnect", "/p2p/"+other.PeerID().String())
 }
@@ -1493,7 +1493,7 @@ func (n *Node) GatewayURL() string {
 总的来说，这两行代码定义了两个HTTP客户端函数，用于在Node对象中创建HTTP客户端，可以方便地使用默认的HTTP客户端。
 
 
-```
+```go
 func (n *Node) GatewayClient() *HTTPClient {
 	return &HTTPClient{
 		Client:  http.DefaultClient,

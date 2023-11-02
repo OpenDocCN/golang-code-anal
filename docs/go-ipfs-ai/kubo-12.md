@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 12
 
-# `/opt/kubo/core/commands/completion.go`
+# `core/commands/completion.go`
 
 该代码定义了一个名为“commands”的包，其中包含了一些命令行工具的实现。具体来说，它实现了以下功能：
 
@@ -35,7 +35,7 @@
 4. 在实现了上述功能之后，该代码还实现了以下输出命令行工具的选项。具体来说，当命令行工具被调用时，如果用户不提供任何参数，则会自动打印出所有选项并让用户选择一个选项作为最终选项。
 
 
-```
+```go
 package commands
 
 import (
@@ -73,7 +73,7 @@ This function first sorts the input flags based on their long names. It then sor
 Finally, the function returns the parsed and formatted versions of the flags and options.
 
 
-```
+```go
 type singleOption struct {
 	LongNames   []string
 	ShortNames  []string
@@ -140,7 +140,7 @@ func commandToCompletions(name string, fullName string, cmd *cmds.Command) *comp
 这段代码定义了三个变量，分别对应 bash、fish 和 zsh 三种 completion 模板的完成形式。接着定义了一个名为 `init` 的函数，该函数在函数初始化时创建了这三种模板的实例。模板的作用是在用户输入命令时，根据输入的内容自动完成相应的快捷方式。其中，`{{ .Name }}` 是模板的变量，用于存储完成形式的命令名称。
 
 
-```
+```go
 var bashCompletionTemplate, fishCompletionTemplate, zshCompletionTemplate *template.Template
 
 func init() {
@@ -191,7 +191,7 @@ _ipfs_compgen -W '{{ range .ShortFlags }}-{{.}}' -- "${word}"
 脚本的最后一个 `return 0` 表示在所有条件都不满足的情况下，返回 0，这意味着脚本不会对任何输入的元描述做任何操作，而是直接退出。
 
 
-```
+```go
 done
 
 if [[ "${word}" == -* ]]; then
@@ -223,7 +223,7 @@ if [[ "${word}" == -* ]]; then
 9. 如果当前输入命令没有在 `completion_words` 数组中，则执行 `_ipfs_compgen` 命令生成 `_ipfs_compgen -W` 命令的输出，其中 `{{ range .Subcommands }}{{.Name }}` 表示 `.Subcommands` 数组中的所有命令名称。
 
 
-```
+```go
 fi
 
 while [[ ${index} -lt ${COMP_CWORD} ]]; do
@@ -267,7 +267,7 @@ fi
 最后，使用 {{ template "command" . }} 模板将生成的命令行工具打印到控制台。
 
 
-```
+```go
 _ipfs_compgen() {
   local oldifs="$IFS"
   IFS=$'\n'
@@ -300,7 +300,7 @@ _ipfs() {
 这段代码的主要作用是完成一些常见的命令，特别是 `ipfs` 命令，通过自动补全它的参数，使得用户可以更方便地使用 `ipfs` 命令。
 
 
-```
+```go
 complete -o nosort -o nospace -o default -F _ipfs ipfs
 `))
 
@@ -331,7 +331,7 @@ IFS="$oldifs"
 7. 最后，`_ipfs`使用了您在之前的命令行提供的模板，并根据您提供的命令行参数内容生成了一长串命令行，这些命令行将尝试使用IPFS在您的系统上执行操作。
 
 
-```
+```go
 _ipfs() {
 COMPREPLY=()
 local index=1
@@ -366,7 +366,7 @@ complete -c ipfs -n '__fish_ipfs_seen_all_subcommands_from{{ .FullName }}' -F
 这段代码的作用是生成一个带有鱼（Fish） completion 功能的命令行工具，其输入参数为 `{{ .Name }}` 和 `{{ .Description }}`，输出参数为 `{{ .FullName }}`。
 
 
-```
+```go
 #{{ .FullName }}
 complete -c ipfs -n '__fish_ipfs_use_subcommand{{ .FullName }}' -a {{ .Name }} -d "{{ .Description }}"
 {{ template "command" . }}
@@ -396,7 +396,7 @@ function __fish_ipfs_seen_all_subcommands_from
 总之，这段代码定义了一个函数，用于设置 Fish 命令行工具中的参数，以使用户能够在命令行中指定更多的选项。
 
 
-```
+```go
 end
 
 function __fish_ipfs_use_subcommand
@@ -426,7 +426,7 @@ function __fish_ipfs_use_subcommand
 整个脚本的作用是提供一个完整的命令帮助文本，以便用户可以使用 `ipfs` 命令行工具。
 
 
-```
+```go
 end
 
 complete -c ipfs -l help -d "Show the full command help text."
@@ -454,7 +454,7 @@ func writeBashCompletions(cmd *cmds.Command, out io.Writer) error {
 另外，这两段代码还实现了另一个名为`writeLegacyCompletions`的函数。该函数与`writeFishCompletions`函数的作用类似，不同之处在于它使用了`LegacyCompletionTemplate`函数，该函数可以兼容`ipfs`命令的`-F`或`--force-import`选项。通过将`cmd`参数传递给`commandToCompletions`函数，并传递给`LegacyCompletionTemplate.Execute`函数，将生成的完成脚本文件输出到指定的`io.Writer`对象中。
 
 
-```
+```go
 // writeFishCompletions generates a fish completion script for the given command tree.
 func writeFishCompletions(cmd *cmds.Command, out io.Writer) error {
 	cmds := commandToCompletions("ipfs", "", cmd)
@@ -468,7 +468,7 @@ func writeZshCompletions(cmd *cmds.Command, out io.Writer) error {
 
 ```
 
-# `/opt/kubo/core/commands/config.go`
+# `core/commands/config.go`
 
 该代码是一个 Go 语言编写的库中的一个命令行工具，名为 "kubo-cmd"。它的作用是执行与 Kubernetes 集群相关的命令，如部署、部署资源、查询等等。
 
@@ -486,7 +486,7 @@ func writeZshCompletions(cmd *cmds.Command, out io.Writer) error {
 最后，通过组合以上功能，实现了对 Kubernetes 集群的一系列命令操作。
 
 
-```
+```go
 package commands
 
 import (
@@ -520,7 +520,7 @@ import (
 最后，没有定义任何函数或方法，可能是为了提供一个简单的示例，但是缺少了必要的上下文，无法确定其具体的作用。
 
 
-```
+```go
 // ConfigUpdateOutput is config profile apply command's output
 type ConfigUpdateOutput struct {
 	OldCfg map[string]interface{}
@@ -550,7 +550,7 @@ const (
 4. 通过 ipfs 配置工具函数，用户还可以设置 ipfs 的配置参数，如 ControlPlane.Auth.Credentials、ControlPlane.Auth.Credentials 等。
 
 
-```
+```go
 var ConfigCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Get and set IPFS config values.",
@@ -587,7 +587,7 @@ The routine opens the configuration data directory, `config.dir`, and performs t
 The `ConfigField` type is used to specify that the input and output types for the `fsrepo.Open` method are `ConfigField`. This allows the function to specify the type of the configuration data that it expects.
 
 
-```
+```go
 Set the value of the 'Datastore.Path' key:
 
   $ ipfs config Datastore.Path ~/.ipfs/datastore
@@ -689,7 +689,7 @@ Set the value of the 'Datastore.Path' key:
 函数的核心部分是对于每个 `pattern`，函数都会搜索 `key` 数组中与该模式匹配的第一个非空字符串，如果找到了，则返回 `true`，否则返回 `false`。在搜索过程中，如果发现 `key` 数组中有一个及以上与 `pattern` 相同的字符串，则认为匹配成功。
 
 
-```
+```go
 // matchesGlobPrefix returns true if and only if the key matches the glob.
 // The key is a sequence of string "parts", separated by commas.
 // The glob is a sequence of string "patterns".
@@ -727,7 +727,7 @@ func matchesGlobPrefix(key string, glob []string) bool {
 该命令的实现在创建了一个名为 `configShowCmd` 的函数，该函数使用 `cmdenv` 和 `json` 包从指定目录中获取配置文件，并使用 `config.Filename` 和 `scrubValue` 和 `scrubOptionalValue` 函数来处理配置文件中的数据。
 
 
-```
+```go
 var configShowCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Output config file contents.",
@@ -785,7 +785,7 @@ NOTE: For security reasons, this command will omit your private key and remote s
 最后，定义了一个名为config.HumanOutput的函数，它接受一个名为out的输出writer和一个名为buf的缓冲区。它尝试从配置文件中获取适当的输出，并将buf初始化为一个新line，然后将其添加到缓冲区中。如果出现错误，函数返回一个非空错误类型。
 
 
-```
+```go
 var HumanJSONEncoder = cmds.MakeTypedEncoder(func(req *cmds.Request, w io.Writer, out *map[string]interface{}) error {
 	buf, err := config.HumanOutput(out)
 	if err != nil {
@@ -812,7 +812,7 @@ func scrubValue(m map[string]interface{}, key []string) (map[string]interface{},
 `scrubEither` 函数首先尝试从 `u` 接口中获取指定的键，如果找不到，则执行 `scrubValueInternal` 函数来获取可能的对象。如果找到对象，则返回 `u` 接口和 nil。如果找不到对象，则返回 nil 和错误。
 
 
-```
+```go
 // Scrubs value and returns no error if missing
 func scrubOptionalValue(m map[string]interface{}, key []string) (map[string]interface{}, error) {
 	return scrubMapInternal(m, key, true)
@@ -842,7 +842,7 @@ func scrubValueInternal(v interface{}, key []string, okIfMissing bool) (interfac
 如果 key 数组中有一个或多个键不是 "*" 字符，函数将从 map 中的 value 属性中添加对应的键值对。如果函数在过程中遇到错误，它将输出该错误并返回一个可能的错误。函数返回新 map 类型，并输出一个可能的错误。
 
 
-```
+```go
 func scrubMapInternal(m map[string]interface{}, key []string, okIfMissing bool) (map[string]interface{}, error) {
 	if len(key) == 0 {
 		return make(map[string]interface{}), nil // delete value
@@ -877,7 +877,7 @@ func scrubMapInternal(m map[string]interface{}, key []string, okIfMissing bool) 
 具体来说，这个命令将在后台执行，并在调用它的用户之前显示帮助信息。它将尝试从环境变量$EDITOR中查找指定的 config 文件，并使用该文件中的内容来编辑 config 文件。如果指定的 config 文件不存在或格式错误，该命令将返回一个错误并停止执行。如果指定的 config 文件存在，它将使用名为 editConfig 的函数来编辑该文件。
 
 
-```
+```go
 var configEditCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Open the config file for editing in $EDITOR.",
@@ -913,7 +913,7 @@ variable set to your preferred text editor.
 函数的 `file.Close()` 函数用于关闭已经打开的文件，这个函数的参数是一个 `file.Close()` 函数的返回值。函数的 `replaceConfig` 函数接收一个 `r` 变量和一个 `file` 参数，这个函数需要在 `file.Close()` 和 `cmdenv.GetFileArg` 函数返回前被调用。函数使用 `fsrepo.Open` 函数打开一个根目录的配置文件，使用 `cmdenv.GetConfigRoot` 函数获取根目录，使用 `fsrepo.Write` 函数将内容写入配置文件，使用 `cmdenv.SetConfigRoot` 函数设置根目录，最后使用 `fsrepo.Close` 函数关闭文件。如果打开配置文件失败，函数返回错误。如果替换配置文件成功，函数返回 `0`。
 
 
-```
+```go
 var configReplaceCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Replace the config with <file>.",
@@ -963,7 +963,7 @@ The script also uses the `scrubPrivKey()` function to remove any private keys fr
 Finally, the script emits a `ConfigUpdateOutput` object once the file has been written. This object contains information about the new configuration object, including the differences between the old and new configuration objects.
 
 
-```
+```go
 var configProfileCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Apply profiles to config.",
@@ -1051,7 +1051,7 @@ var configProfileApplyCmd = &cmds.Command{
 最终，函数返回 `out` 字符串，描述了如何构建基准测试的示例。
 
 
-```
+```go
 func buildProfileHelp() string {
 	var out string
 
@@ -1078,7 +1078,7 @@ func buildProfileHelp() string {
 4. 最后，返回 `cfgMap`，由于已经将 `PrivKeyTag` 和 `IdentityTag` 设置为 `Nil`，所以结果就是 `cfgMap`。如果上述操作出现错误，返回 `nil`，否则继续执行后续操作。
 
 
-```
+```go
 // scrubPrivKey scrubs private key for security reasons.
 func scrubPrivKey(cfg *config.Config) (map[string]interface{}, error) {
 	cfgMap, err := config.ToMap(cfg)
@@ -1114,7 +1114,7 @@ func scrubPrivKey(cfg *config.Config) (map[string]interface{}, error) {
 最后，函数返回新的配置文件、旧的配置文件和错误信息，或者只返回新的配置文件。
 
 
-```
+```go
 // transformConfig returns old config and new config instead of difference between them,
 // because apply command can provide stable API through this way.
 // If dryRun is true, repo's config should not be updated and persisted
@@ -1170,7 +1170,7 @@ func transformConfig(configRoot string, configName string, transformer config.Tr
 * `setConfig(r repo.Repo, key string, value interface{}) (*ConfigField, error)`：创建一个`ConfigField`类型的变量，该变量包含`key`和`value`，并从`repo.Repo`包的`SetConfigKey`函数中设置`key`所对应的配置键的值为`value`。
 
 
-```
+```go
 func getConfig(r repo.Repo, key string) (*ConfigField, error) {
 	value, err := r.GetConfigKey(key)
 	if err != nil {
@@ -1197,7 +1197,7 @@ This function adds or removes remote pinning services with the given `config` co
 If the service to be added or removed is successfully updated, the function returns without error. If any updating conflicts with the existing configuration, the function returns with an error.
 
 
-```
+```go
 func editConfig(filename string) error {
 	editor := os.Getenv("EDITOR")
 	if editor == "" {
@@ -1279,7 +1279,7 @@ func replaceConfig(r repo.Repo, file io.Reader) error {
 函数最后返回 `oldServices` 和 `nil`，分别表示成功和 `nil`。
 
 
-```
+```go
 func getRemotePinningServices(r repo.Repo) (map[string]config.RemotePinningService, error) {
 	var oldServices map[string]config.RemotePinningService
 	if remoteServicesTag, err := getConfig(r, config.RemoteServicesPath); err == nil {
@@ -1301,7 +1301,7 @@ func getRemotePinningServices(r repo.Repo) (map[string]config.RemotePinningServi
 
 ```
 
-# `/opt/kubo/core/commands/config_test.go`
+# `core/commands/config_test.go`
 
 这段代码是一个命令行工具的测试框架，主要测试 `scrubMapInternal` 函数的正确性。
 
@@ -1310,7 +1310,7 @@ func getRemotePinningServices(r repo.Repo) (map[string]config.RemotePinningServi
 这段代码的作用是测试 `scrubMapInternal` 函数的正确性，确保在测试过程中，该函数能够正确地操作并返回预期的结果。
 
 
-```
+```go
 package commands
 
 import "testing"
@@ -1330,7 +1330,7 @@ func TestScrubMapInternalDelete(t *testing.T) {
 
 ```
 
-# `/opt/kubo/core/commands/dht.go`
+# `core/commands/dht.go`
 
 这段代码定义了一个名为"cmds"的命令包，其中包含了一些用于管理IPFS(InterPlanetary File System)的工具。它通过导入来自不同包的函数、变量和常量，来实现在命令行中使用这些工具。
 
@@ -1345,7 +1345,7 @@ func TestScrubMapInternalDelete(t *testing.T) {
 4. 通过使用"imported ErrNotDHT"这个变量，来实现一个错误处理函数，当遇到"routing service is not a DHT"这种错误时，自动丢弃对此错误的治疗，并返回一个ErrNotDHT的错误。
 
 
-```
+```go
 package commands
 
 import (
@@ -1378,7 +1378,7 @@ var ErrNotDHT = errors.New("routing service is not a DHT")
 此外，DhtCmd 还定义了一个 Subcommands 字段，它是一个包含两个字段的多键值对，第一个键是命令名称，第二个键是命令的实现类，它们都实现了 Command 接口。
 
 
-```
+```go
 var DhtCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline:          "Issue commands directly through the DHT.",
@@ -1400,7 +1400,7 @@ var DhtCmd = &cmds.Command{
 这两个变量是在命令行脚本中定义的，作用是创建两个命令行工具。具体的，使用 findProvidersDhtCmd 可以将一个名为 "findProvidersRoutingCmd" 的命令行工具查找并打印所有提供该工具的相关信息，包括其帮助文本、参数选项等。而使用 findPeerDhtCmd 则可以类似地创建一个名为 "findPeerRoutingCmd" 的命令行工具，查找并打印与 "findPeerRoutingCmd" 相关的信息。两个工具的实现都在同一个文件中，但使用了不同的名称来区分它们。
 
 
-```
+```go
 var findProvidersDhtCmd = &cmds.Command{
 	Helptext:  findProvidersRoutingCmd.Helptext,
 	Arguments: findProvidersRoutingCmd.Arguments,
@@ -1428,7 +1428,7 @@ var findPeerDhtCmd = &cmds.Command{
 `getValueDhtCmd` 和 `putValueDhtCmd` 分别代表不同的命令行工具，它们的区别在于它们的参数和选项设置。例如，`getValueDhtCmd` 可能需要传递一个文件路径作为参数，而 `putValueDhtCmd` 可能需要设置一个用于日志输出的选项。
 
 
-```
+```go
 var getValueDhtCmd = &cmds.Command{
 	Helptext:  getValueRoutingCmd.Helptext,
 	Arguments: getValueRoutingCmd.Arguments,
@@ -1467,7 +1467,7 @@ var putValueDhtCmd = &cmds.Command{
 provideRefDhtCmd 的作用是创建一个提供参考路由器的命令，该命令可以被用于远程服务器，以获取最接近指定目标的本地服务器列表。
 
 
-```
+```go
 var provideRefDhtCmd = &cmds.Command{
 	Helptext:  provideRefRoutingCmd.Helptext,
 	Arguments: provideRefRoutingCmd.Arguments,
@@ -1511,7 +1511,7 @@ The `dhtclient` struct also defines the `Dialer` interface which is responsible 
 The `dhtclient` struct is responsible for the overall management of the DHT client, including the configuration of the connection to the DHT server, the management of the incoming connections to the DHT server, and the query of the closest peers.
 
 
-```
+```go
 var queryDhtCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline:          "Find the closest Peer IDs to a given Peer ID by querying the DHT.",

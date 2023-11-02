@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 24
 
-# `/opt/kubo/core/coreapi/name.go`
+# `core/coreapi/name.go`
 
 该代码是一个 Go 语言的库，名为 "coreapi"，它实现了通过 localhost:9000 进行点对点连接到 IPFS 网络的功能。IPFS（InterPlanetary File System）是一个点对点分布式文件系统，旨在提供一种对网络上的任意节点都有机会访问的文件系统。
 
@@ -16,7 +16,7 @@
 8. 通过使用 IPFS 提供的 "peer" 接口与 IPFS 网络上的其他节点建立连接。
 
 
-```
+```go
 package coreapi
 
 import (
@@ -55,7 +55,7 @@ This is a Go function that handles the publish attribute for a node. Here's how 
 10. It returns the `ipns.Name` object.
 
 
-```
+```go
 type NameAPI CoreAPI
 
 // Publish announces new IPNS name and returns the new IPNS entry.
@@ -125,7 +125,7 @@ func (api *NameAPI) Publish(ctx context.Context, p path.Path, opts ...caopts.Nam
 然后，它使用name参数创建一个路径，并使用resolvers函数尝试从命名存储中解析名称。如果解析失败，它将重试所有解析选项并继续尝试，直到成功或所有的尝试都失败。成功解析名称后，它将返回IPNS结果的通道，并将其分配给out通道。最后，它确保out通道有足够的数据来处理返回的IPNS结果，然后关闭它。
 
 
-```
+```go
 func (api *NameAPI) Search(ctx context.Context, name string, opts ...caopts.NameResolveOption) (<-chan coreiface.IpnsResult, error) {
 	ctx, span := tracing.Span(ctx, "CoreAPI.NameAPI", "Search", trace.WithAttributes(attribute.String("name", name)))
 	defer span.End()
@@ -185,7 +185,7 @@ func (api *NameAPI) Search(ctx context.Context, name string, opts ...caopts.Name
 函数内部首先设置一个名为 `ctx` 的上下文并启用跟踪，然后设置一个名为 `cancel` 的上下文并启用取消。接下来，使用 `api.Search` 函数搜索指定名称的结果，并将结果存储在名为 `res` 的变量中。然后，在循环中处理每个结果，设置路径 `p` 和错误 `res.Err`，并检查是否已发生错误。最后，如果所有结果都处理完毕，函数返回路径 `p` 和错误 `res.Err`。
 
 
-```
+```go
 // Resolve attempts to resolve the newest version of the specified name and
 // returns its path.
 func (api *NameAPI) Resolve(ctx context.Context, name string, opts ...caopts.NameResolveOption) (path.Path, error) {
@@ -220,7 +220,7 @@ func (api *NameAPI) Resolve(ctx context.Context, name string, opts ...caopts.Nam
 函数的作用是查找一个私钥与给定的`k`名称，或者在失败时返回一个错误。首先，函数通过`k == "self"`判断输入的`k`是否为"self"（私有 key 的名称），如果是，则返回输入的`self`，否则继续查找。接下来，函数通过`kstore.Get(k)`尝试从`keystore`中查找给定`k`的私钥，如果查找成功，则返回该私钥，否则返回一个错误。接着，函数通过`kstore.List()`获取`keystore`中的所有键列表，如果返回过程中出现错误，则返回一个错误。最后，函数通过`peer.Decode(k)`和`peer.IDFromPrivateKey`分别尝试从`peer`中根据给定的`k`名称获取对等方ID和私钥，如果失败，则返回一个错误。如果对等方ID等于给定的ID，则返回该私钥，否则继续查找。
 
 
-```
+```go
 func keylookup(self ci.PrivKey, kstore keystore.Keystore, k string) (ci.PrivKey, error) {
 	////////////////////
 	// Lookup by name //
@@ -285,7 +285,7 @@ func keylookup(self ci.PrivKey, kstore keystore.Keystore, k string) (ci.PrivKey,
 
 ```
 
-# `/opt/kubo/core/coreapi/object.go`
+# `core/coreapi/object.go`
 
 该代码的作用是定义了一个名为 "coreapi" 的包，其中定义了一些与 ByteArrayView、Encoding 和 errors 等相关的函数和类型。
 
@@ -294,7 +294,7 @@ func keylookup(self ci.PrivKey, kstore keystore.Keystore, k string) (ci.PrivKey,
 该代码还定义了一些错误类型，如 errors.AlreadyExists 和 errors.NotFound，用于处理文件或 ByteArrayView 中不存在指定内容的情况。
 
 
-```
+```go
 package coreapi
 
 import (
@@ -337,7 +337,7 @@ import (
 `ObjectAPI`是一个定义了`Node`和`Link`结构体的类型，以及一个名为`New`的函数。这个类型和函数都在定义了它们的行为之后被用于创建新的`Node`实例和返回它们。
 
 
-```
+```go
 const inputLimit = 2 << 20
 
 type ObjectAPI CoreAPI
@@ -394,7 +394,7 @@ If the serialization fails due to an error, the function returns an error. If th
 The function also allows for pinning of the data by default, which means that the data can be pinned to further improve performance. The pinning is done recursively, so that the entire data structure can be pinned.
 
 
-```
+```go
 func (api *ObjectAPI) Put(ctx context.Context, src io.Reader, opts ...caopts.ObjectPutOption) (path.ImmutablePath, error) {
 	ctx, span := tracing.Span(ctx, "CoreAPI.ObjectAPI", "Put")
 	defer span.End()
@@ -487,7 +487,7 @@ func (api *ObjectAPI) Put(ctx context.Context, src io.Reader, opts ...caopts.Obj
 `api.Data` 函数的参数与 `api.Get` 函数类似，只不过返回的是一个 `io.Reader` 类型的数据。函数返回一个 `ipld.Node` 类型的数据，如果这个数据可用，否则返回一个错误的错误。
 
 
-```
+```go
 func (api *ObjectAPI) Get(ctx context.Context, path path.Path) (ipld.Node, error) {
 	ctx, span := tracing.Span(ctx, "CoreAPI.ObjectAPI", "Get", trace.WithAttributes(attribute.String("path", path.String())))
 	defer span.End()
@@ -522,7 +522,7 @@ func (api *ObjectAPI) Data(ctx context.Context, path path.Path) (io.Reader, erro
 整个函数的实现主要目的是从API中获取指定路径下的链接，并返回它们。
 
 
-```
+```go
 func (api *ObjectAPI) Links(ctx context.Context, path path.Path) ([]*ipld.Link, error) {
 	ctx, span := tracing.Span(ctx, "CoreAPI.ObjectAPI", "Links", trace.WithAttributes(attribute.String("path", path.String())))
 	defer span.End()
@@ -555,7 +555,7 @@ func (api *ObjectAPI) Links(ctx context.Context, path path.Path) ([]*ipld.Link, 
 函数的作用是获取给定路径的节点统计信息，例如文件的大小、链接数等，并将其返回。在函数内部，首先通过调用 `api.core().ResolveNode(ctx, path)` 获取节点对象 `nd`，然后通过调用 `nd.Stat()` 获取节点统计信息 `stat`。最后，创建一个 `coreiface.ObjectStat` 结构体，并设置其字段的值，然后将其返回。
 
 
-```
+```go
 func (api *ObjectAPI) Stat(ctx context.Context, path path.Path) (*coreiface.ObjectStat, error) {
 	ctx, span := tracing.Span(ctx, "CoreAPI.ObjectAPI", "Stat", trace.WithAttributes(attribute.String("path", path.String())))
 	defer span.End()
@@ -597,7 +597,7 @@ func (api *ObjectAPI) Stat(ctx context.Context, path path.Path) (*coreiface.Obje
 7. 返回链的起始点，如果成功创建链接则返回，否则返回错误信息。
 
 
-```
+```go
 func (api *ObjectAPI) AddLink(ctx context.Context, base path.Path, name string, child path.Path, opts ...caopts.ObjectAddLinkOption) (path.ImmutablePath, error) {
 	ctx, span := tracing.Span(ctx, "CoreAPI.ObjectAPI", "AddLink", trace.WithAttributes(
 		attribute.String("base", base.String()),
@@ -658,7 +658,7 @@ func (api *ObjectAPI) AddLink(ctx context.Context, base path.Path, name string, 
 5. 返回路径的 ImmutablePath 对象，如果没有错误。
 
 
-```
+```go
 func (api *ObjectAPI) RmLink(ctx context.Context, base path.Path, link string) (path.ImmutablePath, error) {
 	ctx, span := tracing.Span(ctx, "CoreAPI.ObjectAPI", "RmLink", trace.WithAttributes(
 		attribute.String("base", base.String()),
@@ -702,7 +702,7 @@ func (api *ObjectAPI) RmLink(ctx context.Context, base path.Path, link string) (
 这两个函数一起构成了一个完整的 API 对象的读取和写入数据的功能，允许用户在指定的路径下读取数据并将其写入到 API 对象中。
 
 
-```
+```go
 func (api *ObjectAPI) AppendData(ctx context.Context, path path.Path, r io.Reader) (path.ImmutablePath, error) {
 	ctx, span := tracing.Span(ctx, "CoreAPI.ObjectAPI", "AppendData", trace.WithAttributes(attribute.String("path", path.String())))
 	defer span.End()
@@ -759,7 +759,7 @@ func (api *ObjectAPI) patchData(ctx context.Context, p path.Path, r io.Reader, a
 函数还使用了tracing包来记录函数的上下文信息，以便在函数调用时进行跟踪。函数使用了withAttributes和trace.WithAttributes()方法来设置跟踪参数，并使用了ctx.Span()方法来记录函数的入时间和出时间。函数还使用了defer.Drop()方法来通知函数调用者在函数返回前释放资源。
 
 
-```
+```go
 func (api *ObjectAPI) Diff(ctx context.Context, before path.Path, after path.Path) ([]coreiface.ObjectChange, error) {
 	ctx, span := tracing.Span(ctx, "CoreAPI.ObjectAPI", "Diff", trace.WithAttributes(
 		attribute.String("before", before.String()),
@@ -810,7 +810,7 @@ func (api *ObjectAPI) Diff(ctx context.Context, before path.Path, after path.Pat
 2. `func deserializeNode(nd *Node, dataFieldEncoding string) (*dag.ProtoNode, error)`：将 `nd` 指向的 `Node` 对象中的 `dataFieldEncoding` 字段值解析为 `dataFieldEncoding` 常量的对应编码方式，然后尝试使用该编码方式将 `nd` 的数据加载到 `dag.Node` 对象中。这个函数可能会返回一个 `dag.Node` 对象，或者一个错误的 `error` 消息。
 
 
-```
+```go
 func (api *ObjectAPI) core() coreiface.CoreAPI {
 	return (*CoreAPI)(api)
 }
@@ -851,7 +851,7 @@ func deserializeNode(nd *Node, dataFieldEncoding string) (*dag.ProtoNode, error)
 
 ```
 
-# `/opt/kubo/core/coreapi/path.go`
+# `core/coreapi/path.go`
 
 这段代码定义了一个名为 "coreapi" 的包。它导入了以下依赖项：
 
@@ -875,7 +875,7 @@ package "coreapi"
 通过导入这些依赖项，可以访问 "coreapi" 包中定义的函数和类型。这个包的具体作用没有在代码中详细说明，它可能是用于一个名为 "coreapi" 的项目的开发，或者是出于某种需要而定义的。
 
 
-```
+```go
 package coreapi
 
 import (
@@ -918,7 +918,7 @@ func (api *CoreAPI) ResolveNode(ctx context.Context, p path.Path) (ipld.Node, er
 此函数的核心逻辑是使用 `api.ResolvePath` 函数查找给定路径的根节点，然后使用 `api.dag.Get` 函数获取该根节点的 `CID` 值并返回。如果解析或获取 Node 过程中出现错误，函数将返回 ` nil` 并捕获相应的错误。函数使用了 `attribute.String("path", p.String())` 类型注解来传递给 `api.ResolvePath` 函数的路径参数 `p`，以便在日志中记录该参数。函数使用了 `trace.WithAttributes` 用于记录函数运行时生成的跟踪属性，例如 `ipld.Node` 类型，以便在将来的调试中跟踪函数的执行情况。
 
 
-```
+```go
 // ResolveNode resolves the path `p` using Unixfs resolver, gets and returns the
 // resolved Node.
 func (api *CoreAPI) ResolveNode(ctx context.Context, p path.Path) (ipld.Node, error) {
@@ -946,7 +946,7 @@ The function first checks if there is an error with the namesys.Resolve function
 It is important to note that the function only resolves paths that are either IPLD or Unix FSPaths. It will not be able to resolve paths that are not IPLD or Unix FSPaths.
 
 
-```
+```go
 // ResolvePath resolves the path `p` using Unixfs resolver, returns the
 // resolved path.
 func (api *CoreAPI) ResolvePath(ctx context.Context, p path.Path) (path.ImmutablePath, []string, error) {
@@ -999,7 +999,7 @@ func (api *CoreAPI) ResolvePath(ctx context.Context, p path.Path) (path.Immutabl
 
 ```
 
-# `/opt/kubo/core/coreapi/pin.go`
+# `core/coreapi/pin.go`
 
 这段代码定义了一个名为 "coreapi" 的包，它包含了使用 IPFS(InterPlanetary File System)进行分布式存储的相关组件。它从以下依赖中使用了一些：
 
@@ -1014,7 +1014,7 @@ func (api *CoreAPI) ResolvePath(ctx context.Context, p path.Path) (path.Immutabl
 此包的目的是提供用于管理 IPFS 存储桶的组件，可以用于创建和管理 IPFS 路径，并支持与本地文件系统进行交互。此外，它还支持使用 OpenTelemetry 进行跟踪和日志记录。
 
 
-```
+```go
 package coreapi
 
 import (
@@ -1044,7 +1044,7 @@ import (
 接着，使用 api.pinning.Pin 函数将给定路径的节点添加到系统中，并递归地处理子节点。然后使用 api.provider.Provide 函数提供给系统使用，无论是否有错误。最后，使用 api.pinning.Flush 函数输出最后的日志。
 
 
-```
+```go
 type PinAPI CoreAPI
 
 func (api *PinAPI) Add(ctx context.Context, p path.Path, opts ...caopts.PinAddOption) error {
@@ -1088,7 +1088,7 @@ func (api *PinAPI) Add(ctx context.Context, p path.Path, opts ...caopts.PinAddOp
 最后，函数使用`span.End`来关闭记录的跨临界区，并返回设置的`attribute.String`值，如果没有错误，则返回`nil`。
 
 
-```
+```go
 func (api *PinAPI) Ls(ctx context.Context, opts ...caopts.PinLsOption) (<-chan coreiface.Pin, error) {
 	ctx, span := tracing.Span(ctx, "CoreAPI.PinAPI", "Ls")
 	defer span.End()
@@ -1120,7 +1120,7 @@ func (api *PinAPI) Ls(ctx context.Context, opts ...caopts.PinLsOption) (<-chan c
 最后，函数返回设置是否成功，成功则返回true，否则返回false和错误。
 
 
-```
+```go
 func (api *PinAPI) IsPinned(ctx context.Context, p path.Path, opts ...caopts.PinIsPinnedOption) (string, bool, error) {
 	ctx, span := tracing.Span(ctx, "CoreAPI.PinAPI", "IsPinned", trace.WithAttributes(attribute.String("path", p.String())))
 	defer span.End()
@@ -1156,7 +1156,7 @@ func (api *PinAPI) IsPinned(ctx context.Context, p path.Path, opts ...caopts.Pin
 函数的作用是帮助您通过 `PinAPI` 实现对指定路径 `p` 的 Unpin（解除 pin） 和 Flush（刷到块存储器）操作。
 
 
-```
+```go
 // Rm pin rm api
 func (api *PinAPI) Rm(ctx context.Context, p path.Path, opts ...caopts.PinRmOption) error {
 	ctx, span := tracing.Span(ctx, "CoreAPI.PinAPI", "Rm", trace.WithAttributes(attribute.String("path", p.String())))
@@ -1194,7 +1194,7 @@ func (api *PinAPI) Rm(ctx context.Context, p path.Path, opts ...caopts.PinRmOpti
 接着，函数调用 `api.pinning.Update` 函数更新指定路径下的 `pin` 对象，并设置 `unpin` 选项（如果已存在）。最后，函数调用 `api.pinning.Flush` 函数清除之前的跟踪，并返回更新操作的错误。
 
 
-```
+```go
 func (api *PinAPI) Update(ctx context.Context, from path.Path, to path.Path, opts ...caopts.PinUpdateOption) error {
 	ctx, span := tracing.Span(ctx, "CoreAPI.PinAPI", "Update", trace.WithAttributes(
 		attribute.String("from", from.String()),
@@ -1254,7 +1254,7 @@ type pinStatus struct {
 另外，该结构体还包含一个名为`Ok()`的成员函数，它的作用是返回`pinStatus`结构体中`ok`成员变量的值。
 
 
-```
+```go
 type pinStatus struct {
 	err      error
 	cid      cid.Cid
@@ -1281,7 +1281,7 @@ func (s *pinStatus) Ok() bool {
 函数内部，针 n 包含一个指向 badNode 的类型，函数返回这个针的路径，通过这个路径可以恢复 badNode 的某些元数据。
 
 
-```
+```go
 func (s *pinStatus) BadNodes() []coreiface.BadPinNode {
 	return s.badNodes
 }
@@ -1309,7 +1309,7 @@ The function checks the pin by making a recursive call to `getLinks` and then ei
 The function also has a `Visited` function that adds the current pin to the `visited` map so that it can be safely checked again in the future.
 
 
-```
+```go
 func (api *PinAPI) Verify(ctx context.Context) (<-chan coreiface.PinStatus, error) {
 	ctx, span := tracing.Span(ctx, "CoreAPI.PinAPI", "Verify")
 	defer span.End()
@@ -1383,7 +1383,7 @@ pinInfo.pinType 字段表示了该结构的 pin 类型，path.ImmutablePath 字�
 * pinInfo.Err() 方法返回了该结构体中 err 字段的值，作为 error 类型的字面值。
 
 
-```
+```go
 type pinInfo struct {
 	pinType string
 	path    path.ImmutablePath
@@ -1423,7 +1423,7 @@ The function works as follows:
 This function is useful for implementing a pinning system for Indirect Proof of Stake (PoS) networks.
 
 
-```
+```go
 // pinLsAll is an internal function for returning a list of pins
 //
 // The caller must keep reading results until the channel is closed to prevent
@@ -1541,7 +1541,7 @@ func (api *PinAPI) pinLsAll(ctx context.Context, typeStr string) <-chan coreifac
 由于`api`是`PinAPI`类型，它实现了`CoreAPI`接口，因此`(*CoreAPI)(api)`返回的结果就是`api`的`CoreAPI`类型。通过将`api`作为参数传递给`func`，函数可以安全地操作`PinAPI`类型的`api`，同时又可以安全地操作`CoreAPI`类型的`api`。
 
 
-```
+```go
 func (api *PinAPI) core() coreiface.CoreAPI {
 	return (*CoreAPI)(api)
 }

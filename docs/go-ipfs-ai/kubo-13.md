@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 13
 
-# `/opt/kubo/core/commands/dht_test.go`
+# `core/commands/dht_test.go`
 
 这段代码的作用是测试一个名为 "KeyTranslation" 的功能。该功能旨在验证在将一个对等网络 (Peer-to-Peer network) 的 "public key" (公钥) 映射到另一个对等网络时，映射是否正确。
 
@@ -9,7 +9,7 @@
 如果这段代码的测试用例失败，它将输出一个错误信息并停止执行。
 
 
-```
+```go
 package commands
 
 import (
@@ -47,7 +47,7 @@ func TestKeyTranslation(t *testing.T) {
 
 ```
 
-# `/opt/kubo/core/commands/diag.go`
+# `core/commands/diag.go`
 
 这段代码定义了一个名为“commands”的包，该包通过导入名为“github.com/ipfs/go-ipfs-cmds”的第三方库引入了一个名为“cmds”的命令行工具。
 
@@ -58,7 +58,7 @@ func TestKeyTranslation(t *testing.T) {
 最后，将定义好的命令行工具实例注册到命令行包中，以便在需要时使用。
 
 
-```
+```go
 package commands
 
 import (
@@ -79,7 +79,7 @@ var DiagCmd = &cmds.Command{
 
 ```
 
-# `/opt/kubo/core/commands/dns.go`
+# `core/commands/dns.go`
 
 这段代码定义了一个名为“commands”的包，其中定义了一些用于操作IPFS命令的函数。
 
@@ -96,7 +96,7 @@ var DiagCmd = &cmds.Command{
 函数的作用：定义了一个IPFS命令选项名为“recursive”的选项，该选项可用于设置为“递归”或“迭代”。通过这个选项，可以设置IPFS命令在递归或迭代方式下工作。
 
 
-```
+```go
 package commands
 
 import (
@@ -128,7 +128,7 @@ The `path.NewPath` function constructs a DNS query path from the specified domai
 The `resolvers.Resolve` function resolves a DNS query using the specified resolver. The resolver is configured to return the query DNS link or a DNS reference if the query domain is not a DNS link.
 
 
-```
+```go
 var DNSCmd = &cmds.Command{
 	Status: cmds.Deprecated, // https://github.com/ipfs/kubo/issues/8607
 	Helptext: cmds.HelpText{
@@ -187,7 +187,7 @@ It will work across multiple DNSLinks and IPNS keys.
 
 ```
 
-# `/opt/kubo/core/commands/external.go`
+# `core/commands/external.go`
 
 This is a Go program that wraps the `exec` package to run external commands. It takes a binary name as an argument, and an optional set of arguments using the `--help` or `-h` options.
 
@@ -198,7 +198,7 @@ If the binary fails to start for any reason, a new error is emitted and the `--h
 The `res` function also handles the case where the binary is not found, by returning an error message that is propagated back to the caller.
 
 
-```
+```go
 package commands
 
 import (
@@ -278,7 +278,7 @@ func ExternalBinary(instructions string) *cmds.Command {
 
 ```
 
-# `/opt/kubo/core/commands/extra.go`
+# `core/commands/extra.go`
 
 这段代码定义了一个名为 "commands" 的包，其中包含了一些用于创建和管理 IPFS 命令的函数和结构体。
 
@@ -289,7 +289,7 @@ func ExternalBinary(instructions string) *cmds.Command {
 另外，还定义了一个名为 "doesNotUseRepo" 的结构体，它代表一个不使用 IPFS 官方仓库代码的检查，它的 "SetDoesNotUseRepo" 函数用于设置检查中布尔值的真假，当这个值设置为真时，"SetDoesNotUseRepo" 函数会返回一个函数，这个函数接受一个名为 "e" 的 IPFS 命令的附加选项 "e"，然后将 "e" 设置为检查中定义的 "doesNotUseRepo" 结构体，这样 "e" 就不会使用 IPFS 官方仓库代码了。
 
 
-```
+```go
 package commands
 
 import cmds "github.com/ipfs/go-ipfs-cmds"
@@ -325,7 +325,7 @@ func SetDoesNotUseRepo(val bool) func(e *cmds.Extra) {
 总而言之，该代码的作用是定义了两个函数，用于检查或设置给定 extra 对象中 doesNotUseRepo 标记的存在，从而实现初始化或执行操作时不需要使用配置的命令。
 
 
-```
+```go
 func GetDoesNotUseRepo(e *cmds.Extra) (val bool, found bool) {
 	return getBoolFlag(e, doesNotUseRepo{})
 }
@@ -355,7 +355,7 @@ func SetDoesNotUseConfigAsInput(val bool) func(e *cmds.Extra) {
 函数的作用是帮助用户在不需要自动更新时执行某些命令，通过调用 `preemptsAutoUpdate.SetPreemptsAutoUpdate` 和 `preemptsAutoUpdate.GetPretractsAutoUpdate` 函数，用户可以设置或获取 `preemptsAutoUpdate` 标识的值，从而实现在某些情况下关闭自动更新。
 
 
-```
+```go
 func GetDoesNotUseConfigAsInput(e *cmds.Extra) (val bool, found bool) {
 	return getBoolFlag(e, doesNotUseConfigAsInput{})
 }
@@ -381,7 +381,7 @@ func GetPreemptsAutoUpdate(e *cmds.Extra) (val bool, found bool) {
 函数接收两个参数，一个是CMDS结构体类型的"e"指针，另一个是按接口类型声明的"key"变量。函数内部首先定义了一个类型为"ival"的变量，该变量被赋值为给定的"key"中的值，然后使用"GetValue"函数获取该键对应的值。如果未找到该键，函数返回两个布尔值中的第一个，即false和false。如果找到了该键，则将ival赋值为键对应的值，并返回该值和已找到的标识符。
 
 
-```
+```go
 func getBoolFlag(e *cmds.Extra, key interface{}) (val bool, found bool) {
 	var ival interface{}
 	ival, found = e.GetValue(key)
@@ -394,7 +394,7 @@ func getBoolFlag(e *cmds.Extra, key interface{}) (val bool, found bool) {
 
 ```
 
-# `/opt/kubo/core/commands/files.go`
+# `core/commands/files.go`
 
 该代码包是一个 Go 语言项目中的命令行工具，其作用是帮助开发人员更轻松地交换文件夹和内容。它主要实现了两个主要功能：树状目录列出了所有文件和子目录，以及对目录中的内容进行了一些基本的处理。
 
@@ -403,7 +403,7 @@ func getBoolFlag(e *cmds.Extra, key interface{}) (val bool, found bool) {
 该代码包的作用是提供一个方便、易于使用的工具，让开发人员可以更轻松地管理文件夹和内容，并支持多种文件树和目录操作。
 
 
-```
+```go
 package commands
 
 import (
@@ -446,7 +446,7 @@ import (
 此外，当用户使用 "ipfs files" 命令行工具时，该工具将创建一个根目录 CID，并且会定期检查该 CID 是否发生了更改。
 
 
-```
+```go
 var flog = logging.Logger("cmds/files")
 
 // FilesCmd is the 'ipfs files' command
@@ -473,7 +473,7 @@ MFS可以独立于ipfs pin add和ipfs pin rm使用。通过调用ipfs files rm�
 需要注意的是，当设置--flush标志为false时，可以提高系统的性能，但请注意，在设置为false时，系统将不再自动清除本地文件系统中的缓存内容。因此，如果在运行ipfs files files rm时设置为false，那么即使之前已经清除过缓存，系统也不会自动清除缓存，这可能会导致一些问题的出现。
 
 
-```
+```go
 during garbage collections. However, a DAG may be referenced in MFS without
 being fully available locally (MFS content is lazy loaded when accessed).
 MFS is independent from the list of pinned items ("ipfs pin ls"). Calls to
@@ -498,7 +498,7 @@ to true. Use caution when setting this flag to false. It will improve
 如果 `daemon`（可能是守护进程，用于在后台运行命令）意外地被杀死，则在运行 `ipfs files flush` 命令之前可能已经写入了部分数据，这些数据可能无法恢复，因为它们已经被推回了文件系统中。同样，如果同时运行 `ipfs repo gc` 命令并且 `--flush=false`，则 `filesFlush` 选项也会影响数据一致性。
 
 
-```
+```go
 performance for large numbers of file operations, but it does so at the cost
 of consistency guarantees. If the daemon is unexpectedly killed before running
 'ipfs files flush' on the files in question, then data may be lost. This also
@@ -534,7 +534,7 @@ operations.
 该结构体类型定义了 `errFormat` 类型的 nested `json` 输出模式，将哈希值、文件大小、累积大小、块数量、文件类型、是否与定位相关联以及本地文件大小作为它的字段。
 
 
-```
+```go
 const (
 	filesCidVersionOptionName = "cid-version"
 	filesHashOptionName       = "hash"
@@ -575,7 +575,7 @@ The program uses the `humanize.Bytes` function to print out the file size in a h
 Overall, it looks like the program is designed to provide some basic information about the files in the directory, including the size of each file and the number of blocks that reference each file.
 
 
-```
+```go
 const (
 	defaultStatFormat = `<hash>
 Size: <size>
@@ -702,7 +702,7 @@ var filesStatCmd = &cmds.Command{
 在 statGetFormatOptions 函数中，首先检查给定的三个选项中是否有任何一个为真。如果是，则返回该名称，否则返回错误。接着根据选项的值，返回适当的名称。如果无法返回，则返回错误。
 
 
-```
+```go
 func moreThanOne(a, b, c bool) bool {
 	return a && b || b && c || a && c
 }
@@ -736,7 +736,7 @@ statNode 函数首先通过 nd.Cid() 方法获取节点 ID，然后通过 nd.Siz
 具体来说，statNode 函数根据输入参数 n 的类型来判断，如果 n 是一个根目录节点（statNode 的输入参数为 *dag.ProtoNode），则通过调用 ft.FSNodeFromBytes() 函数将 n 的数据字节编码为文件类型，然后根据文件的类型设置统计输出对应的 statOutput 对象的类型。如果 n 是一个文件节点（statNode 的输入参数为 *dag.RawNode），则直接设置输出对象的类型为 "file"，并设置文件大小和总块数。如果 n 是一个目录节点（statNode 的输入参数为 *dag.ProtoNode），则根据目录节点的大小设置输出对象的块数和总块数，然后设置文件类型为 "directory"。如果 n 的类型无法确定或者是一个 UnixFS 节点，则返回一个错误。
 
 
-```
+```go
 func statNode(nd ipld.Node, enc cidenc.Encoder) (*statOutput, error) {
 	c := nd.Cid()
 
@@ -796,7 +796,7 @@ func statNode(nd ipld.Node, enc cidenc.Encoder) (*statOutput, error) {
 5. 返回 `local`、`sizeLocal` 和 `nil`。
 
 
-```
+```go
 func walkBlock(ctx context.Context, dagserv ipld.DAGService, nd ipld.Node) (bool, uint64, error) {
 	// Start with the block data size
 	sizeLocal := uint64(len(nd.RawData()))
@@ -835,7 +835,7 @@ func walkBlock(ctx context.Context, dagserv ipld.DAGService, nd ipld.Node) (bool
 如果要在MFS中从磁盘添加文件，则可以使用"ipfs add"命令获取IPFS内容ID，然后使用"ipfs files cp"命令将其复制到MFS中。
 
 
-```
+```go
 var filesCpCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Add references to IPFS files and directories in MFS (or copy within MFS).",
@@ -870,7 +870,7 @@ IPFS Content Identifier and then "ipfs files cp" to copy it into MFS:
 从整体上看，这段代码的作用是将一个本地文件添加到 IPFS 网络中，并将其存储到指定的 MFS 路径。此外，它还设置了一些选项，以便在 IPFS 网络中下载数据时进行一些操作。
 
 
-```
+```go
 $ ipfs add --quieter --pin=false <your file>
 # ...
 # ... outputs the root CID at the end
@@ -901,7 +901,7 @@ It then performs the copy operation and, if the `mkParents` flag is set to `true
 Finally, it checks if the copy operation was successful and, if not, returns an error.
 
 
-```
+```go
 `,
 	},
 	Arguments: []cmds.Argument{
@@ -989,7 +989,7 @@ Finally, it checks if the copy operation was successful and, if not, returns an 
 函数的目的是在给定路径下，返回一个IPFS节点对象或者错误。
 
 
-```
+```go
 func getNodeFromPath(ctx context.Context, node *core.IpfsNode, api iface.CoreAPI, p string) (ipld.Node, error) {
 	switch {
 	case strings.HasPrefix(p, "/ipfs/"):
@@ -1026,7 +1026,7 @@ func getNodeFromPath(ctx context.Context, node *core.IpfsNode, api iface.CoreAPI
 由于未定义变量，其默认值均为不可用（undefined）。
 
 
-```
+```go
 type filesLsOutput struct {
 	Entries []mfs.NodeListing
 }
@@ -1073,7 +1073,7 @@ filesLsOutput emittedFile = filesLsOutput.Embrace(out, os.Stderr)
 This would create a new output file `emittedFile` and write it to the standard error stream, emitting the files in the directory specified.
 
 
-```
+```go
 Examples:
 
     $ ipfs files ls /welcome/docs/
@@ -1212,7 +1212,7 @@ The function returns an error if the call to `rfd.Seek` fails.
 The function reads the file and returns the contents of the file.
 
 
-```
+```go
 const (
 	filesOffsetOptionName = "offset"
 	filesCountOptionName  = "count"
@@ -1309,7 +1309,7 @@ This code defines two types: `contextReader` and `contextReaderWrapper`.
 The `Read` method reads the contents of the `Context` and returns it as an error or a number. It uses the `CtxReadFull` method provided by the `contextReader` interface.
 
 
-```
+```go
 type contextReader interface {
 	CtxReadFull(context.Context, []byte) (int, error)
 }
@@ -1339,7 +1339,7 @@ var filesMvCmd = &cmds.Command{
 4. 如果命令行选项`/`（代表默认选项）被设置为`true`，则会调用`mfs.FlushPath`函数，将整个目录强制刷新，以确认所有文件都已经被移动。
 
 
-```
+```go
 Move files around. Just like the traditional Unix mv.
 
 Example:
@@ -1395,7 +1395,7 @@ Example:
 最后，通过 `cmds.Series` 结构，将 `filesWriteCmd` 和其选项作为参数传递给 `run` 函数，以便在命令行中运行该命令。
 
 
-```
+```go
 const (
 	filesCreateOptionName    = "create"
 	filesParentsOptionName   = "parents"
@@ -1422,7 +1422,7 @@ instead.
 新创建的叶子文件将使用Protobuf格式的CID版本0，或者非零CID版本时的原始格式。
 
 
-```
+```go
 `,
 		LongDescription: `
 A low-level MFS command that allows you to append data at the end of a file, or
@@ -1450,7 +1450,7 @@ CID version is 0, or raw if the CID version is non-zero.  Use of the
 通过运行这两个选项，可以更好地控制 IPFS 的行为，以适应不同的使用场景。
 
 
-```
+```go
 '--raw-leaves' option will override this behavior.
 
 If the '--flush' option is set to false, changes will not be propagated to the
@@ -1490,7 +1490,7 @@ ipfs files delete /myfs/dir/example.jpg
 
 
 
-```
+```go
 stat' on the file or any of its ancestors.
 
 WARNING:
@@ -1522,7 +1522,7 @@ If the user sets the `trunc` option, the function truncates the file at the spec
 Finally, the function returns the error if any of the given errors occur.
 
 
-```
+```go
 See '--to-files' in 'ipfs add --help' for more information.
 `,
 	},
@@ -1660,7 +1660,7 @@ Examples:
 最后，使用了几个示例来描述如何使用这个命令行。
 
 
-```
+```go
 var filesMkdirCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Make directories.",
@@ -1690,7 +1690,7 @@ Examples:
 6. 如果出现错误，返回错误。
 
 
-```
+```go
 `,
 	},
 
@@ -1747,7 +1747,7 @@ flushRes.Run函数的作用是在给定的路径上执行flush操作。flush操�
 最后，在运行该命令时，将调用flushRes.Run函数，并将所有参数传递给它，同时将命令的输出传递给cmds.EmitOnce函数，以便在输出中包含操作结果的信息。
 
 
-```
+```go
 type flushRes struct {
 	Cid string
 }
@@ -1804,7 +1804,7 @@ are run with the '--flush=false'.
 函数最终返回一个错误，如果发生任何错误，都会在日志中记录下来。
 
 
-```
+```go
 var filesChcidCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Change the CID version or hash function of the root node of a given path.",
@@ -1854,7 +1854,7 @@ Change the CID version or hash function of the root node of a given path.
 接下来，函数根据`nd`的类型来决定如何更新目录。如果`nd`是一个`*mfs.Directory`类型，则函数将`builder`设置为当前目录的`cid.Builder`，即将目录设置为使用`cid`格式的路径。如果`nd`是其他类型，例如`mfs.Directory`或`mfs.File`，函数将返回一个错误。
 
 
-```
+```go
 func updatePath(rt *mfs.Root, pth string, builder cid.Builder) error {
 	if builder == nil {
 		return nil
@@ -1891,7 +1891,7 @@ The script also accepts an additional option `-h`, which prints a help message f
 When run with the `ipfs files` command, the user is prompted to enter the directory to be removed. The user must then specify the file or directory to be removed using a relative path. The script will then check the paths for any conflicts with existing files and remove the specified file or directory if it is a corruption node, or if it is a directory and it is not marked as being a normal file.
 
 
-```
+```go
 var filesRmCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Remove a file from MFS.",
@@ -1972,7 +1972,7 @@ Remove files or directories.
 函数最后返回 `pdir.Flush` 函数，以确保所有文件和子目录都被删除。
 
 
-```
+```go
 func removePath(filesRoot *mfs.Root, path string, force bool, dashr bool) error {
 	if path == "/" {
 		return fmt.Errorf("cannot delete root")
@@ -2041,7 +2041,7 @@ func removePath(filesRoot *mfs.Root, path string, force bool, dashr bool) error 
 函数的实现主要负责根据请求中提供的`filesCidVersionOptionName`和`filesHashOptionName`选项，为命令的预处理逻辑。它根据`cidVer`和`hashFunStr`的值，来判断是否需要执行特定的哈希函数，以及设置哈希函数的参数。
 
 
-```
+```go
 func getPrefixNew(req *cmds.Request) (cid.Builder, error) {
 	cidVer, cidVerSet := req.Options[filesCidVersionOptionName].(int)
 	hashFunStr, hashFunSet := req.Options[filesHashOptionName].(string)
@@ -2076,7 +2076,7 @@ func getPrefixNew(req *cmds.Request) (cid.Builder, error) {
 这段代码的作用是获取请求参数中的前缀信息，包括前缀类型和前缀长度。前缀类型可以通过调用 `dag.PrefixForCidVersion` 函数获取，前缀长度可以通过设置 `cidVer` 参数来指定。如果前缀类型或前缀长度不存在，则返回 `nil` 和 `nil`，否则根据设置的前缀类型对哈希函数进行设置，并将哈希函数类型和长度存储在 `cidVerSet` 和 `hashFunSet` 参数中，最终返回前缀信息和调用结果。
 
 
-```
+```go
 func getPrefix(req *cmds.Request) (cid.Builder, error) {
 	cidVer, cidVerSet := req.Options[filesCidVersionOptionName].(int)
 	hashFunStr, hashFunSet := req.Options[filesHashOptionName].(string)
@@ -2112,7 +2112,7 @@ This is a Go program that uses the Directories/
 ".
 
 
-```
+```go
 func ensureContainingDirectoryExists(r *mfs.Root, path string, builder cid.Builder) error {
 	dirtomake := gopath.Dir(path)
 
@@ -2190,7 +2190,7 @@ func getFileHandle(r *mfs.Root, path string, create bool, builder cid.Builder) (
 函数的实现遵循了 Go 编程语言的规范，特别是对于路径参数的处理方式，以及对于错误信息的返回方式。
 
 
-```
+```go
 func checkPath(p string) (string, error) {
 	if len(p) == 0 {
 		return "", fmt.Errorf("paths must not be empty")
@@ -2212,7 +2212,7 @@ func checkPath(p string) (string, error) {
 该函数的作用是获取一个目录树中的父目录，并返回它的指针。函数接收两个参数，一个是根目录 `root` 和要查找的目录 `dir`。函数首先使用 `mfs.Lookup` 函数查找根目录中的目录，然后使用递归调用 `mfs.Lookup` 函数查找指定目录。如果查找目录失败，函数返回 `nil` 和错误。如果查找成功，函数将返回指向指定目录的指针，如果失败，函数将返回 `nil` 和错误。函数中的 `*mfs.Directory` 类型表示一个指向 `mfs.Directory` 类型对象的指针，这个类型通常用于表示目录树中的目录。
 
 
-```
+```go
 func getParentDir(root *mfs.Root, dir string) (*mfs.Directory, error) {
 	parent, err := mfs.Lookup(root, dir)
 	if err != nil {

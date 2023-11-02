@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 25
 
-# `/opt/kubo/core/coreapi/pubsub.go`
+# `core/coreapi/pubsub.go`
 
 这段代码定义了一个名为"coreapi"的包，它使用了多个其他包的依赖关系。
 
@@ -19,7 +19,7 @@
 此外，还导入了go-opentelemetry-io/otel包和go.opentelemetry.io/otel包，用于收集和跟踪分布式跟踪事务。
 
 
-```
+```go
 package coreapi
 
 import (
@@ -55,7 +55,7 @@ import (
 5. 将获取到的主题列表返回。
 
 
-```
+```go
 type PubSubAPI CoreAPI
 
 type pubSubSubscription struct {
@@ -83,7 +83,7 @@ func (api *PubSubAPI) Ls(ctx context.Context) ([]string, error) {
 此函数的作用是获取给定主题的信息服务器列表。它接收一个PubSubAPI类型的参数api，并传递一个或多个PubSubPeers选项。然后，它检查API的节点是否成功加载，并验证传递的选项。如果设置没有问题，它将设置属性的"topic"为设置的主题，并返回主题设置的信息服务器列表。函数使用了tracing中的Span，在操作失败时将输出错误。
 
 
-```
+```go
 func (api *PubSubAPI) Peers(ctx context.Context, opts ...caopts.PubSubPeersOption) ([]peer.ID, error) {
 	_, span := tracing.Span(ctx, "CoreAPI.PubSubAPI", "Peers")
 	defer span.End()
@@ -112,7 +112,7 @@ func (api *PubSubAPI) Peers(ctx context.Context, opts ...caopts.PubSubPeersOptio
 函数Subscribe接收一个名为api的PubSubAPI实例，一个名为topic的主题和一个或多个名为opts的PubSubSubscribeOption选项数组。函数使用checkNode函数来检查网络连接。如果连接成功，使用pubSub函数订阅指定主题。如果订阅成功，返回一个名为pubSubSubscription的包装器类型，如果没有更多的配置选项，则返回一个核心iface.PubSubSubscription对象。如果订阅失败，返回一个错误。
 
 
-```
+```go
 func (api *PubSubAPI) Publish(ctx context.Context, topic string, data []byte) error {
 	_, span := tracing.Span(ctx, "CoreAPI.PubSubAPI", "Publish", trace.WithAttributes(attribute.String("topic", topic)))
 	defer span.End()
@@ -162,7 +162,7 @@ func (api *PubSubAPI) Subscribe(ctx context.Context, topic string, opts ...caopt
 第二个函数 `func (sub *pubSubSubscription) Close() error` 的作用是关闭 `sub` 实例所订阅的 `pubSubSubscription`。具体实现是调用 `sub.subscription.Cancel()` 函数取消订阅，并返回一个错误。如果取消订阅成功，则返回 `nil`。
 
 
-```
+```go
 func (api *PubSubAPI) checkNode() (routing.Routing, error) {
 	if api.pubSub == nil {
 		return nil, errors.New("experimental pubsub feature not enabled, run daemon with --enable-pubsub-experiment to use")
@@ -195,7 +195,7 @@ func (sub *pubSubSubscription) Close() error {
 `From`方法的目的是获取`pubSubMessage`类型中`msg.msg.From`属性的值，即消息的发送者ID。
 
 
-```
+```go
 func (sub *pubSubSubscription) Next(ctx context.Context) (coreiface.PubSubMessage, error) {
 	ctx, span := tracing.Span(ctx, "CoreAPI.PubSubSubscription", "Next")
 	defer span.End()
@@ -227,7 +227,7 @@ func (msg *pubSubMessage) From() peer.ID {
 整段代码的作用是获取并返回一个名为 msg 的 pubSubMessage 类型的数据结构，包括数据部分、序列号部分和主题部分，并将这些部分字节数组返回。
 
 
-```
+```go
 func (msg *pubSubMessage) Data() []byte {
 	return msg.msg.Data
 }
@@ -246,7 +246,7 @@ func (msg *pubSubMessage) Topics() []string {
 
 ```
 
-# `/opt/kubo/core/coreapi/routing.go`
+# `core/coreapi/routing.go`
 
 这段代码定义了一个名为 `RoutingAPI` 的 `CoreAPI` 类型，它使用 `CoreIPFS` 包作为其数据存储的后端，使用了 `strings` 包对输入的参数进行校验，并使用了 `peer` 包与对等网络中的 `peer` 进行通信。
 
@@ -257,7 +257,7 @@ func (msg *pubSubMessage) Topics() []string {
 另外，`RoutingAPI` 还实现了 `CA开放选项` 和 `peer.Transport开放选项` 以及 `RoutingAPI` 与其他 `CoreAPI` 类型的 `Combined` 方法。
 
 
-```
+```go
 package coreapi
 
 import (
@@ -302,7 +302,7 @@ func (r *RoutingAPI) Get(ctx context.Context, key string) ([]byte, error) {
 这段代码中，normalizeKey 函数用于将传入的字符串键进行规范化处理，以保持与其他的 RoutingAPI 函数的一致性。r.routing.PutValue 函数是一个已经定义在前面答案中的函数，它是将传入的值和路由策略一起发送到路由器。
 
 
-```
+```go
 func (r *RoutingAPI) Put(ctx context.Context, key string, value []byte, opts ...caopts.RoutingPutOption) error {
 	options, err := caopts.RoutingPutOptions(opts...)
 	if err != nil {
@@ -333,7 +333,7 @@ func (r *RoutingAPI) Put(ctx context.Context, key string, value []byte, opts ...
 最后，函数将三个部分的字符串连接起来，如果成功，则返回，否则返回一个空字符串。
 
 
-```
+```go
 func normalizeKey(s string) (string, error) {
 	parts := strings.Split(s, "/")
 	if len(parts) != 3 ||
@@ -351,7 +351,7 @@ func normalizeKey(s string) (string, error) {
 
 ```
 
-# `/opt/kubo/core/coreapi/swarm.go`
+# `core/coreapi/swarm.go`
 
 该代码是一个 Go 语言项目，名为 "coreapi"，它实现了 libp2p 库中的相关功能。
 
@@ -398,7 +398,7 @@ func normalizeKey(s string) (string, error) {
 18. libp2p.trace.Span：表示一个跨函数调用的 Git 类型。
 
 
-```
+```go
 package coreapi
 
 import (
@@ -429,7 +429,7 @@ import (
 最后，没有定义任何函数或其他变量，直接定义了需要使用的类型和标签。
 
 
-```
+```go
 type SwarmAPI CoreAPI
 
 type connInfo struct {
@@ -456,7 +456,7 @@ const (
 接下来，函数检查swarm.Swarm类型对象中与peerHost关联的网络是否为 nil，然后使用该网络的Backoff清除方法清除peerHost.ID。然后，如果成功连接到远程主机，函数将使用peerHost.Connect方法连接到远程主机，并设置连接参数。最后，函数使用api.peerHost.ConnManager设置一个名为"connectionManagerTag"的标签，并设置连接管理器的权重，以便连接在网络中的其他地方。函数还返回一个nil，表示没有错误发生。
 
 
-```
+```go
 func (api *SwarmAPI) Connect(ctx context.Context, pi peer.AddrInfo) error {
 	ctx, span := tracing.Span(ctx, "CoreAPI.SwarmAPI", "Connect", trace.WithAttributes(attribute.String("peerid", pi.ID.String())))
 	defer span.End()
@@ -491,7 +491,7 @@ func (api *SwarmAPI) Connect(ctx context.Context, pi peer.AddrInfo) error {
 8. 函数返回一个错误对象，其错误类型为`coreiface.ErrConnected`。
 
 
-```
+```go
 func (api *SwarmAPI) Disconnect(ctx context.Context, addr ma.Multiaddr) error {
 	_, span := tracing.Span(ctx, "CoreAPI.SwarmAPI", "Disconnect", trace.WithAttributes(attribute.String("addr", addr.String())))
 	defer span.End()
@@ -542,7 +542,7 @@ func (api *SwarmAPI) Disconnect(ctx context.Context, addr ma.Multiaddr) error {
 函数的作用是获取给定ID的"Multiaddr"列表，如果没有指定"peerHost"，则返回一个错误。
 
 
-```
+```go
 func (api *SwarmAPI) KnownAddrs(ctx context.Context) (map[peer.ID][]ma.Multiaddr, error) {
 	_, span := tracing.Span(ctx, "CoreAPI.SwarmAPI", "KnownAddrs")
 	defer span.End()
@@ -572,7 +572,7 @@ func (api *SwarmAPI) KnownAddrs(ctx context.Context) (map[peer.ID][]ma.Multiaddr
 第二个函数 `ListenAddrs` 与第一个函数类似，但它是通过监听而不是连接到本地网络来获取多地址。函数同样使用一个 `tracing.Span` 来记录请求的会话ID。函数的作用是获取 SwarmAPI 的 `peerHost` 并返回其网络中的接口列表。这个接口列表将包含可用于连接到 `peerHost` 的多地址。如果 `peerHost` 是空的，函数将返回一个空列表并抛出 `coreiface.ErrOffline` 错误。
 
 
-```
+```go
 func (api *SwarmAPI) LocalAddrs(ctx context.Context) ([]ma.Multiaddr, error) {
 	_, span := tracing.Span(ctx, "CoreAPI.SwarmAPI", "LocalAddrs")
 	defer span.End()
@@ -606,7 +606,7 @@ func (api *SwarmAPI) ListenAddrs(ctx context.Context) ([]ma.Multiaddr, error) {
 最后，函数返回结果切片和可能的错误。
 
 
-```
+```go
 func (api *SwarmAPI) Peers(ctx context.Context) ([]coreiface.ConnectionInfo, error) {
 	_, span := tracing.Span(ctx, "CoreAPI.SwarmAPI", "Peers")
 	defer span.End()
@@ -658,7 +658,7 @@ Latency()函数返回一个名为ci.peerstore的错误类型的time.Duration结�
 函数的作用是将连接信息中的参数ci作为输入，并输出与该连接相关的信息，包括发送方ID、对等网络中的地址、网络方向和延迟。
 
 
-```
+```go
 func (ci *connInfo) ID() peer.ID {
 	return ci.peer
 }
@@ -684,7 +684,7 @@ func (ci *connInfo) Latency() (time.Duration, error) {
 函数的作用是获取与连接相关的流，并将其存储在一个名为 out 的数组中，该数组包含协议 ID。
 
 
-```
+```go
 func (ci *connInfo) Streams() ([]protocol.ID, error) {
 	streams := ci.conn.GetStreams()
 
@@ -698,7 +698,7 @@ func (ci *connInfo) Streams() ([]protocol.ID, error) {
 
 ```
 
-# `/opt/kubo/core/coreapi/unixfs.go`
+# `core/coreapi/unixfs.go`
 
 该代码的作用是定义了一个名为 "coreapi" 的包，该包包含了一些与 Kubernetes 客户端和服务器相关的功能。
 
@@ -741,7 +741,7 @@ func (ci *connInfo) Streams() ([]protocol.ID, error) {
 18. 通过导入 "github.com/ipfs/boxo/cid"，实现了对 CID 对象的封装和管理。
 
 
-```
+```go
 package coreapi
 
 import (
@@ -783,7 +783,7 @@ getOrCreateNilNode()方法的实现与题目描述中的代码相似，主要作
 Once方法的实现包含两个步骤：确保创建节点时已经设置好NilRepo字段，并且在创建失败时记录错误。这个字段用于指定Ipfs是否应该在内存中缓存已经创建的节点，以便在稍后调用已经创建的节点。
 
 
-```
+```go
 type UnixfsAPI CoreAPI
 
 var (
@@ -823,7 +823,7 @@ Note that the function uses the `fileAdder.CidBuilder` to store a reference to t
 The function returns the path to the new file system root, or an error if any issues arise during the creation process.
 
 
-```
+```go
 // Add builds a merkledag node from a reader, adds it to the blockstore,
 // and returns the key representing that node.
 func (api *UnixfsAPI) Add(ctx context.Context, files files.Node, opts ...options.UnixfsAddOption) (path.ImmutablePath, error) {
@@ -987,7 +987,7 @@ func (api *UnixfsAPI) Add(ctx context.Context, files files.Node, opts ...options
 5. 如果步骤3或4中的任何一个出现错误，创建并返回一个"error"对象。
 
 
-```
+```go
 func (api *UnixfsAPI) Get(ctx context.Context, p path.Path) (files.Node, error) {
 	ctx, span := tracing.Span(ctx, "CoreAPI.UnixfsAPI", "Get", trace.WithAttributes(attribute.String("path", p.String())))
 	defer span.End()
@@ -1021,7 +1021,7 @@ func (api *UnixfsAPI) Get(ctx context.Context, p path.Path) (files.Node, error) 
 - `dir`：指定当前目录。
 
 
-```
+```go
 // `<link base58 hash> <link size in bytes> <link name>`
 func (api *UnixfsAPI) Ls(ctx context.Context, p path.Path, opts ...options.UnixfsLsOption) (<-chan coreiface.DirEntry, error) {
 	ctx, span := tracing.Span(ctx, "CoreAPI.UnixfsAPI", "Ls", trace.WithAttributes(attribute.String("path", p.String())))
@@ -1076,7 +1076,7 @@ If the `lnk` record is a file, the function checks the type of the file, the siz
 The function then returns the `lnk` record.
 
 
-```
+```go
 func (api *UnixfsAPI) processLink(ctx context.Context, linkres ft.LinkResult, settings *options.UnixfsLsSettings) coreiface.DirEntry {
 	ctx, span := tracing.Span(ctx, "CoreAPI.UnixfsAPI", "ProcessLink")
 	defer span.End()
@@ -1155,7 +1155,7 @@ func (api *UnixfsAPI) processLink(ctx context.Context, linkres ft.LinkResult, se
 函数的实现使用了 `select` 语句和 `channel` 包来实现异步 I/O。`select` 语句允许在数据准备好后从不同的通道中读取数据，即使一些通道可能还没有准备好。`channel` 包允许在 `channel` 类型的通道上发送和接收数据，即使数据流量不确定。
 
 
-```
+```go
 func (api *UnixfsAPI) lsFromLinksAsync(ctx context.Context, dir uio.Directory, settings *options.UnixfsLsSettings) (<-chan coreiface.DirEntry, error) {
 	out := make(chan coreiface.DirEntry, uio.DefaultShardWidth)
 
@@ -1186,7 +1186,7 @@ func (api *UnixfsAPI) lsFromLinksAsync(ctx context.Context, dir uio.Directory, s
 最后，函数返回一个指向 `CoreAPI` 类型的指针，该指针将代表一个核心 Unixfs API 实例。
 
 
-```
+```go
 func (api *UnixfsAPI) lsFromLinks(ctx context.Context, ndlinks []*ipld.Link, settings *options.UnixfsLsSettings) (<-chan coreiface.DirEntry, error) {
 	links := make(chan coreiface.DirEntry, len(ndlinks))
 	for _, l := range ndlinks {
@@ -1211,7 +1211,7 @@ func (api *UnixfsAPI) core() *CoreAPI {
 `syncDagService`实例中的`syncFn`函数的作用是确保有向无环图的每个分支都被持久化到底层的数据存储系统。具体来说，当有向无环图的分支发生变化时，使用`syncFn`函数来通知底层数据存储系统进行更新。这样，即使是在应用程序内部的数据更新操作之后，底层数据存储系统也可以确保有向无环图的分支仍然与应用程序看到的是一致的。
 
 
-```
+```go
 // syncDagService is used by the Adder to ensure blocks get persisted to the underlying datastore
 type syncDagService struct {
 	ipld.DAGService
@@ -1224,7 +1224,7 @@ func (s *syncDagService) Sync() error {
 
 ```
 
-# `/opt/kubo/core/coreapi/test/api_test.go`
+# `core/coreapi/test/api_test.go`
 
 该代码包是一个 Go 语言项目，它旨在实现一个分布式哈希库（DHS）和数据存储库的测试框架。它包括以下主要部分：
 
@@ -1247,7 +1247,7 @@ func (s *syncDagService) Sync() error {
 9.
 
 
-```
+```go
 package test
 
 import (
@@ -1292,7 +1292,7 @@ It also creates a new `repo.Mock` object for each node and uses the `coreapi.New
 The program uses the `bsinf` configuration with the `nodes[0].Peerstore.PeerInfo` field to specify the DNS server and the `nodes[0].Identity` field to specify the file store. It uses the `for` loop to iterate over the nodes and the `if err` statement to handle any errors.
 
 
-```
+```go
 const testPeerID = "QmTFauExutTsy4XP6JbMFcw2Wa9645HJt2bTqL6qYDCKfe"
 
 type NodeProvider struct{}
@@ -1394,14 +1394,14 @@ func (NodeProvider) MakeAPISwarm(t *testing.T, ctx context.Context, fullIdentity
 总而言之，该代码的作用是定义并实现了一个对 "NodeProvider" 接口的测试函数，用于在测试框架中测试 "NodeProvider" 接口的实现。
 
 
-```
+```go
 func TestIface(t *testing.T) {
 	tests.TestApi(NodeProvider{})(t)
 }
 
 ```
 
-# `/opt/kubo/core/coreapi/test/path_test.go`
+# `core/coreapi/test/path_test.go`
 
 这段代码是一个 Go 语言编写的测试框架，用于测试 Boxo 项目中的 ipld 包。具体来说，这段代码：
 
@@ -1419,7 +1419,7 @@ func TestIface(t *testing.T) {
 12. 在 "test" 包的 "main" 函数中，将所有 "testcase" 函数作为参数传递给 "testing.T" 函数。
 
 
-```
+```go
 package test
 
 import (
@@ -1441,7 +1441,7 @@ import (
 This is a Go program that appears to be testing the resolving of a Merkle datacenter block failure. It appears to be using the UnixFS filesystem to store and retrieve files, and is using the IPLD (Internet Time猴驱动程序) to perform the file operations. It uses the ipld.Node type to represent the DagPB node that represents the file, and uses the *merkledag.ProtoNode to represent the IPLD struct that contains the file metadata. It appears to be trying to resolve each entry in the sharded directory which will result in pathing over the missing block by performing a search across the network.
 
 
-```
+```go
 func TestPathUnixFSHAMTPartial(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()

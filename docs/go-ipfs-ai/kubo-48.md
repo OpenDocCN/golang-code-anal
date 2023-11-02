@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 48
 
-# `/opt/kubo/repo/mock.go`
+# `repo/mock.go`
 
 该代码是一个 Go 语言编程语言中的一个包，它实现了使用libp2p与IPFS（InterPlanetary File System）相关的库，提供了访问和管理IPFS资源的方法。
 
@@ -24,7 +24,7 @@
 5. 通过使用RCMgr管理IPFS资源，实现对资源的管理。
 
 
-```
+```go
 package repo
 
 import (
@@ -50,7 +50,7 @@ import (
 通过调用 Config 和 UserResourceOverrides 方法，可以创建并设置 Mock 对象。同时，通过调用 New 方法，可以生成一个新的 Mock 对象。
 
 
-```
+```go
 var errTODO = errors.New("TODO: mock repo")
 
 // Mock is not thread-safe.
@@ -88,7 +88,7 @@ func (m *Mock) UserResourceOverrides() (rcmgr.PartialLimitConfig, error) {
 	函数，接收一个键字符串`key`。函数内部尚未实现。
 
 
-```
+```go
 func (m *Mock) SetConfig(updated *config.Config) error {
 	m.C = *updated // FIXME threadsafety
 	return nil
@@ -121,7 +121,7 @@ func (m *Mock) GetConfigKey(key string) (interface{}, error) {
 * SwarmKey：该字段是一个接收 []byte 类型输入的函数，用于生成 Alter Ego 代理器中的随机键，如果没有实现该接口，则返回一个空的字符串。
 
 
-```
+```go
 func (m *Mock) Datastore() Datastore { return m.D }
 
 func (m *Mock) GetStorageUsage(_ context.Context) (uint64, error) { return 0, nil }
@@ -147,12 +147,12 @@ func (m *Mock) SwarmKey() ([]byte, error) {
 通俗地解释一下，这段代码定义了一个名为 `m` 的指针变量，并将其解引用为指向一个 `FileManager` 类型对象的指针。然后将这个指针返回，使得调用者可以从此指针访问该 `FileManager` 对象。
 
 
-```
+```go
 func (m *Mock) FileManager() *filestore.FileManager { return m.F }
 
 ```
 
-# `/opt/kubo/repo/onlyone.go`
+# `repo/onlyone.go`
 
 这段代码定义了一个名为`OnlyOne`的结构体，用于实现一个共享资源，即打开一个只允许有一个实例的`Repository`。
 
@@ -163,7 +163,7 @@ func (m *Mock) FileManager() *filestore.FileManager { return m.F }
 由于该 `OnlyOne` 结构体中的 `mu` 和 `active` 字段都是 `sync.Mutex` 和 `map` 类型，因此该结构体中的代码实现了一个互斥锁和读写锁，可以确保在同一时间只有一个实例被创建，并在多个实例之间共享数据。
 
 
-```
+```go
 package repo
 
 import (
@@ -192,7 +192,7 @@ type OnlyOne struct {
 4. 最后，函数返回 item，如果 item 不为 nil，则代表成功打开了 Repo，否则返回一个 error。
 
 
-```
+```go
 // use.
 //
 // Key must be comparable, or Open will panic. Make sure to pick keys
@@ -238,7 +238,7 @@ func (o *OnlyOne) Open(key interface{}, open func() (Repo, error)) (Repo, error)
 接着定义了一个名为“Close”的函数，该函数首先锁定“r.parent.mu”以保证在函数中任何对“r.parent”的访问都是同步的，然后减1“r.refs”的计数器，并检查“r.refs”是否大于0。如果是，那么其他正在持有“r”的人会保持与“r”的连接，所以不会关闭它。如果“r.refs”等于0，那么直接关闭“r.Repo”以关闭引用。最后，释放与“r”相关的资源并返回“r.Repo”关闭的错误。
 
 
-```
+```go
 type ref struct {
 	parent *OnlyOne
 	key    interface{}
@@ -265,7 +265,7 @@ func (r *ref) Close() error {
 
 ```
 
-# `/opt/kubo/repo/repo.go`
+# `repo/repo.go`
 
 这段代码是一个 Go 语言编程语言中的一个包，它定义了一个用于将 IPFS（InterPlanetary File System）数据存储在本地或远程的文件系统中的框架。
 
@@ -288,7 +288,7 @@ func (r *ref) Close() error {
 8. 定义了一个名为 "ma" 的函数，它使用 "github.com/multiformats/go-multiaddr" 包生成一个 MultiAddr。
 
 
-```
+```go
 package repo
 
 import (
@@ -311,7 +311,7 @@ import (
 This code defines a `Repo` interface that represents all persistent data of a given IPFS node. The `ErrApiNotRunning` error is defined to indicate that the API is not running.
 
 
-```
+```go
 var ErrApiNotRunning = errors.New("api not running") //nolint
 
 // Repo represents all persistent data of a given ipfs node.
@@ -370,7 +370,7 @@ type Repo interface {
 具体来说，这段代码定义了一个 "Datastore" 接口 "Datastore"，其中包含一个名为 "ds.Batching" 的函数，用于执行批量写入操作。这个函数的实现比较简单，就是将多个写入操作合并为一个，避免了在多个写入操作中使用多个fs.File，导致每次写入操作都创建一个新的文件，造成资源浪费和写入性能下降。
 
 
-```
+```go
 // Datastore is the interface required from a datastore to be
 // acceptable to FSRepo.
 type Datastore interface {
@@ -379,7 +379,7 @@ type Datastore interface {
 
 ```
 
-# `/opt/kubo/repo/common/common.go`
+# `repo/common/common.go`
 
 这段代码定义了一个名为MapGetKV的函数，它接受一个名为map的地图类型和一个键，并返回该地图中具有该键的值以及一个错误。
 
@@ -390,7 +390,7 @@ type Datastore interface {
 函数还可以接受一个可选的参数cursor，当从left开始逐步分割键时，可以使用currentChain作为递归的当前层，这样当前层返回的值就是当前层返回的值。当currentChain等于nil时，函数返回currentChain，否则函数返回cursor。
 
 
-```
+```go
 package common
 
 import (
@@ -437,7 +437,7 @@ func MapGetKV(v map[string]interface{}, key string) (interface{}, error) {
 最后，函数会递归地处理mcursor中的所有部分。当处理完mcursor中的所有部分后，函数返回一个 nil 表示成功。
 
 
-```
+```go
 func MapSetKV(v map[string]interface{}, key string, value interface{}) error {
 	var ok bool
 	var mcursor map[string]interface{}
@@ -483,7 +483,7 @@ func MapSetKV(v map[string]interface{}, key string, value interface{}) error {
 5. 最后，返回 `result` 中的地图，作为合并后的结果。
 
 
-```
+```go
 // Merges the right map into the left map, recursively traversing child maps
 // until a non-map value is found.
 func MapMergeDeep(left, right map[string]interface{}) map[string]interface{} {
@@ -516,7 +516,7 @@ func MapMergeDeep(left, right map[string]interface{}) map[string]interface{} {
 
 ```
 
-# `/opt/kubo/repo/common/common_test.go`
+# `repo/common/common_test.go`
 
 该代码的作用是测试MapMergeDeep函数的正确性。该函数的目的是测试在给定两个地图对象leftMap和rightMap，如何将它们合并并返回一个新的地图对象。
 
@@ -527,7 +527,7 @@ func MapMergeDeep(left, right map[string]interface{}) map[string]interface{} {
 最后，代码会通过assert.True函数来测试MapMergeDeep函数的返回值。如果函数正常工作，那么它应该能够成功创建一个新的地图对象，并输出"MapMergeDeep should return a new map instance"。
 
 
-```
+```go
 package common
 
 import (
@@ -561,7 +561,7 @@ func TestMapMergeDeepReturnsNew(t *testing.T) {
 通过调用 MapMergeDeep 函数并比较预期输出结果和实际输出结果，可以验证函数的正确性。
 
 
-```
+```go
 func TestMapMergeDeepNewKey(t *testing.T) {
 	leftMap := make(map[string]interface{})
 	leftMap["A"] = "Hello World"
@@ -610,7 +610,7 @@ func TestMapMergeDeepNewKey(t *testing.T) {
 5. 函数通过调用 result["A"].(map[string]interface{}) 获取新地图 object resultA 的值，并使用 assert 函数验证两个键（"B" 和 "C"）是否被正确地保留了，以及它们的值是否正确。
 
 
-```
+```go
 func TestMapMergeDeepRecursesOnMaps(t *testing.T) {
 	leftMapA := make(map[string]interface{})
 	leftMapA["B"] = "A value!"
@@ -676,7 +676,7 @@ func TestMapMergeDeepRecursesOnMaps(t *testing.T) {
 这段代码的主要目的是测试 MapMergeDeep 函数是否可以正确地合并两个 map，并且在合并后可以正确地使用 "A" 键。
 
 
-```
+```go
 func TestMapMergeDeepRightNotAMap(t *testing.T) {
 	leftMapA := make(map[string]interface{})
 	leftMapA["B"] = "A value!"
@@ -714,7 +714,7 @@ func TestMapMergeDeepRightNotAMap(t *testing.T) {
 
 ```
 
-# `/opt/kubo/repo/fsrepo/config_test.go`
+# `repo/fsrepo/config_test.go`
 
 这段代码是一个RESTful API测试框架，它包含一个名为"fsrepo_test"的包。以下是对代码中主要部分的解释：
 
@@ -750,7 +750,7 @@ func TestMapMergeDeepRightNotAMap(t *testing.T) {
 11. 由于 test.config 是用 "github.com/ipfs/kubo/repo/fsrepo" 中的数据集测试的，所以要输出 test.config 的数据。
 
 
-```
+```go
 package fsrepo_test
 
 import (
@@ -784,7 +784,7 @@ import (
 
 
 
-```
+```go
 var defaultConfig = []byte(`{
     "StorageMax": "10GB",
     "StorageGCWatermark": 90,
@@ -830,7 +830,7 @@ flatfs.conf 是 FlatFS 的配置，包括了一些选项，如 path（数据存�
 measure.conf 是 Measure 的配置，包括了一些选项，如 child（用于指定要挂载到哪个挂载点）、mountpoint（数据存储挂载点）和 prefix（数据访问前缀）。
 
 
-```
+```go
 var leveldbConfig = []byte(`{
             "compression": "none",
             "path": "datastore",
@@ -874,7 +874,7 @@ var measureConfig = []byte(`{
 如果上述步骤中的任何一个出现了错误，函数就会输出错误信息并退出。
 
 
-```
+```go
 func TestDefaultDatastoreConfig(t *testing.T) {
 	loader, err := loader.NewPluginLoader("")
 	if err != nil {
@@ -931,7 +931,7 @@ func TestDefaultDatastoreConfig(t *testing.T) {
 最后，函数使用 `dsc.Create` 函数在指定的目录中创建一个新 `leveldb` 数据库。如果这个函数成功，并且 `spec` 中指定了 `type` 为 `"leveldb"`，那么退出并检查 `dsc.DiskSpec().String()` 是否与预期相等。如果两者不匹配，函数将打印错误消息。
 
 
-```
+```go
 func TestLevelDbConfig(t *testing.T) {
 	config := new(config.Datastore)
 	err := json.Unmarshal(defaultConfig, config)
@@ -982,7 +982,7 @@ func TestLevelDbConfig(t *testing.T) {
 如果 any of the above tests fail, the function will output an error message and stop at that point.
 
 
-```
+```go
 func TestFlatfsConfig(t *testing.T) {
 	config := new(config.Datastore)
 	err := json.Unmarshal(defaultConfig, config)
@@ -1032,7 +1032,7 @@ func TestFlatfsConfig(t *testing.T) {
 函数会输出一个错误，如果 `defaultConfig` 的解析或 `fsrepo.AnyDatastoreConfig` 函数的执行失败。
 
 
-```
+```go
 func TestMeasureConfig(t *testing.T) {
 	config := new(config.Datastore)
 	err := json.Unmarshal(defaultConfig, config)
@@ -1069,7 +1069,7 @@ func TestMeasureConfig(t *testing.T) {
 
 ```
 
-# `/opt/kubo/repo/fsrepo/datastores.go`
+# `repo/fsrepo/datastores.go`
 
 这段代码定义了一个名为 "fsrepo" 的包，它旨在提供对 IPFS(InterPlanetary File System) 对象的数据库操作。
 
@@ -1095,7 +1095,7 @@ func TestMeasureConfig(t *testing.T) {
 综上所述，这段代码的目的是提供用于操作 IPFS 对象的数据库函数，以方便开发人员更轻松地与 IPFS 数据存储进行交互。
 
 
-```
+```go
 package fsrepo
 
 import (
@@ -1121,7 +1121,7 @@ import (
 同时，还定义了一个抽象的 DatastoreConfig 接口，该接口中包含了一个名为 DiskSpec 的函数，它返回了 datastore 的最小配置，包括磁盘存储的容量以及是否需要创建一个新的 datastore。另外，还定义了另一个名为 Create 的函数接口，该接口实现了如何使用上面定义的 DiskSpec 和 DatastoreConfig 创建一个新的 datastore。
 
 
-```
+```go
 // ConfigFromMap creates a new datastore config from a map.
 type ConfigFromMap func(map[string]interface{}) (DatastoreConfig, error)
 
@@ -1149,7 +1149,7 @@ type DatastoreConfig interface {
 函数的作用是提供一个 JSON 编码的字符数组，该数组可以用来描述 DiskSpec 类型的数据存储，但是如果两个 DiskSpec 存在差异，函数将会执行迁移操作。同时，由于运行时值 such as cache options or concurrency options 不应该添加到 Bytes 函数返回的字符数组中，因此可以放心地使用该函数来获取最小化数据存储特性的 JSON 编码。
 
 
-```
+```go
 // DiskSpec is a minimal representation of the characteristic values of the
 // datastore. If two diskspecs are the same, the loader assumes that they refer
 // to exactly the same datastore. If they differ at all, it is assumed they are
@@ -1175,7 +1175,7 @@ func (spec DiskSpec) Bytes() []byte {
 在代码中，`datastores` map使用了键值对的形式，将不同的磁盘规格映射到对应的`ConfigFromMap`类型上。`init()`函数在函数初始化时创建了这个`datastores` map，其中包括了磁盘规格的四个关键字段：`mount`、`mem`、`log` 和 `measure`。这些关键字字段与对应的`Mapping`类型成员变量形成了映射关系，`Mapping`类型实现了`Map[string, ConfigFromMap]`接口，用于将磁盘规格的各个关键字映射到对应的`ConfigFromMap`类型上。
 
 
-```
+```go
 // String returns a minimal JSON encoding of the DiskSpec.
 func (spec DiskSpec) String() string {
 	return string(spec.Bytes())
@@ -1203,7 +1203,7 @@ func init() {
 从代码的整体上看，这两个函数主要作用于将一个特定的datastoreConfig从一个特定的参数中提取出来，并根据该datastoreConfig创建或返回一个具体的datastoreConfig。
 
 
-```
+```go
 func AddDatastoreConfigHandler(name string, dsc ConfigFromMap) error {
 	_, ok := datastores[name]
 	if ok {
@@ -1239,7 +1239,7 @@ MountDatastoreConfig 的函数旨在从传递给它的参数（通过 "params" �
 总之，这段代码的主要目的是定义一个用于将Datastore存储库挂载到服务器上的struct类型的函数。
 
 
-```
+```go
 type mountDatastoreConfig struct {
 	mounts []premount
 }
@@ -1300,7 +1300,7 @@ func MountDatastoreConfig(params map[string]interface{}) (DatastoreConfig, error
 函数的作用是定义了一个配置存储的键值对，将挂载点与相应的硬盘规格存储在同一个 map 中，然后返回该配置。这个函数可以用于初始化一个挂载集，并为每个挂载点分配一个唯一的 mountpoint，方便用户在以后根据需要查看和更改挂载点。
 
 
-```
+```go
 func (c *mountDatastoreConfig) DiskSpec() DiskSpec {
 	cfg := map[string]interface{}{"type": "mount"}
 	mounts := make([]interface{}, len(c.mounts))
@@ -1330,7 +1330,7 @@ func (c *mountDatastoreConfig) DiskSpec() DiskSpec {
 3. 调用名为`mount.New`的函数，并接收刚刚创建好的`mounts`切片作为参数，返回一个新的`mount.Mount`结构体，以及一个`nil`表示没有错误。
 
 
-```
+```go
 func (c *mountDatastoreConfig) Create(path string) (repo.Datastore, error) {
 	mounts := make([]mount.Mount, len(c.mounts))
 	for i, m := range c.mounts {
@@ -1359,7 +1359,7 @@ type memDatastoreConfig struct {
 * `Create` 方法，它接受一个参数 `string`，返回一个名为 `repo.Datastore` 的类型，类型定义了一个 `Datastore` 接口，但在这里似乎也没有使用它。它似乎创建了一个名为 `ds.NewMapDatastore` 的函数并返回它，但这里似乎没有使用它。
 
 
-```
+```go
 // MemDatastoreConfig returns a memory DatastoreConfig from a spec.
 func MemDatastoreConfig(params map[string]interface{}) (DatastoreConfig, error) {
 	return &memDatastoreConfig{params}, nil
@@ -1385,7 +1385,7 @@ type logDatastoreConfig struct {
 函数的第一个参数是一个包含键值对的字典 `params`，它包含了两个键 `child` 和 `name`。第二个参数是一个字符串 `name`。函数返回一个名为 `logDatastoreConfig` 的类型对象，它包含一个名为 `child` 的字段和一个名为 `name` 的字段。如果 `params` 存在任何错误，函数将返回错误信息。
 
 
-```
+```go
 // LogDatastoreConfig returns a log DatastoreConfig from a spec.
 func LogDatastoreConfig(params map[string]interface{}) (DatastoreConfig, error) {
 	childField, ok := params["child"].(map[string]interface{})
@@ -1415,7 +1415,7 @@ func LogDatastoreConfig(params map[string]interface{}) (DatastoreConfig, error) 
 总之，该代码定义了一个 `logDatastoreConfig` 结构体，以及一些函数和方法，用于创建和配置一个名为 `logDatastore` 的数据存储库。
 
 
-```
+```go
 func (c *logDatastoreConfig) Create(path string) (repo.Datastore, error) {
 	child, err := c.child.Create(path)
 	if err != nil {
@@ -1438,7 +1438,7 @@ type measureDatastoreConfig struct {
 这段代码的作用是创建一个名为 `MeasureDatastoreConfig` 的函数，它接收一个参数 `params`，该参数是一个包含键值对的字典。如果 `params` 中的键 `"child"` 是一个缺少 `map"` 类型属性的字典，函数将返回 `nil` 和一个错误消息。如果 `params` 中的键 `"prefix"` 是一个缺少 `string` 类型属性的字符串，函数将返回 `nil` 和一个错误消息。否则，函数将返回一个指向 `DatastoreConfig` 类型对象的引用，如果没有错误，则返回。
 
 
-```
+```go
 // MeasureDatastoreConfig returns a measure DatastoreConfig from a spec.
 func MeasureDatastoreConfig(params map[string]interface{}) (DatastoreConfig, error) {
 	childField, ok := params["child"].(map[string]interface{})
@@ -1469,7 +1469,7 @@ func MeasureDatastoreConfig(params map[string]interface{}) (DatastoreConfig, err
 总结：这两段代码定义了一个名为`func`的函数，该函数接收一个名为`measureDatastoreConfig`的参数，然后按照给定的数据存储配置创建一个或调用另一个函数，实现数据存储的创建和操作。
 
 
-```
+```go
 func (c *measureDatastoreConfig) DiskSpec() DiskSpec {
 	return c.child.DiskSpec()
 }
@@ -1484,7 +1484,7 @@ func (c measureDatastoreConfig) Create(path string) (repo.Datastore, error) {
 
 ```
 
-# `/opt/kubo/repo/fsrepo/doc.go`
+# `repo/fsrepo/doc.go`
 
 这段代码是一个使用FS Repo库的Python package。它包含以下目录：
 
@@ -1504,7 +1504,7 @@ func (c measureDatastoreConfig) Create(path string) (repo.Datastore, error) {
 `fsrepo`是一个PythonFS Repo库，它提供了一个完整的IPFS客户端API，允许您使用Python在您的本地或远程系统中设置IPFS。它还支持使用配置文件来根据您的需求进行自定义设置。
 
 
-```
+```go
 // package fsrepo
 //
 // TODO explain the package roadmap...
@@ -1531,7 +1531,7 @@ func (c measureDatastoreConfig) Create(path string) (repo.Datastore, error) {
 最后，它包含一个名为 "TODO" 的注释，提示开发人员在未来需要添加的功能。这个注释告诉开发人员需要考虑防止多个守护进程同时运行的问题，并可能需要对库进行其他修改。
 
 
-```
+```go
 //	├── repo.lock                <------ protects datastore/ and config
 //	└── version
 package fsrepo

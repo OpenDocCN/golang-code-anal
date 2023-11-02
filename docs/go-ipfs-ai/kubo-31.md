@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 31
 
-# `/opt/kubo/core/node/libp2p/rcmgr_defaults.go`
+# `core/node/libp2p/rcmgr_defaults.go`
 
 这段代码是一个 Go 语言库 libp2p，它是 Go-libp2p 项目的核心库，提供了用于管理 IPFS（InterPlanetary File System）网络中的文件和点对点连接等功能。
 
@@ -14,7 +14,7 @@
 6. 从 memory 包中导入 "infiniteResourceLimits"，用于设置 IPFS 网络中的资源请求和允许。
 
 
-```
+```go
 package libp2p
 
 import (
@@ -41,7 +41,7 @@ Additionally, if you want to manually configure the scaling limits for these ser
 You can find more information about setting the Autoscaling setting and the `scalingLimitConfig` and `connmgr` settings in the Alibaba Cloud Dynos documentation.
 
 
-```
+```go
 // This file defines implicit limit defaults used when Swarm.ResourceMgr.Enabled
 
 // createDefaultLimitConfig creates LimitConfig to pass to libp2p's resource manager.
@@ -174,7 +174,7 @@ func createDefaultLimitConfig(cfg config.SwarmConfig) (limitConfig rcmgr.Concret
 `partialLimits`函数的作用是创建一个空限制配置类，然后设置基于`rcmgr.ConcreteLimitConfig`设置的内存限制和文件描述符限制，最后它将创建好的限制配置类返回。这个函数的作用是确保在给定的内存和文件描述符限制内，返回一个符合条件的`Computed default go-libp2p Resource Manager`实例。
 
 
-```
+```go
 Computed default go-libp2p Resource Manager limits based on:
     - 'Swarm.ResourceMgr.MaxMemory': %q
     - 'Swarm.ResourceMgr.MaxFileDescriptors': %d
@@ -189,7 +189,7 @@ These can be inspected with 'ipfs swarm resources'.
 
 ```
 
-# `/opt/kubo/core/node/libp2p/rcmgr_logging.go`
+# `core/node/libp2p/rcmgr_logging.go`
 
 这段代码定义了一个名为 libp2p 的包，该包实现了 libp2p 协议。通过导入不同的依赖项，实现了以下功能：
 
@@ -205,7 +205,7 @@ These can be inspected with 'ipfs swarm resources'.
 10. 导入了一个名为 zap 的 zap 类型，用于记录错误信息。
 
 
-```
+```go
 package libp2p
 
 import (
@@ -230,7 +230,7 @@ import (
 该结构体表示一个资源管理器，用于记录与资源相关的日志信息。该资源管理器使用一个输出日志 "zap.SugaredLogger" 将日志信息发送到 "logger" 输出，同时也允许 "delegate" 进行资源管理。此外，该资源管理器定期将超过限制的错误计数到 "countErrs" 函数 map 中，并使用 "mut" sync.Mutex 来保护计数器。
 
 
-```
+```go
 type loggingResourceManager struct {
 	clock       clock.Clock
 	logger      *zap.SugaredLogger
@@ -256,7 +256,7 @@ type loggingScope struct {
 `for`循环用于定期检查是否有新的限制信息。如果是，则调用`n.logger.Warnf`函数来输出一条警告信息，并记录到`errs` map中。如果所有错误都存在，则输出更详细的提示信息并使用`n.logger.Warnf`函数来输出。最后，使用`n.mut.Unlock`函数来解锁`mut`锁，以便在循环结束后能够继续添加新的错误。
 
 
-```
+```go
 var (
 	_ network.ResourceManager    = (*loggingResourceManager)(nil)
 	_ rcmgr.ResourceManagerState = (*loggingResourceManager)(nil)
@@ -304,7 +304,7 @@ func (n *loggingResourceManager) start(ctx context.Context) {
 最后，函数释放n.mut的锁，如果n.limitExceededErrs有键，则执行n.limitExceededErrs的计数器加1操作。
 
 
-```
+```go
 func (n *loggingResourceManager) countErrs(err error) {
 	if errors.Is(err, network.ErrResourceLimitExceeded) {
 		n.mut.Lock()
@@ -335,7 +335,7 @@ func (n *loggingResourceManager) countErrs(err error) {
 当调用 func(n *loggingResourceManager) ViewService(svc string, f func(network.ServiceScope) error) error 时，会创建一个名为 "n" 的整数类型的变量，并将 f 函数赋值给 n.delegate.ViewService。调用 ViewService(f) 时，将传入的 f 函数作为第一个参数传递，并将 svc 作为第二个参数传递。调用 ViewService(f) 时，将传入的 f 函数的返回值作为第三个参数传递。返回一个代表 "ViewService" 函数的错误类型。
 
 
-```
+```go
 func (n *loggingResourceManager) ViewSystem(f func(network.ResourceScope) error) error {
 	return n.delegate.ViewSystem(f)
 }
@@ -365,7 +365,7 @@ func (n *loggingResourceManager) ViewService(svc string, f func(network.ServiceS
 函数内部使用了一个名为 "delegate" 的字段，它是一个匿名类型，表示一个代理对象，这个对象在 "ViewProtocol" 和 "ViewPeer" 函数中被调用，用于执行实际的网络协议访问操作。函数还使用了一个名为 "logger" 的字段，表示一个日志定制的 "Logger" 对象，这个对象在所有函数内部都被用来记录协议或 peer 执行请求时的信息。最后，函数还使用了一个名为 "countErrs" 的字段，表示一个计数器，这个计数器在所有函数内部都被用来记录发生的错误数量。
 
 
-```
+```go
 func (n *loggingResourceManager) ViewProtocol(p protocol.ID, f func(network.ProtocolScope) error) error {
 	return n.delegate.ViewProtocol(p, func(s network.ProtocolScope) error {
 		return f(&loggingScope{logger: n.logger, delegate: s, countErrs: n.countErrs})
@@ -404,7 +404,7 @@ func (n *loggingResourceManager) OpenConnection(dir network.Direction, usefd boo
 这个函数的作用是：执行 `n.delegate` 的函数调用，然后返回一个名为 `[]string` 的类型的数组。
 
 
-```
+```go
 func (n *loggingResourceManager) OpenStream(p peer.ID, dir network.Direction) (network.StreamManagementScope, error) {
 	connMgmtScope, err := n.delegate.OpenStream(p, dir)
 	n.countErrs(err)
@@ -433,7 +433,7 @@ func (n *loggingResourceManager) ListServices() []string {
 这两位作者还确保 `rapi` 存在，然后调用 `ListPeers()` 函数，并将其返回结果赋给变量 `rapi`。最后，这两位作者再次调用 `ListPeers()` 函数，并将其返回结果赋给变量 `rapi`，将 `ok` 的值设置为 `true`。
 
 
-```
+```go
 func (n *loggingResourceManager) ListProtocols() []protocol.ID {
 	rapi, ok := n.delegate.(rcmgr.ResourceManagerState)
 	if !ok {
@@ -461,7 +461,7 @@ func (n *loggingResourceManager) ListPeers() []peer.ID {
 `s`函数接收一个`loggingScope`类型的参数`s`，并返回一个`error`类型的`ReserveMemory`函数作为结果。函数的作用是执行`s.delegate.ReserveMemory`函数，并返回一个`error`类型的结果。如果`s.delegate.ReserveMemory`函数在尝试分配内存时遇到任何错误，那么函数将返回该错误。
 
 
-```
+```go
 func (n *loggingResourceManager) Stat() rcmgr.ResourceManagerStat {
 	rapi, ok := n.delegate.(rcmgr.ResourceManagerState)
 	if !ok {
@@ -492,7 +492,7 @@ func (s *loggingScope) ReserveMemory(size int, prio uint8) error {
 "Done" 函数接收一个名为 "done" 错误类型的参数，然后执行与该参数相关的 "BeginSpan" 函数 "Done" 定义的 "Done" 函数，使用传入的 "done" 参数来关闭 span。
 
 
-```
+```go
 func (s *loggingScope) ReleaseMemory(size int) {
 	s.delegate.ReleaseMemory(size)
 }
@@ -523,7 +523,7 @@ func (s *loggingScope) Done() {
 这个实现的作用是，通过 `delegate` 和一系列方法，使得 `loggingScope` 类型可以被用来访问其 `ProtocolScope` 和 `PeerScope` 类型的属性和方法，从而实现对网络协议 scope 的操作。
 
 
-```
+```go
 func (s *loggingScope) Name() string {
 	return s.delegate.(network.ServiceScope).Name()
 }
@@ -553,7 +553,7 @@ func (s *loggingScope) PeerScope() network.PeerScope {
 函数 `SetPeer` 和 `SetProtocol` 都使用了 `delegate` 指针，该指针保存了一个网络 `Logger` 实例，可以用来记录函数调用过程中的错误信息。 `delegate` 函数会在函数调用时执行相应的 `SetPeer` 和 `SetProtocol` 方法，并将结果返回。
 
 
-```
+```go
 func (s *loggingScope) SetPeer(p peer.ID) error {
 	err := s.delegate.(network.ConnManagementScope).SetPeer(p)
 	s.countErrs(err)
@@ -585,7 +585,7 @@ func (s *loggingScope) SetProtocol(proto protocol.ID) error {
 通过`s.SetLimit(limit rcmgr.Limit)`函数，可以将指定的资源限制器`rcmgr.ResourceScopeLimiter`设置为指定的`loggingScope`的`Limit`对象。
 
 
-```
+```go
 func (s *loggingScope) ServiceScope() network.ServiceScope {
 	return s.delegate.(network.ServiceScope)
 }
@@ -606,7 +606,7 @@ func (s *loggingScope) SetLimit(limit rcmgr.Limit) {
 
 ```
 
-# `/opt/kubo/core/node/libp2p/rcmgr_logging_test.go`
+# `core/node/libp2p/rcmgr_logging_test.go`
 
 这段代码定义了一个名为"libp2p"的包，其中包含了以下几个主要组件：
 
@@ -623,7 +623,7 @@ func (s *loggingScope) SetLimit(limit rcmgr.Limit) {
 此代码的作用是定义了一个名为"libp2p"的包，其中包含了一些用于编写单元测试和时钟驱动程序的组件。具体来说，它定义了一些函数和常量，用于定义测试函数和观察者模式，以及定义了一些用于与时间相关的函数。此外，它还定义了一些用于管理节点资源的组件。
 
 
-```
+```go
 package libp2p
 
 import (
@@ -653,7 +653,7 @@ This is a Go program that performs a network test to determine if it can reserve
 如果程序在循环内两次接收到违反限制的日志，则它将停止并输出"Protected from exceeding resource limits 2 times.  libp2p message: \"system: cannot reserve inbound connection: resource limit exceeded\""。
 
 
-```
+```go
 func TestLoggingResourceManager(t *testing.T) {
 	clock := clock.NewMock()
 	orig := rcmgr.DefaultLimits.AutoScale()
@@ -704,7 +704,7 @@ func TestLoggingResourceManager(t *testing.T) {
 
 ```
 
-# `/opt/kubo/core/node/libp2p/rcmgr_metrics.go`
+# `core/node/libp2p/rcmgr_metrics.go`
 
 这段代码定义了一个名为 "libp2p" 的包，其中包含了一些通用的功能。
 
@@ -724,7 +724,7 @@ func TestLoggingResourceManager(t *testing.T) {
 14. "设置超时" 函数 "设置超时" 没有具体的实现，它可能是一个通用的设置超时函数。
 
 
-```
+```go
 package libp2p
 
 import (
@@ -755,7 +755,7 @@ func mustRegister(c prometheus.Collector) {
 This is a Go contract for Prometheus that provides metrics for a Libp2p RCMG (Remote controlled Memory Manager) system. The metrics are divided into different categories such asconn,conn\_blocked,stream,stream\_blocked,peer,peer\_blocked,protocol,protocol\_blocked,protocol\_peer\_blocked,service,service\_blocked,service\_peer\_blocked,memory,memory\_blocked. These metrics are useful to track the health and performance of the Libp2p RCMM system.
 
 
-```
+```go
 func createRcmgrMetrics() rcmgr.MetricsReporter {
 	const (
 		direction = "direction"
@@ -922,7 +922,7 @@ func createRcmgrMetrics() rcmgr.MetricsReporter {
 由于 `rcmgrMetrics` 是使用 `rcmgr` 包进行管理的，因此它依赖于 `rcmgr` 包的接口实现。如果 `rcmgr` 的实现未实现该接口，该代码将无法编译或运行。
 
 
-```
+```go
 // Failsafe to ensure interface from go-libp2p-resource-manager is implemented
 var _ rcmgr.MetricsReporter = rcmgrMetrics{}
 
@@ -954,7 +954,7 @@ connAllowed方法使用WithLabelValues方法来设置计数器，该方法的第
 allowConn函数还定义了一个名为func的匿名函数，该函数接受一个网络Direction类型的参数和一个布尔值，用于设置是否允许连接。函数将在函数内部执行getDirection和rmc Gather Metrics的connAllowed方法，并将结果返回。
 
 
-```
+```go
 func getDirection(d network.Direction) string {
 	switch d {
 	default:
@@ -983,7 +983,7 @@ BlockStream函数用于记录当前网络连接是否允许发送数据流，并
 AllowPeer函数用于允许指定给定的PeerID的连接。函数会直接增加peerAllowed计数。
 
 
-```
+```go
 func (r rcmgrMetrics) BlockConn(dir network.Direction, usefd bool) {
 	r.connBlocked.WithLabelValues(getDirection(dir), strconv.FormatBool(usefd)).Inc()
 }
@@ -1017,7 +1017,7 @@ func (r rcmgrMetrics) AllowPeer(_ peer.ID) {
 这段代码的具体作用是用于记录函数调用，对于每个函数调用，会创建一个Blocks metrics类型的变量来存储函数的执行结果，然后对于函数中的每个操作，增加该变量的相应标签的计数。
 
 
-```
+```go
 func (r rcmgrMetrics) BlockPeer(_ peer.ID) {
 	r.peerBlocked.Inc()
 }
@@ -1071,7 +1071,7 @@ func (r rcmgrMetrics) AllowMemory(_ int) {
 4. `AllowMemory`函数：允许指定数量的内存。它的具体实现与`AllowService`函数不同，需要传递一个整数类型的参数。
 
 
-```
+```go
 func (r rcmgrMetrics) AllowService(svc string) {
 	r.serviceAllowed.WithLabelValues(svc).Inc()
 }
@@ -1103,14 +1103,14 @@ func (r rcmgrMetrics) AllowMemory(_ int) {
 该函数的作用是统计并记录每个线程块的内存占用情况，并输出线程块最大内存占用量。它可能被用于研究程序中的内存问题，并为程序优化提供参考。
 
 
-```
+```go
 func (r rcmgrMetrics) BlockMemory(_ int) {
 	r.memoryBlocked.Inc()
 }
 
 ```
 
-# `/opt/kubo/core/node/libp2p/relay.go`
+# `core/node/libp2p/relay.go`
 
 这段代码定义了一个名为`RelayTransport`的函数，其作用是创建一个libp2p的relay传输，用于在localhost上搭建基于libp2p的传输系统。
 
@@ -1126,7 +1126,7 @@ func (r rcmgrMetrics) BlockMemory(_ int) {
 该函数可以被用来创建一个libp2p的relay传输实例，从而实现数据的传输和接收。
 
 
-```
+```go
 package libp2p
 
 import (
@@ -1160,7 +1160,7 @@ The `Libp2pOpts` object appears to be a collection of选项 for the relayed serv
 The function also appears to be defining a default set of values for the relayed service, and any user configuration options specified by the user will be applied to this default set.
 
 
-```
+```go
 func RelayService(enable bool, relayOpts config.RelayService) func() (opts Libp2pOpts, err error) {
 	return func() (opts Libp2pOpts, err error) {
 		if enable {
@@ -1200,7 +1200,7 @@ It also initializes an autoRelay feeder that sends a message to the peers when a
 It returns the options struct, the peerChannel, and the autoRelay feeder.
 
 
-```
+```go
 func MaybeAutoRelay(staticRelays []string, cfgPeering config.Peering, enabled bool) fx.Option {
 	if !enabled {
 		return fx.Options()
@@ -1282,7 +1282,7 @@ func MaybeAutoRelay(staticRelays []string, cfgPeering config.Peering, enabled bo
 这段代码的主要作用是实现了一个hole punching（悬空打孔）功能，可以设置代理客户端是否启用悬空打孔功能。如果设置了代理客户端并且启用了悬空打孔功能，那么当没有启用代理客户端时，函数会输出一条错误日志。如果设置了代理客户端并且禁用了悬空打孔功能，那么函数不会执行任何操作，直接返回。
 
 
-```
+```go
 func HolePunching(flag config.Flag, hasRelayClient bool) func() (opts Libp2pOpts, err error) {
 	return func() (opts Libp2pOpts, err error) {
 		if flag.WithDefault(true) {
@@ -1304,7 +1304,7 @@ func HolePunching(flag config.Flag, hasRelayClient bool) func() (opts Libp2pOpts
 
 ```
 
-# `/opt/kubo/core/node/libp2p/routing.go`
+# `core/node/libp2p/routing.go`
 
 该代码的作用是定义了一个名为 "libp2p" 的包，其中定义了一些定义、函数和变量，以及如何导入其他依赖库。
 
@@ -1347,7 +1347,7 @@ func HolePunching(flag config.Flag, hasRelayClient bool) func() (opts Libp2pOpts
 -定义了一个名为 "github.com/libp2p/go-libp2p/core/routing" 的导入，用于从 "routinghelpers"
 
 
-```
+```go
 package libp2p
 
 import (
@@ -1389,7 +1389,7 @@ import (
 `processInitialRoutingIn` 是 `InitialRoutingIn` 处理器的初始化操作，包含了一些设置 DHT 客户端的实验性配置，包括设置实验性客户端的 IP 地址、用户名和密码。
 
 
-```
+```go
 type Router struct {
 	routing.Routing
 
@@ -1420,7 +1420,7 @@ This appears to be a Go program that initializes aado(k) as a K-dimensional HTTP
 It looks like the program has a number of dependencies, including the dependency "github.com/spf13/packages-linux/repos/ent-dimension/webserver-release/v0.3.4" and the dependency "github.com/webrTC/webrTC".
 
 
-```
+```go
 type processInitialRoutingOut struct {
 	fx.Out
 
@@ -1533,7 +1533,7 @@ func BaseRouting(cfg *config.Config) interface{} {
 最后，将 routers 列表返回，作为名为 ContentRouting 的路由委托类型，用于在运行时计算内容路由器。
 
 
-```
+```go
 type p2pOnlineContentRoutingIn struct {
 	fx.In
 
@@ -1570,7 +1570,7 @@ func ContentRouting(in p2pOnlineContentRoutingIn) routing.ContentRouting {
 `Routing` 函数的作用是帮助用户构建一个 P2P 网络中的路由表。通过使用 `TieredRouter` 来排序路由器，可以让系统在路由器数量较多时仍然能够支持高效的负载均衡。
 
 
-```
+```go
 type p2pOnlineRoutingIn struct {
 	fx.In
 
@@ -1613,7 +1613,7 @@ func Routing(in p2pOnlineRoutingIn) irouting.ProvideManyRouter {
 此外，该函数还定义了一个`p2pPSRoutingIn`类型，该类型包含一个`fx.In`类型的字段，它表示需要从路由器输入的pubsub消息。
 
 
-```
+```go
 // OfflineRouting provides a special Router to the routers list when we are creating a offline node.
 func OfflineRouting(dstore ds.Datastore, validator record.Validator) p2pRouterOut {
 	return p2pRouterOut{
@@ -1645,7 +1645,7 @@ type p2pPSRoutingIn struct {
 3. 如果出现错误，函数将返回一个非 ` nil` 的错误对象，以便调用者能够处理。
 
 
-```
+```go
 func PubsubRouter(mctx helpers.MetricsCtx, lc fx.Lifecycle, in p2pPSRoutingIn) (p2pRouterOut, *namesys.PubsubValueStore, error) {
 	psRouter, err := namesys.NewPubsubValueStore(
 		helpers.LifecycleCtx(mctx, lc),
@@ -1677,7 +1677,7 @@ This is a Go module that implements the initial configuration of a Go network. I
 
 
 
-```
+```go
 func autoRelayFeeder(cfgPeering config.Peering, peerChan chan<- peer.AddrInfo) fx.Option {
 	return fx.Invoke(func(lc fx.Lifecycle, h host.Host, dht *ddht.DHT) {
 		ctx, cancel := context.WithCancel(context.Background())

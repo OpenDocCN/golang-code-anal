@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 59
 
-# `/opt/kubo/test/dependencies/dependencies.go`
+# `test/dependencies/dependencies.go`
 
 这段代码是一个 Go 语言编程语言工具，它包含了多方面功能以提高测试质量、代码覆盖率、代码可读性等。下面是具体解释：
 
@@ -29,7 +29,7 @@
 总结一下，这段代码定义了一个名为 `tools` 的包，其中包含了一些用于测试、代码质量检查和随机数据生成等功能的库。
 
 
-```
+```go
 //go:build tools
 // +build tools
 
@@ -48,7 +48,7 @@ import (
 
 ```
 
-# `/opt/kubo/test/dependencies/go-sleep/go-sleep.go`
+# `test/dependencies/go-sleep/go-sleep.go`
 
 这段代码的作用是读取一个以秒为单位的时间段，并将其转换为毫秒，然后等待输入的第二个参数（即时间点的时长），最后输出计算出的结果。
 
@@ -59,7 +59,7 @@ import (
 最后，如果输入的第二个参数解析成功，代码将计算出结果并打印出来。如果没有解析成功，则使用fmt.Fprintf函数输出错误信息。
 
 
-```
+```go
 package main
 
 import (
@@ -96,7 +96,7 @@ func main() {
 如果输入的字符串参数没有时间单位或者不是有效的单位，该函数会通过 `fmt.Fprintln()` 函数输出一条错误信息，并 exit 操作系统，导致程序退出。
 
 
-```
+```go
 func usageError() {
 	fmt.Fprintf(os.Stderr, "Usage: %s <duration>\n", os.Args[0])
 	fmt.Fprintln(os.Stderr, `Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".`)
@@ -117,13 +117,13 @@ specified.
 
 ### Install
 
-```sh
+```gosh
 go install github.com/chriscool/go-sleep
 ```
 
 ### Usage:
 
-```
+```go
 > go-sleep
 Usage: go-sleep <duration>
 Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".
@@ -140,7 +140,7 @@ sys     0m0.007s
 MIT
 
 
-# `/opt/kubo/test/dependencies/go-timeout/main.go`
+# `test/dependencies/go-timeout/main.go`
 
 This is a bash script that runs the `<command>` with a specified timeout. If the timeout is not specified or the `<timeout-in-sec>` is less than 3, the script will print an error message and exit with a non-zero status.
 
@@ -151,7 +151,7 @@ If an error occurs with any of the steps above, the script prints an error messa
 If the `<command>` is executed successfully, the script prints a message and exits with a non-zero status.
 
 
-```
+```go
 package main
 
 import (
@@ -211,7 +211,7 @@ func main() {
 
 ```
 
-# `/opt/kubo/test/dependencies/graphsync-get/graphsync-get.go`
+# `test/dependencies/graphsync-get/graphsync-get.go`
 
 这段代码是一个 Go 语言程序，主要作用是实现一个分布式文件系统。它包括以下主要组件：
 
@@ -244,7 +244,7 @@ func main() {
 总的来说，这段代码实现了一个分布式文件系统，可以离线同步文件并保持原子性和可靠性。同时，它还提供了高性能的文件系统访问，可以通过 IPLD 链路访问文件系统，并支持跨网络和跨机器的访问。
 
 
-```
+```go
 package main
 
 import (
@@ -300,7 +300,7 @@ import (
 2. 该函数没有做错误处理，应该在实际应用中添加必要的错误处理。
 
 
-```
+```go
 func newGraphsync(ctx context.Context, p2p host.Host, bs blockstore.Blockstore) (graphsync.GraphExchange, error) {
 	network := network.NewFromLibp2pHost(p2p)
 	return gsimpl.New(ctx,
@@ -332,7 +332,7 @@ var selectAll ipld.Node = func() ipld.Node {
 7. 如果响应是错误的，则使用 `fmt.Errorf` 函数获取错误信息并返回。
 
 
-```
+```go
 func fetch(ctx context.Context, gs graphsync.GraphExchange, p peer.ID, c cid.Cid) error {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
@@ -375,7 +375,7 @@ The program is responsible for performing the following steps:
 It is distributed under the BSD license, which allows for both modifying and passing on the code as long as the original copyright holder is mentioned and there is a license message included.
 
 
-```
+```go
 func main() {
 	if len(os.Args) != 3 {
 		log.Fatalf("expected a multiaddr and a CID, got %d args", len(os.Args)-1)
@@ -434,7 +434,7 @@ func main() {
 
 ```
 
-# `/opt/kubo/test/dependencies/iptb/iptb.go`
+# `test/dependencies/iptb/iptb.go`
 
 这段代码实现了IPFS(InterPlanetary File System)命令行工具的CLI(命令行界面)版本。它包括了以下主要功能：
 
@@ -459,7 +459,7 @@ func main() {
 10. 注册命令：ipfs插件可以注册命令，例如使用“ipfs export”命令将当前目录下的所有内容导出为JSON格式并保存到指定目录中。
 
 
-```
+```go
 package main
 
 import (
@@ -497,7 +497,7 @@ func init() {
 最后，使用`os.Exit`函数来设置退出码。如果`main`函数返回一个非零值，则操作系统将调用这个函数，并停止执行程序。
 
 
-```
+```go
 func main() {
 	cli := cli.NewCli()
 	if err := cli.Run(os.Args); err != nil {
@@ -508,7 +508,7 @@ func main() {
 
 ```
 
-# `/opt/kubo/test/dependencies/ma-pipe-unidir/main.go`
+# `test/dependencies/ma-pipe-unidir/main.go`
 
 这段代码是一个 Go 语言程序，它定义了一个名为 "main" 的包。这个包通过导入 "flag"、"fmt"、"io" 和 "os" 包，来与命令行进行交互。
 
@@ -523,7 +523,7 @@ func main() {
 总结起来，这个程序的主要目的是提供一种并行连接远程主机的方式，可以通过不同的选项来满足不同的需求。
 
 
-```
+```go
 package main
 
 import (
@@ -548,7 +548,7 @@ The program uses the `ma` package to handle the connection to the incoming peers
 The program then listens for incoming connections and closes the connection when it is done. If an error occurs, the program returns 1.
 
 
-```
+```go
 type Opts struct {
 	Listen  bool
 	PidFile string
@@ -644,14 +644,14 @@ func app() int {
 这段代码是一个简单的 Python 程序，主要作用是定义一个名为 "main" 的函数，该函数是程序的入口点。在函数内，使用 `os.Exit()` 函数来输出 "app()" 函数的返回值，`app()` 函数的作用是模拟程序在运行时的一些操作，例如关闭终端、断开网络连接等。
 
 
-```
+```go
 func main() {
 	os.Exit(app())
 }
 
 ```
 
-# `/opt/kubo/test/dependencies/pollEndpoint/main.go`
+# `test/dependencies/pollEndpoint/main.go`
 
 该代码是一个名为 `pollEndpoint` 的工具函数，用于等待 HTTP 端点（URL）可到达并返回 HTTP 状态为 200 的响应。它主要用于示例目的，并不会真正运行在生产环境中。
 
@@ -680,7 +680,7 @@ func main() {
 11. 运行程序：通过调用 `main` 函数来启动程序，如果程序出现错误，将返回一个非零 exit 码。
 
 
-```
+```go
 // pollEndpoint is a helper utility that waits for a http endpoint to be reachable and return with http.StatusOK
 package main
 
@@ -703,7 +703,7 @@ import (
 This code appears to be a tool that attempts to connect to a specified endpoint using the Metrganet HTTP agent. It uses the Multiaddr type to keep track of the current endpoint, and the verbose logging level is controlled by the *verbose flag. If an error occurs, it logs a message and prints a Try-Timer. If the connection fails after a certain number of attempts, it prints a Fail message. If an HTTP URL is specified, it attempts to connect to that endpoint using the httpdialer and httpclient provided by Metrganet.
 
 
-```
+```go
 var (
 	host    = flag.String("host", "/ip4/127.0.0.1/tcp/5001", "the multiaddr host to dial on")
 	tries   = flag.Int("tries", 10, "how many tries to make before failing")
@@ -781,7 +781,7 @@ func main() {
 6. 最后，通过 `fmt.Println` 函数将结果输出到控制台。
 
 
-```
+```go
 Success:
 	os.Exit(0)
 
@@ -820,7 +820,7 @@ func tryHTTPGet(client *http.Client, url string) bool {
 如果网络连接成功，函数返回 net.Conn 类型表示电话连接的客户端通道，错误返回 error。
 
 
-```
+```go
 type connDialer struct {
 	addr ma.Multiaddr
 }
@@ -831,7 +831,7 @@ func (d connDialer) DialContext(ctx context.Context, network, addr string) (net.
 
 ```
 
-# `/opt/kubo/test/integration/addcat_test.go`
+# `test/integration/addcat_test.go`
 
 这段代码是一个 Go 语言编写的测试套件，用于测试 IPAFS(IPFS) 库中的相关功能。它主要实现了以下功能：
 
@@ -850,7 +850,7 @@ func (d connDialer) DialContext(ctx context.Context, network, addr string) (net.
 7. 日志记录：记录测试过程中发生的错误和警告，便于以后 查看和调试。
 
 
-```
+```go
 package integrationtest
 
 import (
@@ -890,7 +890,7 @@ import (
 最后，如果出现任何错误，函数会打印错误消息并退出。
 
 
-```
+```go
 var log = logging.Logger("epictest")
 
 const kSeed = 1
@@ -916,7 +916,7 @@ func Test1KBInstantaneous(t *testing.T) {
 在第二个函数 TestDegenerateSlowNetwork 中，同样使用了SkipUnlessEpic函数来保证在测试失败的情况下能自动忽略函数的执行。函数的作用是设置一个延迟配置，当延迟配置成功后，会尝试调用AddCatPowers函数。如果该函数成功执行并且部署了Degenerate Blockstore，那么就不会输出任何错误。如果执行失败，那么就会输出错误。
 
 
-```
+```go
 func TestDegenerateSlowBlockstore(t *testing.T) {
 	SkipUnlessEpic(t)
 	conf := testutil.LatencyConfig{BlockstoreLatency: 50 * time.Millisecond}
@@ -938,7 +938,7 @@ func TestDegenerateSlowNetwork(t *testing.T) {
 这两段代码是在测试两个不同的场景。第一个场景是 TestDegenerateSlowRouting，该场景使用了一个具有 400ms 延迟的路由器，然后通过 AddCatPowers 函数添加了 128 个随机路由器。第二个场景是 Test100MBMacbookCoastToCoast，该场景使用了一个具有最高 100Mbps 带宽的链路，然后通过 DirectAddCat 和 DirectAddAppleUSDC 函数直接添加了 100 个随机路由器。这两个场景都使用了测试util.LatencyConfig 提供的延迟配置，并使用了直接添加路由器的函数函数。
 
 
-```
+```go
 func TestDegenerateSlowRouting(t *testing.T) {
 	SkipUnlessEpic(t)
 	conf := testutil.LatencyConfig{RoutingLatency: 400 * time.Millisecond}
@@ -966,7 +966,7 @@ func Test100MBMacbookCoastToCoast(t *testing.T) {
 函数本身不输出任何内容，也不需要使用`By`或`For`等循环结构。
 
 
-```
+```go
 func AddCatPowers(conf testutil.LatencyConfig, megabytesMax int64) error {
 	var i int64
 	for i = 1; i < megabytesMax; i = i * 2 {
@@ -1004,7 +1004,7 @@ Here's a high-level overview of what the function does:
 Note that this implementation is just a simple example and does not handle any errors or perform any actual file operations.
 
 
-```
+```go
 func DirectAddCat(data []byte, conf testutil.LatencyConfig) error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -1095,7 +1095,7 @@ func DirectAddCat(data []byte, conf testutil.LatencyConfig) error {
 这里 `t.SkipNow()` 表示，函数体内部的代码将不会被执行，相当于直接输出 "t.SkipNow()"。
 
 
-```
+```go
 func SkipUnlessEpic(t *testing.T) {
 	if os.Getenv("IPFS_EPIC_TEST") == "" {
 		t.SkipNow()
@@ -1104,7 +1104,7 @@ func SkipUnlessEpic(t *testing.T) {
 
 ```
 
-# `/opt/kubo/test/integration/bench_cat_test.go`
+# `test/integration/bench_cat_test.go`
 
 这段代码是一个 Go 语言编写的测试框架，用于测试 libp2p 库中的一个名为 "integrationtest" 的包。通过阅读代码，我们可以看到以下几个主要部分：
 
@@ -1127,7 +1127,7 @@ func SkipUnlessEpic(t *testing.T) {
 9. 在 "integrationtest" 包中定义了一个名为 "testIntegration" 的函数。这个函数的作用是建立一个包含一个虚构数据和一个随机数据的岛，并验证这两者是否可以通过测试相互通信。
 
 
-```
+```go
 package integrationtest
 
 import (
@@ -1164,7 +1164,7 @@ import (
 整函数"BenchmarkCatXMB"的目的是测试"benchCat"函数的正确性，即测试在传递不同大小参数的情况下，它是否可以正确处理各种数据。
 
 
-```
+```go
 func BenchmarkCat1MB(b *testing.B) { benchmarkVarCat(b, unit.MB*1) }
 func BenchmarkCat2MB(b *testing.B) { benchmarkVarCat(b, unit.MB*2) }
 func BenchmarkCat4MB(b *testing.B) { benchmarkVarCat(b, unit.MB*4) }
@@ -1199,7 +1199,7 @@ Finally, the `mn.LinkAll` method is called on both nodes to perform the file sys
 The function returns no error if the operation was successful, or an error if one occurred.
 
 
-```
+```go
 func benchCat(b *testing.B, data []byte, conf testutil.LatencyConfig) error {
 	b.StopTimer()
 	ctx, cancel := context.WithCancel(context.Background())
@@ -1281,7 +1281,7 @@ func benchCat(b *testing.B, data []byte, conf testutil.LatencyConfig) error {
 
 ```
 
-# `/opt/kubo/test/integration/bench_test.go`
+# `test/integration/bench_test.go`
 
 这段代码是一个名为"integrationtest"的包，其中包含一个名为"benchmarkAddCat"的函数。
 
@@ -1294,7 +1294,7 @@ func benchCat(b *testing.B, data []byte, conf testutil.LatencyConfig) error {
 函数使用了libp2p-testing中的net包，它提供了一个用于与网络服务器进行交互的接口，可以用来进行网络连通测试。
 
 
-```
+```go
 package integrationtest
 
 import (
@@ -1328,7 +1328,7 @@ func benchmarkAddCat(numBytes int64, conf testutil.LatencyConfig, b *testing.B) 
 这段代码的作用是测试添加不同数据量后，程序的延迟情况，为了解决这个问题，进行了多次测试，并统计了平均延迟情况。
 
 
-```
+```go
 var instant = testutil.LatencyConfig{}.AllInstantaneous()
 
 func BenchmarkInstantaneousAddCat1KB(b *testing.B)   { benchmarkAddCat(1*unit.KB, instant, b) }
@@ -1366,7 +1366,7 @@ var routing = testutil.LatencyConfig{}.RoutingSlow()
 每个测试函数的名称都以 `BenchmarkRoutingSlowAddCatXXXMB` 结尾，其中 `XXX` 是测试负载的大小，`MB` 表示以MB为单位。
 
 
-```
+```go
 func BenchmarkRoutingSlowAddCat1MB(b *testing.B)   { benchmarkAddCat(1*unit.MB, routing, b) }
 func BenchmarkRoutingSlowAddCat2MB(b *testing.B)   { benchmarkAddCat(2*unit.MB, routing, b) }
 func BenchmarkRoutingSlowAddCat4MB(b *testing.B)   { benchmarkAddCat(4*unit.MB, routing, b) }
@@ -1393,7 +1393,7 @@ func BenchmarkNetworkSlowAddCat2MB(b *testing.B)   { benchmarkAddCat(2*unit.MB, 
 通过调用 `基准AddCatXXMB` 函数并输出延迟时间，可以测试网络添加不同容量下的数据所需要的平均延迟，以及测试网络的性能。
 
 
-```
+```go
 func BenchmarkNetworkSlowAddCat4MB(b *testing.B)   { benchmarkAddCat(4*unit.MB, network, b) }
 func BenchmarkNetworkSlowAddCat8MB(b *testing.B)   { benchmarkAddCat(8*unit.MB, network, b) }
 func BenchmarkNetworkSlowAddCat16MB(b *testing.B)  { benchmarkAddCat(16*unit.MB, network, b) }
@@ -1424,7 +1424,7 @@ benchmarkAddCat函数定义在“基准测试函数”中，在函数内部使�
 每个测试函数内部都会使用“ benchmarkAddCat”函数内部定义的“AddCat”函数对“hdd”和“B”参数进行测试，并输出测试的名称，例如“BenchmarkBlockstoreSlowAddCat32MB”。
 
 
-```
+```go
 func BenchmarkBlockstoreSlowAddCat32MB(b *testing.B)  { benchmarkAddCat(32*unit.MB, hdd, b) }
 func BenchmarkBlockstoreSlowAddCat64MB(b *testing.B)  { benchmarkAddCat(64*unit.MB, hdd, b) }
 func BenchmarkBlockstoreSlowAddCat128MB(b *testing.B) { benchmarkAddCat(128*unit.MB, hdd, b) }
@@ -1449,12 +1449,12 @@ func BenchmarkMixedAddCat128MB(b *testing.B) { benchmarkAddCat(128*unit.MB, mixe
 最后，该函数内部创建了一个名为"B"的测试复试例复数，该函数将该复数作为参数传递给"func BenchmarkMixedAddCat256MB"函数，以实现在控制台上输出"func BenchmarkMixedAddCat256MB"函数执行的结果。
 
 
-```
+```go
 func BenchmarkMixedAddCat256MB(b *testing.B) { benchmarkAddCat(256*unit.MB, mixed, b) }
 
 ```
 
-# `/opt/kubo/test/integration/bitswap_wo_routing_test.go`
+# `test/integration/bitswap_wo_routing_test.go`
 
 这段代码是一个 Go 语言package 中的 IntegrationTest 包，用于测试 IPFS(即 InterPlanetary File System)的相关功能。它主要的作用是测试 IPFS 客户端与 Node.js 服务器之间的数据传输和块复制功能。
 
@@ -1495,7 +1495,7 @@ func BenchmarkMixedAddCat256MB(b *testing.B) { benchmarkAddCat(256*unit.MB, mixe
 12. 通过 `libp2p.远程跳转到 10 并等待 100 毫秒` 方法，测试从远程跳跃到 10 跳转 100 毫秒的速度是否符合预期。
 
 
-```
+```go
 package integrationtest
 
 import (
@@ -1526,7 +1526,7 @@ It then put 1 block before and 1 block after for the first node, and then it get
 It is important to note that this program is a simple example, and it is not meant to be in production. It is also not tested in all cases, and it may contain bugs or unexpected behavior.
 
 
-```
+```go
 func TestBitswapWithoutRouting(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()

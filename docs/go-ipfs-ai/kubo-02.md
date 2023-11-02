@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 2
 
-# `/opt/kubo/client/rpc/name.go`
+# `client/rpc/name.go`
 
 这段代码定义了一个名为 "rpc" 的包。它导入了以下的外部库：
 
@@ -19,7 +19,7 @@
 这些库和代码定义了一个名为 "RPC" 的接口。这个接口提供了一些用于与 IPFS 网络中的节点进行交互的方法。通过使用 "RPC" 包，你可以在应用程序中实现与 IPFS 网络中节点的一组接口。
 
 
-```
+```go
 package rpc
 
 import (
@@ -46,7 +46,7 @@ import (
 如果设置的`opts`参数中包含`TTL`字段，则函数将`TTL`字段设置为所需的`opts`参数。函数使用`req.Exec`方法执行请求并返回结果，如果出现错误，则返回一个`ipns.Name`类型和一个错误。如果请求成功，则返回一个从`out`结构体中解析出来的`ipnsEntry`类型的`Name`字段。
 
 
-```
+```go
 type NameAPI HttpApi
 
 type ipnsEntry struct {
@@ -82,7 +82,7 @@ func (api *NameAPI) Publish(ctx context.Context, p path.Path, opts ...caopts.Nam
 Go back
 
 
-```
+```go
 func (api *NameAPI) Search(ctx context.Context, name string, opts ...caopts.NameResolveOption) (<-chan iface.IpnsResult, error) {
 	options, err := caopts.NameResolveOptions(opts...)
 	if err != nil {
@@ -153,7 +153,7 @@ func (api *NameAPI) Search(ctx context.Context, name string, opts ...caopts.Name
 接下来，函数创建一个名为 `req` 的请求，设置请求参数为 `api.core().Request("name/resolve", name).Option("nocache", !options.Cache).Option("recursive", ropts.Depth != 1).Option("dht-record-count", ropts.DhtRecordCount).Option("dht-timeout", ropts.DhtTimeout)`。然后，函数调用 `req.Exec` 并执行请求，将结果存储在一个名为 `out` 的结构体中。最后，函数通过调用 `out.Path` 获取路径并返回。如果请求或解析请求失败，函数返回 `nil` 和错误。
 
 
-```
+```go
 func (api *NameAPI) Resolve(ctx context.Context, name string, opts ...caopts.NameResolveOption) (path.Path, error) {
 	options, err := caopts.NameResolveOptions(opts...)
 	if err != nil {
@@ -188,14 +188,14 @@ func (api *NameAPI) Resolve(ctx context.Context, name string, opts ...caopts.Nam
 由于 `NameAPI` 和 `HttpApi` 是两个接口类型，该函数将 `api` 参数强制转换为 `NameAPI` 类型，并返回一个指向 `NameAPI` 的指针。然后，它将指针所代表的 `api` 对象调用 `core` 函数，从而实现了 `NameAPI` 的 `core` 方法。
 
 
-```
+```go
 func (api *NameAPI) core() *HttpApi {
 	return (*HttpApi)(api)
 }
 
 ```
 
-# `/opt/kubo/client/rpc/object.go`
+# `client/rpc/object.go`
 
 该代码是一个RPC（远程过程调用）库的代码，它提供了一个名为“rpc”的包，用于实现基于IPLD（InterPlanetary Distributed Logical Data Store，分布式逻辑数据存储）的远程过程调用。
 
@@ -222,7 +222,7 @@ func (api *NameAPI) core() *HttpApi {
 10. 通过在“rpc”包的定义中，定义了一个名为“Context”类型的字段，实现了对远程过程调用的上下文设置。
 
 
-```
+```go
 package rpc
 
 import (
@@ -249,7 +249,7 @@ import (
 函数内部，首先创建一个名为ObjectAPI的类型对象，然后根据传入的opts选项设置类型对象的初始值。设置类型对象的类型时，使用了caopts.ObjectNewOptions函数，该函数将根据opts选项设置ObjectAPI类型对象的初始值。如果设置成功，函数直接返回n，否则返回 nil 和错误。
 
 
-```
+```go
 type ObjectAPI HttpApi
 
 type objectOut struct {
@@ -282,7 +282,7 @@ func (api *ObjectAPI) New(ctx context.Context, opts ...caopts.ObjectNewOption) (
 函数的作用是将传入的选项对象（opts...caopts.ObjectPutOption）传递给 api.core().Request("object/put")，然后执行该请求并将结果存储在 out 变量中。最后，将 out 对象的哈希值存储到 cid.Parse 函数的输入流中，然后返回 cid.Parse 返回的路径。如果函数在执行过程中遇到错误，则返回路径.ImmutablePath 和错误。
 
 
-```
+```go
 func (api *ObjectAPI) Put(ctx context.Context, r io.Reader, opts ...caopts.ObjectPutOption) (path.ImmutablePath, error) {
 	options, err := caopts.ObjectPutOptions(opts...)
 	if err != nil {
@@ -321,7 +321,7 @@ func (api *ObjectAPI) Put(ctx context.Context, r io.Reader, opts ...caopts.Objec
 这两个函数一起工作，以实现对 API 对象的数据获取。当 `api.Data` 函数尝试从核心层获取数据时，如果请求成功，它将返回一个 `ipld.Node` 对象，否则返回一个错误。而当 `api.Get` 函数尝试获取数据时，如果从核心层获取成功，它将返回一个 `ipld.Node` 对象，否则返回一个错误。
 
 
-```
+```go
 func (api *ObjectAPI) Get(ctx context.Context, p path.Path) (ipld.Node, error) {
 	r, err := api.core().Block().Get(ctx, p)
 	if err != nil {
@@ -361,7 +361,7 @@ func (api *ObjectAPI) Data(ctx context.Context, p path.Path) (io.Reader, error) 
 函数的作用是获取给定路径的链接，并返回它们。它使用`api.core().Request("object/links", p.String()).Exec(ctx, &out)`作为api核心的请求，然后使用这个请求的结果作为参数传递给`Links`结构体中的循环。在循环中，它使用`cid.Parse(l.Hash)`将链接的哈希值解析为该链接的CID，然后使用`res[i] = &ipld.Link{Cid: c, Name: l.Name, Size: l.Size}`创建一个IPLD链接对象，并将其添加到结果数组中。最后，它返回结果，如果没有错误。
 
 
-```
+```go
 func (api *ObjectAPI) Links(ctx context.Context, p path.Path) ([]*ipld.Link, error) {
 	var out struct {
 		Links []struct {
@@ -410,7 +410,7 @@ func (api *ObjectAPI) Links(ctx context.Context, p path.Path) ([]*ipld.Link, err
 最后，它返回一个名为`iface.ObjectStat`的结构体，其中包含上述字段的值，以及一个`nil`错误对象。
 
 
-```
+```go
 func (api *ObjectAPI) Stat(ctx context.Context, p path.Path) (*iface.ObjectStat, error) {
 	var out struct {
 		Hash           string
@@ -446,7 +446,7 @@ func (api *ObjectAPI) Stat(ctx context.Context, p path.Path) (*iface.ObjectStat,
 具体来说，函数首先通过ObjectAddLinkOptions函数调用CAOPortal中的object/patch/add-link API，传递所提供的选项。然后，使用api的core()函数发送请求，将请求路由为"/api/v1/object/link"，并传递所提供的名称和子路径。在服务器确认创建成功后，函数会将返回的Java对象转换为CID类型，并返回路径对象。如果错误发生，函数返回一个路径对象和一个错误。
 
 
-```
+```go
 func (api *ObjectAPI) AddLink(ctx context.Context, base path.Path, name string, child path.Path, opts ...caopts.ObjectAddLinkOption) (path.ImmutablePath, error) {
 	options, err := caopts.ObjectAddLinkOptions(opts...)
 	if err != nil {
@@ -481,7 +481,7 @@ func (api *ObjectAPI) AddLink(ctx context.Context, base path.Path, name string, 
 4. 返回路径.ImmutablePath 和 nil 作为结果，或者是错误。
 
 
-```
+```go
 func (api *ObjectAPI) RmLink(ctx context.Context, base path.Path, link string) (path.ImmutablePath, error) {
 	var out objectOut
 	err := api.core().Request("object/patch/rm-link", base.String(), link).
@@ -503,7 +503,7 @@ func (api *ObjectAPI) RmLink(ctx context.Context, base path.Path, link string) (
 这段代码定义了一个名为`func`的函数，它接受一个名为`api`的整数类型指针和一个路径参数`p`，以及一个名为`r`的`io.Reader`类型的参数。函数的作用是接收一个已经定义好的、带有`path.Path`类型字段的路径对象`p`和一个`io.Reader`类型的参数`r`，然后执行一个名为`api.core().Request`的内部函数，该函数的接收者是一个`path.Path`类型和一个字符串参数`p`，然后将结果存储在名为`out`的变量中。接着，函数检查`out`是否为空，如果为空，则返回一个名为`path.ImmutablePath`的路径对象和一个非空错误，否则，将`out`的值作为字符串返回。最后，如果函数内部出现错误，则返回一个非空错误。
 
 
-```
+```go
 func (api *ObjectAPI) AppendData(ctx context.Context, p path.Path, r io.Reader) (path.ImmutablePath, error) {
 	var out objectOut
 	err := api.core().Request("object/patch/append-data", p.String()).
@@ -539,7 +539,7 @@ err := api.core().Request("object/patch/set-data", p.String()).
 如果函数在请求过程中遇到错误，它将返回一个指向 `path.ImmutablePath` 类型的路径 `c` 和一个错误 `error`。最后，函数根据对象的唯一标识符返回路径，或者返回一个 `path.ImmutablePath` 类型的路径 `c`，表示对象数据成功更改，但没有错误。
 
 
-```
+```go
 func (api *ObjectAPI) SetData(ctx context.Context, p path.Path, r io.Reader) (path.ImmutablePath, error) {
 	var out objectOut
 	err := api.core().Request("object/patch/set-data", p.String()).
@@ -574,7 +574,7 @@ func (api *ObjectAPI) SetData(ctx context.Context, p path.Path, r io.Reader) (pa
 4. 返回结构体数组和`None`表示成功。
 
 
-```
+```go
 type change struct {
 	Type   iface.ChangeType
 	Path   string
@@ -616,14 +616,14 @@ core()函数是这个定义中的一个函数，根据其名称和参数类型�
 总的来说，这段代码定义了一个可以创建HttpApi类型对象的函数，这个函数接收一个HttpApi类型的参数，返回一个可以用来访问HttpApi类型对象的指针。这个函数在代码中起到了关键的作用，它是整个程序的入口点。
 
 
-```
+```go
 func (api *ObjectAPI) core() *HttpApi {
 	return (*HttpApi)(api)
 }
 
 ```
 
-# `/opt/kubo/client/rpc/path.go`
+# `client/rpc/path.go`
 
 这段代码定义了一个名为 `ResolvePath` 的函数，属于名为 `HttpApi` 的包。函数接收一个 `path.Path` 参数，并返回其对应的路径、参数和错误。
 
@@ -634,7 +634,7 @@ func (api *ObjectAPI) core() *HttpApi {
 函数的作用是实现了一个 HTTP API，用于通过组合多个路径的 segments 来获取一个给定路径。它通过调用 `Resolve` 函数来获取给定路径，并在获取失败时返回一个错误路径。
 
 
-```
+```go
 package rpc
 
 import (
@@ -684,7 +684,7 @@ func (api *HttpApi) ResolvePath(ctx context.Context, p path.Path) (path.Immutabl
 函数的实现非常简单，直接使用"api.ResolvePath"计算根节点，然后使用"api.Dag().Get"获取该根节点。
 
 
-```
+```go
 func (api *HttpApi) ResolveNode(ctx context.Context, p path.Path) (ipld.Node, error) {
 	rp, _, err := api.ResolvePath(ctx, p)
 	if err != nil {
@@ -696,7 +696,7 @@ func (api *HttpApi) ResolveNode(ctx context.Context, p path.Path) (ipld.Node, er
 
 ```
 
-# `/opt/kubo/client/rpc/pin.go`
+# `client/rpc/pin.go`
 
 这段代码定义了一个名为 "rpc" 的包，它定义了一些与名为 "rpc" 的IPC(进程间通信)系统相关的接口和函数。
 
@@ -721,7 +721,7 @@ func (api *HttpApi) ResolveNode(ctx context.Context, p path.Path) (ipld.Node, er
 最后，它还定义了一个名为 "rpc" 的包，该包使用上述的 "connect" 和 "disconnect" 函数以及 "send" 和 "send端口" 函数，通过 "strings" 函数提供了一些字符串操作的接口。
 
 
-```
+```go
 package rpc
 
 import (
@@ -748,7 +748,7 @@ pinRefKeyObject和pinRefKeyList类型定义了pinRefKeyObject类型的实例字�
 pin结构体定义了一个具有path类型字段、typ类型字段和一个err类型的字段。它使用了path.ImmutablePath类型的字段类型。这里的作用是定义了pin类型实例的接口，用于定义了PinAPI中的HttpApi类型的实例变量。
 
 
-```
+```go
 type PinAPI HttpApi
 
 type pinRefKeyObject struct {
@@ -778,7 +778,7 @@ type pin struct {
 最后，名为“api”的指针变量接收一个名为“pin”的整数参数，并传递给名为“Add”的函数。函数接收一个名为“ctx”的上下文句柄，一个名为“p”的路径参数和一个名为“opts”的参数，其中“opts”是一个包含一个或多个名为“caopts.PinAddOption”的选项的整数切片。函数返回一个名为“api.core().Request”的请求对象，作为CAAPI的请求，将接收到的整数值作为参数传递。它还包含一个名为“err”的选项，用于返回CAAPI请求的错误。最后，它通过调用“api.core().Request”并传递整数值“p”来执行请求，并使用来自选项切片“opts”的值作为请求的附加选项。
 
 
-```
+```go
 func (p pin) Err() error {
 	return p.err
 }
@@ -810,7 +810,7 @@ The `PinAPI` struct has a `Ls` method that sends a request to the `pin/ls` endpo
 If the request is successful, the method returns a channel of `iface.Pin` structs, which contain the data for each pin in the response. If there is an error, the method returns an error.
 
 
-```
+```go
 type pinLsObject struct {
 	Cid  string
 	Type string
@@ -880,7 +880,7 @@ func (api *PinAPI) Ls(ctx context.Context, opts ...caopts.PinLsOption) (<-chan i
 函数的实现基于两个假设：一是给定的路径参数 `path.Path` 一定是有效的，二是给定的选项参数 `caopts.PinIsPinnedOption` 经过正确的设置。这两个假设并没有在代码中进行明确的说明，因此需要在调用此函数时进行合理的推断和猜测。
 
 
-```
+```go
 // IsPinned returns whether or not the given cid is pinned
 // and an explanation of why its pinned.
 func (api *PinAPI) IsPinned(ctx context.Context, p path.Path, opts ...caopts.PinIsPinnedOption) (string, bool, error) {
@@ -940,7 +940,7 @@ func (api *PinAPI) Update(ctx context.Context, from path.Path, to path.Path, opt
 `Update` 函数的参数也是一个路径名 `from` 和一个或多个路径名 `to`，以及一个或多个名为 `opts` 的选项参数，这些选项参数是一个或多个 `caopts.PinUpdateOption` 类型的选项。函数内部使用 `caopts.PinUpdateOptions` 函数来设置选项参数，如果设置失败，则返回一个错误。然后，函数使用 `api.core().Request` 和 `option.Exec` 方法来执行请求，并设置 `from` 和 `to` 参数，其中包括设置 `unpin` 选项。最后，函数返回一个 `Update` 状态的错误。
 
 
-```
+```go
 func (api *PinAPI) Rm(ctx context.Context, p path.Path, opts ...caopts.PinRmOption) error {
 	options, err := caopts.PinRmOptions(opts...)
 	if err != nil {
@@ -973,7 +973,7 @@ func (api *PinAPI) Update(ctx context.Context, from path.Path, to path.Path, opt
 该结构体可能用于表示一个用于验证 PIN 的结果，例如在登录过程中进行验证。
 
 
-```
+```go
 type pinVerifyRes struct {
 	ok       bool
 	badNodes []iface.BadPinNode
@@ -1003,7 +1003,7 @@ If an error occurs during the pin verify operation, it is added to the `BadNodes
 The function uses the `dec` package to decode the response body from the JSON unmarshaled struct and the `pinVerifyRes` type from the `cid.decoder` package.
 
 
-```
+```go
 type badNode struct {
 	err error
 	cid cid.Cid
@@ -1101,14 +1101,14 @@ func (api *PinAPI) Verify(ctx context.Context) (<-chan iface.PinStatus, error) {
 函数的`core`函数没有参数，返回一个空指针，这意味着它返回的是一个`Nil`指针，而不是`PinAPI`或`HttpApi`类型的实例。
 
 
-```
+```go
 func (api *PinAPI) core() *HttpApi {
 	return (*HttpApi)(api)
 }
 
 ```
 
-# `/opt/kubo/client/rpc/pubsub.go`
+# `client/rpc/pubsub.go`
 
 这段代码定义了一个名为`PubsubAPI`的RPC接口，并包含了一些相关的类和函数，可以用于在分布式系统中进行消息传递。
 
@@ -1134,7 +1134,7 @@ type PubsubAPI HttpApi type PubsubAPI struct
 该代码中定义的类包括：`PubsubAPI`结构体，它包含了`ClientPeer`成员变量，用于与对等方建立连接；`recv.RecvMessage`和`pubsub.PubsubSub`分别用于接收和发布消息的接口，这些接口都使用`encoding/json`库中的JSON序列化和反序列化功能；`BoxoContext`和`CAopts`用于与具体的二进欧人民组织( Box-O-出乎意料)签名和验证服务进行交互；`iface.Iface`用于与具体的解码器(e.g. boxo)进行交互。
 
 
-```
+```go
 package rpc
 
 import (
@@ -1156,7 +1156,7 @@ type PubsubAPI HttpApi
 此函数的作用是获取订阅者API中所有主题的分组。它首先创建一个名为"out"的结构体，用于存储订阅者API返回的主题列表。然后，它使用api.core().Request("pubsub/ls").Exec(ctx, &out)方法发送一个请求到订阅者API，请求的主题列表存储在out.Strings结构体中。如果请求成功，它将存储在out.Strings中的主题列表复制到一个名为topics的数组中，并返回topics。如果请求失败，它将返回一个非空错误对象。
 
 
-```
+```go
 func (api *PubsubAPI) Ls(ctx context.Context) ([]string, error) {
 	var out struct {
 		Strings []string
@@ -1187,7 +1187,7 @@ func (api *PubsubAPI) Ls(ctx context.Context) ([]string, error) {
 函数使用peer.Decode函数将out参数中的peer ID转换为实际peer客户端ID。如果该函数在解码过程中遇到错误，函数将输出nil并返回错误。
 
 
-```
+```go
 func (api *PubsubAPI) Peers(ctx context.Context, opts ...caopts.PubSubPeersOption) ([]peer.ID, error) {
 	options, err := caopts.PubSubPeersOptions(opts...)
 	if err != nil {
@@ -1230,7 +1230,7 @@ func (api *PubsubAPI) Peers(ctx context.Context, opts ...caopts.PubSubPeersOptio
 最后，函数使用 `api.core().Post` 方法来发布消息，该方法的参数为 `ctx` 和 `nil`，作为此函数的回调函数。如果设置 `nil`，则不做任何操作。否则，函数将 `api` 参数的一个 `pubsubMessage` 类型的实例作为参数传递给 `api.core().Post`，并将 `ctx` 和 `nil` 传递给该方法的第二个和第三个参数。
 
 
-```
+```go
 func (api *PubsubAPI) Publish(ctx context.Context, topic string, message []byte) error {
 	return api.core().Request("pubsub/pub", toMultibase([]byte(topic))).
 		FileBody(bytes.NewReader(message)).
@@ -1270,7 +1270,7 @@ type pubsubMessage struct {
 由于该函数指针类型是一个接口类型，因此它接收的必须是实现了该接口的类型。否则，该函数指针将无法转换为该接口类型的值，编译时就会出现错误。
 
 
-```
+```go
 func (msg *pubsubMessage) From() peer.ID {
 	return msg.from
 }
@@ -1320,7 +1320,7 @@ func (msg *pubsubMessage) Topics() []string {
   c. 如果消息传递成功，返回 nil。
 
 
-```
+```go
 func (s *pubsubSub) Next(ctx context.Context) (iface.PubSubMessage, error) {
 	select {
 	case msg, ok := <-s.messages:
@@ -1368,7 +1368,7 @@ func (s *pubsubSub) Next(ctx context.Context) (iface.PubSubMessage, error) {
 最后，该函数返回 `sub` 对象，如果错误，它将返回错误并输出该错误。
 
 
-```
+```go
 func (api *PubsubAPI) Subscribe(ctx context.Context, topic string, opts ...caopts.PubSubSubscribeOption) (iface.PubSubSubscription, error) {
 	/* right now we have no options (discover got deprecated)
 	options, err := caopts.PubSubSubscribeOptions(opts...)
@@ -1428,7 +1428,7 @@ func (api *PubsubAPI) Subscribe(ctx context.Context, topic string, opts ...caopt
 最后定义了一个名为 `toMultibase` 的函数，接收一个字节数组 `data`，并将其编码为 URL-safe 多基数的字符串。函数的实现将数据编码为 Base64 编码的 URL-safe 多基数的字符串，以便通过 HTTP RPC（URL 或 body）发送。
 
 
-```
+```go
 func (s *pubsubSub) Close() error {
 	if s.done != nil {
 		close(s.done)
@@ -1463,7 +1463,7 @@ https://pkg.go.dev/github.com/ipfs/kubo/client/rpc
 
 Pin file on your local IPFS node based on its CID:
 
-```go
+```gogo
 package main
 
 import (
@@ -1495,7 +1495,7 @@ func main() {
 ```
 
 
-# `/opt/kubo/client/rpc/request.go`
+# `client/rpc/request.go`
 
 这段代码定义了一个名为"rpc"的包，其中包括了与远程过程调用(RPC)相关的代码。
 
@@ -1520,7 +1520,7 @@ func main() {
 综上所述，这段代码定义了一个名为"Request"的结构体，用于表示RPC请求的参数和选项，并且定义了与请求上下文、RPC服务和请求参数相关的变量和函数。
 
 
-```
+```go
 package rpc
 
 import (
@@ -1548,7 +1548,7 @@ type Request struct {
 最后，函数创建一个`Request`对象，其中包含请求的上下文、API基本 URL、请求命令和请求参数，以及请求选项的`map[string]string`对象。该对象将被返回，以便后续调用者使用。
 
 
-```
+```go
 func NewRequest(ctx context.Context, url, command string, args ...string) *Request {
 	if !strings.HasPrefix(url, "http") {
 		url = "http://" + url

@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 45
 
-# `/opt/kubo/gc/gc.go`
+# `gc/gc.go`
 
 这段代码定义了一个名为 "gc" 的包，该包提供 Go-IPFS 中的垃圾回收功能。它主要通过以下几个组件来实现：
 
@@ -14,7 +14,7 @@
 8. 在 `gc` 包内部，定义了一些自定义的错误类型，如 `GarbageCollectorError` 等。
 
 
-```
+```go
 // Package gc provides garbage collection for go-ipfs.
 package gc
 
@@ -47,7 +47,7 @@ import (
 最后，该代码块没有做任何其他事情，所以它不会产生任何输出。
 
 
-```
+```go
 var log = logging.Logger("gc")
 
 // Result represents an incremental output from a garbage collection
@@ -84,7 +84,7 @@ It also uses a loop to collect the blocks in the data store, and if it finds an 
 It concludes the function by returning the output of the `gcs.CreateBlock` and `gcs.DeleteBlock` method.
 
 
-```
+```go
 // GC performs a mark and sweep garbage collection of the blocks in the blockstore
 // first, it creates a 'marked' set and adds to it the following:
 // - all recursively pinned blocks, plus all of their descendants (recursively)
@@ -215,7 +215,7 @@ Here's a high-level overview of the function:
 It's worth noting that the `ipfs` package used in this function is Version 0.4.13, which has been deprecated since November 2021. You should consider updating your dependencies to the latest version of this package.
 
 
-```
+```go
 // Descendants recursively finds all the descendants of the given roots and
 // adds them to the given cid.Set, using the provided dag.GetLinks function
 // to walk the tree.
@@ -306,7 +306,7 @@ It then performs the main logic of the function.
 It closes the `bestEffortRootsChan` byectimating the ring buffer, which is done using the `<>` operator.
 
 
-```
+```go
 // toCidV1 converts any CIDv0s to CIDv1s.
 func toCidV1(c cid.Cid) cid.Cid {
 	if c.Version() == 0 {
@@ -415,7 +415,7 @@ ErrCannotDeleteSomeBlocks错误在尝试删除已经被标记为删除的块时�
 ErrcannotcantFetchLinksError是一个结构体，它包含一个名为“cid”的元组字段，该字段指定了要获取链接的块的CID，以及一个名为“Err”的错误字段，其中包含错误发生的详细信息，该信息可以在GC输出中看到。
 
 
-```
+```go
 // ErrCannotFetchAllLinks is returned as the last Result in the GC output
 // channel when there was an error creating the marked set because of a
 // problem when finding descendants.
@@ -439,7 +439,7 @@ type CannotFetchLinksError struct {
 同时，该代码定义了一个名为CannotDeleteBlockError的类型，该类型包含一个与错误相关的消息，该消息可以出现在垃圾回收（GC）输出中。在该类型中，使用了一个名为Error的接口，该接口包含一个CannotDeleteBlockError类型的实例，该实例包含一个键（CannotDeleteBlockError）和一个错误消息（fmt.Sprintf("could not delete blocks for %s: %s", e.Key, e.Err)。
 
 
-```
+```go
 // Error implements the error interface for this type with a useful
 // message.
 func (e *CannotFetchLinksError) Error() string {
@@ -464,7 +464,7 @@ type CannotDeleteBlockError struct {
 函数指针返回一个字符串，该字符串格式化显示了 `e.Key` 和 `e.Err` 的值。
 
 
-```
+```go
 // useful message.
 func (e *CannotDeleteBlockError) Error() string {
 	return fmt.Sprintf("could not remove %s: %s", e.Key, e.Err)
@@ -472,7 +472,7 @@ func (e *CannotDeleteBlockError) Error() string {
 
 ```
 
-# `/opt/kubo/gc/gc_test.go`
+# `gc/gc_test.go`
 
 该代码是一个 Go 语言项目，名为 "gc"，包含以下主要部分：
 
@@ -490,7 +490,7 @@ func (e *CannotDeleteBlockError) Error() string {
 根据上述分析，此代码的主要作用是测试万事可乐 (IPFS) 客户端与相关库的交互作用。
 
 
-```
+```go
 package gc
 
 import (
@@ -537,7 +537,7 @@ Here are the steps that the function follows:
 The function uses the "pinner" package to pin the DAG nodes with "recursive" mode, which guarantees that the output of the consistency checker will be GCed (Generated from Memory).
 
 
-```
+```go
 func TestGC(t *testing.T) {
 	ctx := context.Background()
 
@@ -616,7 +616,7 @@ func TestGC(t *testing.T) {
 从函数的实现中可以看出，该函数主要用于将给定的元素列表的每个元素与一个唯一的 Multihash 值相关联，以便后续的操作和比较。
 
 
-```
+```go
 func toMHs(cids []cid.Cid) []multihash.Multihash {
 	res := make([]multihash.Multihash, len(cids))
 	for i, c := range cids {
@@ -640,7 +640,7 @@ go-ipfs can be started by your operating system's native init system.
 
 For `systemd`, the best approach is to run the daemon in a user session. Here is a sample service file:
 
-```systemd
+```gosystemd
 [Unit]
 Description=IPFS daemon
 
@@ -663,7 +663,7 @@ To run this in your user session, save it as `~/.config/systemd/user/ipfs.servic
 
 *Note:* If you want this `--user` service to run at system boot, you must [`enable-linger`](http://www.freedesktop.org/software/systemd/man/loginctl.html) on the account that runs the service:
 
-```
+```go
 # loginctl enable-linger [user]
 ```
 Read more about `--user` services here: [wiki.archlinux.org:Systemd ](https://wiki.archlinux.org/index.php/Systemd/User#Automatic_start-up_of_systemd_user_instances)
@@ -677,10 +677,10 @@ Read more about `--user` services here: [wiki.archlinux.org:Systemd ](https://wi
 
 - And below is a very basic sample upstart job. **Note the username jbenet**.
 
-```
+```go
 cat /etc/init/ipfs.conf
 ```
-```
+```go
 description "ipfs: interplanetary filesystem"
 
 start on (local-filesystems and net-device-up IFACE!=lo)
@@ -696,19 +696,19 @@ exec ipfs daemon
 
 Another version is available here:
 
-```sh
+```gosh
 ipfs cat /ipfs/QmbYCwVeA23vz6mzAiVQhJNa2JSiRH4ebef1v2e5EkDEZS/ipfs.conf >/etc/init/ipfs.conf
 ```
 
 For both, edit to replace occurrences of `jbenet` with whatever user you want it to run as:
 
-```sh
+```gosh
 sed -i s/jbenet/<chosen-username>/ /etc/init/ipfs.conf
 ```
 
 Once you run `ipfs init` to create your IPFS settings, you can control the daemon using the `init.d` commands:
 
-```sh
+```gosh
 sudo service ipfs start
 sudo service ipfs stop
 sudo service ipfs restart
@@ -721,7 +721,7 @@ Similar to `systemd`, on macOS you can run `go-ipfs` via a user LaunchAgent.
 
 - Create `~/Library/LaunchAgents/io.ipfs.go-ipfs.plist`:
 
-```xml
+```goxml
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -760,7 +760,7 @@ A bare-bones launchd agent file for ipfs. To have launchd automatically run the 
 
 
 
-# `/opt/kubo/p2p/listener.go`
+# `p2p/listener.go`
 
 这段代码定义了一个名为p2p的包，其中定义了一个名为Listener的接口。
 
@@ -773,7 +773,7 @@ Listener接口表示一个用于监听连接并将其转发到目标的主机。
 最后，该接口还定义了一个close()方法，用于关闭监听器。这个方法不会影响已经连接的流，可以在关闭监听器之前或同时调用。
 
 
-```
+```go
 package p2p
 
 import (
@@ -811,7 +811,7 @@ newListenersLocal 的实现创建了一个名为 Listeners 的 struct，该 stru
 newListenersP2P 的实现创建了一个名为 Listeners 的 struct，该 struct 包含一个 map 类型的 Listeners 对象。map 类型代表一组键值对，键是协议 ID，值是实现了 Listener 接口的Listener 对象。实现了 Listener 接口的Listener 对象通过 handleStream 函数与从客户端到主机的 P2P 连接建立连接。
 
 
-```
+```go
 // Listeners manages a group of Listener implementations,
 // checking for conflicts and optionally dispatching connections.
 type Listeners struct {
@@ -861,7 +861,7 @@ func newListenersP2P(host p2phost.Host) *Listeners {
 此函数接收一个函数作为参数，该函数接收一个`Listener`实例作为参数。如果函数返回`true`，则关闭所有监听器，否则循环并关闭最后一个监听器。首先，函数创建一个名为`todo`的缓冲区，用于存储未关闭的监听器。然后，函数获取所有已注册的监听器并遍历它们。对于每个已注册的监听器，如果函数返回`true`，则删除它并从`todo`缓冲区中添加它。否则，函数关闭该监听器。最后，函数遍历`todo`缓冲区并关闭所有监听器。函数返回`todo`中监听器的数量。
 
 
-```
+```go
 // Register registers listenerInfo into this registry and starts it.
 func (r *Listeners) Register(l Listener) error {
 	r.Lock()
@@ -899,7 +899,7 @@ func (r *Listeners) Close(matchFunc func(listener Listener) bool) int {
 
 ```
 
-# `/opt/kubo/p2p/local.go`
+# `p2p/local.go`
 
 这段代码定义了一个名为"p2p"的包，其中定义了一个名为"localListener"的函数。该函数使用Go标准库中的"context"和"time"函数以及第三方库"github.com/jbenet/go-temp-err-catcher"、"github.com/libp2p/go-libp2p/core/network"、"github.com/libp2p/go-libp2p/core/peer"、"github.com/multiformats/go-multiaddr"和"github.com/multiformats/go-multiaddr/net"。
 
@@ -914,7 +914,7 @@ func (r *Listeners) Close(matchFunc func(listener Listener) bool) int {
 函数最后返回，没有做任何其他事情。
 
 
-```
+```go
 package p2p
 
 import (
@@ -976,7 +976,7 @@ func (p2p *P2P) ForwardLocal(ctx context.Context, peer peer.ID, proto protocol.I
 }
 
 
-```
+```go
 type localListener struct {
 	ctx context.Context
 
@@ -1037,7 +1037,7 @@ func (p2p *P2P) ForwardLocal(ctx context.Context, peer peer.ID, proto protocol.I
 7. 否则，函数将继续运行，并设置一个Go函数 `l.setupStream(local)`，用于设置本地套接字。
 
 
-```
+```go
 func (l *localListener) dial(ctx context.Context) (net.Stream, error) {
 	cctx, cancel := context.WithTimeout(ctx, time.Second*30) // TODO: configurable?
 	defer cancel()
@@ -1068,7 +1068,7 @@ func (l *localListener) acceptConns() {
 函数的作用是创建一个远程流并将其注册到本地监听器中，以便在需要时可以开始监听远程服务器发送的数据。
 
 
-```
+```go
 func (l *localListener) setupStream(local manet.Conn) {
 	remote, err := l.dial(l.ctx)
 	if err != nil {
@@ -1102,7 +1102,7 @@ func (l *localListener) setupStream(local manet.Conn) {
 函数还返回监听器的发送方地址(由 "l.laddr" 引用)，以及由 "l.peer" 引用的目标地址(目标服务器)。
 
 
-```
+```go
 func (l *localListener) close() {
 	l.listener.Close()
 }
@@ -1132,14 +1132,14 @@ func (l *localListener) TargetAddress() ma.Multiaddr {
 函数的实现首先获取并获取远程监听器的连接地址，然后使用该地址的 `String()` 方法获取一个字符串，作为协议 ID 的值，最后将该值作为 `protocol.ID` 返回。
 
 
-```
+```go
 func (l *localListener) key() protocol.ID {
 	return protocol.ID(l.ListenAddress().String())
 }
 
 ```
 
-# `/opt/kubo/p2p/p2p.go`
+# `p2p/p2p.go`
 
 该代码是一个名为"p2p"的包，它定义了一个名为"P2P"的结构体，用于表示当前正在运行的流/监听器。
 
@@ -1154,7 +1154,7 @@ func (l *localListener) key() protocol.ID {
 最后，该结构体还定义了一个名为"log"的Logger，用于输出当前的日志信息。
 
 
-```
+```go
 package p2p
 
 import (
@@ -1191,7 +1191,7 @@ type P2P struct {
 最后，该函数返回了一个新的 `P2P` 实例，该实例包含上述定义的 `ListenersLocal`、`ListenersP2P` 和 `Streams` 字段。
 
 
-```
+```go
 // New creates new P2P struct.
 func New(identity peer.ID, peerHost p2phost.Host, peerstore pstore.Peerstore) *P2P {
 	return &P2P{
@@ -1217,7 +1217,7 @@ func New(identity peer.ID, peerHost p2phost.Host, peerstore pstore.Peerstore) *P
 具体来说，函数首先获取一个`protos`变量，该变量存储了`mux handler`中的所有协议。然后，函数遍历`protos`，检查当前是否等于`proto`。如果是，则返回`true`，否则继续遍历。最后，如果所有的`proto`处理程序都已注册，则返回`false`。
 
 
-```
+```go
 // CheckProtoExists checks whether a proto handler is registered to
 // mux handler.
 func (p2p *P2P) CheckProtoExists(proto protocol.ID) bool {
@@ -1234,7 +1234,7 @@ func (p2p *P2P) CheckProtoExists(proto protocol.ID) bool {
 
 ```
 
-# `/opt/kubo/p2p/remote.go`
+# `p2p/remote.go`
 
 这段代码定义了一个名为 "p2p" 的包，其中包含了一些定义、函数和变量。以下是该包的主要作用：
 
@@ -1247,7 +1247,7 @@ func (p2p *P2P) CheckProtoExists(proto protocol.ID) bool {
 4. 在 "remoteListener" 函数中，通过调用 "fmt" 函数中的 "Printf" 函数，将远程监听器 IP 地址和端口格式化并输出到控制台。
 
 
-```
+```go
 package p2p
 
 import (
@@ -1277,7 +1277,7 @@ struct 类型 remoteListener 包含以下字段：
 remoteListener 结构体可以用来创建和管理 P2P 监听器，以接收和发送数据到远程设备。
 
 
-```
+```go
 type remoteListener struct {
 	p2p *P2P
 
@@ -1306,7 +1306,7 @@ type remoteListener struct {
 最后，函数返回名为"listener"的"Listener"对象和一个非空错误对象。
 
 
-```
+```go
 func (p2p *P2P) ForwardRemote(ctx context.Context, proto protocol.ID, addr ma.Multiaddr, reportRemote bool) (Listener, error) {
 	listener := &remoteListener{
 		p2p: p2p,
@@ -1339,7 +1339,7 @@ func (p2p *P2P) ForwardRemote(ctx context.Context, proto protocol.ID, addr ma.Mu
 最后，函数使用l.p2p.Streams注册到远程服务器。注册后，函数将开始监听来自服务器的数据流，并将这些数据流传递给l.p2p.Streams的注册函数。
 
 
-```
+```go
 func (l *remoteListener) handleStream(remote net.Stream) {
 	local, err := manet.Dial(l.addr)
 	if err != nil {
@@ -1387,7 +1387,7 @@ func (l *remoteListener) handleStream(remote net.Stream) {
 第二个函数 `func (l *remoteListener) ListenAddress() ma.Multiaddr` 同样接收远程监听者 `l`，并返回其目标地址。函数的实现比较复杂，需要创建一个 `ma.Multiaddr` 对象，其中 `maPrefix` 是前缀，用于标识目标地址的前缀。函数首先尝试从远程监听者的 `p2p.identity` 字段中构建目标地址，如果失败则 `panic` 并输出错误信息。最后，函数返回 `l.addr`，即远程监听者的目标地址。
 
 
-```
+```go
 func (l *remoteListener) Protocol() protocol.ID {
 	return l.proto
 }
@@ -1419,7 +1419,7 @@ return l.proto
 函数内部使用了`*remoteListener` 获取远程监听器`l`的引用，然后通过远程监听器`l`的`proto`字段获取其协议ID，最后返回该协议ID。
 
 
-```
+```go
 func (l *remoteListener) close() {}
 
 func (l *remoteListener) key() protocol.ID {
@@ -1428,7 +1428,7 @@ func (l *remoteListener) key() protocol.ID {
 
 ```
 
-# `/opt/kubo/p2p/stream.go`
+# `p2p/stream.go`
 
 这段代码定义了一个名为"p2p"的包，其中包含了以下几个主要组件：
 
@@ -1455,7 +1455,7 @@ func (l *remoteListener) key() protocol.ID {
 11. `导入`语句，引入了`github.com/multiformats/go-multiaddr`库，定义了一个名为"manet"的包。
 
 
-```
+```go
 package p2p
 
 import (
@@ -1490,7 +1490,7 @@ const cmgrTag = "stream-fwd"
 该结构体定义了一个 StreamRegistry，可以用来注册、获取和设置Stream的元数据。
 
 
-```
+```go
 // Stream holds information on active incoming and outgoing p2p streams.
 type Stream struct {
 	id uint64
@@ -1518,7 +1518,7 @@ type Stream struct {
 `startStreaming()` 函数的作用是启动一个流式传输的过程。具体实现包括开始接收本地数据、开始发送本地数据以及关闭与 `Stream` 相关的注册表。
 
 
-```
+```go
 // close stream endpoints and deregister it.
 func (s *Stream) close() {
 	s.Registry.Close(s)
@@ -1558,7 +1558,7 @@ func (s *Stream) startStreaming() {
 另外，这个结构体还包含一个名为 `Lock` 的方法，用于获取对注册表中流的状态进行互斥锁，以确保在多个调用 `Registration` 方法的情况下，只能够有一个实例在同时执行。
 
 
-```
+```go
 // StreamRegistry is a collection of active incoming and outgoing proto app streams.
 type StreamRegistry struct {
 	sync.Mutex
@@ -1596,7 +1596,7 @@ func (r *StreamRegistry) Register(streamInfo *Stream) {
 函数的实现充分说明了其作用：即从注册表中删除指定的流。
 
 
-```
+```go
 // Deregister deregisters stream from the registry.
 func (r *StreamRegistry) Deregister(streamID uint64) {
 	r.Lock()
@@ -1625,7 +1625,7 @@ func (r *StreamRegistry) Deregister(streamID uint64) {
 在函数Reset中，首先关闭Registry中注册的流所在的本地端点，然后调用Registry中注册的流所在的远程端的Reset操作，使得远程端的点准备就绪。接着，调用Registry中注册的流所在的本地端的Reset操作，使得本地端的点准备就绪。最后，输出Registry中注册的流。
 
 
-```
+```go
 // Close stream endpoints and deregister it.
 func (r *StreamRegistry) Close(s *Stream) {
 	_ = s.Local.Close()

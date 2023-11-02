@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 26
 
-# `/opt/kubo/core/corehttp/commands.go`
+# `core/corehttp/commands.go`
 
 这段代码是一个 Go 语言package 中的代码，它实现了通过 IPFS(InterPlanetary File System) 下载文件并执行一些操作的功能。下面是简要解释：
 
@@ -61,7 +61,7 @@
 28. `ipms.SetCommands "ipfs-setup-ZERO"`：设置 ipms 包的命令为 "ipfs-setup-ZERO"。
 
 
-```
+```go
 package corehttp
 
 import (
@@ -94,7 +94,7 @@ import (
 最后，该代码还提供了一些示例用法，以通过配置文件或命令行参数使用 "ipfs config API.HTTPHeaders" 函数将请求头设置为 JSON 字符串形式，其中请求头中的 "Access-Control-Allow-Origin" 键设置为 "*"。
 
 
-```
+```go
 var errAPIVersionMismatch = errors.New("api version mismatch")
 
 const (
@@ -119,7 +119,7 @@ defaultLocalhostOrigins 的作用是提供一个默认的 Localhost 网络接口
 companionBrowserExtensionOrigins 中的内容则是两个已知的浏览器扩展程序的 origin，这些扩展程序据说是通过 IPFS (InterPlanetary File System) 技术进行分布式存储的。这里的 IPFS-Companion 和 ipfs-companion-beta 分别是两个已知的 IPFS 扩展程序。
 
 
-```
+```go
 const APIPath = "/api/v0"
 
 var defaultLocalhostOrigins = []string{
@@ -147,7 +147,7 @@ addHeadersFromConfig()函数的作用是读取配置中定义的HTTP头信息，
 这两个函数一起作用，以确定允许的CORS来源和头信息，通过组合它们可以允许服务器在响应中使用CORS头信息，从而提高安全性。
 
 
-```
+```go
 func addCORSFromEnv(c *cmdsHttp.ServerConfig) {
 	origin := os.Getenv(originEnvKey)
 	if origin != "" {
@@ -196,7 +196,7 @@ patchCORSVars 函数同样接收一个 CmdsHttp.ServerConfig 类型的参数，�
 这两个函数一起工作，确保在添加 CORS Vars 时，正确设置服务器监听的端口以及允许的起源列表。
 
 
-```
+```go
 func addCORSDefaults(c *cmdsHttp.ServerConfig) {
 	// always safelist certain origins
 	c.AppendAllowedOrigins(defaultLocalhostOrigins...)
@@ -250,7 +250,7 @@ func patchCORSVars(c *cmdsHttp.ServerConfig, addr net.Addr) {
 11. 使用`mux.Handle()`函数和`nil`作为返回值创建一个HTTP选项函数，该函数将请求转发到函数体内的命令处理函数，并返回一个HTTP选项函数的`http.ServeMux`对象，该对象使用`oldcmds.ServeOption()`创建的函数。
 
 
-```
+```go
 func commandsOption(cctx oldcmds.Context, command *cmds.Command, allowGet bool) ServeOption {
 	return func(n *core.IpfsNode, l net.Listener, mux *http.ServeMux) (*http.ServeMux, error) {
 		cfg := cmdsHttp.NewServerConfig()
@@ -290,7 +290,7 @@ The implementation checks the client IPFS version and compares it to the require
 The `CheckVersionOption` function returns a serve option that checks the client IPFS version. It does nothing when the user agent string does not contain `/kubo/` or `/go-ipfs/`.
 
 
-```
+```go
 // CommandsOption constructs a ServerOption for hooking the commands into the
 // HTTP server. It will NOT allow GET requests.
 func CommandsOption(cctx oldcmds.Context) ServeOption {
@@ -334,7 +334,7 @@ func CheckVersionOption() ServeOption {
 
 ```
 
-# `/opt/kubo/core/corehttp/corehttp.go`
+# `core/corehttp/corehttp.go`
 
 这段代码定义了一个名为"corehttp"的包，它提供了对HTTP包、网络包和其他高级HTTP接口的支持，以便于开发人员构建 web 界面、网关和其他基于 HTTP 的应用程序。
 
@@ -345,7 +345,7 @@ func CheckVersionOption() ServeOption {
 该包还定义了一些函数，例如"/core/http/request上下文、请求头、请求体、响应、错误"，这些函数用于处理 HTTP 请求的上下文、请求头、请求体、响应以及错误。另外，该包中的"/core/http/package上下文"定义了一些通用的函数和数据结构，例如获取当前 HTTP 上下文、设置 HTTP 上下文等等。
 
 
-```
+```go
 /*
 Package corehttp provides utilities for the webui, gateways, and other
 high-level HTTP interfaces to IPFS.
@@ -382,7 +382,7 @@ import (
 最后，在函数内部，定义了一个 HTTP 处理程序，用于在请求到达时返回 HTTP 状态码 200，表示请求成功。这个处理程序使用了一个 net/http 包中的 Write 函数来写入响应，因为 net/http 包不支持 CONNECT 方法，所以在这种情况下需要使用 ServeHTTP 函数来完成 CONNECT 请求的转发。
 
 
-```
+```go
 var log = logging.Logger("core/server")
 
 // shutdownTimeout is the timeout after which we'll stop waiting for hung
@@ -429,7 +429,7 @@ func MakeHandler(n *core.IpfsNode, l net.Listener, options ...ServeOption) (http
 函数的参数部分，包括一个表示 HTTP 服务器监听选项的参数清单（ServeOption）和一个或多个输入参数，这些参数可能会用于配置 HTTP 服务器（如设置请求头、设置代理等）。
 
 
-```
+```go
 // ListenAndServe runs an HTTP server listening at |listeningMultiAddr| with
 // the given serve options. The address must be provided in multiaddr format.
 //
@@ -469,7 +469,7 @@ The `manet.FromNetAddr` function is used to create a `net.Listener` instance tha
 The `select` statement is used to wait for the server to complete before continuing. If the server is closed before it finishes, the function returns an error. If the server completes successfully, the function returns an empty `IpfsNode` object. If the server fails to start, the function returns an error.
 
 
-```
+```go
 // Serve accepts incoming HTTP connections on the listener and pass them
 // to ServeOption handlers.
 func Serve(node *core.IpfsNode, lis net.Listener, options ...ServeOption) error {
@@ -532,7 +532,7 @@ func Serve(node *core.IpfsNode, lis net.Listener, options ...ServeOption) error 
 
 ```
 
-# `/opt/kubo/core/corehttp/gateway.go`
+# `core/corehttp/gateway.go`
 
 该代码包是旨在实现一个名为“corehttp”的库，它提供了在Go标准库中的HTTP客户端功能。它包含了来自以下外部的依赖项：
 - “github.com/ipfs/boxo”的“blockservice”包
@@ -567,7 +567,7 @@ func Serve(node *core.IpfsNode, lis net.Listener, options ...ServeOption) error 
 - 通过 opentel移民计数器 库
 
 
-```
+```go
 package corehttp
 
 import (
@@ -607,7 +607,7 @@ import (
 最后，遍历`paths`字符串数组，将其对应的路径路由添加到`Handler`的`path`参数中，最终返回一个`ServeMux`实例，用于处理请求。如果出错，返回一个非`nil`的`error`。
 
 
-```
+```go
 func GatewayOption(paths ...string) ServeOption {
 	return func(n *core.IpfsNode, _ net.Listener, mux *http.ServeMux) (*http.ServeMux, error) {
 		config, err := getGatewayConfig(n)
@@ -646,7 +646,7 @@ func GatewayOption(paths ...string) ServeOption {
 7. 返回 "childMux"，没有错误。
 
 
-```
+```go
 func HostnameOption() ServeOption {
 	return func(n *core.IpfsNode, _ net.Listener, mux *http.ServeMux) (*http.ServeMux, error) {
 		config, err := getGatewayConfig(n)
@@ -674,7 +674,7 @@ func HostnameOption() ServeOption {
 第二个函数`Func Libp2pGatewayOption() ServeOption`返回一个HTTP服务器，该服务器使用`blockservice.New`和`gateway.NewBlocksBackend`创建一个 blockservice 块存储器和一个 gateway，然后使用 `http.HandleFunc`和`gateway.WithResolver`组合函数来设置HTTP响应，并使用 `offlineGatewayErrWrapper`将错误信息包含在 response 中。
 
 
-```
+```go
 func VersionOption() ServeOption {
 	return func(_ *core.IpfsNode, _ net.Listener, mux *http.ServeMux) (*http.ServeMux, error) {
 		mux.HandleFunc("/version", func(w http.ResponseWriter, r *http.Request) {
@@ -729,7 +729,7 @@ The `-nd` or `--数据库` flag is used to specify the name of the database used
 The `-nf` or `--下载权限` flag is used to specify the minimum number of blocks that can be downloaded by the OfflineGateway. It should be passed to the `n.Blocks` constructor, which sets the minimum number of blocks that can be downloaded by the OfflineGateway. If this number is set to zero or negative, it means that the OfflineGateway won't download any blocks and can be used only for unregistering blocks from the Blockstore.
 
 
-```
+```go
 func newGatewayBackend(n *core.IpfsNode) (gateway.IPFSBackend, error) {
 	cfg, err := n.Repo.Config()
 	if err != nil {
@@ -790,7 +790,7 @@ func newGatewayBackend(n *core.IpfsNode) (gateway.IPFSBackend, error) {
 最后，该代码创建了一个offlineGatewayErrWrapper类型的变量o，并将其设置为IPFSBackend类型的gwimpl，以便在需要时使用该变量来获取IPFS元数据。
 
 
-```
+```go
 type offlineGatewayErrWrapper struct {
 	gwimpl gateway.IPFSBackend
 }
@@ -823,7 +823,7 @@ func (o *offlineGatewayErrWrapper) Get(ctx context.Context, path path.ImmutableP
 这些函数可以确保在函数调用成功时，获取指定路径的文件信息。如果函数调用失败，则使用offlineGatewayErrWrapper中的错误处理函数来捕获和处理错误。
 
 
-```
+```go
 func (o *offlineGatewayErrWrapper) GetAll(ctx context.Context, path path.ImmutablePath) (gateway.ContentPathMetadata, files.Node, error) {
 	md, n, err := o.gwimpl.GetAll(ctx, path)
 	err = offlineErrWrap(err)
@@ -853,7 +853,7 @@ func (o *offlineGatewayErrWrapper) Head(ctx context.Context, path path.Immutable
 第三个函数是IsCached函数，它接收一个context.Context和一个路径类型的参数，并返回一个bool类型的结果。函数直接调用offlineGatewayErrWrapper中提供的IsCached函数，并返回其返回的结果。
 
 
-```
+```go
 func (o *offlineGatewayErrWrapper) ResolvePath(ctx context.Context, path path.ImmutablePath) (gateway.ContentPathMetadata, error) {
 	md, err := o.gwimpl.ResolvePath(ctx, path)
 	err = offlineErrWrap(err)
@@ -883,7 +883,7 @@ func (o *offlineGatewayErrWrapper) IsCached(ctx context.Context, path path.Path)
 由于这些函数使用了 `offlineGatewayErrWrapper` 类型的对象，它们都有 `GetIPNSRecord()`，`ResolveMutable()` 和 `GetDNSLinkRecord()` 方法，这些方法的具体实现可能因具体的网络服务提供商（ISP）而有所不同。
 
 
-```
+```go
 func (o *offlineGatewayErrWrapper) GetIPNSRecord(ctx context.Context, c cid.Cid) ([]byte, error) {
 	rec, err := o.gwimpl.GetIPNSRecord(ctx, c)
 	err = offlineErrWrap(err)
@@ -915,7 +915,7 @@ Finally, it applies the settings from the public gateways configuration, if they
 It returns the gateway configuration and a nil error.
 
 
-```
+```go
 var _ gateway.IPFSBackend = (*offlineGatewayErrWrapper)(nil)
 
 var defaultPaths = []string{"/ipfs/", "/ipns/", "/api/", "/p2p/"}
@@ -979,7 +979,7 @@ func getGatewayConfig(n *core.IpfsNode) (gateway.Config, error) {
 
 ```
 
-# `/opt/kubo/core/corehttp/gateway_test.go`
+# `core/corehttp/gateway_test.go`
 
 该代码包是用于测试 Core API 的工具包，它包含了与测试相关的函数和变量。
 
@@ -992,7 +992,7 @@ func getGatewayConfig(n *core.IpfsNode) (gateway.Config, error) {
 总之，该代码包的作用是用于测试 Core API 的功能，通过编写测试函数来验证它是否能够正确地执行各种操作，确保它能够正常工作。
 
 
-```
+```go
 package corehttp
 
 import (
@@ -1026,7 +1026,7 @@ import (
 该函数的实现采用了 Recursive 风格，其中使用了 `namesys.DefaultResolveOptions` 来设置默认的解析选项，包括最大深度为无限大。函数在 `Resolve` 函数中，遍历了给定的 `opts` 中的解析选项，并对每个解析选项进行了设置。然后，函数根据给定的路径 `p`，递归地查找给定路径下标为 0 的子路径，如果子路径存在于给定深度下的某个路径中，则返回一个 `namesys.Result` 类型的结果，否则返回一个 `namesys.ErrResolveFailed` 类型的错误。在查找子路径时，函数使用了路径 `path.SegmentsToString` 将路径分割为元素，并遍历每个元素。如果元素是 "ipns/" 的前缀，则设置深度为 0，并返回一个 `namesys.Result` 类型的结果。如果元素不是以 "/ipns/" 开头的元素，则设置深度为 depth - 1，并尝试从 `mockNamesys` 映射中获取该元素的值，如果映射成功，则返回该元素的值，否则返回一个 `namesys.ErrResolveFailed` 类型的错误。最后，函数返回结果，并不会输出源代码。
 
 
-```
+```go
 type mockNamesys map[string]path.Path
 
 func (m mockNamesys) Resolve(ctx context.Context, p path.Path, opts ...namesys.ResolveOption) (namesys.Result, error) {
@@ -1083,7 +1083,7 @@ func (m mockNamesys) Resolve(ctx context.Context, p path.Path, opts ...namesys.R
 该函数接收一个名为 `subs` 的字符串参数，并返回一个解析器和一个布尔值，表示是否成功获取解析器。由于它没有实现，因此无法提供任何具体的信息。
 
 
-```
+```go
 func (m mockNamesys) ResolveAsync(ctx context.Context, p path.Path, opts ...namesys.ResolveOption) <-chan namesys.AsyncResult {
 	out := make(chan namesys.AsyncResult, 1)
 	res, err := m.Resolve(ctx, p, opts...)
@@ -1119,7 +1119,7 @@ func (m mockNamesys) GetResolver(subs string) (namesys.Resolver, bool) {
 6. 返回 `n` 和 `n` 创建失败时可能返回的 `error` 类型。
 
 
-```
+```go
 func newNodeWithMockNamesys(ns mockNamesys) (*core.IpfsNode, error) {
 	c := config.Config{
 		Identity: config.Identity{
@@ -1151,7 +1151,7 @@ func newNodeWithMockNamesys(ns mockNamesys) (*core.IpfsNode, error) {
 最后，该函数使用一个名为c的HTTP客户端，执行请求并返回响应。
 
 
-```
+```go
 type delegatedHandler struct {
 	http.Handler
 }
@@ -1192,7 +1192,7 @@ func doWithoutRedirect(req *http.Request) (*http.Response, error) {
 该函数的作用是创建一个测试服务器，用于测试 `coreapi` 和 `httptest` 包的功能。它通过创建一个代表客户端和服务器的 `httptest.Server` 实例，以及一个代表服务器的 `http.Handler` 实例，来构建一个可以进行客户端和服务器通信的测试环境。通过这种方式，可以方便地进行测试，而无需编写实际的应用程序。
 
 
-```
+```go
 func newTestServerAndNode(t *testing.T, ns mockNamesys) (*httptest.Server, iface.CoreAPI, context.Context) {
 	n, err := newNodeWithMockNamesys(ns)
 	if err != nil {
@@ -1246,7 +1246,7 @@ func newTestServerAndNode(t *testing.T, ns mockNamesys) (*httptest.Server, iface
 函数的作用是验证版本号是否正确，并且检查客户端版本是否与服务器版本兼容。
 
 
-```
+```go
 func TestVersion(t *testing.T) {
 	version.CurrentCommit = "theshortcommithash"
 
@@ -1291,7 +1291,7 @@ The function then calls the `getGatewayConfig` function to retrieve the gateway 
 Overall, this function tests that the `TestDeserializedResponsesInheritance` function works correctly and handles various combinations of global setting and gateway setting values.
 
 
-```
+```go
 func TestDeserializedResponsesInheritance(t *testing.T) {
 	for _, testCase := range []struct {
 		globalSetting          config.Flag
@@ -1333,7 +1333,7 @@ func TestDeserializedResponsesInheritance(t *testing.T) {
 
 ```
 
-# `/opt/kubo/core/corehttp/logs.go`
+# `core/corehttp/logs.go`
 
 这段代码定义了一个名为`writeErrNotifier`的结构体，它包含一个`Writer`类型的字段`w`和一个`ErrorChan`类型的字段`errs`。
 
@@ -1344,7 +1344,7 @@ func TestDeserializedResponsesInheritance(t *testing.T) {
 函数返回一个`WriteError`类型的结果，表示尝试写入到外部网络中的任何错误。
 
 
-```
+```go
 package corehttp
 
 import (
@@ -1372,7 +1372,7 @@ type writeErrNotifier struct {
 函数返回的 `n` 表示写入到 `w` 的字节数，`err` 表示可能的错误。如果错误发生，函数将返回一个非零值，否则返回写入到 `w` 的字节数。
 
 
-```
+```go
 func newWriteErrNotifier(w io.Writer) (io.WriteCloser, <-chan error) {
 	ch := make(chan error, 1)
 	return &writeErrNotifier{
@@ -1404,7 +1404,7 @@ func (w *writeErrNotifier) Write(b []byte) (int, error) {
 第二段代码定义了一个ServeOption类型的函数，它接收一个IpfsNode类型的参数n，一个网络听众类型的参数_net.Listener，和一个http.ServeMux类型的参数mux。函数返回一个http.ServeMux类型的参数，如果没有错误，它会在mux上添加一个以"/logs"为路径的HTTP请求处理函数。这个函数会接收一个http.ResponseWriter类型的参数w和一个http.Request类型的参数r，然后它会将w.WriteHeader(200)并把wnf, errs这两个变量添加到mux.HandleFunc中的参数中。最后，函数返回一个http.ServeMux类型的参数，如果没有错误，它会在mux上返回一个 nil 值。
 
 
-```
+```go
 func (w *writeErrNotifier) Close() error {
 	select {
 	case w.errs <- io.EOF:
@@ -1428,7 +1428,7 @@ func LogOption() ServeOption {
 
 ```
 
-# `/opt/kubo/core/corehttp/metrics.go`
+# `core/corehttp/metrics.go`
 
 这段代码是一个 Go 语言中的 package，它导入了 CoreHTTP、Core、net、time 和 statistics 等几个库。
 
@@ -1443,7 +1443,7 @@ func LogOption() ServeOption {
 总结起来，这段代码可能是一个用于从网络请求和响应中收集统计数据并将其存储在 Prometheus 中的库。
 
 
-```
+```go
 package corehttp
 
 import (
@@ -1469,7 +1469,7 @@ import (
 `MetricsOpenCensorationCollectionOption`函数，当接收到一个 `MetricsOpenCensorationCollectionOption` 请求时，创建一个 HTTP serveMux 函数，并在该函数中添加一个到 metrics 文件的 scraping Endpoint。这个 endpoint 使用的 OpenCounters 存储桶来提供 metrics。函数内部还会注册 OpenCounters 并用 `debugz` 存储所有 metrics。最后，函数还会处理 `/debug/metrics/oc/debugz`。
 
 
-```
+```go
 // MetricsScrapingOption adds the scraping endpoint which Prometheus uses to fetch metrics.
 func MetricsScrapingOption(path string) ServeOption {
 	return func(n *core.IpfsNode, _ net.Listener, mux *http.ServeMux) (*http.ServeMux, error) {
@@ -1522,7 +1522,7 @@ func MetricsOpenCensusCollectionOption() ServeOption {
 4. 返回 MetricsOpenC烟火棒 和注册成功后可能产生的错误。
 
 
-```
+```go
 // MetricsOpenCensusDefaultPrometheusRegistry registers the default prometheus
 // registry as an exporter to OpenCensus metrics. This means that OpenCensus
 // metrics will show up in the prometheus metrics endpoint
@@ -1560,7 +1560,7 @@ If an error is encountered, it is likely that the Summer肌理 has already been 
 Finally, the function constructs the mux (i.e. thePrometheusSummaryVec) by setting the Handler to the newPrometheusSummaryVec and instrumenting it with the appropriate metrics. This is done using PrometheusInstrumentedHandler, which instrument the response and counter metrics, and instrumenting the request metrics using PrometheusInstrumentedHandlerRequestSize. It will return the handle and a error.
 
 
-```
+```go
 // MetricsCollectionOption adds collection of net/http-related metrics.
 func MetricsCollectionOption(handlerName string) ServeOption {
 	return func(_ *core.IpfsNode, _ net.Listener, mux *http.ServeMux) (*http.ServeMux, error) {
@@ -1646,7 +1646,7 @@ func MetricsCollectionOption(handlerName string) ServeOption {
 该结构体中的`Describe`方法与指标的`Desc`方法类似，因此可以将`peersTotalMetric`作为该方法的指标，并将`ch`作为方法接受者的通道。该方法将`peersTotalMetric`发送到接受者`ch`中，以便将其添加到`peersTotalMetric`的统计数据中。
 
 
-```
+```go
 var peersTotalMetric = prometheus.NewDesc(
 	prometheus.BuildFQName("ipfs", "p2p", "peers_total"),
 	"Number of connected peers",
@@ -1673,7 +1673,7 @@ func (IpfsNodeCollector) Describe(ch chan<- *prometheus.Desc) {
 函数的作用是输出经过的peersTotalMetric指标，并将其存储在一个map中，以便将其返回。
 
 
-```
+```go
 func (c IpfsNodeCollector) Collect(ch chan<- prometheus.Metric) {
 	for tr, val := range c.PeersTotalValues() {
 		ch <- prometheus.MustNewConstMetric(

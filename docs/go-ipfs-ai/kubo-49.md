@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 49
 
-# `/opt/kubo/repo/fsrepo/fsrepo.go`
+# `repo/fsrepo/fsrepo.go`
 
 这段代码定义了一个名为 `fsrepo` 的包，它提供了一个 HomeDir 并且使用了验证、错误处理和格式化等安全特性。
 
@@ -21,7 +21,7 @@
 7. 通过 `util.Context`、`fmt.Println`、`errors.Print`、`strings.Replace` 等实现了文件系统repo的一些常用功能。
 
 
-```
+```go
 package fsrepo
 
 import (
@@ -63,7 +63,7 @@ import (
 接下来，代码定义了一个名为 "migrationInstructions" 的字符串，用于存储指向移
 
 
-```
+```go
 // LockFile is the filename of the repo lock, relative to config dir
 // TODO rename repo lock and hide name.
 const LockFile = "repo.lock"
@@ -95,7 +95,7 @@ a migration in reverse.
 最后，代码使用一些断言来检查错误是否为 NoRepoError 实例，如果是，就执行一些操作并返回错误消息。
 
 
-```
+```go
 See https://github.com/ipfs/fs-repo-migrations/blob/master/run.md for details.`
 
 var (
@@ -123,7 +123,7 @@ func (err NoRepoError) Error() string {
 最后，它定义了一个名为 `swarmKeyFile` 的变量，它指定了三周丰存储库的私钥文件的路径。
 
 
-```
+```go
 const (
 	apiFile      = "api"
 	gatewayFile  = "gateway"
@@ -172,7 +172,7 @@ var (
 该FSRepo结构体提供了一个统一的接口，让调用者可以使用FSRepo的多种属性和方法。可以安全地用于多个调用者，而不会互相干扰。
 
 
-```
+```go
 // FSRepo represents an IPFS FileSystem Repo. It is safe for use by multiple
 // callers.
 type FSRepo struct {
@@ -204,7 +204,7 @@ type FSRepo struct {
 注意：在实际应用中，如果这段代码放在一个名为 "github.com/user/repo/master" 的 GitHub 仓库中，那么它将作为贡献者贡献到这个仓库中。
 
 
-```
+```go
 var _ repo.Repo = (*FSRepo)(nil)
 
 // Open the FSRepo at path. Returns an error if the repo is not
@@ -230,7 +230,7 @@ func OpenWithUserConfig(repoPath string, userConfigFilePath string) (repo.Repo, 
 This is a Go function that creates a new `FileMgr` instance for a given directory, given a path to a config object, and options for a file manager. It checks for errors and returns either the newly created `FileMgr` instance or an error if any.
 
 
-```
+```go
 func open(repoPath string, userConfigFilePath string) (repo.Repo, error) {
 	packageLock.Lock()
 	defer packageLock.Unlock()
@@ -315,7 +315,7 @@ func open(repoPath string, userConfigFilePath string) (repo.Repo, error) {
 最后，函数创建一个名为 `FSRepo` 的结构体，它包含一个 `path` 字段和一个 `configFilePath` 字段。函数返回这个结构体，如果所有参数都被正确传递，不会输出任何错误信息。
 
 
-```
+```go
 func newFSRepo(rpath string, userConfigFilePath string) (*FSRepo, error) {
 	expPath, err := homedir.Expand(filepath.Clean(rpath))
 	if err != nil {
@@ -348,7 +348,7 @@ func newFSRepo(rpath string, userConfigFilePath string) (*FSRepo, error) {
 初始化这些函数时，需要保证在调用之前，IPFS和Go-IPFS都已经初始化好了。
 
 
-```
+```go
 func checkInitialized(path string) error {
 	if !isInitializedUnsynced(path) {
 		alt := strings.Replace(path, ".ipfs", ".go-ipfs", 1)
@@ -386,7 +386,7 @@ func configIsInitialized(path string) bool {
 最后，函数会检查调用者是否已经初始化过配置文件。如果是，函数直接返回`nil`，否则会处理错误并返回。
 
 
-```
+```go
 func initConfig(path string, conf *config.Config) error {
 	if configIsInitialized(path) {
 		return nil
@@ -420,7 +420,7 @@ func initConfig(path string, conf *config.Config) error {
 最后，函数使用`os.WriteFile`函数将指定的文件写入指定的路径，并设置文件权限为0600。如果指定的路径不存在，则返回错误。
 
 
-```
+```go
 func initSpec(path string, conf map[string]interface{}) error {
 	fn, err := config.Path(path, specFn)
 	if err != nil {
@@ -452,7 +452,7 @@ func initSpec(path string, conf map[string]interface{}) error {
 6. 返回是否有错误。
 
 
-```
+```go
 // Init initializes a new FSRepo at the given path with the provided config.
 // TODO add support for custom datastores.
 func Init(repoPath string, conf *config.Config) error {
@@ -489,7 +489,7 @@ func Init(repoPath string, conf *config.Config) error {
 函数的第二个参数`APIAddr`返回了注册的API地址，根据该地址可以访问FSRepo中存储的API数据。由于这是一项并发操作，因此任何能够读取或写入该文件系统的进程都应该使用`mv`命令来覆盖整个文件，而不是对文件进行修改，以避免读写冲突。
 
 
-```
+```go
 // LockedByOtherProcess returns true if the FSRepo is locked by another
 // process. If true, then the repo cannot be opened by this process.
 func LockedByOtherProcess(repoPath string) (bool, error) {
@@ -514,7 +514,7 @@ func LockedByOtherProcess(repoPath string) (bool, error) {
 如果API文件读取成功，函数会从文件中读取内容并将其转换为字符串，然后使用string的TrimSpace函数将其截去多余的空格，最后创建一个名为ma.Multiaddr的多地址类型。函数的实现遵循了安全编程实践的建议，避免了潜在的错误和攻击。
 
 
-```
+```go
 func APIAddr(repoPath string) (ma.Multiaddr, error) {
 	repoPath = filepath.Clean(repoPath)
 	apiFilePath := filepath.Join(repoPath, apiFile)
@@ -561,7 +561,7 @@ func APIAddr(repoPath string) (ma.Multiaddr, error) {
 此外，该代码中还有一条注释，指出 `SetAPIAddr()` 函数的作用是：将一个 `ma.Multiaddr` 类型的参数写入到 `/api` 文件中。
 
 
-```
+```go
 func (r *FSRepo) Keystore() keystore.Keystore {
 	return r.keystore
 }
@@ -610,7 +610,7 @@ func (r *FSRepo) SetAPIAddr(addr ma.Multiaddr) error {
 最后，如果所有的写入和读取操作都成功完成，代码会返回 `nil` 表示没有错误。否则，代码会返回一些错误信息，例如文件重命名错误、文件无法删除时的错误。
 
 
-```
+```go
 // SetGatewayAddr writes the Gateway Addr to the /gateway file.
 func (r *FSRepo) SetGatewayAddr(addr net.Addr) error {
 	// Create a temp file to write the address, so that we don't leave empty file when the
@@ -660,7 +660,7 @@ func (r *FSRepo) SetGatewayAddr(addr net.Addr) error {
 注意，以上解释中提到的文件名libp2p-resource-limit-overrides.json在给定的代码中是固定的，如果文件名发生改变，需要相应地进行修改。
 
 
-```
+```go
 // openConfig returns an error if the config file is not present.
 func (r *FSRepo) openConfig() error {
 	conf, err := serialize.Load(r.configFilePath)
@@ -705,7 +705,7 @@ The readSpec method reads the DatastoreSpec file and returns a DatastoreSpec obj
 The main function of the struct initializes the Datastore and sets the keystore to it. It also wraps the Datastore with metrics gathering.
 
 
-```
+```go
 func (r *FSRepo) openKeystore() error {
 	ksp := filepath.Join(r.path, "keystore")
 	ks, err := keystore.NewFSKeystore(ksp)
@@ -766,7 +766,7 @@ func (r *FSRepo) openDatastore() error {
 第二个函数 `Close` 同样接收一个 `FSRepo` 类型的参数 `r`，并使用它路径中的 `Close` 函数关闭 `FSRepo`，释放所有持有的资源。如果 `FSRepo` 已经是关闭状态，函数将返回一个错误。函数将在调用时确保所有持有的资源都已释放，并将其状态设置为 `closed`。
 
 
-```
+```go
 func (r *FSRepo) readSpec() (string, error) {
 	fn, err := config.Path(r.path, specFn)
 	if err != nil {
@@ -819,7 +819,7 @@ func (r *FSRepo) Close() error {
 这段代码是用来配置当前的配置文件。函数内部配置文件不会被复制，因此调用者不能在函数内部修改配置。同时，这个函数不会抛出错误，但是如果配置文件不能访问，会抛出一个不可预测的错误。
 
 
-```
+```go
 // Config the current config. This function DOES NOT copy the config. The caller
 // MUST NOT modify it without first calling `Clone`.
 //
@@ -852,7 +852,7 @@ func (r *FSRepo) Config() (*config.Config, error) {
 函数的作用是确保`r`处于关闭状态，并且允许函数安全地访问`rcmgr.PartialLimitConfig`类型。
 
 
-```
+```go
 func (r *FSRepo) UserResourceOverrides() (rcmgr.PartialLimitConfig, error) {
 	// It is not necessary to hold the package lock since the repo is in an
 	// opened state. The package lock is _not_ meant to ensure that the repo is
@@ -877,7 +877,7 @@ func (r *FSRepo) UserResourceOverrides() (rcmgr.PartialLimitConfig, error) {
 第二个函数是BackupConfig，它接收一个前缀字符串prefix，然后返回一个配置文件名和一个错误。函数内部创建一个临时文件temp，然后尝试打开一个名为r.configFilePath的文件，并尝试读取和写入该文件。如果打开文件或创建文件的过程出现错误，函数将返回一个错误对象。然后，函数将原始文件的内容复制到temp文件中。最后，函数返回原始文件的名称，以及一个 nil的错误对象。
 
 
-```
+```go
 func (r *FSRepo) FileManager() *filestore.FileManager {
 	return r.filemgr
 }
@@ -916,7 +916,7 @@ Finally, the method writes the updated config to the file using the `writeConfig
 The FSRepo class warns users not to modify the config object after calling the `SetConfig` method. It also emphasizes that storing non-user-generated Go config structures as user-generated JSON nested maps is not allowed.
 
 
-```
+```go
 // SetConfig updates the FSRepo's config. The user must not modify the config
 // object after calling this method.
 // FIXME: There is an inherent contradiction with storing non-user-generated
@@ -964,7 +964,7 @@ func (r *FSRepo) SetConfig(updated *config.Config) error {
 接下来，函数使用`common.MapGetKV`函数从`cfg` map对象中获取指定键的值。如果配置文件存在且配置文件中的键是有效的配置键，函数将返回该配置文件的值和`nil`。如果配置文件不存在或键不是有效的配置键，函数将返回一个`nil`错误。
 
 
-```
+```go
 // GetConfigKey retrieves only the value of a particular key.
 func (r *FSRepo) GetConfigKey(key string) (interface{}, error) {
 	packageLock.Lock()
@@ -995,7 +995,7 @@ func (r *FSRepo) GetConfigKey(key string) (interface{}, error) {
 8. 如果所有的步骤都成功完成，则返回 nil。
 
 
-```
+```go
 // SetConfigKey writes the value of a particular key.
 func (r *FSRepo) SetConfigKey(key string, value interface{}) error {
 	packageLock.Lock()
@@ -1055,7 +1055,7 @@ func (r *FSRepo) SetConfigKey(key string, value interface{}) error {
 最后一个函数是名为SwarmKey的函数，它返回一个由字节组成的切片和一个error。它使用Fsrepo.path计算一个swarm key文件，并使用计算存储空间占用的函数计算所需的存储空间，然后返回它们。如果计算存储空间占用的函数返回错误，则SwarmKey函数将返回nil。
 
 
-```
+```go
 // Datastore returns a repo-owned datastore. If FSRepo is Closed, return value
 // is undefined.
 func (r *FSRepo) Datastore() repo.Datastore {
@@ -1091,7 +1091,7 @@ func (r *FSRepo) SwarmKey() ([]byte, error) {
 这段代码定义了一个名为FSRepo的结构体，并创建了两个指向FSRepo实例的引用。然后，它定义了一个名为IsInitialized的函数，该函数使用闭包来确保在函数调用期间只有一个FSRepo实例被初始化。最后，它提供了一个判断FSRepo实例是否已初始化的函数，如果初始化成功则返回true，否则返回false。
 
 
-```
+```go
 var (
 	_ io.Closer = &FSRepo{}
 	_ repo.Repo = &FSRepo{}
@@ -1116,7 +1116,7 @@ func IsInitialized(path string) bool {
 需要注意的是，该方法有一个保护锁`packageLock`，并通过调用者的` hold`方法来确保该锁在调用者退出时被释放。
 
 
-```
+```go
 // private methods below this point. NB: packageLock must held by caller.
 
 // isInitializedUnsynced reports whether the repo is initialized. Caller must
@@ -1127,7 +1127,7 @@ func isInitializedUnsynced(repoPath string) bool {
 
 ```
 
-# `/opt/kubo/repo/fsrepo/fsrepo_test.go`
+# `repo/fsrepo/fsrepo_test.go`
 
 这段代码定义了一个名为 "fsrepo" 的包，它导入了以下外部库：
 
@@ -1227,7 +1227,7 @@ func isInitializedUnsynced(repoPath string) bool {
 - "子目录聚类" 函数，用于设置 fsrep
 
 
-```
+```go
 package fsrepo
 
 import (
@@ -1290,7 +1290,7 @@ func TestCanManageReposIndependently(t *testing.T) {
 This is the output of the `func TestInitIdempotence(t *testing.T)` function which is used to test the InitIdempotence of the `func Init(path string, config *config.Config)` function. This function creates a temporary directory, initializes a new SQL database, and returns whether the initialization process was successful. It also includes a test to remove the database in case of failure.
 
 
-```
+```go
 func TestInitIdempotence(t *testing.T) {
 	t.Parallel()
 	path := t.TempDir()
@@ -1344,7 +1344,7 @@ func TestCanManageReposIndependently(t *testing.T) {
 6. 在关闭数据存储器后，函数尝试再次获取存储的键。如果获取成功，函数会输出一个错误信息。如果之前的错误信息提示函数在关闭数据存储器后无法获取数据，函数不会输出任何错误信息。
 
 
-```
+```go
 func TestDatastoreGetNotAllowedAfterClose(t *testing.T) {
 	t.Parallel()
 	path := t.TempDir()
@@ -1378,7 +1378,7 @@ func TestDatastoreGetNotAllowedAfterClose(t *testing.T) {
 9. 比较 "expected" 和 "actual" 数组是否相等。如果相等，说明数据已成功复制。
 
 
-```
+```go
 func TestDatastorePersistsFromRepoToRepo(t *testing.T) {
 	t.Parallel()
 	path := t.TempDir()
@@ -1415,7 +1415,7 @@ func TestDatastorePersistsFromRepoToRepo(t *testing.T) {
 7. 关闭两个 Open 函数分别对资源库进行操作。
 
 
-```
+```go
 func TestOpenMoreThanOnceInSameProcess(t *testing.T) {
 	t.Parallel()
 	path := t.TempDir()
@@ -1433,7 +1433,7 @@ func TestOpenMoreThanOnceInSameProcess(t *testing.T) {
 
 ```
 
-# `/opt/kubo/repo/fsrepo/misc.go`
+# `repo/fsrepo/misc.go`
 
 这段代码是一个名为 "fsrepo" 的包，它定义了一个名为 "BestKnownPath" 的函数，用于查找 fsrepo 存储库的最佳已知路径。
 
@@ -1442,7 +1442,7 @@ func TestOpenMoreThanOnceInSameProcess(t *testing.T) {
 最后，函数返回最佳已知路径，如果不存在或出现错误，则返回 nil。
 
 
-```
+```go
 package fsrepo
 
 import (
@@ -1469,7 +1469,7 @@ func BestKnownPath() (string, error) {
 
 ```
 
-# `/opt/kubo/repo/fsrepo/migrations/fetch.go`
+# `repo/fsrepo/migrations/fetch.go`
 
 这段代码定义了一个名为"migrations"的包，它使用了以下的一些库：
 
@@ -1493,7 +1493,7 @@ func BestKnownPath() (string, error) {
 - `count_data_by_line()`：统计一个字符串中每个数据出现的次数。
 
 
-```
+```go
 package migrations
 
 import (
@@ -1518,7 +1518,7 @@ import (
 通过调用FetchBinary函数，可以下载一个二进制文件并将其保存为归档文件。如果"DownloadDirectory"变量被设置为指定下载目录，则下载的归档文件将保存在该目录中。
 
 
-```
+```go
 // DownloadDirectory can be set as the location for FetchBinary to save the
 // downloaded archive file in.  If not set, then FetchBinary saves the archive
 // in a temporary directory that is removed after the contents of the archive
@@ -1552,7 +1552,7 @@ The function then creates a file to write the archive data to and opens a connec
 It is important to note that the function assumes that the IPFS URL passed by the user is valid and the archive is in the correct format.
 
 
-```
+```go
 // If out is a directory, then the binary is written to that directory with the
 // same name it has inside the archive.  Otherwise, the binary file is written
 // to the file named by out.
@@ -1674,7 +1674,7 @@ func FetchBinary(ctx context.Context, fetcher Fetcher, dist, ver, binName, out s
 最后，函数返回 "linux-musl" 或 "linux"，具体取决于是否找到了 "musl"。函数在返回前添加了一个空括号，这意味着它返回的是一个名为 "linux-musl" 或 "linux" 的字符串。
 
 
-```
+```go
 // osWithVariant returns the OS name with optional variant.
 // Currently returns either runtime.GOOS, or "linux-musl".
 func osWithVariant() (string, error) {
@@ -1715,7 +1715,7 @@ func osWithVariant() (string, error) {
 具体来说，函数的实现首先从 `dist` 参数中提取一个字符串，然后从该字符串中提取版本号、架构和操作系统，并将它们拼接到 `name` 和 `ver` 参数上，再将它们和 `atype` 合并为一个字符串。最后，函数使用 `fmt.Sprintf` 函数将合并后的字符串格式化为一个新的字符串，该字符串作为下载二进制的目的路径。函数的返回值是目的路径和文件名。
 
 
-```
+```go
 // makeArchivePath composes the path, relative to the distribution site, from which to
 // download a binary.  The path returned does not contain the distribution site path,
 // e.g. "/ipns/dist.ipfs.tech/", since that is know to the fetcher.

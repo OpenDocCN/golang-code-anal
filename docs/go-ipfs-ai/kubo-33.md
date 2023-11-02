@@ -30,7 +30,7 @@ If a new denylist file is added, `ipfs daemon` needs to be restarted.
 
 CLI and Gateway users will receive errors in response to request impacted by a blocklist:
 
-```
+```go
 Error: /ipfs/QmQvjk82hPkSaZsyJ8vNER5cmzKW7HyGX5XVusK7EAenCN is blocked and cannot be provided
 ```
 
@@ -45,7 +45,7 @@ caused the request to be blocked.
 Clear-text rules are simple: just put content paths to block, one per line.
 Paths with unicode and whitespace need to be percend-encoded:
 
-```
+```go
 /ipfs/QmbWqxBEKC3P8tqsKc98xmWNzrzDtRLMiMPL8wBuTGsMnR
 /ipfs/bafybeihfg3d7rdltd43u3tfvncx7n5loqofbsobojcadtmokrljfthuc7y/927%20-%20Standards/927%20-%20Standards.png
 ```
@@ -68,7 +68,7 @@ All block events are logged as warnings on a separate level named `nopfs-blocks`
 
 To only log requests for blocked content set `GOLOG_LOG_LEVEL="nopfs-blocks=warn"`:
 
-```
+```go
 WARN (...) QmRFniDxwxoG2n4AcnGhRdjqDjCM5YeUcBE75K8WXmioH3: blocked (test.deny:9)
 ```
 
@@ -152,7 +152,7 @@ The shardFunc is prefixed with `/repo/flatfs/shard/v1` then followed by a descri
 - `/repo/flatfs/shard/v1/prefix/2`
   - Shards based on the two character prefix of the key
 
-```json
+```gojson
 {
 	"type": "flatfs",
 	"path": "<relative path within repo for flatfs root>",
@@ -166,7 +166,7 @@ NOTE: flatfs must only be used as a block store (mounted at `/blocks`) as it onl
 ## levelds
 Uses a leveldb database to store key value pairs.
 
-```json
+```gojson
 {
 	"type": "levelds",
 	"path": "<location of db inside repo>",
@@ -181,7 +181,7 @@ Uses [badger](https://github.com/dgraph-io/badger) as a key value store.
 * `syncWrites`: Flush every write to disk before continuing. Setting this to false is safe as kubo will automatically flush writes to disk before and after performing critical operations like pinning. However, you can set this to true to be extra-safe (at the cost of a 2-3x slowdown when adding files).
 * `truncate`: Truncate the DB if a partially written sector is found (defaults to true). There is no good reason to set this to false unless you want to manually recover partially written (and unpinned) blocks if kubo crashes half-way through a adding a file.
 
-```json
+```gojson
 {
 	"type": "badgerds",
 	"path": "<location of badger inside repo>",
@@ -195,7 +195,7 @@ Uses [badger](https://github.com/dgraph-io/badger) as a key value store.
 Allows specified datastores to handle keys prefixed with a given path.
 The mountpoints are added as keys within the child datastore definitions.
 
-```json
+```gojson
 {
 	"type": "mount",
 	"mounts": [
@@ -215,7 +215,7 @@ The mountpoints are added as keys within the child datastore definitions.
 
 This datastore is a wrapper that adds metrics tracking to any datastore.
 
-```json
+```gojson
 {
 	"type": "measure",
 	"prefix": "sometag.datastore",
@@ -268,7 +268,7 @@ If you feel intrepid, you can dump this information and investigate it yourself:
 The first thing to look for is hung goroutines -- any goroutine that's been stuck
 for over a minute will note that in the trace. It looks something like:
 
-```
+```go
 goroutine 2306090 [semacquire, 458 minutes]:
 sync.runtime_Semacquire(0xc8222fd3e4)
   /home/whyrusleeping/go/src/runtime/sema.go:47 +0x26
@@ -425,7 +425,7 @@ The value will contain:
 
 #### Configuration file example:
 
-```json
+```gojson
 "Routing": {
   "Type": "custom",
   "Routers": {
@@ -543,7 +543,7 @@ The value will contain:
 
 Added YAML for clarity:
 
-```yaml
+```goyaml
 ---
 Type: custom
 Routers:
@@ -621,7 +621,7 @@ Methods:
 
 All routers must implement the `routing.Routing` interface:
 
-```go=
+```gogo=
 type Routing interface {
     ContentRouting
     PeerRouting
@@ -633,7 +633,7 @@ type Routing interface {
 
 All methods involved:
 
-```go=
+```gogo=
 type Routing interface {
     Provide(context.Context, cid.Cid, bool) error
     FindProvidersAsync(context.Context, cid.Cid, int) <-chan peer.AddrInfo
@@ -677,7 +677,7 @@ As test fixtures we can add different use cases here and see how the configurati
 
 ### Mimic previous dual DHT config
 
-```json
+```gojson
 "Routing": {
   "Type": "custom",
   "Routers": {
@@ -744,7 +744,7 @@ As test fixtures we can add different use cases here and see how the configurati
 ```
 YAML representation for clarity:
 
-```yaml
+```goyaml
 ---
 Type: custom
 Routers:
@@ -889,7 +889,7 @@ Default: `error`
 
 Example:
 
-```console
+```goconsole
 GOLOG_LOG_LEVEL="error,core/server=debug" ipfs daemon
 ```
 
@@ -905,7 +905,7 @@ Specifies the log message format.  It supports the following values:
 
 For example, to log structured JSON (for easier parsing):
 
-```bash
+```gobash
 export GOLOG_LOG_FMT="json"
 ```
 The logging format defaults to `color` when the output is a terminal, and `nocolor` otherwise.
@@ -958,7 +958,7 @@ Useful for testing things like DNSLink without real DNS lookup.
 
 Example:
 
-```console
+```goconsole
 $ IPFS_NS_MAP="dnslink-test1.example.com:/ipfs/bafkreicysg23kiwv34eg2d7qweipxwosdo2py4ldv42nbauguluen5v6am,dnslink-test2.example.com:/ipns/dnslink-test1.example.com" ipfs daemon
 ...
 $ ipfs resolve -r /ipns/dnslink-test2.example.com
@@ -973,7 +973,7 @@ Useful for testing and debugging in offline contexts.
 
 Example:
 
-```console
+```goconsole
 $ ipfs config Routing.Type auto
 $ IPFS_HTTP_ROUTERS="http://127.0.0.1:7423" ipfs daemon
 ```
@@ -1093,7 +1093,7 @@ Experimental.
 ### How to enable
 
 Modify your ipfs config:
-```
+```go
 ipfs config --json Experimental.FilestoreEnabled true
 ```
 
@@ -1124,7 +1124,7 @@ v0.4.17
 ### How to enable
 
 Modify your ipfs config:
-```
+```go
 ipfs config --json Experimental.UrlstoreEnabled true
 ```
 
@@ -1152,7 +1152,7 @@ Stable but not quite ready for prime-time.
 ### How to enable
 
 Generate a pre-shared-key using [ipfs-swarm-key-gen](https://github.com/Kubuxu/go-ipfs-swarm-key-gen)):
-```
+```go
 go get github.com/Kubuxu/go-ipfs-swarm-key-gen/ipfs-swarm-key-gen
 ipfs-swarm-key-gen > ~/.ipfs/swarm.key
 ```
@@ -1166,17 +1166,17 @@ nodes (Since we aren't part of your private network) so you will need to set up
 your own bootstrap nodes.
 
 First, to prevent your node from even trying to connect to the default bootstrap nodes, run:
-```bash
+```gobash
 ipfs bootstrap rm --all
 ```
 
 Then add your own bootstrap peers with:
-```bash
+```gobash
 ipfs bootstrap add <multiaddr>
 ```
 
 For example:
-```
+```go
 ipfs bootstrap add /ip4/104.236.76.40/tcp/4001/p2p/QmSoLV4Bbm51jM9C4gDYZQ9Cy3U6aXMJDAbzgu2fzaDs64
 ```
 
@@ -1211,7 +1211,7 @@ Experimental, will be stabilized in 0.6.0
 
 The `p2p` command needs to be enabled in the config:
 
-```sh
+```gosh
 > ipfs config --json Experimental.Libp2pStreamMounting true
 ```
 
@@ -1235,7 +1235,7 @@ port `$APP_PORT`.
 
 Then, configure the p2p listener by running:
 
-```sh
+```gosh
 > ipfs p2p listen /x/kickass/1.0 /ip4/127.0.0.1/tcp/$APP_PORT
 ```
 
@@ -1249,7 +1249,7 @@ First, configure the client p2p dialer, so that it forwards all inbound
 connections on `127.0.0.1:SOME_PORT` to the server node listening
 on `/x/kickass/1.0`.
 
-```sh
+```gosh
 > ipfs p2p forward /x/kickass/1.0 /ip4/127.0.0.1/tcp/$SOME_PORT /p2p/$SERVER_ID
 ```
 
@@ -1258,12 +1258,12 @@ connection will be forwarded to the service running on `127.0.0.1:$APP_PORT` on
 the remote machine. You can test it with netcat:
 
 ***On "server" node:***
-```sh
+```gosh
 > nc -v -l -p $APP_PORT
 ```
 
 ***On "client" node:***
-```sh
+```gosh
 > nc -v 127.0.0.1 $SOME_PORT
 ```
 
@@ -1284,13 +1284,13 @@ _you can get `$SERVER_ID` by running `ipfs id -f "<id>\n"`_
 
 ***First, on the "server" node:***
 
-```sh
+```gosh
 ipfs p2p listen /x/ssh /ip4/127.0.0.1/tcp/22
 ```
 
 ***Then, on "client" node:***
 
-```sh
+```gosh
 ipfs p2p forward /x/ssh /ip4/127.0.0.1/tcp/2222 /p2p/$SERVER_ID
 ```
 
@@ -1318,13 +1318,13 @@ Experimental
 
 The `p2p` command needs to be enabled in the config:
 
-```sh
+```gosh
 > ipfs config --json Experimental.Libp2pStreamMounting true
 ```
 
 On the client, the p2p HTTP proxy needs to be enabled in the config:
 
-```sh
+```gosh
 > ipfs config --json Experimental.P2pHttpProxy true
 ```
 
@@ -1348,7 +1348,7 @@ port `$APP_PORT`.
 
 Then, configure the p2p listener by running:
 
-```sh
+```gosh
 > ipfs p2p listen --allow-custom-protocol /http /ip4/127.0.0.1/tcp/$APP_PORT
 ```
 
@@ -1362,12 +1362,12 @@ connection will be forwarded to the service running on `127.0.0.1:$APP_PORT` on
 the remote machine (which needs to be a http server!) with path `$FORWARDED_PATH`. You can test it with netcat:
 
 ***On "server" node:***
-```sh
+```gosh
 > echo -e "HTTP/1.1 200\nContent-length: 11\n\nIPFS rocks!" | nc -l -p $APP_PORT
 ```
 
 ***On "client" node:***
-```sh
+```gosh
 > curl http://localhost:8080/p2p/$SERVER_ID/http/
 ```
 
@@ -1472,7 +1472,7 @@ Users interested in this feature should upgrade to at least 0.5.0
 
 Run your daemon with the `--enable-namesys-pubsub` flag
 or modify your ipfs config and restart the daemon:
-```
+```go
 ipfs config --json Ipns.UsePubsub true
 ```
 
@@ -1505,7 +1505,7 @@ Automatically discovers relays and advertises relay addresses when the node is b
 
 Modify your ipfs config:
 
-```
+```go
 ipfs config --json Swarm.RelayClient.Enabled true
 ```
 
@@ -1527,7 +1527,7 @@ Replaces the existing provide mechanism with a robust, strategic provider system
 
 Modify your ipfs config:
 
-```
+```go
 ipfs config --json Experimental.StrategicProviding true
 ```
 
@@ -1557,7 +1557,7 @@ protocol. However, IPFS will not currently use this protocol to _fetch_ files.
 
 Modify your ipfs config:
 
-```
+```go
 ipfs config --json Experimental.GraphsyncEnabled true
 ```
 
@@ -1631,13 +1631,13 @@ For more information, see:
 ### Configuring
 To enable:
 
-```
+```go
 ipfs config --json Experimental.OptimisticProvide true
 ```
 
 If you want to change the `OptimisticProvideJobsPoolSize` setting from its default of 60:
 
-```
+```go
 ipfs config --json Experimental.OptimisticProvideJobsPoolSize 120
 ```
 
@@ -1680,7 +1680,7 @@ Notes:
 
 Modify your ipfs config:
 
-```
+```go
 ipfs config --json Experimental.GatewayOverLibp2p true
 ```
 

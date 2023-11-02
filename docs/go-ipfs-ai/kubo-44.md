@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 44
 
-# `/opt/kubo/fuse/node/mount_darwin.go`
+# `fuse/node/mount_darwin.go`
 
 这段代码是一个 Go 语言中的声明，它将导出一个名为 "node" 的 package。通过执行以下命令，Go 编译器会将其构建为独立的 Go 包：
 
@@ -31,7 +31,7 @@ go build !nofuse
 4. 通过运行 "node_main.js" 函数，将 kubernetes.gen.repo 和 kubernetes.time. yaml 文件的日月量(奇偶)值打印出来。
 
 
-```
+```go
 //go:build !nofuse
 // +build !nofuse
 
@@ -63,7 +63,7 @@ import (
 最后定义了一个名为 "errStrFuseRequired" 的变量，其初始值为 `"OSXFUSE not found."`，似乎是一个错误消息，用于在用户没有安装 FUSE 工具链时抛出。
 
 
-```
+```go
 func init() {
 	// this is a hack, but until we need to do it another way, this works.
 	platformFuseChecks = darwinFuseCheckVersion
@@ -88,7 +88,7 @@ var errStrFuseRequired = `OSXFUSE not found.
 此外，该段代码还建议你安装 "osxfuse" 之前，请尝试在最低版本 2.7.2（或更高）的操作系统上安装它，因为较低版本的操作系统不支持更高版本的软件包。
 
 
-```
+```go
 OSXFUSE is required to mount, please install it.
 NOTE: Version 2.7.2 or higher required; prior versions are known to kernel panic!
 It is recommended you install it from the OSXFUSE website:
@@ -109,7 +109,7 @@ var errStrNoFuseHeaders = "no such file or directory: '/usr/local/lib/libosxfuse
 这段代码会输出一个错误信息，指出当前操作系统不支持名为"OSXFUSE"的软件包，同时提到了OSXFUSE版本2.7.2可能会导致系统崩溃。它建议升级到最新的OSXFUSE版本。此外，它还提供了一个指向OSXFUSE网站的链接，以获取更高级别的软件包。
 
 
-```
+```go
 var errStrUpgradeFuse = `OSXFUSE version %s not supported.
 
 OSXFUSE versions <2.7.2 are known to cause kernel panics!
@@ -134,7 +134,7 @@ type errNeedFuseVersion struct {
 函数内部首先定义了一个字符串变量"return"，然后使用"fmt"包中的"Sprintf"函数将其内容设置为`unable to check fuse version`。这里使用了%fusing“格式化字符串”的技巧，通过"unable to check fuse version"来表达无法检查FUSE版本的状况。接着，使用"Dear User"来段落开头，然后输出一段信息，指出调用者需要检查他们的操作系统版本，否则无法安装一个安全版本。接下来，使用"we tried to install it, but something went wrong"来描述尝试安装一个辅助工具时遇到的问题。最后，使用"Please install it yourself"来鼓励调用者安装他们自己的操作系统版本。
 
 
-```
+```go
 func (me errNeedFuseVersion) Error() string {
 	return fmt.Sprintf(`unable to check fuse version.
 
@@ -168,7 +168,7 @@ You can also stop ipfs from running these checks and use whatever OSXFUSE
 这段代码的作用是设置 IPFS 的可执行性，并检查 `fuse` 包是否已安装。如果没有安装 `fuse`，则会报错并拒绝安装 `ipfs-executable`。
 
 
-```
+```go
 version you have by running:
 
 	ipfs config --bool %s true
@@ -195,7 +195,7 @@ Before mounting, we must check your version of OSXFUSE. We are protecting
 最后，它通过运行 "go get fuse-version" 来自动安装 FUSE 工具，并输出 "fuse-version -only agent" 命令的输出结果，显示用户空间 FUSE 代理的版本为 "OSXFUSE.AgentVersion: 2.7.3"。
 
 
-```
+```go
 you from a nasty kernel panic we found in OSXFUSE versions <2.7.2.[1]. To
 make matters worse, it's harder than it should be to check whether you have
 the right version installed...[2]. We've automated the process with the
@@ -228,7 +228,7 @@ You should see something like this:
 3. 输出一条友好消息，告诉用户在修复了这个问题后可以重新尝试运行 Ipfs 服务。
 
 
-```
+```go
 Just make sure the number is 2.7.2 or higher. You can then stop ipfs from
 trying to run these checks with:
 
@@ -254,7 +254,7 @@ You may be able to get this error to go away by setting it again:
 该函数的输出将是一个字符串，其中包含有关 FUSE 版本的详细信息。
 
 
-```
+```go
 Either way, please tell us at: http://github.com/ipfs/kubo/issues
 `
 
@@ -304,7 +304,7 @@ func darwinFuseCheckVersion(node *core.IpfsNode) error {
 `tryGFVFromFuseVersion` 函数使用 `GFV` 包中的 `<fuse>` 函数获取操作系统中的 `x86_64` 签名文件元数据，并返回其版本号和 `None` 错误。具体来说，该函数调用 `<fuse>.<profile>` 字段来获取 `GFV` 包中的 `<fuse>` 函数，然后从该函数的输出中提取版本号部分并返回，如果调用失败则返回 `"x86_64"` 和相应的错误信息。
 
 
-```
+```go
 func tryGFV() (string, error) {
 	// first try sysctl. it may work!
 	ov, err := trySysctl()
@@ -339,7 +339,7 @@ fuse-version -q -only agent -s OSXFUSE
 如果下载或运行命令成功，该代码会返回out缓冲区的字符串，表示文件系统功能验证 agent 的版本，同时返回一个 nil error。如果下载或运行命令失败，该代码会输出错误信息并捕获该错误，以便进行更详细的错误处理。
 
 
-```
+```go
 func tryGFVFromFuseVersion() (string, error) {
 	if err := ensureFuseVersionIsInstalled(); err != nil {
 		return "", err
@@ -370,7 +370,7 @@ go installgithub.com/jbenet/go-fuse-version/fuse-version
 6. 如果安装成功，则返回。
 
 
-```
+```go
 func ensureFuseVersionIsInstalled() error {
 	// see if fuse-version is there
 	if _, err := exec.LookPath("fuse-version"); err == nil {
@@ -419,7 +419,7 @@ func ensureFuseVersionIsInstalled() error {
 3. 如果 `val` 的类型不符合预期，那么函数将返回 `false` 和一个错误对象，错误对象包含 `err` 字段，其中包含错误信息。
 
 
-```
+```go
 func userAskedToSkipFuseCheck(node *core.IpfsNode) (skip bool, err error) {
 	val, err := node.Repo.GetConfigKey(dontCheckOSXFUSEConfigKey)
 	if err != nil {
@@ -440,7 +440,7 @@ func userAskedToSkipFuseCheck(node *core.IpfsNode) (skip bool, err error) {
 
 ```
 
-# `/opt/kubo/fuse/node/mount_nofuse.go`
+# `fuse/node/mount_nofuse.go`
 
 这段代码是一个 Go 语言编写的文本，它通过结合两个条件 `!windows` 和 `nofuse` 来禁止在 Windows 平台上使用某些功能。它调用了 Node.js 中一个名为 `core` 的包，并定义了一个名为 `Mount` 的函数，用于将文件系统挂载点挂载到本地根目录。
 
@@ -452,7 +452,7 @@ func userAskedToSkipFuseCheck(node *core.IpfsNode) (skip bool, err error) {
 这段代码的具体实现可能还需要结合其他部分代码才能正常工作，比如定义 `core` 包时需要引入哪些依赖项，以及如何定义 `Mount` 函数实现具体的挂载操作等。
 
 
-```
+```go
 //go:build !windows && nofuse
 // +build !windows,nofuse
 
@@ -470,7 +470,7 @@ func Mount(node *core.IpfsNode, fsdir, nsdir string) error {
 
 ```
 
-# `/opt/kubo/fuse/node/mount_notsupp.go`
+# `fuse/node/mount_notsupp.go`
 
 这段代码是一个 FUSE 文件系统挂载命令，用于在启用了 FUSE 的 Linux 系统中安装依赖库以支持在 FUSE 文件系统中使用。
 
@@ -481,7 +481,7 @@ func Mount(node *core.IpfsNode, fsdir, nsdir string) error {
 通过调用 `Mount` 函数，可以实现将 FUSE 文件系统挂载到指定的目录的功能。
 
 
-```
+```go
 //go:build (!nofuse && openbsd) || (!nofuse && netbsd) || (!nofuse && plan9)
 // +build !nofuse,openbsd !nofuse,netbsd !nofuse,plan9
 
@@ -499,7 +499,7 @@ func Mount(node *core.IpfsNode, fsdir, nsdir string) error {
 
 ```
 
-# `/opt/kubo/fuse/node/mount_test.go`
+# `fuse/node/mount_test.go`
 
 这段代码是一个 Go 语言编写的测试用例，用于在不同的操作系统上测试是否支持 OpenBSD、nofuse、netbsd 和 Plan9 这些古董级的 FUSE 分支。
 
@@ -517,7 +517,7 @@ func Mount(node *core.IpfsNode, fsdir, nsdir string) error {
 最后，该代码还定义了一个 `test` 包，包含了一些测试用例，用于测试 FUSE 是否支持这些条件。
 
 
-```
+```go
 //go:build !openbsd && !nofuse && !netbsd && !plan9
 // +build !openbsd,!nofuse,!netbsd,!plan9
 
@@ -557,7 +557,7 @@ The program includes a function `Short()` that does nothing.
 It appears that the program is using the `core.NewNode` function to create a new FUSE node, and the `ipns.InitializeKeyspace` and `ipns.Mount` functions to initialize and mount the IPFS data structure.
 
 
-```
+```go
 func maybeSkipFuseTests(t *testing.T) {
 	if ci.NoFuse() {
 		t.Skip("Skipping FUSE tests")
@@ -631,14 +631,14 @@ func TestExternalUnmount(t *testing.T) {
 
 ```
 
-# `/opt/kubo/fuse/node/mount_unix.go`
+# `fuse/node/mount_unix.go`
 
 这段代码是一个 Go 语言编写的函数，它通过结合多个条件来判断是否支持使用某些软件包。这里列举了几个常用的软件包，如 `windows`、`openbsd`、`netbsd`、`plan9` 和 `nofuse`，表示需要这些软件包才能正常工作。同时，该函数还判断了是否启用了 FUSE 子系统，如果启用了，则不执行任何操作。
 
 具体来说，该函数首先判断了多个条件，如果其中任意一个条件为 `true`，则函数将输出一条信息，说明当前环境不支持该软件包的使用。如果所有条件都为 `false`，则函数将不做任何操作，不会影响 `node` 函数的执行。
 
 
-```
+```go
 //go:build !windows && !openbsd && !netbsd && !plan9 && !nofuse
 // +build !windows,!openbsd,!netbsd,!plan9,!nofuse
 
@@ -671,7 +671,7 @@ import (
 最后，定义了一个名为 "Mount" 的函数，该函数接收一个名为 "core.IpfsNode" 的 IpfsNode 类型的输入参数，以及一个 FUSE 挂载点和一个 FUSE 子目录。函数首先检查是否 already have live mounts，如果已经存在，则尝试关闭它们并重新尝试。如果 fuseNoDirectory 和 fuseExitStatus1 检查失败，函数将调用 platformFuseChecks 函数来执行 FUSE 错误检查。如果所有检查都成功，函数将正常挂载文件系统。
 
 
-```
+```go
 var log = logging.Logger("node")
 
 // fuseNoDirectory used to check the returning fuse error.
@@ -715,7 +715,7 @@ The `node` argument is the node object that provides the IPC services, and `fsdi
 The function returns either an error or nil if there was an error in mounting the file systems. If an error in mounted file system occurs, the function will return a custom error.
 
 
-```
+```go
 func doMount(node *core.IpfsNode, fsdir, nsdir string) error {
 	fmtFuseErr := func(err error, mountpoint string) error {
 		s := err.Error()
@@ -783,7 +783,7 @@ func doMount(node *core.IpfsNode, fsdir, nsdir string) error {
 
 ```
 
-# `/opt/kubo/fuse/node/mount_windows.go`
+# `fuse/node/mount_windows.go`
 
 这段代码定义了一个名为 "Mount" 的函数，它接受两个参数：一个表示 IPFS 节点的指针（<core.IpfsNode> 类型）和一个表示目标文件系统的路径（字符串）。函数的作用是挂载文件系统到 IPFS 节点上。
 
@@ -798,7 +798,7 @@ func doMount(node *core.IpfsNode, fsdir, nsdir string) error {
 总之，这段代码定义了一个简单的函数，用于将 IPFS 节点挂载到指定的文件系统上。
 
 
-```
+```go
 package node
 
 import (
@@ -813,7 +813,7 @@ func Mount(node *core.IpfsNode, fsdir, nsdir string) error {
 
 ```
 
-# `/opt/kubo/fuse/readonly/doc.go`
+# `fuse/readonly/doc.go`
 
 这段代码定义了一个名为"fuse/readonly"的FUSE（Filesystem in Userspace）文件系统实现，旨在通过IPFS（InterPlanetary File System，星际文件系统）访问文件。它主要存储在ipfs.目录中，提供了一个可以访问IPFS资源的方式，允许用户在不受文件系统限制的情况下进行文件操作。
 
@@ -838,14 +838,14 @@ func Mount(node *core.IpfsNode, fsdir, nsdir string) error {
 总之，这段代码定义了一个FUSE文件系统实现，可以让你通过IPFS访问文件，并提供了一系列文件操作功能。
 
 
-```
+```go
 // package fuse/readonly implements a fuse filesystem to access files
 // stored inside of ipfs.
 package readonly
 
 ```
 
-# `/opt/kubo/fuse/readonly/ipfs_test.go`
+# `fuse/readonly/ipfs_test.go`
 
 这段代码是一个 Go 语言中的匿名函数，它通过结合多个条件，来判断是否使用某些第三方库。具体来说，该函数的作用是：
 
@@ -862,7 +862,7 @@ package readonly
 * `g开行武夷山双腿导游图 flask小游戏 一起去二连湖作文 左右做人流体描图摸摸集 英语中动词和副词的辨析 董卿的父亲是谁 野生大乱斗下载 对不起我不认识你 拍照那个app下载 我和儿子重名了怎么办呢 幼儿园老师 美国国旗和约 91红心福利视频大全 小黄人2在线观看 百度云盘下载软件下载网站 迪迦奥特曼模型 标致4008海外版本 91红心福利视频大全 超级马里奥256背景 路由器上不了网怎么处理 小黄人2下载 奥特曼是日本买的吗 迪士尼公主英文名字 2022考研初试时间 小米redmi k4pro参数 2022考研初试成绩查询 2022考研初试成绩查询网站 董卿的儿子是谁
 
 
-```
+```go
 //go:build !nofuse && !openbsd && !netbsd && !plan9
 // +build !nofuse,!openbsd,!netbsd,!plan9
 
@@ -919,7 +919,7 @@ func randObj(t *testing.T, nd *core.IpfsNode, size int64) (ipld.Node, []byte) {
 }
 
 
-```
+```go
 func maybeSkipFuseTests(t *testing.T) {
 	if ci.NoFuse() {
 		t.Skip("Skipping FUSE tests")
@@ -954,7 +954,7 @@ func randObj(t *testing.T, nd *core.IpfsNode, size int64) (ipld.Node, []byte) {
 5. 如果操作成功，将打印成功消息。如果出现错误，将捕获并记录错误，以便在测试中进行更详细的错误处理。
 
 
-```
+```go
 func setupIpfsTest(t *testing.T, node *core.IpfsNode) (*core.IpfsNode, *fstest.Mount) {
 	t.Helper()
 	maybeSkipFuseTests(t)
@@ -984,7 +984,7 @@ func setupIpfsTest(t *testing.T, node *core.IpfsNode) (*core.IpfsNode, *fstest.M
 这段代码的主要作用是测试在Ipfs中读取文件的正确性。该代码首先创建一个随机对象，然后使用Ipfs的`random_object`函数将该对象随机存储到Ipfs的某个目录中。接着，代码使用`path.Join`函数将Ipfs目录的路径与随机对象的键（即随机对象的序列号）组合成一个新的文件名。最后，代码使用`os.ReadFile`函数读取文件并比较读取到的内容与之前存储的随机对象的内容是否相等。如果它们不相等，则代码会输出错误信息并跳过当前的测试。
 
 
-```
+```go
 // Test writing an object and reading it back through fuse.
 func TestIpfsBasicRead(t *testing.T) {
 	if testing.Short() {
@@ -1026,7 +1026,7 @@ func TestIpfsBasicRead(t *testing.T) {
 最后，函数返回结果数组。
 
 
-```
+```go
 func getPaths(t *testing.T, ipfs *core.IpfsNode, name string, n *dag.ProtoNode) []string {
 	if len(n.Links()) == 0 {
 		return []string{name}
@@ -1060,7 +1060,7 @@ The program uses a goroutine to read the contents of the file. It reads the file
 The program also uses a context with a cancel function to cancel the operation when it is done.
 
 
-```
+```go
 // Perform a large number of concurrent reads to stress the system.
 func TestIpfsStressRead(t *testing.T) {
 	if testing.Short() {
@@ -1183,7 +1183,7 @@ func TestIpfsStressRead(t *testing.T) {
 5. 如果二者内容不匹配，或者目录节点不存在，则抛出错误并打印错误信息。
 
 
-```
+```go
 // Test writing a file and reading it back.
 func TestIpfsBasicDirRead(t *testing.T) {
 	if testing.Short() {
@@ -1250,7 +1250,7 @@ func TestIpfsBasicDirRead(t *testing.T) {
 如果测试过程中出现错误，程序会打印错误消息并停止执行。
 
 
-```
+```go
 // Test to make sure the filesystem reports file sizes correctly.
 func TestFileSizeReporting(t *testing.T) {
 	if testing.Short() {
@@ -1276,7 +1276,7 @@ func TestFileSizeReporting(t *testing.T) {
 
 ```
 
-# `/opt/kubo/fuse/readonly/mount_unix.go`
+# `fuse/readonly/mount_unix.go`
 
 这段代码是一个 Go 语言编写的工具函数，用于构建 Go 语言程序的依赖文件。
 
@@ -1285,7 +1285,7 @@ func TestFileSizeReporting(t *testing.T) {
 然后，它定义了一个名为 `Mount` 的函数，用于将 IPFS 挂载到指定路径。函数接收两个参数：一个 IPFS 节点和一个挂载点。函数首先尝试从配置文件中查找有关允许其他操作系统访问的设置，如果没有找到，则输出一个 `N/A` 错误。然后，它创建一个新的文件系统并将其传递给 `Mount` 函数，以便在 IPFS 节点上执行挂载操作。最后，函数将返回一个 `mount.Mount` 类型，表示已完成的挂载操作，以及可能的错误。
 
 
-```
+```go
 //go:build (linux || darwin || freebsd) && !nofuse
 // +build linux darwin freebsd
 // +build !nofuse
@@ -1310,7 +1310,7 @@ func Mount(ipfs *core.IpfsNode, mountpoint string) (mount.Mount, error) {
 
 ```
 
-# `/opt/kubo/fuse/readonly/readonly_unix.go`
+# `fuse/readonly/readonly_unix.go`
 
 这段代码是一个 Go 语言编写的 build 函数，用于构建 Go 语言程序的依赖文件。它使用了 build- as-BUILD- 模式，这种模式将依赖文件提取到 build 中而不是在运行时同时构建。
 
@@ -1323,7 +1323,7 @@ func Mount(ipfs *core.IpfsNode, mountpoint string) (mount.Mount, error) {
 这里 !nofuse 是用来避免在构建时同时构建 Linux 和 Darwin 下的文件系统，因为 build-as-BUILD- 模式会同时构建这两个操作系统下的依赖文件，这可能导致一些问题。
 
 
-```
+```go
 //go:build (linux || darwin || freebsd) && !nofuse
 // +build linux darwin freebsd
 // +build !nofuse
@@ -1362,7 +1362,7 @@ import (
 最后，它还定义了一个名为 "Root" 的结构体，该结构体包含一个名为 "Ipfs" 的成员和一个名为 "fs.Node" 的成员，后者用于将 IPFS 节点转换为 fs.Node 类型。该 "Root" 结构体还定义了一个名为 "Error" 的成员和一个名为 "nil" 的成员，后者的作用是避免在输出错误信息时产生不必要的混乱。
 
 
-```
+```go
 var log = logging.Logger("fuse/ipfs")
 
 // FileSystem is the readonly IPFS Fuse Filesystem.
@@ -1393,7 +1393,7 @@ If the conversion succeeds, it creates a `Node` struct that represents the file 
 It is important to note that the `Node` struct in this implementation only has a single property, `Ipfs`, which is used to store the `Ipfs` object. This is not a full file descriptor struct and any additional functionality, such as support for file attributes or creation of channels, would need to be implemented.
 
 
-```
+```go
 // Root is the root object of the filesystem tree.
 type Root struct {
 	Ipfs *core.IpfsNode
@@ -1490,7 +1490,7 @@ func (s *Root) Lookup(ctx context.Context, name string) (fs.Node, error) {
 通过使用这些数据结构和函数，函数可以实现从指定目录中读取目录列表并返回的功能。需要注意的是，由于该函数在根目录下被禁止使用，因此需要进行特判以避免发生错误。
 
 
-```
+```go
 // ReadDirAll reads a particular directory. Disallowed for root.
 func (*Root) ReadDirAll(ctx context.Context) ([]fuse.Dirent, error) {
 	log.Debug("read Root")
@@ -1530,7 +1530,7 @@ func (s *Node) loadData() error {
 如果 `s` 节点没有缓存数据，函数会执行 `loadData` 函数来加载数据，并返回错误信息。如果加载数据成功，则根据 `s.cached.Type()` 获取到的数据类型，执行相应的写入操作。
 
 
-```
+```go
 // Attr returns the attributes of a given node.
 func (s *Node) Attr(ctx context.Context, a *fuse.Attr) error {
 	log.Debug("Node attr")
@@ -1580,7 +1580,7 @@ func (s *Node) Attr(ctx context.Context, a *fuse.Attr) error {
 函数的作用是帮助用户查找 FUSE 树中指定的节点，并在查找失败时给出错误信息。
 
 
-```
+```go
 // Lookup performs a lookup under this node.
 func (s *Node) Lookup(ctx context.Context, name string) (fs.Node, error) {
 	log.Debugf("Lookup '%s'", name)
@@ -1616,7 +1616,7 @@ The function then checks the type of the data and converts it to the appropriate
 The function then appends the `fuse.Dirent` entries for the retrieved directory child node to a slice of entries and returns either the slice or an error. If any errors occur, the function returns immediately. If the function successfully retrieves and formats the entries, it returns them.
 
 
-```
+```go
 // ReadDirAll reads the link structure as directory entries.
 func (s *Node) ReadDirAll(ctx context.Context) ([]fuse.Dirent, error) {
 	log.Debug("Node ReadDir")
@@ -1692,7 +1692,7 @@ func (s *Node) ReadDirAll(ctx context.Context) ([]fuse.Dirent, error) {
 7. 最后，函数使用“close”方法关闭输入读取器（r），并返回一个名为“nil”的错误。
 
 
-```
+```go
 func (s *Node) Getxattr(ctx context.Context, req *fuse.GetxattrRequest, resp *fuse.GetxattrResponse) error {
 	// TODO: is nil the right response for 'bug off, we ain't got none' ?
 	resp.Xattr = nil
@@ -1750,7 +1750,7 @@ func (s *Node) Read(ctx context.Context, req *fuse.ReadRequest, resp *fuse.ReadR
 最后，代码创建了一个名为 `roNodeImpl` 的名为 `NodeImpl` 的实参类型，该实参类型包含了一个名为 `fs.NodeImpl` 的类型字段，该类型字段包含了一个 `Node` 类型字段和一个 `NodeStringLookupper` 类型字段。
 
 
-```
+```go
 // to check that our Node implements all the interfaces we want.
 type roRoot interface {
 	fs.Node
@@ -1778,7 +1778,7 @@ type roNode interface {
 因此，`(*Node)(nil)`表示创建一个指向Node类型对象的智能指针，并将该智能指针初始化为 nil(指向一个空智能指针)。由于Node类型没有被定义，因此无法创建一个具体的Node对象，但可以定义一个名为`Node`的类型，以便在需要时创建Node对象。
 
 
-```
+```go
 var _ roNode = (*Node)(nil)
 
 ```

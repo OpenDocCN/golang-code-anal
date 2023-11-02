@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 16
 
-# `/opt/kubo/core/commands/ping.go`
+# `core/commands/ping.go`
 
 该代码是一个 Go 语言 package 中的函数命令，主要用于设置和管理社区成员资格（社区成员身份验证）。
 
@@ -37,7 +37,7 @@
 15. 通过 "export usage" 导出 "usage" 函数，用于设置社区成员资格验证的使用说明。
 
 
-```
+```go
 package commands
 
 import (
@@ -66,7 +66,7 @@ import (
 最后，定义了一个 `PingTimeout` 常量，它的值为 `10 * time.Second`，表示允许的最短 `Ping` 请求超时时间。这个常量被用于 `PingCount` 的 `count` 选项中，当 `count` 设置为 `0` 时，允许 `Ping` 请求的最大次数为 `PingCount` 减一。
 
 
-```
+```go
 const kPingTimeout = 10 * time.Second
 
 type PingResult struct {
@@ -89,7 +89,7 @@ This is a Go-like language and it looks like it implements theering.io API. The 
 The code implements a simple ping server that listens for incoming pings and sends them a response. The server uses a buffer to store incoming requests and a receiver to handle the events emitted by the receiver. The receiver receives and processes each event, updating the total latency time received from the pings. If the receiver receives multiple pings, it average the latency time over the received pings and sends the information in a `PingResult` struct to the receiver.
 
 
-```
+```go
 var PingCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Send echo request packets to IPFS hosts.",
@@ -285,7 +285,7 @@ f. 返回 `text`。
 函数的作用是接收一个字符串参数 `text`，解析 `text` 中的 peer 地址信息，并返回一个匹配的 `MA` 对象、一个 `peer.ID` 值和一个错误对象。
 
 
-```
+```go
 func ParsePeerParam(text string) (ma.Multiaddr, peer.ID, error) {
 	// Multiaddr
 	if strings.HasPrefix(text, "/") {
@@ -306,7 +306,7 @@ func ParsePeerParam(text string) (ma.Multiaddr, peer.ID, error) {
 
 ```
 
-# `/opt/kubo/core/commands/profile.go`
+# `core/commands/profile.go`
 
 这段代码是一个 Go 语言编写的命令行工具，它主要用于在本地机器上安装并配置 IPFS（InterPlanetary File System）库。IPFS 是一个去中心化的点对点分布式文件系统，可以快速、安全地共享文件。
 
@@ -329,7 +329,7 @@ func ParsePeerParam(text string) (ma.Multiaddr, peer.ID, error) {
 8. 使用 GitHub Actions：最后，通过运行 GitHub Actions 来自动化部署这个命令行工具，以便在代码仓库的页面中显示 ipfs 密度的额外信息。
 
 
-```
+```go
 package commands
 
 import (
@@ -356,7 +356,7 @@ import (
 最后，定义了一个名为 `sysProfileCmd` 的常量，该常量指向一个名为 `cmds.Command` 的类型，该类型包含一个可以帮助使用 `sysProfileCmd` 的 `Helptext` 字段。
 
 
-```
+```go
 // time format that works in filenames on windows.
 var timeFormat = strings.ReplaceAll(time.RFC3339, ":", "_")
 
@@ -395,7 +395,7 @@ go run collect_profiles.go
 2121111121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212
 
 
-```
+```go
 Collects profiles from a running go-ipfs daemon into a single zip file.
 To aid in debugging, this command also attempts to include a copy of
 the running go-ipfs binary.
@@ -417,7 +417,7 @@ The output file includes:
 这段代码实现了一个对Go-IPFS进行监控和分析的工具，提供了运行中的 Goroutines、CPU 分配情况、堆内存使用情况、堆内存分配情况、互斥锁使用情况、块级分配情况以及 Go-IPFS 的版本信息。它并不包含任何与 Go-IPFS 数据或元数据相关的信息，也不包含您的配置文件或私钥，以及您的计算机的内存、文件系统等内部信息。
 
 
-```
+```go
 - A list of running goroutines.
 - A CPU profile.
 - A heap inuse profile.
@@ -443,7 +443,7 @@ The `archive.Close()` call at the end of the `PostRun` block is a mistake, as it
 It is also worth noting that the code does not handle errors that may occur during profile creation. For example, the file may not have the necessary permissions, or the profile may already exist. It is possible that these errors will cause the profile to fail and should be handled appropriately.
 
 
-```
+```go
 However, it could reveal:
 
 - Your build path, if you built go-ipfs yourself.
@@ -542,7 +542,7 @@ However, it could reveal:
 
 ```
 
-# `/opt/kubo/core/commands/pubsub.go`
+# `core/commands/pubsub.go`
 
 这段代码定义了一个名为"commands"的包，其中定义了一些用于管理IPFS(InterPlanetary File System)和其他网络服务的命令。具体来说，这些命令包括：
 
@@ -555,7 +555,7 @@ However, it could reveal:
 7. "github.com/ipfs/go-ipfs-cmds"：通过导入 "github.com/ipfs/go-ipfs-cmds" 来支持IPFS命令行工具中的"go-ipfs-cmds"命令。
 
 
-```
+```go
 package commands
 
 import (
@@ -582,7 +582,7 @@ import (
 该命令对象通过 map 函数与几个 CMDS(命令对象模型)关联，包括 PubSubPubCmd、PubsubSubCmd、PubsubLsCmd 和 PubsubPeersCmd。这些函数一起实现了 PubSub 系统的核心功能。
 
 
-```
+```go
 var PubsubCmd = &cmds.Command{
 	Status: cmds.Deprecated,
 	Helptext: cmds.HelpText{
@@ -615,7 +615,7 @@ DEPRECATED FEATURE (see https://github.com/ipfs/kubo/issues/9717)
 最后，这个脚本定义了一个名为 PubsubSubCmd 的常量，它是一个cmds.Command类型的变量，用于存储 cmds.Command 的实例。
 
 
-```
+```go
 type pubsubMessage struct {
 	From     string   `json:"from,omitempty"`
 	Data     string   `json:"data,omitempty"`
@@ -674,7 +674,7 @@ if err != nil {
 This code snippet demonstrates how to use the data serializer to serialize a PubSubMessage to the output stream. The serializer can then be used with the "text" or "json" formats as described in the Go standard.
 
 
-```
+```go
 PEER ENCODING
 
   Peer IDs in From fields are encoded using the default text representation
@@ -770,7 +770,7 @@ TOPIC AND DATA ENCODING
 由于该代码处于被 deprecated(已过时)的状态，因此它的实现被弃用，不应该在生产环境中使用。
 
 
-```
+```go
 var PubsubPubCmd = &cmds.Command{
 	Status: cmds.Deprecated,
 	Helptext: cmds.HelpText{
@@ -808,7 +808,7 @@ HTTP RPC ENCODING
 注意，该代码中的所有 API 调用都是基于 Go 的云函数，并且使用了 Go 的标准库 "fmt"，"os"，"strings"，"unicode"，"net/http"，"io/ioutil"，"golang.org/x/net/context"，以及 "golang.org/x/os/err" 等。
 
 
-```
+```go
 `,
 	},
 	Arguments: []cmds.Argument{
@@ -854,7 +854,7 @@ Helptext 变量包含一个使用新主题名称格式帮助文本，该文本�
 在帮助文本中，有一个名为 TopicEncoding 的短描述，它指出了该命令使用的主题名称编码方式。该描述还提到了一个名为 TopicEncodings 的变量，它包含一个 JSON 格式的主题编码格式。
 
 
-```
+```go
 var PubsubLsCmd = &cmds.Command{
 	Status: cmds.Deprecated,
 	Helptext: cmds.HelpText{
@@ -892,7 +892,7 @@ TOPIC ENCODING
 整个工具的作用是将一组主题发送到指定的讨论组，并将它们编码成“base64url”格式的字节。
 
 
-```
+```go
 `,
 	},
 	Run: func(req *cmds.Request, res cmds.ResponseEmitter, env cmds.Environment) error {
@@ -929,7 +929,7 @@ TOPIC ENCODING
 第二段代码 "safeTextListEncoder" 接收一个 "Request" 参数、一个 "Writer" 参数和一个字符串数组 "list"。它遍历输入参数 "list" 中的每个元素，并使用 "fmt" 函数将每个元素的字符串编码为字符串，并在编码过程中使用 "cmdenv.EscNonPrint" 函数将非打印able字符集中的字符进行转义。最后，它使用 "safeTextListEncoder" 函数将编码后的字符串打印到输出 "Writer" 上。
 
 
-```
+```go
 func multibaseDecodedStringListEncoder(req *cmds.Request, w io.Writer, list *stringList) error {
 	for n, mb := range list.Strings {
 		_, data, err := mbase.Decode(mb)
@@ -967,7 +967,7 @@ func safeTextListEncoder(req *cmds.Request, w io.Writer, list *stringList) error
 值得注意的是，这个脚本还输出了一个DEPRECATED FEATURE警告，因为这个功能在将来不应该被用于生产环境。在当前状态下，它可能已经被测试用于开发和调试目的。
 
 
-```
+```go
 var PubsubPeersCmd = &cmds.Command{
 	Status: cmds.Deprecated,
 	Helptext: cmds.HelpText{
@@ -998,7 +998,7 @@ DEPRECATED FEATURE (see https://github.com/ipfs/kubo/issues/9717)
 如果出现任何错误，例如从客户端收到的数据不可用或IoTFS服务器返回的错误消息，则返回错误。
 
 
-```
+```go
 TOPIC AND DATA ENCODING
 
   Topic names are a binary data. To ensure all bytes are transferred
@@ -1055,7 +1055,7 @@ TOPIC AND DATA ENCODING
 在函数内部，由于 `mbase.Decode` 函数需要一个编码作为参数，而 `urlArgsEncoder` 和 `urlArgsDecoder` 函数需要将 binary 数据作为参数传递，因此它们需要对 `mbase.Decode` 函数进行修改，以便正确地接收和处理多基数字符串。具体来说，这两个函数需要在返回前对 `mbase.Decode` 函数的错误信息进行处理，以使其能够正确地处理 `urlArgsEncoder` 和 `urlArgsDecoder` 函数传入的数据。
 
 
-```
+```go
 // TODO: move to cmdenv?
 // Encode binary data to be passed as multibase string in URL arguments.
 // (avoiding issues described in https://github.com/ipfs/kubo/issues/7939)
@@ -1092,7 +1092,7 @@ func urlArgsDecoder(req *cmds.Request, env cmds.Environment) error {
 
 ```
 
-# `/opt/kubo/core/commands/refs.go`
+# `core/commands/refs.go`
 
 这段代码定义了一个名为 "commands" 的包，其中定义了一些与命令行相关的常量和函数。
 
@@ -1116,7 +1116,7 @@ func urlArgsDecoder(req *cmds.Request, env cmds.Environment) error {
 最后，这个包还定义了一个名为 "ipfs-cmds" 的函数指针类型，它是从 "ipfs/go-ipfs-cmds" 包中导入的。
 
 
-```
+```go
 package commands
 
 import (
@@ -1150,7 +1150,7 @@ import (
 最后，该代码没有做其他事情，所以它不会输出任何值。
 
 
-```
+```go
 var refsEncoderMap = cmds.EncoderMap{
 	cmds.Text: cmds.MakeTypedEncoder(func(req *cmds.Request, w io.Writer, out *RefWrapper) error {
 		if out.Err != "" {
@@ -1176,7 +1176,7 @@ type KeyList struct {
 另外，最后一个选项 "max-depth" 可以用于指定在 "ipfs refs" 命令中列出链接的最大深度，即对象中链接不能再嵌套多少层。
 
 
-```
+```go
 const (
 	refsFormatOptionName    = "format"
 	refsEdgesOptionName     = "edges"
@@ -1210,7 +1210,7 @@ The program can handle a maximum depth of 10, and supports both direct and indir
 The program uses a recursive function to traverse the object graph, and outputs the encoded references for all unique resources that are at a depth of 1 or greater.
 
 
-```
+```go
 List all references recursively by using the flag '-r'.
 
 NOTE: Like most other commands, Kubo will try to fetch the blocks of the passed path if they can't be found in the local store if it is running in online mode.
@@ -1302,7 +1302,7 @@ NOTE: Like most other commands, Kubo will try to fetch the blocks of the passed 
 通过使用 "refsEncoderMap" 和其他函数，该命令可以正确处理不同本地对象的哈希值，并在遍历哈希值时输出结果。
 
 
-```
+```go
 var RefsLocalCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "List all local references.",
@@ -1342,7 +1342,7 @@ Displays the hashes of all local objects. NOTE: This treats all local objects as
 该函数的作用是获取给定路径列表中的所有根节点，并将它们返回。函数接收一个上下文上下文、一个表示要获取的接口API和一个字符串数组，然后使用cmdutils.PathOrCidPath函数将每个路径的根节点获取出来，并将获取到的根节点存储在一个数组中。接着使用n.ResolvePath函数，将每个根节点作为路径的根节点，递归地获取其它的根节点，并将它们的根节点ID存储在一个哈希表中。最后，函数返回根节点ID数组和错误，如果在获取过程中出现错误，则返回nil。
 
 
-```
+```go
 func objectsForPaths(ctx context.Context, n iface.CoreAPI, paths []string) ([]cid.Cid, error) {
 	roots := make([]cid.Cid, len(paths))
 	for i, sp := range paths {
@@ -1372,7 +1372,7 @@ func objectsForPaths(ctx context.Context, n iface.CoreAPI, paths []string) ([]ci
 最后，在 RefWrapper 和 RefWriter 的构造函数中，初始化了上述定义的字符串字段和标识符，并将 RefWrapper 的 ref 和 Err 字段设置为空，将 RefWriter 的 res 和 DAG 字段设置为 res.Response 和 ipld.NodeGetter.Node，将 RefWriter 的 Unique 字段设置为 false，将 PrintFmt 字段设置为 ""。
 
 
-```
+```go
 type RefWrapper struct {
 	Ref string
 	Err string
@@ -1403,7 +1403,7 @@ This is a function that is part of a拓扑排序算法的预处理 step。它的
 总体来说，该函数的主要作用是处理每个节点的局部拓扑结构，并确保节点集合中每个节点都被正确地打印出来。
 
 
-```
+```go
 // WriteRefs writes refs of the given object to the underlying writer.
 func (rw *RefWriter) WriteRefs(c cid.Cid, enc cidenc.Encoder) (int, error) {
 	n, err := rw.DAG.Get(rw.Ctx, c)
@@ -1471,7 +1471,7 @@ func (rw *RefWriter) writeRefsRecursive(n ipld.Node, depth int, enc cidenc.Encod
 This function appears to determine whether a depth recorder (`rw`) can retrieve a CPL subgraph from a root node (`c`) with the specified depth limit (`--maxDepth`). It does this by first checking if the depth limit is already reached. If it is, the function returns `false` and `false`, as it is not possible to have a depth limit that is greater than or equal to the maximum depth. If the depth limit is not reached, the function checks if the input graph is already unique. If it is not, the function starts tracking the CPL subgraph by traversing the graph and counting the number of seen CPL instances. If the depth limit is already reached or the graph is already unique, the function returns `false` and `false`, as it is not possible to retrieve a CPL subgraph from a root node with a depth that is greater than or equal to the maximum depth. If the depth limit is not reached and the graph is not already unique, the function returns `true` and `true`, as it is possible to retrieve a CPL subgraph from a root node with the specified depth limit.
 
 
-```
+```go
 // visit returns two values:
 // - the first boolean is true if we should keep traversing the DAG
 // - the second boolean is true if we should print the CID
@@ -1558,7 +1558,7 @@ func (rw *RefWriter) visit(c cid.Cid, depth int) (bool, bool) {
 该函数主要实现了 `WriteOneEdge` 接口，支持输出一个边（` edge` 参数）。
 
 
-```
+```go
 // Write one edge
 func (rw *RefWriter) WriteEdge(from, to cid.Cid, linkname string, enc cidenc.Encoder) error {
 	if rw.Ctx != nil {

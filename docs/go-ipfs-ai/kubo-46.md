@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 46
 
-# `/opt/kubo/plugin/daemon.go`
+# `plugin/daemon.go`
 
 这段代码定义了一个名为`PluginDaemon`的接口，用于定义一个用于运行插件的`Plugin`实例。这个插件可以运行在命令行或系统启动时，它通过`CoreAPI`实现对底层系统的访问。
 
@@ -11,7 +11,7 @@
 最后，插件 daemon 进程可以通过`CoreAPI`提供的API来访问底层系统，如`/ethereum/v1/accounts`等。
 
 
-```
+```go
 package plugin
 
 import (
@@ -28,7 +28,7 @@ type PluginDaemon interface {
 
 ```
 
-# `/opt/kubo/plugin/daemoninternal.go`
+# `plugin/daemoninternal.go`
 
 这段代码定义了一个名为“plugin”的包。这个包包含一个名为“PluginDaemonInternal”的接口类型。这个接口类型定义了一个名为“PluginDaemonInternal”的类型，以及一个名为“Plugin”的接口类型。
 
@@ -37,7 +37,7 @@ type PluginDaemon interface {
 通过实现“PluginDaemonInternal”接口，可以创建自己的daemon插件，并将它与IpfsNode进行交互。这个插件可以用来实现自己的Ipfs相关操作，例如创建或删除IpfsNode、获取IpfsClient等。
 
 
-```
+```go
 package plugin
 
 import "github.com/ipfs/kubo/core"
@@ -55,7 +55,7 @@ type PluginDaemonInternal interface {
 
 ```
 
-# `/opt/kubo/plugin/datastore.go`
+# `plugin/datastore.go`
 
 这段代码定义了一个名为`PluginDatastore`的接口，用于实现添加对不同数据存储器的处理器。它实现了`PluginDatastore`接口，提供了`Plugin`和`DatastoreTypeName`以及`DatastoreConfigParser`两个方法。
 
@@ -65,7 +65,7 @@ type PluginDaemonInternal interface {
 
 
 
-```
+```go
 package plugin
 
 import (
@@ -83,7 +83,7 @@ type PluginDatastore interface {
 
 ```
 
-# `/opt/kubo/plugin/fx.go`
+# `plugin/fx.go`
 
 这段代码定义了一个名为"plugin"的包，其中包含了一些关于如何自定义Go-IPFS应用中fx选项的接口定义。
 
@@ -96,7 +96,7 @@ type PluginDatastore interface {
 总之，这段代码提供了一个简单而灵活的方法，让用户可以自定义Go-IPFS应用的选项。
 
 
-```
+```go
 package plugin
 
 import (
@@ -124,7 +124,7 @@ import (
 通过 PluginFx 的 Plugin 和 Options 方法，你可以在使用 Native Furniturefx 时定义自己的选项，并通过这个接口来返回这些选项。
 
 
-```
+```go
 // Generally you'll want to append additional options to NodeInfo.FXOptions and return that.
 type PluginFx interface {
 	Plugin
@@ -133,7 +133,7 @@ type PluginFx interface {
 
 ```
 
-# `/opt/kubo/plugin/ipld.go`
+# `plugin/ipld.go`
 
 这段代码定义了一个名为`PluginIPLD`的接口，表示一个可以注册IPLD(即IPLD编码器)处理程序的插件。
 
@@ -144,7 +144,7 @@ type PluginFx interface {
 因此，该代码定义了一个用于添加IPLD编码器处理程序的插件接口，并为实现者提供了注册IPLD编码器到注册表的方法。
 
 
-```
+```go
 package plugin
 
 import (
@@ -161,7 +161,7 @@ type PluginIPLD interface {
 
 ```
 
-# `/opt/kubo/plugin/plugin.go`
+# `plugin/plugin.go`
 
 这段代码定义了一个名为"plugin"的环境类，用于在IPFS插件的初始化时传递给插件的配置环境。
 
@@ -172,7 +172,7 @@ type PluginIPLD interface {
 最后，该插件的代码中定义了一个名为"Plugin"的接口，该接口定义了插件的API访问点，以及插件启动时执行的操作。
 
 
-```
+```go
 package plugin
 
 // Environment is the environment passed into the plugin on init.
@@ -207,7 +207,7 @@ type Environment struct {
 初始化插件时，如果插件使用了 io.Closer，它应该在插件卸载时执行终止步骤。
 
 
-```
+```go
 // Plugin is the base interface for all kinds of go-ipfs plugins
 // It will be included in interfaces of different Plugins
 //
@@ -228,7 +228,7 @@ type Plugin interface {
 
 ```
 
-# `/opt/kubo/plugin/tracer.go`
+# `plugin/tracer.go`
 
 这段代码定义了一个名为`PluginTracer`的接口，用于实现一个插件，可以在父程序中添加跟踪器。
 
@@ -241,7 +241,7 @@ type Plugin interface {
 `InitTracer`函数是插件的一个必须的函数，用于初始化跟踪器。该函数的实现将在创建跟踪器实例时执行，初始化跟踪器并将之添加到分配的上下文中。如果函数在执行时出现错误，将会返回一个`opentracing.IgnoreCriteria`类型的错误，而不是一个具体的错误信息。
 
 
-```
+```go
 package plugin
 
 import (
@@ -257,7 +257,7 @@ type PluginTracer interface {
 
 ```
 
-# `/opt/kubo/plugin/loader/loader.go`
+# `plugin/loader/loader.go`
 
 这段代码是一个 Go 语言编写的库，名为 "loader"，旨在为在 IPFS(InterPlanetary File System) 系统中使用 Kubernetes 集群时提供一种简单的方法。它实现了以下主要功能：
 
@@ -276,7 +276,7 @@ type PluginTracer interface {
 7. Kubernetes 支持：该库假设用户正在使用一个支持 Kubernetes 的 IPFS 客户端。它提供了一些 Kubernetes 资源类型，例如 Deployment,Service 和 ConfigMap，可以通过 Loader 进行拉取和推送。
 
 
-```
+```go
 package loader
 
 import (
@@ -313,7 +313,7 @@ import (
 最后，定义了一个名为 `loaderState` 的枚举类型，用于记录加载器的状态。
 
 
-```
+```go
 var preloadPlugins []plugin.Plugin
 
 // Preload adds one or more plugins to the preload list. This should _only_ be called during init.
@@ -340,7 +340,7 @@ fmt.Printf("%v\n", loaderState)
 这样就可以在控制台输出加载器的不同状态了。
 
 
-```
+```go
 const (
 	loaderLoading loaderState = iota
 	loaderInitializing
@@ -408,7 +408,7 @@ func (ls loaderState) String() string {
 通过使用`LoadAndLoadDirectory`和`Plugin`类型的函数，可以实现插件加载器的主要功能。在初始化函数中，加载器会读取任何需要的插件，并将它们注册到实例中。然后，可以调用`start`函数来启动插件加载器，并可以选择性地调用`start`函数来加载插件。调用`close`函数可以关闭插件加载器。
 
 
-```
+```go
 // PluginLoader keeps track of loaded plugins.
 //
 // To use:
@@ -439,7 +439,7 @@ type PluginLoader struct {
 最后，函数加载整个repo目录中的插件，如果加载成功，将返回PluginLoader实例，否则返回 nil。
 
 
-```
+```go
 // NewPluginLoader creates new plugin loader.
 func NewPluginLoader(repo string) (*PluginLoader, error) {
 	loader := &PluginLoader{plugins: make([]plugin.Plugin, 0, len(preloadPlugins)), repo: repo}
@@ -472,7 +472,7 @@ func NewPluginLoader(repo string) (*PluginLoader, error) {
 具体来说，代码首先定义了一个名为`cfg`的结构体，该结构体包含一个名为`Plugins`的`config.Plugins`字段。然后，定义了一个`readPluginsConfig`函数，该函数接收一个`repoRoot`和一个`userConfigFile`参数。函数首先定义了一个`cfg`结构体，然后使用`config.Filename`函数来获取配置文件路径。接着，使用`os.Open`函数打开配置文件，并使用`json.NewDecoder`函数将JSON编码的配置文件内容读取到`cfg`结构体中。最后，函数返回`cfg.Plugins`和nil，分别表示读取到的插件和没有错误。
 
 
-```
+```go
 // readPluginsConfig reads the Plugins section of the IPFS config, avoiding
 // reading anything other than the Plugin section. That way, we're free to
 // make arbitrary changes to all _other_ sections in migrations.
@@ -513,7 +513,7 @@ transition函数的作用是在从当前状态加载到目标状态时，确保�
 这两个函数一起使用，确保在执行transition函数从当前状态加载器到目标状态时，始终使用正确的加载器状态，从而避免可能出现的错误。
 
 
-```
+```go
 func (loader *PluginLoader) assertState(state loaderState) error {
 	if loader.state != state {
 		return fmt.Errorf("loader state must be %s, was %s", state, loader.state)
@@ -540,7 +540,7 @@ func (loader *PluginLoader) transition(from, to loaderState) error {
 因此，这段代码的作用是将一个插件加载到插件加载器中，并允许在插件加载器中加载已禁用但仍然存在于配置中的插件。
 
 
-```
+```go
 // Load loads a plugin into the plugin loader.
 func (loader *PluginLoader) Load(pl plugin.Plugin) error {
 	if err := loader.assertState(loaderLoading); err != nil {
@@ -582,7 +582,7 @@ func (loader *PluginLoader) Load(pl plugin.Plugin) error {
 函数的具体实现可以看作是在插件加载器初始化过程中，加载所有可用的插件并将其注册到加载器中。这样，当加载器需要加载插件时，它可以从插件目录中的所有插件中选择一个或多个来加载，而不会因为某些插件不存在而崩溃。
 
 
-```
+```go
 // LoadDirectory loads a directory of plugins into the plugin loader.
 func (loader *PluginLoader) LoadDirectory(pluginDir string) error {
 	if err := loader.assertState(loaderLoading); err != nil {
@@ -614,7 +614,7 @@ func (loader *PluginLoader) LoadDirectory(pluginDir string) error {
 最后，函数返回包含所有插件的数组，或者是错误。
 
 
-```
+```go
 func loadDynamicPlugins(pluginDir string) ([]plugin.Plugin, error) {
 	_, err := os.Stat(pluginDir)
 	if os.IsNotExist(err) {
@@ -667,7 +667,7 @@ func loadDynamicPlugins(pluginDir string) ([]plugin.Plugin, error) {
 整个函数的实现重点是确保所有的加载器都已正确加载和初始化，以便 plugins 可以正常使用。
 
 
-```
+```go
 // Initialize initializes all loaded plugins.
 func (loader *PluginLoader) Initialize() error {
 	if err := loader.transition(loaderLoading, loaderInitializing); err != nil {
@@ -698,7 +698,7 @@ func (loader *PluginLoader) Initialize() error {
 最终，这段代码将所有插件注入到适当的子系统中，并返回一个表示成功或失败的结果。
 
 
-```
+```go
 // Inject hooks all the plugins into the appropriate subsystems.
 func (loader *PluginLoader) Inject() error {
 	if err := loader.transition(loaderInitialized, loaderInjecting); err != nil {
@@ -753,7 +753,7 @@ func (loader *PluginLoader) Inject() error {
 具体实现中，首先定义了一个`PluginLoader`类型的变量`loader`，然后定义了一个`Start`函数，该函数接收一个`core.IpfsNode`类型的参数`node`，接着如果错误，返回错误。在`Start`函数中，首先检查是否有错误，然后如果有错误，则关闭加载器并返回。接着，使用`transition`函数将加载器从`loaderInjected`状态转移到`loaderStarting`状态，然后再使用`coreapi.NewCoreAPI`函数获取一个`CoreAPI`实例，如果错误，返回错误。然后，开始遍历所有插件，对于每个插件，使用`plugins` slice获取插件的`PluginDaemon`类型，如果是，则使用`Start`函数启动插件。在循环过程中，将启动的插件添加到`loader.started`数组中，然后使用`transition`函数将加载器从`loaderStarting`状态转移到`loaderStarted`状态，最后使用`transition`函数将加载器从`loaderStarted`状态转移到`loaderStarted`状态，这样所有的插件都启动成功并添加到`loader.started`数中。
 
 
-```
+```go
 // Start starts all long-running plugins.
 func (loader *PluginLoader) Start(node *core.IpfsNode) error {
 	if err := loader.transition(loaderInjected, loaderStarting); err != nil {
@@ -796,7 +796,7 @@ func (loader *PluginLoader) Start(node *core.IpfsNode) error {
 当 `loaderClosed` 状态成立时，函数会将 `loaderFailed` 和 `loaderClosing` 状态中的一个设置为 `loaderClosed`，并返回 `nil`。
 
 
-```
+```go
 // Close stops all long-running plugins.
 func (loader *PluginLoader) Close() error {
 	switch loader.state {
@@ -843,7 +843,7 @@ func (loader *PluginLoader) Close() error {
 该函数接收一个 PluginTracer 类型的参数，但没有对其进行任何操作。函数的作用是提醒在将来应该使用 OpenTelemetry 收集器而不是当前的 Tracer 插件。然后在函数内部创建一个新的 Tracer 实例，并将其注册到应用程序中。
 
 
-```
+```go
 func injectDatastorePlugin(pl plugin.PluginDatastore) error {
 	return fsrepo.AddDatastoreConfigHandler(pl.DatastoreTypeName(), pl.DatastoreConfigParser())
 }
@@ -869,7 +869,7 @@ func injectTracerPlugin(pl plugin.PluginTracer) error {
 这个函数的作用是注册一个名为 `fx` 的插件，该插件使用了 `plugin.PluginFx` 选项。具体来说，函数首先调用 `core.RegisterFXOptionFunc` 来注册 `fx` 插件的选项功能。然后，它返回一个 `nil` 表示成功或错误，失败时返回 `core.NewError`。
 
 
-```
+```go
 func injectFxPlugin(pl plugin.PluginFx) error {
 	core.RegisterFXOptionFunc(pl.Options)
 	return nil
@@ -877,7 +877,7 @@ func injectFxPlugin(pl plugin.PluginFx) error {
 
 ```
 
-# `/opt/kubo/plugin/loader/load_nocgo.go`
+# `plugin/loader/load_nocgo.go`
 
 这段代码是一个Go语言编写的Linux、Darwin和FreeBSD系统的构建加载器。它包含三个构建函数，分别用于在没有CGO、noplugin和免费BSD等插件的情况下构建系统。
 
@@ -888,7 +888,7 @@ func injectFxPlugin(pl plugin.PluginFx) error {
 最后，通过运行这些构建函数，加载器将构建系统。
 
 
-```
+```go
 //go:build !cgo && !noplugin && (linux || darwin || freebsd)
 // +build !cgo
 // +build !noplugin
@@ -911,14 +911,14 @@ func init() {
 此函数的作用是加载一个名为"nocgoLoadPlugin"的插件，并返回插件列表和错误。它接受一个字符串参数"fi"，表示插件文件的接口。函数返回 nil 和一个错误对象 errors.New，当插件无法使用cgo支持时，错误对象将包含错误信息。
 
 
-```
+```go
 func nocgoLoadPlugin(fi string) ([]iplugin.Plugin, error) {
 	return nil, errors.New("not built with cgo support")
 }
 
 ```
 
-# `/opt/kubo/plugin/loader/load_noplugin.go`
+# `plugin/loader/load_noplugin.go`
 
 这段代码定义了一个名为“loader”的包，其中包含一个名为“init”的函数。
 
@@ -927,7 +927,7 @@ func nocgoLoadPlugin(fi string) ([]iplugin.Plugin, error) {
 接下来，我们没有做任何具体的实现，直接返回了一个无参函数。根据组合函数的特性，我们可以猜测这个函数会在需要时被调用，然后在函数内部执行加载IHF（InterPlanetary File System）插件的操作。不过，由于没有提供具体的输入和输出，因此无法进一步验证我们的猜测。
 
 
-```
+```go
 //go:build noplugin
 // +build noplugin
 
@@ -952,14 +952,14 @@ func init() {
 在实际应用中，该函数用于在运行时检查是否支持所要加载的插件，若插件支持，则可以正常返回所需的Plugin；若插件不支持，则返回一个错误信息，用户可以根据此进行相应调整。
 
 
-```
+```go
 func nopluginLoadPlugin(string) ([]iplugin.Plugin, error) {
 	return nil, errors.New("not built with plugin support")
 }
 
 ```
 
-# `/opt/kubo/plugin/loader/load_unix.go`
+# `plugin/loader/load_unix.go`
 
 这段代码是一个Go语言编写的Makefile，用于编译并运行一个名为"kubo"的KubernetesIPFS分布式存储库的子模块。
 
@@ -972,7 +972,7 @@ func nopluginLoadPlugin(string) ([]iplugin.Plugin, error) {
 5. 最后，加载KubernetesIPFS插件。
 
 
-```
+```go
 //go:build cgo && !noplugin && (linux || darwin || freebsd)
 // +build cgo
 // +build !noplugin
@@ -1006,7 +1006,7 @@ func init() {
 5. 函数返回的结果是，由名为 "ipnl插件" 的接口数组和可能的错误组成的元组，如果调用失败则输出错误。
 
 
-```
+```go
 func unixLoadPlugin(fi string) ([]iplugin.Plugin, error) {
 	pl, err := plugin.Open(fi)
 	if err != nil {
@@ -1027,7 +1027,7 @@ func unixLoadPlugin(fi string) ([]iplugin.Plugin, error) {
 
 ```
 
-# `/opt/kubo/plugin/loader/preload.go`
+# `plugin/loader/preload.go`
 
 这段代码定义了一个名为“loader”的包。这个包定义了一系列导入的第三方插件，这些插件都是用来提供额外的功能和增强表现，包括：
 
@@ -1043,7 +1043,7 @@ func unixLoadPlugin(fi string) ([]iplugin.Plugin, error) {
 通过导入这些插件，“loader”可以提供更多的功能和方便，使得开发人员可以更轻松地开发基于IPFS的Kubernetes应用。
 
 
-```
+```go
 package loader
 
 import (
@@ -1078,7 +1078,7 @@ import (
 这个插件加载器脚本仅作为插件的一级加载器，它并不会对插件进行任何修改或执行其他操作。要使用插件，需要将插件的代码段复制到插件的原始缓冲区（source code），并使用编译器将插件编译为可执行文件。
 
 
-```
+```go
 // To change it, modify the plugin/loader/preload.sh
 
 func init() {
@@ -1094,7 +1094,7 @@ func init() {
 
 ```
 
-# `/opt/kubo/plugin/plugins/badgerds/badgerds.go`
+# `plugin/plugins/badgerds/badgerds.go`
 
 这段代码是一个 Go 语言编写的库，名为 "badgerds"，用于在 Kubernetes 中使用 IPFS(InterPlanetary File System)数据源。它实现了以下功能：
 
@@ -1111,7 +1111,7 @@ func init() {
 总结起来，这段代码是一个库，它实现了在 Kubernetes 中使用 IPFS 数据源的基本功能。
 
 
-```
+```go
 package badgerds
 
 import (
@@ -1138,7 +1138,7 @@ badgerdsPlugin是一个匿名类型，它代表了一个没有名称和版本的
 由于badgerdsPlugin是一个匿名类型，因此无法直接访问其实例的Name和Version属性，但是可以像访问普通切片一样使用它们的默认实现。
 
 
-```
+```go
 // Plugins is exported list of plugins that will be loaded.
 var Plugins = []plugin.Plugin{
 	&badgerdsPlugin{},
@@ -1184,7 +1184,7 @@ func (*badgerdsPlugin) Version() string {
 7. `badgerdsPlugin`是一个指向`badgerds`实现的`badgerdsPlugin`类型。它实现了`Init`和`DatastoreTypeName`函数，因此，它可以在初始化函数中使用自身来执行这些函数。
 
 
-```
+```go
 func (*badgerdsPlugin) Init(_ *plugin.Environment) error {
 	return nil
 }
@@ -1210,7 +1210,7 @@ params map[string]interface{}) (fsrepo.DatastoreConfig, error) {
 This means that the function expects the value to be passed in as a key, and the key must be of the specified type. The return type of the function is `fsrepo.DatastoreConfig, error`. If the function evaluates successfully, it returns a value of type `fsrepo.DatastoreConfig, error`. If it fails, it returns an error of type `error`.
 
 
-```
+```go
 // BadgerdsDatastoreConfig returns a configuration stub for a badger datastore
 // from the given parameters.
 func (*badgerdsPlugin) DatastoreConfigParser() fsrepo.ConfigFromMap {
@@ -1284,7 +1284,7 @@ d. 调用`badgerds.NewDatastore`函数，使用新的datastore配置创建新的
 e. 返回新datastore实例和调用成功。
 
 
-```
+```go
 func (c *datastoreConfig) DiskSpec() fsrepo.DiskSpec {
 	return map[string]interface{}{
 		"type": "badgerds",
@@ -1313,7 +1313,7 @@ func (c *datastoreConfig) Create(path string) (repo.Datastore, error) {
 
 ```
 
-# `/opt/kubo/plugin/plugins/dagjose/dagjose.go`
+# `plugin/plugins/dagjose/dagjose.go`
 
 这段代码定义了一个名为 "dagjose" 的 package，它包含了一些导入、定义和导入声明，以及一个名为 "Plugins" 的字段，其值为一个包含一个名为 "dagjose" 的列表类型的 "plugin.Plugin" 结构体。
 
@@ -1328,7 +1328,7 @@ func (c *datastoreConfig) Create(path string) (repo.Datastore, error) {
 4. 通过导入 "multicodec" 和 "go-multicodec" 包，实现了多个数据编码的混合格式，以便在 DAG-Jose 使用不同的数据编码形式。
 
 
-```
+```go
 package dagjose
 
 import (
@@ -1361,7 +1361,7 @@ var Plugins = []plugin.Plugin{
 最后，它通过 `func (*dagjosePlugin) Init(_ *plugin.Environment) error` 函数，表示 `dagjosePlugin` 的初始化，它接受一个 `*plugin.Environment` 类型的参数，但没有实现具体的初始化操作。
 
 
-```
+```go
 type dagjosePlugin struct{}
 
 var _ plugin.PluginIPLD = (*dagjosePlugin)(nil)
@@ -1385,7 +1385,7 @@ func (*dagjosePlugin) Init(_ *plugin.Environment) error {
 该函数的作用是注册一个名为"DagJose"的加密/解密器到名为"Registry"的注册表中。注册器函数需要传递两个参数，第一个参数是一个代表"DagJose"的接口类型，第二个参数是一个代表"Registry"的接口类型。函数的作用是执行"Registry"注册"DagJose"加密/解密器操作。
 
 
-```
+```go
 func (*dagjosePlugin) Register(reg multicodec.Registry) error {
 	reg.RegisterEncoder(uint64(mc.DagJose), dagjose.Encode)
 	reg.RegisterDecoder(uint64(mc.DagJose), dagjose.Decode)
@@ -1394,7 +1394,7 @@ func (*dagjosePlugin) Register(reg multicodec.Registry) error {
 
 ```
 
-# `/opt/kubo/plugin/plugins/flatfs/flatfs.go`
+# `plugin/plugins/flatfs/flatfs.go`
 
 这段代码定义了一个名为"flatfs"的包，其中包含了一个名为"flatfsPlugin"的静态错误类型。
 
@@ -1407,7 +1407,7 @@ func (*dagjosePlugin) Register(reg multicodec.Registry) error {
 最后，该代码还定义了一些常量和变量，用于定义flatfs的一些参数和选项。
 
 
-```
+```go
 package flatfs
 
 import (
@@ -1441,7 +1441,7 @@ var Plugins = []plugin.Plugin{
 最后，该 struct 类型还包含一个名为 "ds-flatfs" 的类型，用于将 flat file system 映射到 plugin.PluginDatastore。
 
 
-```
+```go
 type flatfsPlugin struct{}
 
 var _ plugin.PluginDatastore = (*flatfsPlugin)(nil)
@@ -1467,7 +1467,7 @@ func (*flatfsPlugin) Init(_ *plugin.Environment) error {
 这段代码的作用是实现了一个`BadgerdsDatastoreConfig`的解析函数，该函数可以根据传入的参数解析出一个`BadgerdsDatastoreConfig`结构体，然后返回该结构体。
 
 
-```
+```go
 func (*flatfsPlugin) DatastoreTypeName() string {
 	return "flatfs"
 }
@@ -1523,7 +1523,7 @@ func (*flatfsPlugin) DatastoreConfigParser() fsrepo.ConfigFromMap {
 函数首先将 `c` 指向的路径的绝对路径。然后使用 `filepath.Join` 函数将路径和当前工作目录连接起来，以便创建数据存储文件。接着使用 `flatfs.CreateOrOpen` 函数创建或打开数据存储文件，并设置一个字符类型的参数 `c.shardFun` 和一个布尔类型的参数 `c.syncField`，表示是否自动创建数据存储文件并同步数据文件。最后，函数返回创建的数据存储文件的结果。
 
 
-```
+```go
 func (c *datastoreConfig) DiskSpec() fsrepo.DiskSpec {
 	return map[string]interface{}{
 		"type":      "flatfs",

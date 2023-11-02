@@ -1,11 +1,11 @@
 # go-ipfs 源码解析 21
 
-# `/opt/kubo/core/commands/name/name.go`
+# `core/commands/name/name.go`
 
 该代码的作用是定义了一个名为 "name" 的包，该包包含了一些导入、常量和函数，用于将 IPFS 中的链请不要
 
 
-```
+```go
 package name
 
 import (
@@ -37,7 +37,7 @@ import (
 最后，将上述字段都设置为`true`，说明这个命令会成功执行，并返回正确的结果。
 
 
-```
+```go
 type IpnsEntry struct {
 	Name  string
 	Value string
@@ -66,7 +66,7 @@ which is the hash of its public key.
 通过执行这些操作，用户可以轻松地将数据发布到IPFS网络中，并可以通过IPFS键命令来查看和获取与数据相关的更多信息。
 
 
-```
+```go
 IPNS is a PKI namespace, where names are the hashes of public keys, and
 the private key enables publishing new (signed) values. In both publish
 and resolve, the default name used is the node's own PeerID,
@@ -91,7 +91,7 @@ Publish an <ipfs-path> with your default name:
 最后，它使用 "ipfs name resolve QmaCpDMGvV2BGHeYERUEnRQAwe3N8SzbUtfsmvsqQLuvuJ" 命令来尝试从 IPFS 服务器上恢复另一个名称 "QmaCpDMGvV2BGHeYERUEnRQAwe3N8SzbUtfsmvsqQLuvuJ"。
 
 
-```
+```go
 Publish an <ipfs-path> with another name, added by an 'ipfs key' command:
 
   > ipfs key gen --type=rsa --size=2048 mykey
@@ -121,7 +121,7 @@ Resolve the value of another name:
 5. 通过 "inspect" 命令，可以查看本地文件系统中的 ipfs 链接。
 
 
-```
+```go
 Resolve the value of a dnslink:
 
   > ipfs name resolve ipfs.io
@@ -157,7 +157,7 @@ Resolve the value of a dnslink:
 这两个结构体可能是在某个IPNS库中使用的，用于验证IPNSEntry的有效性。
 
 
-```
+```go
 type IpnsInspectValidation struct {
 	Valid  bool
 	Reason string
@@ -187,7 +187,7 @@ type IpnsInspectEntry struct {
 该结构体代表了一个IPNS Inspect命令的输出结果。这个命令可以接受一个IPNS记录的JSON或XML格式的输入数据，并在传递一个公钥文件时使用验证功能来确保输入数据的合法性。
 
 
-```
+```go
 type IpnsInspectResult struct {
 	Entry         IpnsInspectEntry
 	PbSize        int
@@ -218,7 +218,7 @@ The server also validates the incoming request using the SignatureType feature. 
 The server returns an HTTP 500 Internal Server Error response if the incoming request is invalid or the server is not able to validate it.
 
 
-```
+```go
 `,
 		LongDescription: `
 Prints values inside of IPNS Record protobuf and its DAG-CBOR Data field.
@@ -382,7 +382,7 @@ Passing --verify will verify signature against provided public key.
 
 ```
 
-# `/opt/kubo/core/commands/name/publish.go`
+# `core/commands/name/publish.go`
 
 这段代码是一个 Go 语言编写的命令行工具，它旨在创建一个名为 "name" 的包。这个包通过导入其他包的函数和类型来完成其操作。
 
@@ -397,7 +397,7 @@ Passing --verify will verify signature against provided public key.
 7. 在工具的帮助下，创建了一个名为 "name" 的包。
 
 
-```
+```go
 package name
 
 import (
@@ -423,7 +423,7 @@ import (
 该命令对象中定义的变量 errAllowOffline 是通过调用 errors.New 创建的，它包含一个错误消息 "can't publish while offline: pass `--allow-offline` to override"，用于在发布命令时如果当前环境处于离线状态，但是允许通过传递 --allow-offline 选项来覆盖这个错误。
 
 
-```
+```go
 var errAllowOffline = errors.New("can't publish while offline: pass `--allow-offline` to override")
 
 const (
@@ -448,7 +448,7 @@ var PublishCmd = &cmds.Command{
 该命名空间允许在IPFS上生成更多的节点名称和它们的相应密钥。您可以通过运行'ipfs key'命令来查看和使用更多名称。
 
 
-```
+```go
 IPNS is a PKI namespace, where names are the hashes of public keys, and
 the private key enables publishing new (signed) values. In both publish
 and resolve, the default name used is the node's own PeerID,
@@ -484,7 +484,7 @@ ipfs name publish /ipfs/QmatmE9msSfkKxoffpHwNLNKgwZG8eT9Bud6YoPab52vpy
 Keep in mind that in order to publish an IPFS path, you will need to have ownership or control over the IPFS blocks that make up the path. If you do not have this control, you may need to contact the IPFS network administrator to request the necessary permissions.
 
 
-```
+```go
 Publish an <ipfs-path> with your default name:
 
   > ipfs name publish /ipfs/QmatmE9msSfkKxoffpHwNLNKgwZG8eT9Bud6YoPab52vpy
@@ -523,7 +523,7 @@ If the `-h` option is specified, the program will display the help message and e
 The program uses the `time` package to parse the TTL timestamp and the `cmdutils` package to handle the path to the data to be stored. It also uses the `api.IpnsNodeService` and `api.IpnsEntry` types from the `k8s.io` package to handle the Kubernetes node service and the IpnsEntry resource.
 
 
-```
+```go
 `,
 	},
 
@@ -614,14 +614,14 @@ The program uses the `time` package to parse the TTL timestamp and the `cmdutils
 
 ```
 
-# `/opt/kubo/core/commands/object/diff.go`
+# `core/commands/object/diff.go`
 
 这段代码定义了一个名为 "objectcmd" 的包。它导入了多个外部库，包括 "fmt"、"io"、"github.com/ipfs/boxo/ipld/merkledag/dagutils"、"github.com/ipfs/boxo/path" 和 "github.com/ipfs/go-ipfs-cmds"。还定义了一个常量 "verboseOptionName"，用于指定是否在输出中包含详细的调试信息。
 
 此代码的主要作用是创建一个名为 "objectcmd" 的包，用于在 IPFS 分布式文件系统中执行命令。通过导入其他库，它实现了命令行工具 "objectcmd" 的功能，包括将其包装为命令行工具，从 IPFS 存储桶中读取数据，并执行一系列操作。"
 
 
-```
+```go
 package objectcmd
 
 import (
@@ -649,7 +649,7 @@ const (
 最后，定义了两个函数，一个名为"diffChanges"的函数和一个名为"diffObjects"的函数。这些函数的具体作用未在代码中详细说明。
 
 
-```
+```go
 type Changes struct {
 	Changes []*dagutils.Change
 }
@@ -680,7 +680,7 @@ two IPFS objects.
 最后，在脚本中，`QmcmRptkSPWhptCttgHg27QNDmnV33wAJyUkCnAvqD3eCD` 和 `QmRfFVsjSXkhFxrfWnLpMae2M4GBVsry6VAuYYcji5MiZb` 是IPFS资源别名，分别指向不同的文件。
 
 
-```
+```go
 Example:
 
    > ls foo
@@ -723,7 +723,7 @@ The "generateChanges" function is called by the "EmitOnce" method, which is then
 The "Changes" struct is defined as a struct that includes several fields, including "After" which is a field that specifies the application date and time of the configuration changes to be applied.
 
 
-```
+```go
 `,
 	},
 	Arguments: []cmds.Argument{
@@ -806,14 +806,14 @@ The "Changes" struct is defined as a struct that includes several fields, includ
 
 ```
 
-# `/opt/kubo/core/commands/object/object.go`
+# `core/commands/object/object.go`
 
 这段代码定义了一个名为 "objectcmd" 的包。它导入了多个外部库，包括 encoding/base64、errors、fmt、io、text/tabwriter、cmds、github.com/ipfs/go-ipfs-cmds、github.com/ipfs/kubo/core/commands/cmdenv、github.com/ipfs/kubo/core/commands/cmdutils、humanize、github.com/dustin/go-humanize、github.com/ipfs/boxo/coreiface/options、dag、ipld 和 go-cid。
 
 具体来说，这段代码定义了一个工具函数对象，通过执行一系列操作，将 JSON 格式的数据转换为指定格式的数据，并在转换过程中输出一些信息。它还可以将数据写入到一个名为 "output.txt" 的文件中。
 
 
-```
+```go
 package objectcmd
 
 import (
@@ -843,7 +843,7 @@ import (
 最后，定义了一个名为 `Object` 的结构体，其中包含一个名为 `Hash` 的字符串字段和一个名为 `Links` 的数组字段，该数组字段也是一个名为 `Link` 的结构体类型。该结构体还包含一个名为 `json` 的字段，用于将结构体序列化为 JSON 字节切片。
 
 
-```
+```go
 type Node struct {
 	Links []Link
 	Data  string
@@ -866,7 +866,7 @@ type Object struct {
 最后，定义了一个名为ObjectCmd的命令对象，该对象继承自cmds.Command，用于定义命令行参数的默认值和错误消息。
 
 
-```
+```go
 var ErrDataEncoding = errors.New("unknown data field encoding")
 
 const (
@@ -902,7 +902,7 @@ var ObjectCmd = &cmds.Command{
 由于该命令是针对旧版本的Go库而设计的，因此随着Go语言版本的增长，该命令可能会变得过时。建议使用更现代的"ipfs dag"和"ipfs files"来代替旧的"ipfs object"。
 
 
-```
+```go
 'ipfs object' is a legacy plumbing command used to manipulate dag-pb objects
 directly. Deprecated, use more modern 'ipfs dag' and 'ipfs files' instead.`,
 	},
@@ -924,7 +924,7 @@ directly. Deprecated, use more modern 'ipfs dag' and 'ipfs files' instead.`,
 这段代码定义了一个名为ObjectDataCmd的ObjectDataCmd类型变量，以及一个名为cmds.Command的Command类型变量。然后，它将ObjectDataCmd的Status设置为deprecated，将其Helptext设置为一个字符串，其中包含了该命令的说明，指出该命令已经过时，并提供了一个替代方法来获取dag-pb对象的数据。最后，它将该Command类型的指针变量ObjectDataCmd保存到变量中。
 
 
-```
+```go
 // ObjectDataCmd object data command
 var ObjectDataCmd = &cmds.Command{
 	Status: cmds.Deprecated, // https://github.com/ipfs/kubo/issues/7936
@@ -967,7 +967,7 @@ encoded multihash. Provided for legacy reasons. Use 'ipfs dag get' instead.
 3. 将获取到的data作为响应返回。
 
 
-```
+```go
 Note that the "--encoding" option does not affect the output, since the output
 is the raw data of the object.
 `,
@@ -1009,7 +1009,7 @@ Finally, the function creates an `Object` object with the retrieved information 
 The function uses the `tabwriter` package to write the response to the `stdout` or `stderr` of the `cmds.Request` object. The `headers` option is used to specify which fields to include in the response. If the `headers` option is `true`, the function will write the `Hash`, `Size`, and `Name` fields to the `tabwriter`.
 
 
-```
+```go
 // ObjectLinksCmd object links command
 var ObjectLinksCmd = &cmds.Command{
 	Status: cmds.Deprecated, // https://github.com/ipfs/kubo/issues/7936
@@ -1101,7 +1101,7 @@ Finally, it encodes the `Data` field using the `encodeData` function and emits t
 Note that the `decodeNode` function has not been defined in the code, so it is assumed to be a function that takes a `Node` object and a string encoding and returns a deserialized `Node` object. Additionally, the `Link` object has a `Hash` field that is a hexadecimal encoded version of the CID field, and a `Name` field that is the human-readable name of the link.
 
 
-```
+```go
 // ObjectGetCmd object get command
 var ObjectGetCmd = &cmds.Command{
 	Status: cmds.Deprecated, // https://github.com/ipfs/kubo/issues/7936
@@ -1216,7 +1216,7 @@ DEPRECATED and provided for legacy reasons. Use 'ipfs dag get' instead.
 注意，由于该代码已经过时，因此它包含的实现完全没有任何意义。如果您需要实现相同的功能，建议使用 modern 的工具，例如“files stat”或“dag stat”。
 
 
-```
+```go
 // ObjectStatCmd object stat command
 var ObjectStatCmd = &cmds.Command{
 	Status: cmds.Deprecated, // https://github.com/ipfs/kubo/issues/7936
@@ -1249,7 +1249,7 @@ DEPRECATED: modern replacements are 'files stat' and 'dag stat'
 需要注意的是，根目录的元数据可能会被不同的人修改，因此在依赖这个工具的时候，应该注意保证其安全。另外，由于DAG是二进制格式的数据结构，而这里显示的是对人类友好的字符串，因此也建议在使用这个工具的时候，避免对DAG的修改。
 
 
-```
+```go
 DEPRECATED: Provided for legacy reasons. Modern replacements:
 
   For unixfs, 'ipfs files stat' can be used:
@@ -1292,7 +1292,7 @@ The function uses the following encoders:
 * json: This encoder is used for the JSON representation of the input object.
 
 
-```
+```go
 `,
 	},
 
@@ -1379,7 +1379,7 @@ The function also has a type declaration for `Object` which has the fields `Hash
 The function uses the `cmdenv` package to interact with the external service. This package is used to retrieve environment objects, which contain information about the external service, such as its endpoint and any required authentication.
 
 
-```
+```go
 // ObjectPutCmd object put command
 var ObjectPutCmd = &cmds.Command{
 	Status: cmds.Deprecated, // https://github.com/ipfs/kubo/issues/7936
@@ -1469,7 +1469,7 @@ DEPRECATED and provided for legacy reasons. Use 'ipfs dag put' instead.
 ObjectNewCmd的函数重载了cmds.Command的 helptext属性的标签line和shortDescription属性。shortDescription属性指定了该命令的短描述，即ipfs object new命令的标签line和短描述。该标签line指定了该命令的名称，即"Deprecated way to create a new dag-pb object from a template。"短描述指定了该命令的作用，即通过调用该命令可以创建一个新的DAG-PB节点。
 
 
-```
+```go
 // ObjectNewCmd object new command
 var ObjectNewCmd = &cmds.Command{
 	Status: cmds.Deprecated, // https://github.com/ipfs/kubo/issues/7936
@@ -1500,7 +1500,7 @@ php
 该命令的实际实现主要依赖于 cmdenv 和 api-model ，通过这两者的组合，实现了命令行工具的定义。
 
 
-```
+```go
 Available templates:
 	* unixfs-dir
 
@@ -1553,7 +1553,7 @@ deserializeNode 函数的作用是将给定的 Node 对象转换为数据分层�
 最后，函数根据给定的数据字段编码方式对数据进行处理，如将文本数据作为[]byte 类型的数据，将 Base64 编码的数据作为[]byte 类型的数据，如果数据字段编码不正确，则返回错误。
 
 
-```
+```go
 // converts the Node object into a real dag.ProtoNode
 func deserializeNode(nd *Node, dataFieldEncoding string) (*dag.ProtoNode, error) {
 	dagnode := new(dag.ProtoNode)
@@ -1602,7 +1602,7 @@ func deserializeNode(nd *Node, dataFieldEncoding string) (*dag.ProtoNode, error)
 如果函数在执行编码操作时遇到错误，它将返回一个空字符串和错误。
 
 
-```
+```go
 func encodeData(data []byte, encoding string) (string, error) {
 	switch encoding {
 	case "text":

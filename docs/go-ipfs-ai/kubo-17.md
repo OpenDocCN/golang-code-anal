@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 17
 
-# `/opt/kubo/core/commands/repo.go`
+# `core/commands/repo.go`
 
 这段代码定义了一个名为 "commands" 的包，其中定义了一些与命令行相关的函数和变量。
 
@@ -21,7 +21,7 @@
 - 一个名为 "cmds" 的函数，它是一个 "ipfs" 项目的 Commands，定义了一些与命令行相关的函数和选项。
 
 
-```
+```go
 package commands
 
 import (
@@ -61,7 +61,7 @@ import (
 通过 RepoCmd 对象，可以调用 RepoCmd.Helptext 和 RepoCmd.Version 方法来获取该命令的帮助信息和版本号。通过 Subcommands 中的命令对象，可以调用相应的命令对象来执行对应的操作。例如，要查看本地 IPFS 存储库中的文件，可以调用 RepoCmd.List 方法。
 
 
-```
+```go
 type RepoVersion struct {
 	Version string
 }
@@ -94,7 +94,7 @@ The code also defines several constants for the different options that can be us
 The last line of the code creates an instance of the `cmds.Command` struct to hold the `repoGcCmd` instance. This struct is used to hold information about the command and can be used to provide help information to the user.
 
 
-```
+```go
 // GcResult is the result returned by "repo gc" command.
 type GcResult struct {
 	Key   cid.Cid
@@ -123,7 +123,7 @@ If there were errors, the function logs them using the "fmt.Fprintf" function an
 If the "corerepo.Get" operation was successful, the function performs the "re.Emit" operation with the "GcResult" struct and returns.
 
 
-```
+```go
 'ipfs repo gc' is a plumbing command that will sweep the local
 set of stored objects and remove ones that are not pinned in
 order to reclaim hard disk space.
@@ -210,7 +210,7 @@ order to reclaim hard disk space.
 此代码定义了两个变量，分别为 repoSizeOnlyOptionName 和 repoHumanOptionName，它们表示是否仅输出 repo 的大小信息或者仅输出 repo 的人类操作选项。接下来定义了一个名为 repoStatCmd 的命令对象，该对象表示要执行的 cmds.Command 类型的变量。通过该命令对象，可以调用 repoStatCmd.Helptext 和 repoStatCmd.Execute 等方法，从而获取本地仓库的统计信息并输出相应的结果。
 
 
-```
+```go
 const (
 	repoSizeOnlyOptionName = "size-only"
 	repoHumanOptionName    = "human"
@@ -239,7 +239,7 @@ The function uses a function called `printSize` to print human-readable names fo
 The function appears to handle errors correctly and returns an empty response if an error occurs. It also appears to return a response with a human-readable name if the repository is specified with a human-readable name.
 
 
-```
+```go
 RepoPath        string The path to the repo being currently used.
 Version         string The repo version.
 `,
@@ -321,7 +321,7 @@ Version         string The repo version.
 6. 将命令的编码器设置为`cmds.EncoderMap`，其中包含一个输出编码器，将输出写入一个`MessageOutput`类型的变量中。输出编码器的内容是一个`fmt.Fprintf`函数，用于将"Deprecated"`的消息输出到标准输出（通常是终端）。
 
 
-```
+```go
 var repoFsckCmd = &cmds.Command{
 	Status: cmds.Deprecated, // https://github.com/ipfs/kubo/issues/6435
 	Helptext: cmds.HelpText{
@@ -354,7 +354,7 @@ var repoFsckCmd = &cmds.Command{
 另外，函数内部还定义了一个名为 "defer wg.Done()" 的延迟操作，该操作将在同步工作组完成时执行，以确保所有 goroutines 都已经完成。
 
 
-```
+```go
 type VerifyProgress struct {
 	Msg      string
 	Progress int
@@ -396,7 +396,7 @@ func verifyWorkerRun(ctx context.Context, wg *sync.WaitGroup, keys <-chan cid.Ci
 函数的返回值是"results"通道的值，它将包含由"verifyWorkerRun"产生的验证结果。
 
 
-```
+```go
 func verifyResultChan(ctx context.Context, keys <-chan cid.Cid, bs bstore.Blockstore) <-chan string {
 	results := make(chan string)
 
@@ -427,7 +427,7 @@ If any errors occur during the verification process, the routine returns an erro
 The routine uses the `encoding.Text` type to convert the hashes to a text format that can be easily compared against each other. It also uses the `text/sort` package to sort the hashes by their content, which allows for efficient sorting without having to create a new array.
 
 
-```
+```go
 var repoVerifyCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Verify all blocks in repo are not corrupted.",
@@ -511,7 +511,7 @@ var repoVerifyCmd = &cmds.Command{
 * 输出当前的FS-REPO版本号。
 
 
-```
+```go
 var repoVersionCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Show the repo version.",
@@ -556,7 +556,7 @@ The program then uses the `migrations.GetMigrationFetcher` function to fetch the
 If the migration fails or there is an error, the program prints an error message and returns an error. Otherwise, it prints a success message and returns nil.
 
 
-```
+```go
 var repoMigrateCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Apply any outstanding migrations to the repo.",
@@ -622,7 +622,7 @@ var repoMigrateCmd = &cmds.Command{
 
 ```
 
-# `/opt/kubo/core/commands/resolve.go`
+# `core/commands/resolve.go`
 
 这段代码定义了一个名为"commands"的包，其中定义了一些用于与IPFS(InterPlanetary File System)进行交互的命令。
 
@@ -660,7 +660,7 @@ var repoMigrateCmd = &cmds.Command{
 通过这些函数，可以实现与IPFS的交互操作，例如创建目录、上传文件、查询文件等等。
 
 
-```
+```go
 package commands
 
 import (
@@ -692,7 +692,7 @@ The "resolveDhtRecordCountOptionName" option is specified as "dht-record-count",
 The "resolveDhtTimeoutOptionName" option is specified as "dht-timeout", which means it will accept names that are passed in as arguments and try to resolve them to a timeout value for DNS resolution.
 
 
-```
+```go
 const (
 	resolveRecursiveOptionName      = "recursive"
 	resolveDhtRecordCountOptionName = "dht-record-count"
@@ -713,7 +713,7 @@ identifiers and resolves them to the referenced item.
 该命令的作用是接受任何标识符（例如IPFS对象、IPFS引用或DNS链接），并将其解析为引用中的指定对象。具体来说，该命令使用Go语言中的IPFS协议，它支持IPFS对象之间的链接，并且可以与其他协议（如DNS）链接。通过使用`ipfs resolve`命令，用户可以指定要查找的标识符，命令将使用IPFS协议解析这些标识符并返回其引用对象。
 
 
-```
+```go
 There are a number of mutable name protocols that can link among
 themselves and into IPNS. For example IPNS references can (currently)
 point at an IPFS object, and DNS links can point at other DNS links, IPNS
@@ -743,7 +743,7 @@ If the specified path is not valid or cannot be encoded, the function returns an
 Finally, the function returns an error if any errors occur.
 
 
-```
+```go
 Resolve the value of another name recursively:
 
   $ ipfs resolve -r /ipns/QmbCMUZw6JFeZ7Wp9jkzbye3Fzp2GGcPgC3nmeUjfVF87n
@@ -856,7 +856,7 @@ Resolve the value of an IPFS DAG path:
 
 ```
 
-# `/opt/kubo/core/commands/root.go`
+# `core/commands/root.go`
 
 这段代码定义了一个名为“commands”的包，其中定义了一些可以用来操作IPFS(InterPlanetary File System)的工具。
 
@@ -877,7 +877,7 @@ Resolve the value of an IPFS DAG path:
 最后，代码导入了命令行工具(commands)包，以便在IPFS集群中使用这些工具。
 
 
-```
+```go
 package commands
 
 import (
@@ -905,7 +905,7 @@ import (
 此外，还定义了一个 `OfflineOption`，它的值为 `"offline"`，这意味着当 DHT 代理没有连接到本地网络时，它会记录下来。不过，这个选项已经过时了，建议使用 `OfflineOption` 代替。最后，定义了一个 `ApiOption`，它的值为 `"api"`，这意味着使用 DHT 代理的 API 请求。
 
 
-```
+```go
 var log = logging.Logger("core/commands")
 
 var (
@@ -939,7 +939,7 @@ const (
 10. 添加/删除CID：通过调用`block`命令来添加/删除CID。
 
 
-```
+```go
 var Root = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline:  "Global p2p merkle-dag filesystem.",
@@ -976,7 +976,7 @@ DATA STRUCTURE COMMANDS
 12. mount：用于将IPFS读写挂载点（实验性）的命令。
 
 
-```
+```go
 TEXT ENCODING COMMANDS
   cid           Convert and discover properties of CIDs
   multibase     Encode and decode data with Multibase format
@@ -1027,7 +1027,7 @@ commands：这个命令列出当前可用的所有命令。
 log：这个命令用于管理IPFS网络中的日志。包括记录运行的daemon、设置日志输出格式等信息。
 
 
-```
+```go
 NETWORK COMMANDS
   id            Show info about IPFS peers
   bootstrap     Add or remove bootstrap peers
@@ -1053,7 +1053,7 @@ TOOL COMMANDS
 此外，该工具还定义了一些选项，包括`RepoDirOption`、`ConfigFileOption`、`DebugOption`、`LocalOption`、`OfflineOption`和`ApiOption`，用于控制工具的某些选项。这些选项可以在命令行中使用，例如`ipfs <command> --help`将显示完整的命令行帮助。
 
 
-```
+```go
 Use 'ipfs <command> --help' to learn more about each command.
 
 ipfs uses a repository in the local file system. By default, the repo is
@@ -1100,7 +1100,7 @@ The list of subcommands includes commands for adding, editing, and deleting file
 Some of the notable commands in this list include "files" and "block", which are likely used to handle file and directory operations in the Improverman operator. Others include "ping" and "swarm", which are likely used for remote file and directory operations.
 
 
-```
+```go
 var CommandsDaemonCmd = CommandsCmd(Root)
 
 var rootSubcommands = map[string]*cmds.Command{
@@ -1154,7 +1154,7 @@ var rootSubcommands = map[string]*cmds.Command{
 最后，定义了一个名为 "ipfs" 的类，该类实现了 "ipfs" 命令行工具的功能。
 
 
-```
+```go
 // RootRO is the readonly version of Root
 var RootRO = &cmds.Command{}
 
@@ -1209,7 +1209,7 @@ var rootROSubcommands = map[string]*cmds.Command{
 1. 输出 "Root.ProcessHelp()"，这会输出一个使用 Python 的帮助信息，其中 "Root" 和 "func" 是函数定义时的名称，而 "ProcessHelp()" 是 Python 的 `sys.process.milli」'
 
 
-```
+```go
 func init() {
 	Root.ProcessHelp()
 	*RootRO = *Root
@@ -1237,14 +1237,14 @@ func init() {
 这段代码定义了一个名为 "MessageOutput" 的结构体类型，它有一个名为 "Message" 的字符串字段。这个结构体类型的变量可以被赋值，并且可以在以后的代码中使用。
 
 
-```
+```go
 type MessageOutput struct {
 	Message string
 }
 
 ```
 
-# `/opt/kubo/core/commands/root_test.go`
+# `core/commands/root_test.go`
 
 这段代码定义了一个名为 "commands" 的包，其中包含了一些测试函数，以及一个名为 "printErrors" 的函数。
 
@@ -1253,7 +1253,7 @@ type MessageOutput struct {
 该代码的主要目的是测试 "Root.debugValidate" 和 "RootRO.debugValidate" 函数的正确性。具体而言，代码会打印出所有测试错误信息，并使用 "t.Error" 函数将错误信息传递给 "t.Errorf" 函数。
 
 
-```
+```go
 package commands
 
 import (
@@ -1279,7 +1279,7 @@ func TestCommandTree(t *testing.T) {
 
 ```
 
-# `/opt/kubo/core/commands/routing.go`
+# `core/commands/routing.go`
 
 这段代码定义了一个名为“commands”的包，其中定义了一些IPFS相关的命令。具体来说，这些命令包括：
 
@@ -1302,7 +1302,7 @@ func TestCommandTree(t *testing.T) {
 - `github.com/ipfs/boxo/ipfs/transport/相关人员` 类型，用于定义IPFS传输层的底层实现。
 
 
-```
+```go
 package commands
 
 import (
@@ -1335,7 +1335,7 @@ import (
 最后，定义了一个名为 RoutingCmd 的 CMD 对象，该对象包含了在命令行中允许在线下发的路由命令，以及用于获取、设置和关联路由的子命令。
 
 
-```
+```go
 var errAllowOffline = errors.New("can't put while offline: pass `--allow-offline` to override")
 
 const (
@@ -1364,7 +1364,7 @@ var RoutingCmd = &cmds.Command{
 This is a Go routine that implements the `routing.QueryEvent` interface. It appears to handle the processing of routing events, which are defined by the `routing.Provider` and `routing.Provider` functions. These functions specify the addresses of the peers that should be used for
 
 
-```
+```go
 var findProvidersRoutingCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline:          "Find peers that can provide a specific value, given a key.",
@@ -1457,7 +1457,7 @@ var findProvidersRoutingCmd = &cmds.Command{
 This is a Go routine that implements the `routing.QueryEvent` type. It
 
 
-```
+```go
 const (
 	recursiveOptionName = "recursive"
 )
@@ -1573,7 +1573,7 @@ var provideRefRoutingCmd = &cmds.Command{
 对于每个服务，函数使用`r.Provide`传递给上下文、客户端ID和`true`参数。如果任何错误产生，函数将返回一个非`nil`错误。
 
 
-```
+```go
 func provideKeys(ctx context.Context, r routing.Routing, cids []cid.Cid) error {
 	for _, c := range cids {
 		err := r.Provide(ctx, c, true)
@@ -1629,7 +1629,7 @@ e. It emits any events that it has already emitted and returns.
 The function also uses the `printEvent` function to handle the events emitted by the peer, which are logged without any additional information.
 
 
-```
+```go
 var findPeerRoutingCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline:          "Find the multiaddresses associated with a Peer ID.",
@@ -1729,7 +1729,7 @@ The `base64.StdEncoding.DecodeString` method is then used to decode the encoded 
 Overall, this command is useful for finding the best value for a given key in a routing system.
 
 
-```
+```go
 var getValueRoutingCmd = &cmds.Command{
 	Status: cmds.Experimental,
 	Helptext: cmds.HelpText{
@@ -1788,7 +1788,7 @@ Different key types can specify other 'best' rules.
 由于该命令的实验性质，它的帮助文本中包含了重要的警告，要求使用者的帮助，因为该命令在 production 环境中并不稳定。
 
 
-```
+```go
 var putValueRoutingCmd = &cmds.Command{
 	Status: cmds.Experimental,
 	Helptext: cmds.HelpText{
@@ -1817,7 +1817,7 @@ The function uses a nested function, `pfuncMap`, to convert the options associat
 The function uses the `printEvent` function to convert the `options` map to a `routing.QueryEvent` object. The `printEvent` function is defined in the `printEvent` package, which is not included in the function source code.
 
 
-```
+```go
 of this.
 
 The value must be a valid value for the given key type. For example, if the key
@@ -1906,7 +1906,7 @@ The `pf()` function appears to handle various events that occur in the routing p
 Overall, this function seems to be an essential part of the `PeerFramework` system, as it is being used by the routing peers to handle various events that occur in their interactions with the system.
 
 
-```
+```go
 type (
 	printFunc func(obj *routing.QueryEvent, out io.Writer, verbose bool) error
 	pfuncMap  map[routing.QueryEventType]printFunc
@@ -1982,7 +1982,7 @@ ii. 如果解密失败，则返回一个错误。
 函数的输出结果为解密后的字符串，如果解密失败则返回一个错误。
 
 
-```
+```go
 func escapeDhtKey(s string) (string, error) {
 	parts := strings.Split(s, "/")
 	if len(parts) != 3 ||

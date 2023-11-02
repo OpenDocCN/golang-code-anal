@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 53
 
-# `/opt/kubo/routing/error.go`
+# `routing/error.go`
 
 这段代码定义了一个名为 "routing" 的包，其中包含了一些用于创建动态路由参数的函数和结构体。
 
@@ -9,7 +9,7 @@
 此外，这段代码还定义了一个名为 "fmt" 的包，其中包含了一项fmt函数，用于将错误消息打印为字符串格式。
 
 
-```
+```go
 package routing
 
 import (
@@ -39,14 +39,14 @@ func NewParamNeededErr(param string, routing config.RouterType) error {
 最后，将创建好的格式化字符串返回，并使用`e.Error()`方法将其返回的字符串作为参数传入，返回新的错误对象，即`e.Error()`的返回值。
 
 
-```
+```go
 func (e *ParamNeededError) Error() string {
 	return fmt.Sprintf("configuration param '%v' is needed for %v delegated routing types", e.ParamName, e.RouterType)
 }
 
 ```
 
-# `/opt/kubo/routing/wrapper.go`
+# `routing/wrapper.go`
 
 这段代码定义了一个名为“routing”的包，其中包含了一个名为“ProvideManyRouter”的接口，以及一个实现了“ProvideManyRouter”接口的名为“httpRoutingWrapper”的类。
 
@@ -62,7 +62,7 @@ func (e *ParamNeededError) Error() string {
 这段代码定义了一个名为“routing”的包，其中包含了一个名为“ProvideManyRouter”的接口，以及多个名为“httpRoutingWrapper”的类，这些类实现了“ProvideManyRouter”接口。
 
 
-```
+```go
 package routing
 
 import (
@@ -96,7 +96,7 @@ var (
 另外，还包含一个名为Bootstrap的函数，用于启动整个路由器链的加载过程。
 
 
-```
+```go
 // httpRoutingWrapper is a wrapper needed to construct the routing.Routing interface from
 // http delegated routing.
 type httpRoutingWrapper struct {
@@ -112,7 +112,7 @@ func (c *httpRoutingWrapper) Bootstrap(ctx context.Context) error {
 
 ```
 
-# `/opt/kubo/tar/format.go`
+# `tar/format.go`
 
 这段代码定义了一个名为 "tarfmt" 的包，它主要用于处理 tarball（tarball 是 GitHub Boxo 项目中的一个依赖包）文件。这个包实现了 tarball 文件的标准化，以便在不同的系统上进行解包和打包。
 
@@ -139,7 +139,7 @@ func (c *httpRoutingWrapper) Bootstrap(ctx context.Context) error {
 通过这些函数，"tarfmt" 包可以帮助用户处理 tarball 文件，使其具有标准化的一些特点，从而使其在不同的系统上具有更好的兼容性。
 
 
-```
+```go
 package tarfmt
 
 import (
@@ -182,7 +182,7 @@ import (
 如果 `w.WriteHeader(h)` 成功，函数返回 `buf.Bytes()` 和错误。因为 `blockSize` 变量是固定的，所以每次调用 `marshalHeader` 函数时，`zeroBlock` 字节数组中的所有元素都将被复用。
 
 
-```
+```go
 var log = logging.Logger("tarfmt")
 
 var (
@@ -207,7 +207,7 @@ func marshalHeader(h *tar.Header) ([]byte, error) {
 具体来说，代码中实现了一个名为ImportTar的函数，它接受一个IOReader对象和一个DAGService对象作为参数。函数在读取Tar文件内容后，创建了一个根目录节点，然后遍历Tar文件内容，将每个目录节点导入到DAGService中。在导入每个目录节点时，函数会检查其大小并计算其所需的存储空间，然后添加到DAGService中。如果函数在遍历过程中遇到错误，例如Tar文件不存在或读取错误，函数将返回错误并停止执行。最终，函数返回根目录节点，它将作为DAGService中的根节点，用于导出目录树。
 
 
-```
+```go
 // ImportTar imports a tar file into the given DAGService and returns the root
 // node.
 func ImportTar(ctx context.Context, r io.Reader, ds ipld.DAGService) (*dag.ProtoNode, error) {
@@ -277,7 +277,7 @@ func ImportTar(ctx context.Context, r io.Reader, ds ipld.DAGService) (*dag.Proto
 最后，函数使用path.Join函数将所有元素连接起来，形成一个完整的路径，并返回该路径。
 
 
-```
+```go
 // adds a '-' to the beginning of each path element so we can use 'data' as a
 // special link in the structure without having to worry about.
 func escapePath(pth string) string {
@@ -323,7 +323,7 @@ The function then returns the number of bytes read and a pointer to the end of t
 Overall, the function appears to be reading a file and returning the number of bytes read and a pointer to the end of the file.
 
 
-```
+```go
 func (tr *tarReader) Read(b []byte) (int, error) {
 	// if we have a header to be read, it takes priority
 	if tr.hdrBuf != nil {
@@ -430,7 +430,7 @@ func (tr *tarReader) Read(b []byte) (int, error) {
 该函数的作用是将 DAG 对象导出为 tar 文件，并返回一个 tar 文件的读取器和错误。
 
 
-```
+```go
 // ExportTar exports the passed DAG as a tar file. This function is the inverse
 // of ImportTar.
 func ExportTar(ctx context.Context, root *dag.ProtoNode, ds ipld.DAGService) (io.Reader, error) {
@@ -464,7 +464,7 @@ type countReader struct {
 这个函数只是简单地关闭 `r.r` 对象的读取操作。它返回一个错误，如果不成功关闭 `r.r` 对象，则会返回一个错误。
 
 
-```
+```go
 func (r *countReader) Read(b []byte) (int, error) {
 	n, err := r.r.Read(b)
 	r.n += n
@@ -518,7 +518,7 @@ this is an ipfs integration test
 
 * ipfs image named "zaqwsx_ipfs-test-img"
 
-```
+```go
 make setup
 fig build 
 fig up
@@ -536,7 +536,7 @@ it listens on 4011 and 4012
 * file in data volume, internally mapped to /data/file
 
 
-# `/opt/kubo/test/api-startup/main.go`
+# `test/api-startup/main.go`
 
 该代码的作用是测量HTTP服务器监听的两个不同端口（端口号5001和8080）的响应时间。
 
@@ -547,7 +547,7 @@ it listens on 4011 and 4012
 最后，代码等待两个 goroutine 完成，然后从 `when` 通道中获取数据，并打印从第一个数据中减去第二个数据的结果。
 
 
-```
+```go
 package main
 
 import (
@@ -585,7 +585,7 @@ func main() {
 
 ```
 
-# `/opt/kubo/test/bench/bench_cli_ipfs_add/main.go`
+# `test/bench/bench_cli_ipfs_add/main.go`
 
 这段代码是一个 Go 语言编写的程序，主要作用是测试一个名为 "test-mode.sh" 的脚本是否符合预期。如果脚本运行成功，则会输出 "./test-mode.sh: test-mode.sh" 的错误信息；如果脚本运行失败，则会输出更详细的错误信息。
 
@@ -626,7 +626,7 @@ func main() {
 	* "github.com/ipfs/kubo/config/第三方库，下载了一个"kubelet
 
 
-```
+```go
 package main
 
 import (
@@ -661,7 +661,7 @@ import (
 如果上述代码中出现的错误仍然存在，那么将打印一个错误消息并退出程序。
 
 
-```
+```go
 var (
 	debug  = flag.Bool("debug", false, "direct ipfs output to console")
 	online = flag.Bool("online", false, "run the benchmarks with a running daemon")
@@ -697,7 +697,7 @@ The program also includes a number of helper functions and variables that are us
 Overall, this program provides a simple and convenient way to perform a benchmark of a FUSE-based file system in Go.
 
 
-```
+```go
 func benchmarkAdd(amount int64) (*testing.BenchmarkResult, error) {
 	var benchmarkError error
 	results := testing.Benchmark(func(b *testing.B) {
@@ -776,7 +776,7 @@ func benchmarkAdd(amount int64) (*testing.BenchmarkResult, error) {
 
 ```
 
-# `/opt/kubo/test/bench/offline_add/main.go`
+# `test/bench/offline_add/main.go`
 
 这段代码是一个 Go 语言编写的测试程序，它包括以下主要部分：
 
@@ -791,7 +791,7 @@ func benchmarkAdd(amount int64) (*testing.BenchmarkResult, error) {
 
 
 
-```
+```go
 package main
 
 import (
@@ -817,7 +817,7 @@ import (
 这段代码的主要目的是比较两个不同单位的数值，基准函数是用来获取每个单位数量并打印在控制台上的。
 
 
-```
+```go
 func main() {
 	if err := compareResults(); err != nil {
 		log.Fatal(err)
@@ -851,7 +851,7 @@ func compareResults() error {
 最后，设置一个名为"b.StartTimer"的计时器，并使用"exec.Command"函数执行"ipfs add"命令，将"amount"参数作为命令行参数传入。设置"setupCmd"为"cmd"的执行命令，将"f"作为执行命令的文件名，并覆盖"amount"参数为所需的"amount"，将"seed"参数设置为所需的随机数种子。最后，使用"b.StopTimer"方法停止计时器，并在所有计时器都停止时返回"testing.BenchmarkResult"。
 
 
-```
+```go
 func benchmarkAdd(amount int64) (*testing.BenchmarkResult, error) {
 	results := testing.Benchmark(func(b *testing.B) {
 		b.SetBytes(amount)
@@ -899,7 +899,7 @@ func benchmarkAdd(amount int64) (*testing.BenchmarkResult, error) {
 
 ```
 
-# `/opt/kubo/test/cli/backup_bootstrap_test.go`
+# `test/cli/backup_bootstrap_test.go`
 
 This is a Go program that starts a Heartbeat server and twodaemon nodes using the Raft protocol. It starts the nodes with a bootstrap interval, which is a time interval between the start of the bootstrap process and the start of the nodes.
 
@@ -916,7 +916,7 @@ The program uses the `assert` types to check that the nodes have the expected nu
 The program is using the Raft protocol to connect the nodes and start the nodes. The `NewOptionalDuration` function is used to create an optional duration with a minimum of 250 milliseconds. The `StartDaemons` method is used to start the nodes, the `StopDaemons` method is used to stop the nodes, and the `Connect` method is used to connect two nodes. The `StartDaemon` method is used to start a daemon on a node and the `assert` types are used to check that the nodes have the expected number of peers and stops them when they are not connected.
 
 
-```
+```go
 package cli
 
 import (
@@ -980,7 +980,7 @@ func TestBackupBootstrapPeers(t *testing.T) {
 
 ```
 
-# `/opt/kubo/test/cli/basic_commands_test.go`
+# `test/cli/basic_commands_test.go`
 
 该代码是一个 Go 语言编写的 CLI 工具链，用于测试 IPFS（InterPlanetary File System）库的客户端和服务端。它主要用于测试 ipfs-cli 工具链的功能，以验证它是否符合 Go 语言的规范。
 
@@ -1003,7 +1003,7 @@ func TestBackupBootstrapPeers(t *testing.T) {
 8. 通过调用 "testipfs" 函数，测试 ipfs-cli 是否能够通过 ipfs-kube 访问文件系统，并测试是否能够正常工作。
 
 
-```
+```go
 package cli
 
 import (
@@ -1028,7 +1028,7 @@ import (
 最后，该代码在同一目录下创建了一个名为`test.txt`的文件，并将其中的内容替换为`It works!`。然后，该代码使用` harness.NewT`()方法创建了一个测试 harness，并使用`t.Parallel()`()方法来保证测试的并行执行。该测试 harness会随机写入一些测试文件到该目录下，然后运行该代码，并输出测试结果。如果测试成功，则输出"/path/to/test.txt: It works!"。
 
 
-```
+```go
 var versionRegexp = regexp.MustCompile(`^ipfs version (.+)$`)
 
 func parseVersionOutput(s string) semver.Version {
@@ -1061,7 +1061,7 @@ func TestCurDirIsWritable(t *testing.T) {
 这段代码的作用是测试`ipfs`命令行工具中所有可用的`version`标志。具体来说，这段代码创建一个新的`node`实例，运行`ipfs version --all`命令，并输出结果。然后，通过`strings.TrimSpace()`方法去除结果中的换行符和空格，得到一个只包含`version`字样的字符串。接下来，通过`assert.Contains()`函数测试四个输出是否都包含`Kubo`、`Repo`、`System`和`Golang`。
 
 
-```
+```go
 func TestIPFSVersionCommandMatchesFlag(t *testing.T) {
 	t.Parallel()
 	node := harness.NewT(t).NewNode()
@@ -1103,7 +1103,7 @@ func TestIPFSVersionAll(t *testing.T) {
 整个函数的目的是验证 IPFS 版本依赖关系的构建没有问题，并确保可以通过该函数轻松地追踪和测试不同的依赖关系。
 
 
-```
+```go
 func TestIPFSVersionDeps(t *testing.T) {
 	t.Parallel()
 	node := harness.NewT(t).NewNode()
@@ -1145,7 +1145,7 @@ func TestIPFSVersionDeps(t *testing.T) {
 8. 最后，我们使用 ` harness.NewT` 实例的 `Setup` 函数设置 `node` 实例，并返回 `node` 实例。
 
 
-```
+```go
 func TestIPFSCommands(t *testing.T) {
 	t.Parallel()
 	node := harness.NewT(t).NewNode()
@@ -1178,7 +1178,7 @@ func TestAllSubcommandsAcceptHelp(t *testing.T) {
 最后，它使用 `node.IPFS("--help").Stdout.String()` 函数获取根节点中的 `--help` 命令的输出，并使用一系列 `assert` 语句来验证帮助文档是否包含根命令。
 
 
-```
+```go
 func TestAllRootCommandsAreMentionedInHelpText(t *testing.T) {
 	t.Parallel()
 	node := harness.NewT(t).NewNode()
@@ -1216,7 +1216,7 @@ func TestAllRootCommandsAreMentionedInHelpText(t *testing.T) {
 This appears to be a Go test that checks if certain IPFS commands follow the documentation width limit. The `allowList` and `denyList` variables are used to store the list of commands that are allowed and the list of commands that are denied, respectively. The `node.IPFSCommands()` function is called to get a list of all the available IPFS commands, and then the test checks if each command is in the `allowList` or `denyList`. If the command is in the `allowList`, the test prints a message and does not proceed. If the command is in the `denyList`, the test prints a message and proceeds with the test.
 
 
-```
+```go
 func TestCommandDocsWidth(t *testing.T) {
 	t.Parallel()
 	node := harness.NewT(t).NewNode()
@@ -1318,7 +1318,7 @@ func TestCommandDocsWidth(t *testing.T) {
 总的作用就是测试 `func TestAllCommandsFailWhenPassedBadFlag` 函数的行为，并确保它能够在所有测试场景中正常运行。
 
 
-```
+```go
 func TestAllCommandsFailWhenPassedBadFlag(t *testing.T) {
 	t.Parallel()
 	node := harness.NewT(t).NewNode()
@@ -1343,7 +1343,7 @@ func TestCommandsFlags(t *testing.T) {
 
 ```
 
-# `/opt/kubo/test/cli/completion_test.go`
+# `test/cli/completion_test.go`
 
 这段代码是一个用于测试 Bash 命令行工具的工具。具体来说，它使用 Github.com/ipfs/kubo库实现的命令行工具 Harness，并实现了以下主要功能：
 
@@ -1354,7 +1354,7 @@ func TestCommandsFlags(t *testing.T) {
 5. 通过调用 assert.NoError 和 assertion error 验证错误信息，如果错误信息为空，则表示验证成功。
 
 
-```
+```go
 package cli
 
 import (
@@ -1398,7 +1398,7 @@ func TestBashCompletion(t *testing.T) {
 2. 创建数据结构：函数定义了一个名为 "h" 的 " harness"，然后通过 "NewT" 和 "
 
 
-```
+```go
 func TestZshCompletion(t *testing.T) {
 	t.Parallel()
 	h := harness.NewT(t)
@@ -1427,7 +1427,7 @@ func TestZshCompletion(t *testing.T) {
 
 ```
 
-# `/opt/kubo/test/cli/content_blocking_test.go`
+# `test/cli/content_blocking_test.go`
 
 该代码是一个 Go 语言编写的命令行工具包，名为 "cli"。它主要用于测试 libp2p 库的用法。
 
@@ -1441,7 +1441,7 @@ func TestZshCompletion(t *testing.T) {
 该代码的作用是提供一个用于测试 libp2p 库命令行工具功能的工具包，通过简单的函数设计和测试，使得开发人员可以更容易地测试和验证 libp2p 库的不同功能。
 
 
-```
+```go
 package cli
 
 import (
@@ -1483,7 +1483,7 @@ The `bodyExpl` is a helper that checks the content of the blocked file.
 The `bodyExpl.isBlockContent` is used to check if the content is blocked.
 
 
-```
+```go
 func TestContentBlocking(t *testing.T) {
 	// NOTE: we can't run this with t.Parallel() because we set IPFS_NS_MAP
 	// and running in parallel could impact other tests

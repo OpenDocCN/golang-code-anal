@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 10
 
-# `/opt/kubo/core/commands/bitswap.go`
+# `core/commands/bitswap.go`
 
 这段代码定义了一个名为"commands"的包，其中定义了一些与Go标准库中命令行工具操作相关的函数和命令。
 
@@ -20,7 +20,7 @@
 这些函数和命令可以通过在Go应用程序中使用`cmdenv`命令行工具来发现和使用，也可以在需要时使用Go标准库中提供的命令行工具和其他库函数。
 
 
-```
+```go
 package commands
 
 import (
@@ -49,7 +49,7 @@ import (
 该命令行工具还定义了一个名为 `peerOptionName` 的变量，它的值为 `"peer"`。
 
 
-```
+```go
 var BitswapCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline:          "Interact with the bitswap agent.",
@@ -127,7 +127,7 @@ If the `<peer_id>` is not equal to the `<peer_id>` specified in the `<peer_id>` 
 If the `<pid>` of the peer matches the `<peer_id>`, the function displays the wantlist and returns it to the response.
 
 
-```
+```go
 var showWantlistCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Show blocks currently on the wantlist.",
@@ -202,7 +202,7 @@ bitswap.Bitswap(bitswap.Block{}, bitswap.Block{}, w)
 This would print the data to `w` in human-readable format if `human` is `true`, or the data in its raw byte order otherwise.
 
 
-```
+```go
 const (
 	bitswapVerboseOptionName = "verbose"
 	bitswapHumanOptionName   = "human"
@@ -296,7 +296,7 @@ The decision engine also supports encoding the output in JSON format, which can 
 Note: This decision engine is a simple implementation and may not be fully functional or secure in production. It is recommended to thoroughly test and verify the decision engine in a controlled environment before using it for production purposes.
 
 
-```
+```go
 var ledgerCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Show the current ledger for a peer.",
@@ -357,7 +357,7 @@ prints the ledger associated with a given peer.
 最后，函数使用短描述中的标签`"Trigger reprovider."`来描述该命令的作用。
 
 
-```
+```go
 var reprovideCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Trigger reprovider.",
@@ -386,7 +386,7 @@ Trigger reprovider to announce our data to network.
 
 ```
 
-# `/opt/kubo/core/commands/block.go`
+# `core/commands/block.go`
 
 这段代码定义了一个名为“commands”的包，其中定义了一些与IPFS(基于IPFS协议的分布式文件系统)命令行工具相关的函数和变量。
 
@@ -425,7 +425,7 @@ Trigger reprovider to announce our data to network.
 - 函数“boxo.CreateExclusiveWriteCloser”，用于创建一个临时的Closer用于写入文件，但不会自动关闭文件。
 
 
-```
+```go
 package commands
 
 import (
@@ -456,7 +456,7 @@ import (
 最后，没有定义其他函数或变量，也没有从外部导入任何模块或库。
 
 
-```
+```go
 type BlockStat struct {
 	Key  string
 	Size int
@@ -483,7 +483,7 @@ The command can be used to validate that a CID is passed to the validator, and t
 It's important to note that this code is just a sample and it's not a production ready code.
 
 
-```
+```go
 passed with a valid CID.
 `,
 	},
@@ -511,7 +511,7 @@ var blockStatCmd = &cmds.Command{
 该命令在输出时，使用 `cmds.EmitOnce` 函数将块信息作为响应输出，以便 `res` 变量中的回调函数正确使用。
 
 
-```
+```go
 'ipfs block stat' is a plumbing command for retrieving information
 on raw IPFS blocks. It outputs the following to stdout:
 
@@ -569,7 +569,7 @@ on raw IPFS blocks. It outputs the following to stdout:
 4. 将块输出：通过`res.Emit()`方法将获取到的IPFS块输出到标准输出。
 
 
-```
+```go
 var blockGetCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Get a raw IPFS block.",
@@ -614,7 +614,7 @@ const mhlenOptionName         = "mhlen"   // "mhlen" 是一个字符串，表示
 另外，还定义了一个名为 blockPutCmd 的变量，它是一个名为 cmds.Command 的结构体，用于存储命令行选项的命令对象。
 
 
-```
+```go
 const (
 	blockFormatOptionName   = "format"
 	blockCidCodecOptionName = "cid-codec"
@@ -646,7 +646,7 @@ The function then iterates through the files in the request's files section usin
 The function uses the `q8.5/blockstat` types and an encoding map that maps the `text` Q8 encoding option to a function that writes the block header to the given `w` and `bs` data structures.
 
 
-```
+```go
 Passing alternative --cid-codec does not modify imported data, nor run any
 validation. It is provided solely for convenience for users who create blocks
 in userland.
@@ -747,7 +747,7 @@ The `removedBlock` type represents an object that has been removed from the loca
 The `blockRmCmd` variable is of type `cmds.Command<的世界>` and has a `Helptext` property, which is defined as `cmds.HelpText{< Tagline> : "Remove IPFS block(s) from the local datastore." < ShortDescription> : }`. This property provides a description of what the command does, as well as a possible command-line option to use when running the command.
 
 
-```
+```go
 const (
 	forceOptionName      = "force"
 	blockQuietOptionName = "quiet"
@@ -851,7 +851,7 @@ res {
 
 
 
-```
+```go
 It takes a list of CIDs to remove from the local datastore..
 `,
 	},
@@ -937,7 +937,7 @@ It takes a list of CIDs to remove from the local datastore..
 
 ```
 
-# `/opt/kubo/core/commands/bootstrap.go`
+# `core/commands/bootstrap.go`
 
 这段代码定义了一个名为“commands”的包，其中定义了一些函数命令，用于与Kubernetes(K8s)系统进行交互。
 
@@ -964,7 +964,7 @@ It takes a list of CIDs to remove from the local datastore..
 - 导入：导入“ma”包，该包提供了一个CLI工具“ma”，用于管理Kubernetes Multi-Atlas(MAA)类型。
 
 
-```
+```go
 package commands
 
 import (
@@ -994,7 +994,7 @@ import (
 通过 `bootstrapListCmd.List` 子命令来显示 bootstrap 路由器列表，通过 `bootstrapListCmd.Add` 和 `bootstrapListCmd.Rm` 子命令来添加和删除 bootstrap 路由器对端地址到列表中。
 
 
-```
+```go
 type BootstrapOutput struct {
 	Peers []string
 }
@@ -1026,7 +1026,7 @@ This is a generated file from the Go template language. This file defines a comm
 
 
 
-```
+```go
 const (
 	defaultOptionName = "default"
 )
@@ -1121,7 +1121,7 @@ in the bootstrap list).
 函数的实现遵循了 Go 语言编程规范中的命令行工具开发范式，可以帮助开发者更轻松地编写和使用 Go 语言中的命令行工具。
 
 
-```
+```go
 var bootstrapAddDefaultCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Add default peers to the bootstrap list.",
@@ -1171,7 +1171,7 @@ The `RequestParser` and `ResponseEncoder` functions are defined next. The `Reque
 The `BootstrapOutput` type is defined as a subclass of `BootstrapOutput`, and the `MakeTypedEncoder` function is defined to convert the `BootstrapOutput` into a text-encoded representation that includes the name of each removed peer.
 
 
-```
+```go
 const (
 	bootstrapAllOptionName = "all"
 )
@@ -1245,7 +1245,7 @@ var bootstrapRemoveCmd = &cmds.Command{
 6. 该函数的`type`属性为`BootstrapOutput`类型，`encoders`属性是一个`cmds.EncoderMap`，其中包含一个`cmds.Text`编码器，用于将`bootstrapWritePeers`函数产生的`removed`字段写入到输出中。
 
 
-```
+```go
 var bootstrapRemoveAllCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline:          "Remove all peers from the bootstrap list.",
@@ -1298,7 +1298,7 @@ var bootstrapRemoveAllCmd = &cmds.Command{
 5. 输出结束。
 
 
-```
+```go
 var bootstrapListCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline:          "Show peers in the bootstrap list.",
@@ -1351,7 +1351,7 @@ The program also has a "global" variable, which is initialized with a configurat
 The program has been tested and reviewed on Github.
 
 
-```
+```go
 func bootstrapWritePeers(w io.Writer, prefix string, peers []string) error {
 	sort.Stable(sort.StringSlice(peers))
 	for _, peer := range peers {
@@ -1429,7 +1429,7 @@ Here's a high-level overview of what this function does:
 There are some details in the code that aren't described here, but the core logic of the function can be understood from this high-level overview.
 
 
-```
+```go
 func bootstrapRemove(r repo.Repo, cfg *config.Config, toRemove []string) ([]string, error) {
 	removed := make([]peer.AddrInfo, 0, len(toRemove))
 	keep := make([]peer.AddrInfo, 0, len(cfg.Bootstrap))
@@ -1500,7 +1500,7 @@ func bootstrapRemove(r repo.Repo, cfg *config.Config, toRemove []string) ([]stri
 最后，函数使用`repo.RemoveAll`函数移除所有远程仓库的`bootstrap_peers`字段，并返回`removed`。如果任何调用`repo.RemoveAll`函数的错误在创建空字符串切片时被保留，那么函数将返回一个空字符串切片和一个错误。
 
 
-```
+```go
 func bootstrapRemoveAll(r repo.Repo, cfg *config.Config) ([]string, error) {
 	removed, err := cfg.BootstrapPeers()
 	if err != nil {
@@ -1522,7 +1522,7 @@ SECURITY WARNING:
 这段代码是Python的一个脚本，主要作用是解释“bootstrap list”的含义以及如何使用该列表。这个列表包含了从网络中的“trusted peers”获取其他节点信息。脚本中提到了“edit this list”，说明这个列表是可以编辑的。需要注意的是，脚本的使用可能存在潜在的风险，需要谨慎操作。
 
 
-```
+```go
 The bootstrap command manipulates the "bootstrap list", which contains
 the addresses of bootstrap nodes. These are the *trusted peers* from
 which to learn about other peers in the network. Only edit this list

@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 8
 
-# `/opt/kubo/config/routing_test.go`
+# `config/routing_test.go`
 
 This appears to be a configuration file for a distributed hash table (DHT), which is a decentralized data structure that stores data in a distributed network of computers.
 
@@ -13,7 +13,7 @@ The DHT uses the toleration time of 10 seconds to ensure that changes are persis
 The DHT uses the IgnoreErrors parameter to ignore any errors that may occur when accessing the DHT. By default, this parameter is set to true, so any errors that occur will not be persisted to the DHT.
 
 
-```
+```go
 package config
 
 import (
@@ -134,7 +134,7 @@ MethodsMissing 是这一结构体，它包含上述定义的所有方法，但�
 require.NoError(methodsOK.Check()) 和 require.Error(methodsMissing.Check()) 是用于测试上述结构体是否符合预期行为的函数，它们会输出断言的错误信息，如果结构体中定义的方法不满足预期，则会输出错误，否则则输出正确的错误信息。
 
 
-```
+```go
 func TestMethods(t *testing.T) {
 	require := require.New(t)
 
@@ -178,7 +178,7 @@ func TestMethods(t *testing.T) {
 
 ```
 
-# `/opt/kubo/config/swarm.go`
+# `config/swarm.go`
 
 `relay_protocol` is a configuration flag for the Swarm Relay service.
 
@@ -191,7 +191,7 @@ It is recommended to use the `Swarm.RelayService` when this feature is enabled, 
 It is also recommended to use the `relay_protocol` in conjunction with the `relay_server_max_年龄` flag, as it allows you to specify the maximum age of a relay server to be used for the `relay_protocol` feature.
 
 
-```
+```go
 package config
 
 type SwarmConfig struct {
@@ -283,7 +283,7 @@ json
 The `StaticRelays` configuration can be enabled by setting the `enabled` field to `true`.
 
 
-```
+```go
 type RelayClient struct {
 	// Enables the auto relay feature: will use relays if it is not publicly reachable.
 	Enabled Flag `json:",omitempty"`
@@ -334,7 +334,7 @@ type RelayService struct {
 最后，这个结构体定义了一个名为 "Multiplexers" 的成员，它指定了用于在单个 duplex 连接上 multiplex 多个连接的传输协议。它的成员变量 "Yamux" 指定了加密协议的优先级，这里的优先级是 100，它的成员变量 "Mplex" 指定了混淆协议的优先级，这里的优先级是 -1，表示将数据包发送到混合网络中的最低优先级。
 
 
-```
+```go
 type Transports struct {
 	// Network specifies the base transports we'll use for dialing. To
 	// listen on a transport, add the transport to your Addresses.Swarm.
@@ -384,7 +384,7 @@ type Transports struct {
 `ResourceMgr`中的`Allowlist`结构体是一个字符串数组，用于指定哪些地址可以绕过系统限制。此允许名单的配置是通过`Allowlist.Add`函数来完成的，可以将允许的地址添加到允许名单中。
 
 
-```
+```go
 // ConnMgr defines configuration options for the libp2p connection manager.
 type ConnMgr struct {
 	Type        *OptionalString   `json:",omitempty"`
@@ -426,7 +426,7 @@ ResourceMgrPeerScopePrefix：对等机 scope 预缀，用于定义对等机对�
 这些常量用于在代码中更方便地使用这些资源管理器的访问权限。
 
 
-```
+```go
 const (
 	ResourceMgrSystemScope         = "system"
 	ResourceMgrTransientScope      = "transient"
@@ -437,7 +437,7 @@ const (
 
 ```
 
-# `/opt/kubo/config/types.go`
+# `config/types.go`
 
 这段代码定义了一个名为config的包，其中包含了一些用于处理字符串和 JSON 的函数和变量。
 
@@ -446,7 +446,7 @@ const (
 此外，这段代码还定义了一个名为config的包，其中包含了一些函数来执行 JSON 解析和字符串操作。例如，encoding/json 包中的 json.Unmarshal函数可以将一个 JSON string 解析成一个 single string 类型，而fmt.Printf函数可以用来格式化一个或多个字符串。
 
 
-```
+```go
 package config
 
 import (
@@ -475,7 +475,7 @@ type Strings []string
 最后，函数返回一个非空`[]string`对象，其中包含`Strings`对象中所有的字符串。
 
 
-```
+```go
 // UnmarshalJSON conforms to the json.Unmarshaler interface.
 func (o *Strings) UnmarshalJSON(data []byte) error {
 	if data[0] == '[' {
@@ -507,7 +507,7 @@ func (o *Strings) UnmarshalJSON(data []byte) error {
 6. 通过`var _ json.Unmarshaler = (*Strings)(nil)`和`var _ json.Marshaler   = (*Strings)(nil)`来创建两个变量，它们都接受一个`Strings`对象作为参数，并将其赋值给一个名为`(*Strings)`的类型别名，以便在代码中更方便地使用`Strings`对象。
 
 
-```
+```go
 // MarshalJSON conforms to the json.Marshaler interface.
 func (o Strings) MarshalJSON() ([]byte, error) {
 	switch len(o) {
@@ -536,7 +536,7 @@ var (
 最后，代码还使用了一个名为Flag的变量，其值为-1，因为在JSON编码中，-1被视为false的编码，0被视为null的编码，1被视为true的编码。
 
 
-```
+```go
 // Flag represents a ternary value: false (-1), default (0), or true (+1).
 //
 // When encoded in json, False is "false", Default is "null" (or empty), and True
@@ -561,7 +561,7 @@ const (
 函数的第二个实现是`json.Marshal`函数的调用，该函数将`f`的值转换为JSON字符串并返回。如果`f`的值未被定义，函数也会输出一个错误并退出。
 
 
-```
+```go
 func (f Flag) WithDefault(defaultValue bool) bool {
 	switch f {
 	case False:
@@ -597,7 +597,7 @@ func (f Flag) MarshalJSON() ([]byte, error) {
 第二段代码定义了一个名为func的函数，接受一个名为f的整型指针作为参数。函数的作用是返回f的类型，具体实现是，根据f的值返回对应的字符串类型，例如如果f是Default，返回字符串"default"，如果f是True，返回字符串"true"，如果f是False，返回字符串"false"。
 
 
-```
+```go
 func (f *Flag) UnmarshalJSON(input []byte) error {
 	switch string(input) {
 	case "null":
@@ -650,7 +650,7 @@ var (
 最后，该代码还定义了一个名为`Priority`的`int64`类型，以及一个名为`DefaultPriority`和`Disabled`的`Priority`常量。这些类型和常量将在代码的后续部分中被用于比较和设置不同的优先级。
 
 
-```
+```go
 var (
 	_ json.Unmarshaler = (*Flag)(nil)
 	_ json.Marshaler   = (*Flag)(nil)
@@ -677,7 +677,7 @@ const (
 具体实现过程中，首先会根据输入的优先级类型来判断优先级的合法性，如果优先级不合法，则会输出错误并返回 `false`。如果优先级合法，则会执行一系列判断，首先判断输入的优先级是否为 `Disabled`，如果是，则直接返回 0，并返回 `false`。如果不是，则会判断输入的优先级是否为 `DefaultPriority`，如果是，则会执行一系列判断，首先判断输入的默认优先级是否为 `Disabled`，如果是，则返回 0，并返回 `false`。如果不是，则会判断输入的优先级是否大于 0，如果是，则返回指定优先级，并判断是否启用了 `WithDefault` 函数。最后，如果输入的优先级不合法，则会输出错误并返回 `false`。
 
 
-```
+```go
 // WithDefault resolves the priority with the given default.
 //
 // If defaultPriority is Default/0, this function will return 0.
@@ -720,7 +720,7 @@ func (p Priority) WithDefault(defaultPriority Priority) (priority int64, enabled
 4. 如果`p`的值大于`DefaultPriority`，则返回`nil`，即返回错误。
 
 
-```
+```go
 func (p Priority) MarshalJSON() ([]byte, error) {
 	// > 0 == Priority
 	if p > 0 {
@@ -755,7 +755,7 @@ func (p Priority) MarshalJSON() ([]byte, error) {
 函数的实现是通过对输入的字符串进行 switch 操作，根据不同的输入字符串执行不同的行为。如果输入的字符串无法解析，函数会返回一个相应的错误。
 
 
-```
+```go
 func (p *Priority) UnmarshalJSON(input []byte) error {
 	switch string(input) {
 	case "null", "undefined":
@@ -791,7 +791,7 @@ func (p *Priority) UnmarshalJSON(input []byte) error {
 此外，函数还使用了两个变量"_ json.Unmarshaler"和"_ json.Marshaler"，它们都接受一个名为"Priority"的整数参数。这两个变量似乎用于JSON数据的输入和输出，根据"Priority"的值将数据转换为JSON字符串或解码为JSON数据。
 
 
-```
+```go
 func (p Priority) String() string {
 	if p > 0 {
 		return fmt.Sprintf("%d", p)
@@ -820,7 +820,7 @@ OptionalDuration提供了一个名为NewOptionalDuration的函数，该函数接
 另外，OptionalDuration还提供了一个名为UnmarshalJSON的函数，该函数接收一个字节切片参数input，并将其解析为OptionalDuration类型。如果输入为null、"null"、"undefined"或空字符串，该函数将直接返回OptionalDuration类型，并完成对输入的遍历。否则，该函数将尝试将输入的字符串解析为时间类型，如果解析失败，则返回一个Error类型的函数值。
 
 
-```
+```go
 // OptionalDuration wraps time.Duration to provide json serialization and deserialization.
 //
 // NOTE: the zero value encodes to JSON nill.
@@ -860,7 +860,7 @@ func (d *OptionalDuration) UnmarshalJSON(input []byte) error {
 第三个函数名为OptionalDuration_MarshalJSON，其功能是将OptionalDuration数据结构解析为JSON字符串，并返回表示该值的字节切片和可能的错误。如果数据结构为空，则返回一个空的JSON字符串和一个错误。如果数据结构不为空，则将OptionalDuration的值解析为JSON字符串，并返回该值的字节切片。
 
 
-```
+```go
 func (d *OptionalDuration) IsDefault() bool {
 	return d == nil || d.value == nil
 }
@@ -892,7 +892,7 @@ func (d OptionalDuration) MarshalJSON() ([]byte, error) {
 然后，可以推断出 "var" 变量的作用是声明一个名为 "Duration" 的变量，类型为 "Duration"。
 
 
-```
+```go
 func (d OptionalDuration) String() string {
 	if d.value == nil {
 		return "default"
@@ -924,7 +924,7 @@ type Duration struct {
 如果解析 JSON 字节切片时遇到错误，函数2将返回一个非空错误。否则，它返回一个空错误。函数1将在调用 `MarshalJSON()` 函数失败时返回一个空错误，调用 `UnmarshalJSON()` 函数失败时返回一个空错误。
 
 
-```
+```go
 func (d Duration) MarshalJSON() ([]byte, error) {
 	return json.Marshal(d.String())
 }
@@ -959,7 +959,7 @@ func (d *Duration) UnmarshalJSON(b []byte) error {
 该段代码还定义了一个名为"NewOptionalInteger"的函数，该函数接受一个整数参数"v"，并返回一个名为"OptionalInteger"的结构体，该结构体的"value"字段存储输入的整数"v"。
 
 
-```
+```go
 var (
 	_ json.Unmarshaler = (*Duration)(nil)
 	_ json.Marshaler   = (*Duration)(nil)
@@ -988,7 +988,7 @@ func NewOptionalInteger(v int64) *OptionalInteger {
 函数MarshalJSON函数接受一个OptionalInteger类型的实例p，并返回一个字节切片和一个错误。函数的作用是，将整数类型变量p的值写入JSON字符串，如果整数类型变量p的值不为 nil，则首先将整数类型变量p的值写入JSON字符串，然后返回JSON字符串和错误。如果整数类型变量p为 nil，则返回一个空字节切片和错误。
 
 
-```
+```go
 // WithDefault resolves the integer with the given default.
 func (p *OptionalInteger) WithDefault(defaultValue int64) (value int64) {
 	if p == nil || p.value == nil {
@@ -1020,7 +1020,7 @@ func (p OptionalInteger) MarshalJSON() ([]byte, error) {
 函数返回一个`nil`表示没有错误。
 
 
-```
+```go
 func (p *OptionalInteger) UnmarshalJSON(input []byte) error {
 	switch string(input) {
 	case "null", "undefined":
@@ -1049,7 +1049,7 @@ func (p *OptionalInteger) UnmarshalJSON(input []byte) error {
 最后，说明了一个名为`OptionalString`的定义，它表示一个带有默认值的字符串。函数内部的字符串表示方法，将`OptionalString`的编码方式与JSON中的`Default`键的编码方式进行了映射。
 
 
-```
+```go
 func (p OptionalInteger) String() string {
 	if p.value == nil {
 		return "default"
@@ -1074,7 +1074,7 @@ var (
 另外，该结构体还实现了一个名为 "WithDefault" 的函数，它接收一个字符串参数 "defaultValue"，并返回一个字符串类型的 "value"。这个函数会将 "OptionalString" 实例中的 "value" 字段设置为 "defaultValue"，如果 "OptionalString" 实例为空，则会使用 "defaultValue" 作为默认值。
 
 
-```
+```go
 type OptionalString struct {
 	value *string
 }
@@ -1109,7 +1109,7 @@ func (p *OptionalString) WithDefault(defaultValue string) (value string) {
 该代码定义了一个OptionalString类型，通过这三个函数可以对OptionalString对象进行操作，包括判断字符串是否为默认的、非空的，将字符串对象从JSON字符串中解码，以及将字符串对象设置为默认的字符串对象。
 
 
-```
+```go
 // IsDefault returns if this is a default optional integer.
 func (p *OptionalString) IsDefault() bool {
 	return p == nil || p.value == nil
@@ -1160,7 +1160,7 @@ func (p *OptionalString) UnmarshalJSON(input []byte) error {
 9. "swarmLimits"结构体中的"doNotUse"成员是一个不允许使用的标识，这意味着它不能被使用，否则会导致编译错误。
 
 
-```
+```go
 func (p OptionalString) String() string {
 	if p.value == nil {
 		return "default"
@@ -1186,7 +1186,7 @@ var _ json.Unmarshaler = swarmLimits(false)
 值得注意的是，该函数不会输出其源代码，因此无法查看具体的实现细节。
 
 
-```
+```go
 func (swarmLimits) UnmarshalJSON(b []byte) error {
 	d := json.NewDecoder(bytes.NewReader(b))
 	for {
@@ -1226,7 +1226,7 @@ var _ json.Unmarshaler = experimentalAcceleratedDHTClient(false)
 7. 返回JSON字节码中的所有无效键。
 
 
-```
+```go
 type experimentalAcceleratedDHTClient doNotUse
 
 var _ json.Unmarshaler = experimentalAcceleratedDHTClient(false)
@@ -1260,7 +1260,7 @@ func (experimentalAcceleratedDHTClient) UnmarshalJSON(b []byte) error {
 该代码的注释中提到了一个警告，即结构体类型的 `doNotUse` 字段目前还不支持 `json.Marshal` 函数。这是因为 `json.Marshal` 函数会将结构体中的所有字段分别存储为 JSON 字节，并且 `doNotUse` 字段的本意是表示一个布尔值，而不是一个 JSON 字段。因此，如果使用 `doNotUse` 类型的结构体，需要编写自定义的 JSON 编码器来支持这种类型的字段。
 
 
-```
+```go
 // doNotUse is a type you must not use, it should be struct{} but encoding/json
 // does not support omitempty on structs and I can't be bothered to write custom
 // marshalers on all structs that have a doNotUse field.
@@ -1268,7 +1268,7 @@ type doNotUse bool
 
 ```
 
-# `/opt/kubo/config/types_test.go`
+# `config/types_test.go`
 
 This appears to be a testing function for a function that parses JSON-formatted durations (such as "1d", "2s", etc.) as a Singleton，空optional Duration 类型.
 
@@ -1281,7 +1281,7 @@ Finally, it also tests the reverse order of the input string and it seems to wor
 Please let me know if you have any questions or if there's anything else I can help you with.
 
 
-```
+```go
 package config
 
 import (
@@ -1418,7 +1418,7 @@ func TestOptionalDuration(t *testing.T) {
 第二个函数 `TestNoStrings` 测试一个空字符串是否和给定的期望字符串 `"null"` 相同。函数中使用了和第一个函数相同的方式，首先将字符串 `{}` 进行 JSON 编码，然后将编码后的字符串存储到变量 `out` 中。接着，函数检查 `out` 是否等于给定的期望字符串 `"null"`。如果检查失败，函数会输出错误信息并切断程序的流程。如果 `out` 和 `expected` 相同，函数会输出一条错误信息并切断程序的流程。
 
 
-```
+```go
 func TestOneStrings(t *testing.T) {
 	out, err := json.Marshal(Strings{"one"})
 	if err != nil {
@@ -1452,7 +1452,7 @@ func TestNoStrings(t *testing.T) {
 最后，定义了一个名为 `TestManyStrings` 的函数，与上面定义的 `func TestManyStrings` 函数名字一样，但是它的作用域是同名的。从代码可以看出，这个函数接收两个整数参数 `t` 和 `ctx`，并使用 `fmt.Printf` 函数输出一个字符串，然后将该字符串打印到控制台。
 
 
-```
+```go
 func TestManyStrings(t *testing.T) {
 	out, err := json.Marshal(Strings{"one", "two"})
 	if err != nil {
@@ -1484,7 +1484,7 @@ The `WithDefault` method is used here, which is a special case for the `WithDefa
 The tests also cover how the default value can be a JSON string that contains keys and values. This is done by first creating a JSON string from the default value, then using this string to serialize and deserialize an `Environment` object. If the deserialization fails, the test panics.
 
 
-```
+```go
 func TestFlag(t *testing.T) {
 	// make sure we have the right zero value.
 	var defaultFlag Flag
@@ -1574,7 +1574,7 @@ Finally, it outputs the decoded priority object in JSON format.
 It's important to note that there are several different `Priority` values in the `map[string]Priority` which could be encoded. The encoder function is checking the input `ok` and the expected `DefaultPriority` are the same, it's just a wildcard, it could be any of the defined map priority values that are not `null` or `false`.
 
 
-```
+```go
 func TestPriority(t *testing.T) {
 	// make sure we have the right zero value.
 	var defaultPriority Priority
@@ -1655,7 +1655,7 @@ If the reverse is successful, the function then performs a JSON unmarshal of the
 Finally, the function checks if the `I` field of the `Foo` struct has the expected value. If the value is not the expected value, the function will raise an error and log the failure. If the value is the expected value, the function will not log anything.
 
 
-```
+```go
 func TestOptionalInteger(t *testing.T) {
 	makeInt64Pointer := func(v int64) *int64 {
 		return &v
@@ -1772,7 +1772,7 @@ If the input is invalid (e.g. an array with an empty element or an empty string)
 It should be noted that this tool only validates the structure of the input and not its content. It also does not validate the input for being in the expected format, only the structure.
 
 
-```
+```go
 func TestOptionalString(t *testing.T) {
 	makeStringPointer := func(v string) *string {
 		return &v

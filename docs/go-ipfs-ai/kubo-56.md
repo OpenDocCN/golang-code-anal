@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 56
 
-# `/opt/kubo/test/cli/rcmgr_test.go`
+# `test/cli/rcmgr_test.go`
 
 该代码是一个 Go 语言编写的名为 "cli" 的工具包。它主要用于在 libp2p 网络中进行测试，libp2p 是一个高性能的点对点网络，用于连接和交换数据。
 
@@ -14,7 +14,7 @@
 6. 通过导入 "encoding/json" 和 "testing" 这两库，实现了 json 编码和解码，以及测试功能。
 
 
-```
+```go
 package cli
 
 import (
@@ -49,7 +49,7 @@ The `assert.Equal()` function is used to compare the exit code of the `RunIPFS()
 The `t.Run()` annotation is used to indicate the test function to run.
 
 
-```
+```go
 func TestRcmgr(t *testing.T) {
 	t.Parallel()
 
@@ -364,7 +364,7 @@ func TestRcmgr(t *testing.T) {
 4. 输出错误信息。
 
 
-```
+```go
 func unmarshalLimits(t *testing.T, b []byte) *libp2p.LimitsConfigAndUsage {
 	limits := &libp2p.LimitsConfigAndUsage{}
 	err := json.Unmarshal(b, limits)
@@ -374,7 +374,7 @@ func unmarshalLimits(t *testing.T, b []byte) *libp2p.LimitsConfigAndUsage {
 
 ```
 
-# `/opt/kubo/test/cli/routing_dht_test.go`
+# `test/cli/routing_dht_test.go`
 
 This is a Go test that tests the "routing" commands for the IPFS-based network node "harness". The "routing" commands are used to interact with the IPFS network by finding providers, finding peers, and putting data.
 
@@ -387,7 +387,7 @@ The "run" section of the "t.Run" method calls the "Run" method on the "harness" 
 In summary, this test suite ensures that the "routing" commands can only be run when the harness is online and that the "put" command can only be run when the harness is online.
 
 
-```
+```go
 package cli
 
 import (
@@ -522,7 +522,7 @@ func testRoutingDHT(t *testing.T, enablePubsub bool) {
 4. 使用 `assert.Equal` 函数检查 `res` 变量的值是否为1,`res` 的 `ExitCode()` 方法返回 `1`。如果返回值不是1，说明运行 `"dht"` 和 `"findpeer"` 命令的 `Harness` 实例的退出代码不是1，也就是测试失败。
 
 
-```
+```go
 func testSelfFindDHT(t *testing.T) {
 	t.Run("ipfs routing findpeer fails for self", func(t *testing.T) {
 		t.Parallel()
@@ -555,7 +555,7 @@ func testSelfFindDHT(t *testing.T) {
 通过执行这三个测试函数，可以检验路由器的运行状况，并验证其是否能够正常工作。
 
 
-```
+```go
 func TestRoutingDHT(t *testing.T) {
 	testRoutingDHT(t, false)
 	testRoutingDHT(t, true)
@@ -564,7 +564,7 @@ func TestRoutingDHT(t *testing.T) {
 
 ```
 
-# `/opt/kubo/test/cli/stats_test.go`
+# `test/cli/stats_test.go`
 
 这段代码是一个 Go 语言编写的命令行工具 "kubo" 的测试框架。它旨在测试 IPFS-based Kubernetes ("kube") harbor 的 stats 功能，具体来说，测试 "dht" 以为全球多地服务器提供 DNS 解析的 DNS 服务。
 
@@ -580,7 +580,7 @@ func TestRoutingDHT(t *testing.T) {
 该代码的主要目的是验证 "dht" 命令行工具是否能够成功提供全球多地服务器。
 
 
-```
+```go
 package cli
 
 import (
@@ -608,7 +608,7 @@ func TestStats(t *testing.T) {
 
 ```
 
-# `/opt/kubo/test/cli/swarm_test.go`
+# `test/cli/swarm_test.go`
 
 This appears to be a unit test for the IPFS (Inter-Peer File System) `swarm` and `identify` commands. The `swarm` command is used to form a swarm of nodes and form a chain reaction, while the `identify` command is used to identify and connect to these nodes.
 
@@ -617,7 +617,7 @@ The `t.Run` function defines a test for the `swarm` and `identify` commands, and
 The `assertions` section of the test is where the actual test code would go, including checks for the expected data in the output of the `swarm` and `identify` commands. The specific checks may vary depending on the requirements of the unit test.
 
 
-```
+```go
 package cli
 
 import (
@@ -711,7 +711,7 @@ func TestSwarm(t *testing.T) {
 
 ```
 
-# `/opt/kubo/test/cli/tracing_test.go`
+# `test/cli/tracing_test.go`
 
 这段代码是一个名为“cli”的包的导入语句，其中定义了一个名为“testutils”的包，它似乎包含了一些测试相关的函数和变量。
 
@@ -722,7 +722,7 @@ func TestSwarm(t *testing.T) {
 最后，通过导入“testutils”包中的函数来对测试进行断言，似乎是测试“kubo”命令行工具的功能是否符合预期，具体测试代码中包括了一些测试用例，比如对测试工具输出的日志进行断言，通过运行“kubo”命令行工具来测试这些断言是否能够正确输出。
 
 
-```
+```go
 package cli
 
 import (
@@ -751,7 +751,7 @@ import (
 5. `pipelines`：定义了服务中所有 pipeline，其中 `otlp` 接收者作为必经之路。
 
 
-```
+```go
 var otelCollectorConfigYAML = `
 receivers:
   otlp:
@@ -782,7 +782,7 @@ The program uses the "docker-config.yaml" file to specify the configuration opti
 The program uses the "docker" command to start the Iterator Daemon as a separate process, and uses the "stop" command to stop the Iterator when it is no longer needed.
 
 
-```
+```go
 `
 
 func TestTracing(t *testing.T) {
@@ -839,7 +839,7 @@ func TestTracing(t *testing.T) {
 
 ```
 
-# `/opt/kubo/test/cli/transports_test.go`
+# `test/cli/transports_test.go`
 
 这段代码是一个 Go 语言编写的命令行工具 package，名为 "cli"，旨在为测试 "ipfs-kubo" 项目的不同功能提供简单的命令行工具。具体来说，这段代码包括以下几个主要部分：
 
@@ -870,7 +870,7 @@ func TestTracing(t *testing.T) {
 8. 最后，通过运行 "go test" 命令来运行所有的测试，并根据测试结果输出相应的错误信息。
 
 
-```
+```go
 package cli
 
 import (
@@ -895,7 +895,7 @@ The program first configures the nodes to have a specific IP address (127.0.0.1)
 The program then disables any built-in routing, then starts the nodes and connects them to the test network. Finally, it runs the tests to verify that the nodes can properly configure the Quic network and the WebSocket transport.
 
 
-```
+```go
 func TestTransports(t *testing.T) {
 	disableRouting := func(nodes harness.Nodes) {
 		nodes.ForEachPar(func(n *harness.Node) {
@@ -1039,7 +1039,7 @@ func TestTransports(t *testing.T) {
 
 TestGatewayHAMTDirectory.car generated with:
 
-```bash
+```gobash
 ipfs version
 # ipfs version 0.19.0
 
@@ -1078,7 +1078,7 @@ ipfs dag export $FIXTURE_CID > TestGatewayHAMTDirectory.car
 TestGatewayMultiRange.car generated with:
 
 
-```sh
+```gosh
 ipfs version
 # ipfs version 0.19.0
 
@@ -1109,7 +1109,7 @@ ipfs dag export $FIXTURE_CID > TestGatewayMultiRange.car
 ```
 
 
-# `/opt/kubo/test/cli/harness/buffer.go`
+# `test/cli/harness/buffer.go`
 
 这段代码定义了一个名为“harness”的包，它使用了“Buffer”类型来提供线程安全的字节缓冲区。
 
@@ -1120,7 +1120,7 @@ ipfs dag export $FIXTURE_CID > TestGatewayMultiRange.car
 而“Buffer”类的“b”字段则是这个字符串的缓冲区，用于暂存尚未打印的字符串，而“m”则是一个读写锁，用于保证对“b”的读写操作是同步的。这样，即使同时有多个协程在访问“b”中的字符串，也不会发生冲突，从而保证代码的正确性。
 
 
-```
+```go
 package harness
 
 import (
@@ -1147,7 +1147,7 @@ type Buffer struct {
 3. `func (b *Buffer) Trimmed() string` 函数接收一个 `Buffer` 类型的参数 `b`，并返回其 `Trimmed` 方法返回的字符串。函数使用了 `b.m.Lock()` 和 `b.m.Unlock()` 来进行互斥锁和释放锁操作，确保在同一时刻只有一个 `Trimmed` 操作在进行。函数实现了将 `Buffer` 类型的 `b` 中的字节串截去字符串末尾的换行符并返回，如果字符串长度为0，则返回原字符串。
 
 
-```
+```go
 func (b *Buffer) Write(p []byte) (n int, err error) {
 	b.m.Lock()
 	defer b.m.Unlock()
@@ -1184,7 +1184,7 @@ func (b *Buffer) Trimmed() string {
 第二段代码实现了一个将缓冲区中的字符串分割成多行文本并返回的功能。它与第一段代码类似，只是使用了不同的函数名称。具体来说，它与第一段代码的实现过程类似，只是将函数名称替换为了 "testutils.SplitLines"。
 
 
-```
+```go
 func (b *Buffer) Bytes() []byte {
 	b.m.Lock()
 	defer b.m.Unlock()
@@ -1199,7 +1199,7 @@ func (b *Buffer) Lines() []string {
 
 ```
 
-# `/opt/kubo/test/cli/harness/harness.go`
+# `test/cli/harness/harness.go`
 
 该代码包名为“ harness”，是一个 Go 项目。它导入了多个外部依赖项：
 - "errors"：用于处理错误。
@@ -1216,7 +1216,7 @@ func (b *Buffer) Lines() []string {
 接下来，定义了一个名为 "Harness" 的函数，它的作用是帮助测试。函数内部定义了一系列函数，用于将进测试的值传递给 "github.com/ipfs/go-log/v2" 和 "github.com/ipfs/kubo/test/cli/testutils" 这两个库。
 
 
-```
+```go
 package harness
 
 import (
@@ -1243,7 +1243,7 @@ import (
 最后，该代码没有输出任何内容，而是自己定义了一个类型的实例并进行了初始化。
 
 
-```
+```go
 // Harness tracks state for a test, such as temp dirs and IFPS nodes, and cleans them up after the test.
 type Harness struct {
 	Dir       string
@@ -1272,7 +1272,7 @@ func EnableDebugLogging() {
 这两个函数都首先创建一个根目录，然后设置`Harness`实例的`Runner`和`Dir`，接着设置一个`nodes`文件夹，该文件夹将包含一个名为`ipfs.txt`的文件，其中包含一些节点配置信息。在创建`Harness`实例的选项之后，可以调用其中的任何一个函数来实例化一个`Harness`实例，并将一个`Harness`实例返回给调用者。
 
 
-```
+```go
 // NewT constructs a harness that cleans up after the given test is done.
 func NewT(t *testing.T, options ...func(h *Harness)) *Harness {
 	h := New(options...)
@@ -1323,7 +1323,7 @@ func New(options ...func(h *Harness)) *Harness {
 最后，代码返回了一个名为 "m" 的Map对象，其中包含了所有操作系统环境中的环境变量。
 
 
-```
+```go
 func osEnviron() map[string]string {
 	m := map[string]string{}
 	for _, entry := range os.Environ() {
@@ -1357,7 +1357,7 @@ func (h *Harness) NewNode() *Node {
 函数返回文件读取路径，这样当调用此函数时，您需要根据实际文件路径关闭文件。
 
 
-```
+```go
 func (h *Harness) NewNodes(count int) Nodes {
 	var newNodes []*Node
 	for i := 0; i < count; i++ {
@@ -1387,7 +1387,7 @@ func (h *Harness) WriteToTemp(contents string) string {
 具体来说，这段代码首先会创建一个新的临时文件，并返回该文件的指针。在 WriteFile 函数中，首先检查传入的文件名是否为绝对路径，如果不是，则会输出错误信息。接着，会将文件内容写入到指定的文件路径中。如果文件路径解析失败或者写入文件时出现错误，则会输出错误信息并引起系统崩溃。
 
 
-```
+```go
 // TempFile creates a new unique temp file.
 func (h *Harness) TempFile() *os.File {
 	f, err := os.CreateTemp(h.Dir, "")
@@ -1427,7 +1427,7 @@ func (h *Harness) WriteFile(filename, contents string) {
 函数使用了计时器来确保在超时时间内有足够的时间来等待文件出现。如果超时后仍然没有文件出现，函数就会退出循环，并返回一个错误。
 
 
-```
+```go
 func WaitForFile(path string, timeout time.Duration) error {
 	start := time.Now()
 	timer := time.NewTimer(timeout)
@@ -1460,7 +1460,7 @@ func WaitForFile(path string, timeout time.Duration) error {
 函数 `Sh` 接收一个字符串参数 `expr`，然后使用 `-c` 选项运行 `expr`。函数会将 `expr` 和 `"-c"` 拼接成 `cmd`，并使用 `h.Runner.Run` 函数运行 `cmd`。由于 `Sh` 函数没有其他参数，因此它返回的结果是 `*RunResult` 类型的空指针。
 
 
-```
+```go
 func (h *Harness) Mkdirs(paths ...string) {
 	for _, path := range paths {
 		if filepath.IsAbs(path) {
@@ -1501,7 +1501,7 @@ func (h *Harness) Sh(expr string) *RunResult {
 5. 返回提取出的 peer ID。
 
 
-```
+```go
 func (h *Harness) Cleanup() {
 	log.Debugf("cleaning up cluster")
 	h.Nodes.StopDaemons()

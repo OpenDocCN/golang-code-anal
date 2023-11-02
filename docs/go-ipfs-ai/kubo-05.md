@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 5
 
-# `/opt/kubo/cmd/ipfs/pinmfs_test.go`
+# `cmd/ipfs/pinmfs_test.go`
 
 该代码是一个 Go 语言packagemain项目，它演示了如何使用libp2p库创建一个分布式文件系统并实现基本功能。
 
@@ -54,7 +54,7 @@
 46. 通过使用 "ip
 
 
-```
+```go
 package main
 
 import (
@@ -89,7 +89,7 @@ import (
 最后，还有一个 `testPinMFSNode` 类型，它代表了一个 `testPinMFSNode`，用于代表一个操作的执行结果。
 
 
-```
+```go
 type testPinMFSContext struct {
 	ctx context.Context
 	cfg *config.Config
@@ -132,7 +132,7 @@ return strings.Contains(e1.Error(), e2.Error()) || strings.Contains(e2.Error(), 
 这个函数的作用是判断两个错误是否相似，取决于它们的错误信息是否相同。
 
 
-```
+```go
 func (x *testPinMFSNode) RootNode() (ipld.Node, error) {
 	return merkledag.NewRawNode([]byte{0x01}), x.err
 }
@@ -169,7 +169,7 @@ func isErrorSimilar(e1, e2 error) bool {
 最后，函数内部使用两个判断条件，`!isErrorSimilar(<-errCh, ctx.err)`和`!isErrorSimilar(<-errCh, ctx.err)`，来判断错误是否与上下文中的错误相同，如果两个判断条件都为`true`，则说明错误没有传播，反之则说明错误已经传播。
 
 
-```
+```go
 func TestPinMFSConfigError(t *testing.T) {
 	ctx := &testPinMFSContext{
 		ctx: context.Background(),
@@ -203,7 +203,7 @@ func TestPinMFSConfigError(t *testing.T) {
 10. 最后一个 isErrorSimilar 的返回值使用了逻辑非，即 true，表示函数会输出错误。
 
 
-```
+```go
 func TestPinMFSRootNodeError(t *testing.T) {
 	ctx := &testPinMFSContext{
 		ctx: context.Background(),
@@ -239,7 +239,7 @@ It appears that the function uses a combination of constants, interfaces, and he
 If the function passes all the tests, it will indicate that the configuration is correctly set and the testing can proceed. Otherwise, it will return an error or throw an exception.
 
 
-```
+```go
 func TestPinMFSService(t *testing.T) {
 	cfgInvalidInterval := &config.Config{
 		Pinning: config.Pinning{
@@ -306,7 +306,7 @@ func TestPinMFSService(t *testing.T) {
 函数内部还有一个循环，该循环用于接收可能发生的任何错误，并检查它们是否符合预期错误前缀。如果期望错误前缀与 `err` 中的错误消息包含相同的字符，则函数将打印错误消息并中止测试。
 
 
-```
+```go
 func testPinMFSServiceWithError(t *testing.T, cfg *config.Config, expectedErrorPrefix string) {
 	goctx, cancel := context.WithCancel(context.Background())
 	ctx := &testPinMFSContext{
@@ -333,7 +333,7 @@ func testPinMFSServiceWithError(t *testing.T, cfg *config.Config, expectedErrorP
 
 ```
 
-# `/opt/kubo/cmd/ipfs/runmain_test.go`
+# `cmd/ipfs/runmain_test.go`
 
 这段代码是一个 Go 语言程序，它包含了名为 `main` 的包，通过 `go build` 命令编译，通过 `go test` 命令运行。这段代码的作用是编译一个名为 `testrunmain` 的包，并运行其中包含的 `test` 包。
 
@@ -356,7 +356,7 @@ func testPinMFSServiceWithError(t *testing.T, cfg *config.Config, expectedErrorP
 `// this abuses go so much that I felt dirty writing this code` 是一个注释，说明这段代码的作用，即滥用 Go 的功能。这段代码使用 `go build` 命令编译了一个名为 `testrunmain` 的包，并通过 `go test` 命令运行其中包含的 `test` 包。
 
 
-```
+```go
 //go:build testrunmain
 // +build testrunmain
 
@@ -388,7 +388,7 @@ import (
 这段代码的主要目的是测试一个名为 `main` 的二进制文件，并对它的返回值进行处理。它主要的作用是设置 `os` 函数的参数，并将 `main` 的返回值传递给它。
 
 
-```
+```go
 func TestRunMain(t *testing.T) {
 	args := flag.Args()
 	os.Args = append([]string{os.Args[0]}, args...)
@@ -415,7 +415,7 @@ This is the [ipfs](http://ipfs.io) command line tool. It contains a full ipfs no
 
 To install it, move the binary somewhere in your `$PATH`:
 
-```sh
+```gosh
 sudo mv ipfs /usr/local/bin/ipfs
 ```
 
@@ -425,19 +425,19 @@ Or run `sudo ./install.sh` which does this for you.
 
 First, you must initialize your local ipfs node:
 
-```sh
+```gosh
 ipfs init
 ```
 
 This will give you directions to get started with ipfs.
 You can always get help with:
 
-```sh
+```gosh
 ipfs --help
 ```
 
 
-# `/opt/kubo/cmd/ipfs/util/signal.go`
+# `cmd/ipfs/util/signal.go`
 
 这段代码是一个 Go 语言编写的工具函数，它解释了 Go 语言在 Go 1.11版本之前的构建机制。
 
@@ -450,7 +450,7 @@ ipfs --help
 最后，它实现了一个名为 `休眠` 的函数，该函数休眠直到操作系统接受它所传递的信号。休眠函数的作用是在需要时暂停执行操作，以确保系统不会在正在进行的任务中挂起。
 
 
-```
+```go
 //go:build !wasm
 // +build !wasm
 
@@ -475,7 +475,7 @@ IntrHandler构造函数的实现创建了一个IntrHandler实例，并将closing
 IntrHandler Close函数的实现关闭通道并等待wg组中的所有操作完成。在函数中，首先，将closing通道的值设置为[ ]结构体类型，允许通过此通道进行的操作只有在该通道的读取或写入操作完成时才会输出到外部。然后，调用wg组的Close()方法，并等待直到通道关闭。最后，返回一个nil值，表示没有错误发生。
 
 
-```
+```go
 // IntrHandler helps set up an interrupt handler that can
 // be cleanly shut down through the io.Closer interface.
 type IntrHandler struct {
@@ -502,7 +502,7 @@ func (ih *IntrHandler) Close() error {
 由于每次 `Handle` 函数都会创建一个独立的 `for` 循环来监听信号，所以这种自旋机制可以确保在关闭信号到达并传递给所有处理程序之前，所有处理程序都已经完成了其工作。
 
 
-```
+```go
 // Handle starts handling the given signals, and will call the handler
 // callback function each time a signal is caught. The function is passed
 // the number of times the handler has been triggered in total, as
@@ -544,7 +544,7 @@ func (ih *IntrHandler) Handle(handler func(count int, ih *IntrHandler), sigs ...
 7. 通过调用 `intrh.Handle` 函数，将 `handlerFunc` 注册为操作系统的中断处理程序，并返回一个 `io.Closer` 和一个 `context.Context`，这个 `context.Context` 允许函数挂起当前操作系统的信号直到它被显式取消。
 
 
-```
+```go
 func SetupInterruptHandler(ctx context.Context) (io.Closer, context.Context) {
 	intrh := NewIntrHandler()
 	ctx, cancelFunc := context.WithCancel(ctx)
@@ -573,7 +573,7 @@ func SetupInterruptHandler(ctx context.Context) (io.Closer, context.Context) {
 
 ```
 
-# `/opt/kubo/cmd/ipfs/util/signal_wasm.go`
+# `cmd/ipfs/util/signal_wasm.go`
 
 这段代码定义了一个名为“util”的包，其中包含了一些与上下文相关的函数。
 
@@ -586,7 +586,7 @@ func SetupInterruptHandler(ctx context.Context) (io.Closer, context.Context) {
 最后，在“util”包的其它函数中使用了这些定义的函数，例如“Close”函数会在一个“ctx”上下文上执行一些操作，然后调用“ctxCloser”设置的“Close”函数来关闭上下文。
 
 
-```
+```go
 package util
 
 import (
@@ -608,7 +608,7 @@ func SetupInterruptHandler(ctx context.Context) (io.Closer, context.Context) {
 
 ```
 
-# `/opt/kubo/cmd/ipfs/util/ui.go`
+# `cmd/ipfs/util/ui.go`
 
 这段代码是一个 Go 语言编写的静态时延（即时延）函数。它包含两个条件判断，和一个输出函数。
 
@@ -629,7 +629,7 @@ func SetupInterruptHandler(ctx context.Context) (io.Closer, context.Context) {
 6. `package main`：这个说明定义了一个名为 `main` 的包，可能用于包含程序的入口函数。
 
 
-```
+```go
 //go:build !windows
 // +build !windows
 
@@ -641,7 +641,7 @@ func InsideGUI() bool {
 
 ```
 
-# `/opt/kubo/cmd/ipfs/util/ui_windows.go`
+# `cmd/ipfs/util/ui_windows.go`
 
 这段代码是一个辅助函数，名为`InsideGUI`，它用来检查用户是否在终端窗口中。它通过获取控制台屏幕缓冲区信息并检查当前的窗口是否在控制台窗口中来进行判断。
 
@@ -650,7 +650,7 @@ func InsideGUI() bool {
 接下来，代码使用三元运算符检查`conhostInfo`中的`CursorPosition`字段是否为零。如果是零，则表示当前窗口的鼠标没有移动，也就是用户当前仍然在控制台窗口中。因此，该辅助函数返回`true`，表明用户当前在控制台窗口中。如果返回`false`，则表明用户当前不在控制台窗口中。
 
 
-```
+```go
 package util
 
 import "golang.org/x/sys/windows"
@@ -672,7 +672,7 @@ func InsideGUI() bool {
 
 ```
 
-# `/opt/kubo/cmd/ipfs/util/ulimit.go`
+# `cmd/ipfs/util/ulimit.go`
 
 这段代码定义了一个名为"util"的包，其中包含了一些通用的工具函数。
 
@@ -700,7 +700,7 @@ func InsideGUI() bool {
 	// 在这里，我们可以将更多的代码定义加入到 "util" 包中，以便于限速管理功能的支持。
 
 
-```
+```go
 package util
 
 import (
@@ -734,7 +734,7 @@ var (
 如果 `os.Getenv("IPFS_FD_MAX")` 没有被设置为任何有意义的值，函数将返回一个非零值，其值为 `0`。
 
 
-```
+```go
 // minimum file descriptor limit before we complain.
 const minFds = 2048
 
@@ -767,7 +767,7 @@ If the user limit is greater than the soft limit, the function raises the soft l
 If the user limit is greater than the soft limit and the soft limit is less than the minimumFds, the function raises the soft limit to the hard limit and returns `true`. If the process does not have permission, the function returns `false` and the error.
 
 
-```
+```go
 // ManageFdLimit raise the current max file descriptor count
 // of the process based on the IPFS_FD_MAX value.
 func ManageFdLimit() (changed bool, newLimit uint64, err error) {
@@ -842,7 +842,7 @@ func ManageFdLimit() (changed bool, newLimit uint64, err error) {
 
 ```
 
-# `/opt/kubo/cmd/ipfs/util/ulimit_freebsd.go`
+# `cmd/ipfs/util/ulimit_freebsd.go`
 
 这段代码是一个Go语言中的便用函数包，名为"util"。
 
@@ -857,7 +857,7 @@ func ManageFdLimit() (changed bool, newLimit uint64, err error) {
 总结起来，这段代码定义了一个包含三个函数的便用函数包，用于获取和设置系统限制。但是，由于没有具体的函数体，我们无法得知这些函数是如何工作的。
 
 
-```
+```go
 //go:build freebsd
 // +build freebsd
 
@@ -916,7 +916,7 @@ func freebsdSetLimit(soft uint64, max uint64) error {
 4. 如果设置或获取成功，函数返回 0 和限制值最大值，`err` 参数用于表示错误。
 
 
-```
+```go
 func freebsdGetLimit() (uint64, uint64, error) {
 	rlimit := unix.Rlimit{}
 	err := unix.Getrlimit(unix.RLIMIT_NOFILE, &rlimit)
@@ -939,7 +939,7 @@ func freebsdSetLimit(soft uint64, max uint64) error {
 
 ```
 
-# `/opt/kubo/cmd/ipfs/util/ulimit_test.go`
+# `cmd/ipfs/util/ulimit_test.go`
 
 这段代码是一个 Go 语言中的程序，它的主要目的是测试 `ManageFdLimit` 函数。具体来说，这段代码的作用是：
 
@@ -951,7 +951,7 @@ func freebsdSetLimit(soft uint64, max uint64) error {
 6. `t.Errorf` 表示测试函数 `ManageFdLimit` 的错误信息，它会将任何错误信息输出到 `t` 会话的 `Error` 字段中，并提供错误信息的详细信息。
 
 
-```
+```go
 //go:build !windows && !plan9
 // +build !windows,!plan9
 
@@ -983,7 +983,7 @@ func TestManageFdLimit(t *testing.T) {
 此外，代码还测试了 `ManageFdLimit()` 函数，该函数旨在通过设置 IPFS_FD_MAX 环境变量来管理文件描述符计数。如果 `ManageFdLimit()` 函数在尝试设置 IPFS_FD_MAX 环境变量时遇到错误，它将返回一个非空错误。如果错误是允许的（例如，由于尝试设置的值超出了允许的范围），则 `ManageFdLimit()` 函数将返回 `nil`，否则它将返回一个非空错误，该错误将包含有关错误信息的一行。如果 `ManageFdLimit()` 函数返回了一个非空错误，则代码将打印该错误并尝试使用 `os.Unsetenv()` 函数将 IPFS_FD_MAX 环境变量设置为空字符串，这将清除之前的设置。
 
 
-```
+```go
 func TestManageInvalidNFds(t *testing.T) {
 	t.Logf("Testing file descriptor invalidity")
 	var err error
@@ -1031,7 +1031,7 @@ func TestManageInvalidNFds(t *testing.T) {
 该测试代码覆盖了Linux系统调用os.setenv和os.unsetenv的实现，允许用户在测试代码中设置IPFS_FD_MAX环境变量，并在测试成功后清空它。
 
 
-```
+```go
 func TestManageFdLimitWithEnvSet(t *testing.T) {
 	t.Logf("Testing file descriptor manager with IPFS_FD_MAX set")
 	var err error
@@ -1061,7 +1061,7 @@ func TestManageFdLimitWithEnvSet(t *testing.T) {
 
 ```
 
-# `/opt/kubo/cmd/ipfs/util/ulimit_unix.go`
+# `cmd/ipfs/util/ulimit_unix.go`
 
 这段代码是一个名为`util`的包的初始化函数，其中包含一些用于操作系统相关的函数。
 
@@ -1072,7 +1072,7 @@ func TestManageFdLimitWithEnvSet(t *testing.T) {
 最后，函数内部创建了一个名为`init`的函数，它将`supportsFDManagement`的值设为`true`，这意味着Go语言将启用套接字。
 
 
-```
+```go
 //go:build darwin || linux || netbsd || openbsd
 // +build darwin linux netbsd openbsd
 
@@ -1101,7 +1101,7 @@ func init() {
 这两函数是用来设置Linux文件系统的限制，以避免在运行程序时因为设置的限额过低而导致的运行效率问题。
 
 
-```
+```go
 func unixGetLimit() (uint64, uint64, error) {
 	rlimit := unix.Rlimit{}
 	err := unix.Getrlimit(unix.RLIMIT_NOFILE, &rlimit)
@@ -1118,7 +1118,7 @@ func unixSetLimit(soft uint64, max uint64) error {
 
 ```
 
-# `/opt/kubo/cmd/ipfs/util/ulimit_windows.go`
+# `cmd/ipfs/util/ulimit_windows.go`
 
 这段代码是一个 Go 语言编写的工具包中的一个函数，名为 `util.init()`。它包含一个全局初始化函数，用于在函数第一次被调用时初始化一些选项。
 
@@ -1127,7 +1127,7 @@ func unixSetLimit(soft uint64, max uint64) error {
 在函数内部，首先定义了一个名为 `supportsFDManagement` 的变量，并将其初始化为一个布尔值 `false`。然后在函数体中，使用 `//go:build` 注释开启 Go 语言的构建选项，然后使用 `// +build windows` 注释开启在 Windows 上构建。最后，定义了一个 `init()` 函数，用于在函数第一次被调用时执行一些初始化操作。
 
 
-```
+```go
 //go:build windows
 // +build windows
 
@@ -1139,7 +1139,7 @@ func init() {
 
 ```
 
-# `/opt/kubo/cmd/ipfswatch/ipfswatch_test.go`
+# `cmd/ipfswatch/ipfswatch_test.go`
 
 这段代码是一个 Go 语言程序，主要作用是测试一个名为 `IsHidden` 的函数。
 
@@ -1160,7 +1160,7 @@ func init() {
 通过上述测试，我们可以得出结论，`IsHidden` 函数可以正确地测试一个目录是否为隐藏目录。
 
 
-```
+```go
 //go:build !plan9
 // +build !plan9
 
@@ -1180,7 +1180,7 @@ func TestIsHidden(t *testing.T) {
 
 ```
 
-# `/opt/kubo/cmd/ipfswatch/main.go`
+# `cmd/ipfswatch/main.go`
 
 这段代码是一个 Go 语言程序，它定义了一个名为 "main" 的包。
 
@@ -1203,7 +1203,7 @@ func TestIsHidden(t *testing.T) {
 然后，它等待管道中的内容写入，并在完成后打印一些日志信息。
 
 
-```
+```go
 //go:build !plan9
 // +build !plan9
 
@@ -1241,7 +1241,7 @@ import (
 整个函数的主干就是执行第3步中的操作，即使用IPFS_PATH与当前工作目录（如果已知的話）进行交互。
 
 
-```
+```go
 var (
 	http      = flag.Bool("http", false, "expose IPFS HTTP API")
 	repoPath  = flag.String("repo", os.Getenv("IPFS_PATH"), "IPFS_PATH to use")
@@ -1280,7 +1280,7 @@ The function takes in an event object that describes the event that occurred, in
 The function is also如果是 file system events related to the removal of a directory, it adds the contents of the directory to the IPFS, and if it is successful, it prints a message indicating that the directory has been added to the IPFS.
 
 
-```
+```go
 func run(ipfsPath, watchPath string) error {
 	proc := process.WithParent(process.Background())
 	log.Printf("running IPFSWatch on '%s' using repo at '%s'...", watchPath, ipfsPath)
@@ -1409,7 +1409,7 @@ func run(ipfsPath, watchPath string) error {
 最后，函数返回一个 error，表示前驱操作中发生的错误。
 
 
-```
+```go
 func addTree(w *fsnotify.Watcher, root string) error {
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -1447,7 +1447,7 @@ func addTree(w *fsnotify.Watcher, root string) error {
 第二段代码 `func IsHidden(path string) bool` 接收一个字符串参数 `path`，然后使用 `filepath.Base` 函数来获取路径的根目录，如果根目录为 `"."`(表示当前目录)，则返回为 `false`。否则，如果根目录为文件或目录名称，则返回为 `true`。最后，使用 `rune` 函数来获取路径字符串中的第一个字符，如果该字符为 `.`(表示目录名称)，则返回为 `true`；否则返回为 `false`。
 
 
-```
+```go
 func IsDirectory(path string) (bool, error) {
 	fileInfo, err := os.Stat(path)
 	return fileInfo.IsDir(), err
@@ -1483,7 +1483,7 @@ func IsHidden(path string) bool {
 该函数的作用是创建一个可以用来执行 Ipfs 命令的上下文对象，可以在命令行中使用 `ipfs` 命令。
 
 
-```
+```go
 func cmdCtx(node *core.IpfsNode, repoPath string) commands.Context {
 	return commands.Context{
 		ConfigRoot: repoPath,
@@ -1497,7 +1497,7 @@ func cmdCtx(node *core.IpfsNode, repoPath string) commands.Context {
 
 IPFSWatch monitors a directory and adds changes to IPFS
 
-```
+```go
 λ. ipfswatch --help
   -path=".": the path to watch
   -repo="": IPFS_PATH to use

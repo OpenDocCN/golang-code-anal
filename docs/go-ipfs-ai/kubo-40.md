@@ -142,7 +142,7 @@ At the moment, go-ipfs cannot use this protocol to download content from other p
 
 To enable, run:
 
-```bash
+```gobash
 > ipfs config --json Experimental.GraphsyncEnabled true
 ```
 
@@ -182,7 +182,7 @@ We suggest you use Badger if:
 
 In the flatfs datastore, we've fixed an issue where temporary files could be left behind in some cases. While this release will avoid leaving behind temporary files, you may want to remove any left behind by previous releases:
 
-```bash
+```gobash
 > rm ~/.ipfs/blocks/*/put-*
 > rm ~/.ipfs/blocks/du-*
 ```
@@ -355,7 +355,7 @@ The `ipfs repo fsck` now does nothing but print an error message. Previously, it
 
 It's now possible to initialize an IPFS node with an existing IPFS config by running:
 
-```bash
+```gobash
 > ipfs init /path/to/existing/config
 ```
 
@@ -374,7 +374,7 @@ Files can now be ignored on add by passing the `--ignore` and/or
 
 For example, to add a git repo while ignoring all files git would ignore, you could run:
 
-```bash
+```gobash
 > cd path/to/some/repo
 > ipfs add -r --hidden=false --ignore=.git --ignore-rules-path=.gitignore .
 ```
@@ -383,7 +383,7 @@ For example, to add a git repo while ignoring all files git would ignore, you co
 
 It's now possible to add data directly from a named pipe:
 
-```bash
+```gobash
 > mkfifo foo
 > echo -n "hello " > foo &
 > echo -n "world" > bar &
@@ -398,7 +398,7 @@ NOTE: To avoid surprising users, IPFS will only add data from FIFOs _directly_ n
 
 IPFS now allows rapid reading and writing of blocks in [`.car` format](https://github.com/ipld/specs/blob/master/block-layer/content-addressable-archives.md#readme). The functionality is accessible via the experimental `dag import` and `dag export` commands:
 
-```
+```go
 ~$ ipfs dag export QmQPeNsJPyVWPFDVHb77w8G42Fvo15z4bG2X8D2GhfbSXc \
 | xz > welcome_to_ipfs.car.xz
 
@@ -406,7 +406,7 @@ IPFS now allows rapid reading and writing of blocks in [`.car` format](https://g
 
 ```
 Then on another `ipfs` instance, not even connected to the network:
-```
+```go
 ~$ xz -dc welcome_to_ipfs.car.xz | ipfs dag import
 
 Pinned root	QmQPeNsJPyVWPFDVHb77w8G42Fvo15z4bG2X8D2GhfbSXc	success
@@ -443,7 +443,7 @@ You can find the new systemd units in the go-ipfs repo under misc/systemd.
 
 This release supports exposing the IPFS API over a unix domain socket in the filesystem. You use this feature, run:
 
-```bash
+```gobash
 > ipfs config Addresses.API "/unix/path/to/socket/location"
 ```
 
@@ -479,7 +479,7 @@ Plugins can now be configured and/or disabled via the [ipfs config file](./docs/
 
 To make this possible, the plugin interface has changed. The `Init` function now takes an `*Environment` object. Specifically, the plugin signature has changed from:
 
-```go
+```gogo
 type Plugin interface {
 	Name() string
 	Version() string
@@ -489,7 +489,7 @@ type Plugin interface {
 
 to
 
-```go
+```gogo
 type Environment struct {
 	// Path to the IPFS repo.
 	Repo string
@@ -1420,7 +1420,7 @@ If you hit this performance issue on Linux, you should tune the `net.core.rmem_d
 
 If necessary, you can disable the QUIC transport by running:
 
-```bash
+```gobash
 > ipfs config --json Swarm.Transports.Network.QUIC false
 ```
 
@@ -1450,7 +1450,7 @@ While base32 (the current default encoding used in subdomains) is simpler than b
 
 This release adds support for base36 but won't use it by default. If you'd like to re-encode an Ed25519 IPNS key into base36, you can use the `ipfs cid format` command:
 
-```sh
+```gosh
 $ ipfs cid format -v 1 --codec libp2p-key -b base36 bafzaajaiaejca4syrpdu6gdx4wsdnokxkprgzxf4wrstuc34gxw5k5jrag2so5gk k51qzi5uqu5dj16qyiq0tajolkojyl9qdkr254920wxv7ghtuwcz593tp69z9m
 ```
 

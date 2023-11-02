@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 51
 
-# `/opt/kubo/repo/fsrepo/migrations/migrations_test.go`
+# `repo/fsrepo/migrations/migrations_test.go`
 
 package migrations
 
@@ -73,7 +73,7 @@ func createFakeBin(i int, binName, tmpDir string) {
 }
 
 
-```
+```go
 package migrations
 
 import (
@@ -154,7 +154,7 @@ func TestFindMigrations(t *testing.T) {
 函数的作用是验证“findMigrations”函数的行为，它通过测试其失败和成功情况来检查函数是否正常工作。
 
 
-```
+```go
 func TestFindMigrationsReverse(t *testing.T) {
 	tmpDir := t.TempDir()
 
@@ -211,7 +211,7 @@ func TestFindMigrationsReverse(t *testing.T) {
 函数的复杂度为较低，因为它只需要创建一个临时目录，并打印一些日志消息。
 
 
-```
+```go
 func TestFetchMigrations(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -268,7 +268,7 @@ func TestFetchMigrations(t *testing.T) {
 9. 如果 migration 过程失败，将在模拟的 HTTP 请求中捕获该错误，然后根据错误信息来判断是哪个文件系统版本的问题，并输出相应的错误信息。
 
 
-```
+```go
 func TestRunMigrations(t *testing.T) {
 	fakeHome := t.TempDir()
 
@@ -325,7 +325,7 @@ func TestRunMigrations(t *testing.T) {
 最后，函数会设置 `migPath` 目录下的文件 `emptyFile`，使其内容为 `ExeName` 文件的内容。
 
 
-```
+```go
 func createFakeBin(from, to int, tmpDir string) {
 	migPath := filepath.Join(tmpDir, ExeName(migrationName(from, to)))
 	emptyFile, err := os.Create(migPath)
@@ -369,7 +369,7 @@ var testConfig = `
 接下来，函数遍历`DownloadSources`的值，并检查它们是否与`DefaultMigrationDownloadSources`的值匹配。如果它们的值不匹配，函数将错误并输出错误信息。如果所有的下载源都匹配，函数将跳过该部分测试。
 
 
-```
+```go
 `
 
 func TestReadMigrationConfigDefaults(t *testing.T) {
@@ -403,7 +403,7 @@ func TestReadMigrationConfigDefaults(t *testing.T) {
 总的来说，这段代码的主要目的是测试 `ReadMigrationConfig` 函数的正确性，并验证它是否能够正确地读取和处理一个包含 "unknown" 错误的配置文件。
 
 
-```
+```go
 func TestReadMigrationConfigErrors(t *testing.T) {
 	tmpDir := makeConfig(t, `{"Migration": {"Keep": "badvalue"}}`)
 
@@ -441,7 +441,7 @@ func TestReadMigrationConfigErrors(t *testing.T) {
 综上所述，这段代码的作用是测试迁移配置文件中下载源的数量和下载源的匹配情况，如果出现错误则进行相应的错误处理。
 
 
-```
+```go
 func TestReadMigrationConfig(t *testing.T) {
 	tmpDir := makeConfig(t, testConfig)
 
@@ -484,7 +484,7 @@ The code you provided is testing a migration fetcher that uses IPFS (InterPlanet
 Overall, this code tests a function that downloads files from a website using IPFS and a MultiFetcher. It checks if the MultiFetcher is an instance of `MultiFetcher`, and if the `downloadSources` variable is an empty string.
 
 
-```
+```go
 type mockIpfsFetcher struct{}
 
 var _ Fetcher = (*mockIpfsFetcher)(nil)
@@ -599,7 +599,7 @@ func TestGetMigrationFetcher(t *testing.T) {
 该函数的作用是创建一个临时文件夹，并将一个字符串类型的参数configData写入该文件夹中，然后返回文件夹的路径。这个函数可以在测试中用来暂存配置数据，以便在测试结束后，不需要将配置数据残留到 disk 中。
 
 
-```
+```go
 func makeConfig(t *testing.T, configData string) string {
 	tmpDir := t.TempDir()
 
@@ -618,14 +618,14 @@ func makeConfig(t *testing.T, configData string) string {
 
 ```
 
-# `/opt/kubo/repo/fsrepo/migrations/retryfetcher.go`
+# `repo/fsrepo/migrations/retryfetcher.go`
 
 这段代码定义了一个名为`RetryFetcher`的结构体，它包含一个`Fetcher`字段和一个`MaxTries`字段。`Fetcher`字段是一个`Fetch`方法的指针，用于执行实际的网络请求。`MaxTries`字段用于限制最多尝试多少次网络请求，如果尝试次数超过了这个限制，则会返回一个错误。
 
 该代码的作用是提供一个用于执行网络请求的 retry 机制。通过在 `Fetch`方法中执行最多 `MaxTries` 次网络请求，来实现从服务器下载文件的 retry 机制。如果网络请求过程中出现错误，则会返回一个错误，并设置 `lastErr` 字段的值为该错误，以便在之后的重试过程中使用。
 
 
-```
+```go
 package migrations
 
 import (
@@ -663,14 +663,14 @@ func (r *RetryFetcher) Fetch(ctx context.Context, filePath string) ([]byte, erro
 此函数的作用是关闭`r.Fetcher`关闭的资源。由于`r.Fetcher`资源类型未定义，我们无法提供关于`r.Fetcher`的上下文信息。但我们可以确定的是，当一个资源关闭时，所有使用该资源的请求都将失败。因此，当`func`关闭`r.Fetcher`时，任何正在等待`r.Fetcher`资源完成请求的请求都将失败。
 
 
-```
+```go
 func (r *RetryFetcher) Close() error {
 	return r.Fetcher.Close()
 }
 
 ```
 
-# `/opt/kubo/repo/fsrepo/migrations/unpack.go`
+# `repo/fsrepo/migrations/unpack.go`
 
 这段代码定义了一个名为 `unpackArchive` 的函数，它接受五个参数：
 
@@ -689,7 +689,7 @@ func (r *RetryFetcher) Close() error {
 最后，函数会判断 `atype` 是否为 "tar.gz"，如果是，函数会继续执行 `unpackTgz` 的操作；如果不是，函数会执行 `unpackZip` 的操作。
 
 
-```
+```go
 package migrations
 
 import (
@@ -729,7 +729,7 @@ func unpackArchive(arcPath, atype, root, name, out string) error {
 最后，如果 "arcPath" 或 "out" 目录不存在，则会抛出相应的错误。
 
 
-```
+```go
 func unpackTgz(arcPath, root, name, out string) error {
 	fi, err := os.Open(arcPath)
 	if err != nil {
@@ -790,7 +790,7 @@ func unpackTgz(arcPath, root, name, out string) error {
 "unpackZip"函数的作用是将ZIP档案中的某个文件夹解压到指定的目录，并返回错误。它需要传递三个参数：要解压缩的ZIP档案的路径、要解压缩的文件夹名称以及要写入的文件名。
 
 
-```
+```go
 func unpackZip(arcPath, root, name, out string) error {
 	zipr, err := zip.OpenReader(arcPath)
 	if err != nil {
@@ -832,7 +832,7 @@ func unpackZip(arcPath, root, name, out string) error {
 函数的实现使它可以在写入错误文件的同时创建一个新的输出文件。如果调用函数并且输出文件已存在，将创建覆盖原有文件而不是覆盖原有文件并写入新内容。
 
 
-```
+```go
 func writeToPath(rc io.Reader, out string) error {
 	binfi, err := os.Create(out)
 	if err != nil {
@@ -847,7 +847,7 @@ func writeToPath(rc io.Reader, out string) error {
 
 ```
 
-# `/opt/kubo/repo/fsrepo/migrations/unpack_test.go`
+# `repo/fsrepo/migrations/unpack_test.go`
 
 该代码包是一个Migrations包，用于处理与文件系统相关的操作。具体来说，它实现了以下功能：
 
@@ -860,7 +860,7 @@ func writeToPath(rc io.Reader, out string) error {
 该代码包可能还被用于其他Migrations相关操作，比如将数据迁移到云存储或导出为移动设备支持的格式等。
 
 
-```
+```go
 package migrations
 
 import (
@@ -889,7 +889,7 @@ import (
 函数的作用是验证是否能够正确地打开或关闭不同类型的归档文件，以帮助开发者检查代码的质量和完整性。
 
 
-```
+```go
 func TestUnpackArchive(t *testing.T) {
 	// Check unrecognized archive type
 	err := unpackArchive("", "no-arch-type", "", "", "")
@@ -966,7 +966,7 @@ The `unpackTgz` function is expected to handle an archive file `tar.gz` correctl
 The function reads the archive file and unpacks its contents to the specified output file. It checks for errors opening the archive file and returns them if any. It also checks that the output file has the expected size, and reports an error if it doesn't.
 
 
-```
+```go
 func TestUnpackTgz(t *testing.T) {
 	tmpDir := t.TempDir()
 
@@ -1028,7 +1028,7 @@ func TestUnpackTgz(t *testing.T) {
 10. 检查输出文件中的内容是否正确。如果输出文件中的内容与预期不符，则说明 UnpackZip 函数存在错误。
 
 
-```
+```go
 func TestUnpackZip(t *testing.T) {
 	tmpDir := t.TempDir()
 
@@ -1087,7 +1087,7 @@ func TestUnpackZip(t *testing.T) {
 7. 返回 nil，表示操作成功。
 
 
-```
+```go
 func writeTarGzipFile(archName, root, fileName, data string) error {
 	archFile, err := os.Create(archName)
 	if err != nil {
@@ -1122,7 +1122,7 @@ func writeTarGzipFile(archName, root, fileName, data string) error {
 如果`tw`关闭或数据写入失败，函数将返回一个错误。
 
 
-```
+```go
 func writeTarGzip(root, fileName, data string, w io.Writer) error {
 	// gzip writer writes to buffer
 	gzw := gzip.NewWriter(w)
@@ -1171,7 +1171,7 @@ func writeTarGzip(root, fileName, data string, w io.Writer) error {
 5. 如果归档文件写入成功，函数将返回 nil。
 
 
-```
+```go
 func writeZipFile(archName, root, fileName, data string) error {
 	archFile, err := os.Create(archName)
 	if err != nil {
@@ -1208,7 +1208,7 @@ func writeZipFile(archName, root, fileName, data string) error {
 函数返回一个`nil`表示没有错误。
 
 
-```
+```go
 func writeZip(root, fileName, data string, w io.Writer) error {
 	zw := zip.NewWriter(w)
 	defer zw.Close()
@@ -1233,7 +1233,7 @@ func writeZip(root, fileName, data string, w io.Writer) error {
 
 ```
 
-# `/opt/kubo/repo/fsrepo/migrations/versions.go`
+# `repo/fsrepo/migrations/versions.go`
 
 这段代码定义了一个名为 "migrations" 的包，其中包含了一些与 migrations(迁移)相关的方法和工具。
 
@@ -1246,7 +1246,7 @@ func writeZip(root, fileName, data string, w io.Writer) error {
 最后，定义了一个名为 "migrate" 的函数，该函数接受一个持久化器(类似于数据库的持久化器)和一个版本号(或者是最后一个提交时的版本号)，用于将应用程序的状态迁移到一个新的版本。该函数会读取应用程序配置文件中所有的持久化器，并将这些持久化器与新的版本号进行比较，如果应用程序配置文件中所有的持久化器与新的版本号不匹配，则会尝试将应用程序的状态持久化到新的版本号。
 
 
-```
+```go
 package migrations
 
 import (
@@ -1271,7 +1271,7 @@ import (
 函数的实现主要使用了函数式编程的方法，以避免使用副作用（ side-effect）。这样的实现可以提高代码的可读性和可维护性，同时减少了代码的复杂度和出错率。
 
 
-```
+```go
 const distVersions = "versions"
 
 // LatestDistVersion returns the latest version, of the specified distribution,
@@ -1306,7 +1306,7 @@ func LatestDistVersion(ctx context.Context, fetcher Fetcher, dist string, stable
 最后，函数创建一个字符串数组并将版本信息添加到其中，然后使用函数名称并传递输入参数，返回版本数组和 nil，如果错误则返回错误信息。
 
 
-```
+```go
 // DistVersions returns all versions of the specified distribution, that are
 // available on the distriburion site.  List is in ascending order, unless
 // sortDesc is true.
@@ -1347,7 +1347,7 @@ func DistVersions(ctx context.Context, fetcher Fetcher, dist string, sortDesc bo
 
 ```
 
-# `/opt/kubo/repo/fsrepo/migrations/versions_test.go`
+# `repo/fsrepo/migrations/versions_test.go`
 
 这段代码是一个 Go 语言程序，旨在测试 Istio 服务器的版本管理功能。它包含一个名为 `DistVersions` 的函数，该函数使用 HTTP 客户端从给定的 IPFS 服务器下载版本信息。下载的版本信息保存在一个名为 `testDist` 的字符串中，如果下载失败，则该字符串为空。
 
@@ -1356,7 +1356,7 @@ func DistVersions(ctx context.Context, fetcher Fetcher, dist string, sortDesc bo
 该函数的输入参数是一个 HTTP 客户端和一个 IPFS 服务器。它使用一个名为 `testDist` 的字符串作为 HTTPFS 服务器的 URL。函数在开始时创建一个 HTTP 客户端并将其连接到 IPFS 服务器。然后，它调用 `DistVersions` 函数并传递它所需的参数。如果下载成功，它打印出最新的五个版本，并将 `testDist` 字符串设置为下载的版本号。
 
 
-```
+```go
 package migrations
 
 import (
@@ -1424,7 +1424,7 @@ func TestLatestDistVersion(t *testing.T) {
 接下来，函数使用上下文对象和下载的版本字段，调用一个名为LatestDistVersion的函数。如果函数成功执行并且下载的版本字段包含至少6个元素，那么它将使用Semver库中的Latest版本函数，并打印出当前版本的名称。如果函数在下载版本时遇到任何错误，它将打印错误并退出测试。
 
 
-```
+```go
 func TestLatestDistVersion(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -1449,12 +1449,12 @@ func TestLatestDistVersion(t *testing.T) {
 
 ```
 
-# `/opt/kubo/repo/fsrepo/migrations/ipfsfetcher/ipfsfetcher.go`
+# `repo/fsrepo/migrations/ipfsfetcher/ipfsfetcher.go`
 
 该代码是一个 Go 语言项目，名为 "ipfsfetcher"，旨在从 localhost（可能是本地运行的容器）开始，下载一个名为 "default.ipfs" 的 ipfs 链接，并将其下载到本地。下载过程需要使用 libp2p（零知识证明通过子进程通信，允许你创建自定义网络）技术，并利用平行网络（并行网络允许具有相同 IP 地址的多个节点形成一个虚拟网络，有助于提高下载速度）来加速下载过程。
 
 
-```
+```go
 package ipfsfetcher
 
 import (
@@ -1506,7 +1506,7 @@ import (
 `IpfsFetcher`还包含一个名为`fetched`的数组，用于保存下载的文件路径，以及一个名为`mutex`的同步锁，用于确保对`fetched`数组的互斥访问。
 
 
-```
+```go
 const (
 	// Default maximum download size.
 	defaultFetchLimit = 1024 * 1024 * 512
@@ -1556,7 +1556,7 @@ type IpfsFetcher struct {
 7. 返回新创建的 `IpfsFetcher` 对象。
 
 
-```
+```go
 var _ migrations.Fetcher = (*IpfsFetcher)(nil)
 
 // NewIpfsFetcher creates a new IpfsFetcher
@@ -1601,7 +1601,7 @@ func NewIpfsFetcher(distPath string, fetchLimit int64, repoRoot *string, userCon
 该函数的输入参数是一个表示文件路径的参数 `filePath`，它是一个字符串。函数返回一个由字节数组和错误对象组成的 slice，其中字节数组包含文件内容，错误对象可以是任何错误类型的实例。
 
 
-```
+```go
 // Fetch attempts to fetch the file at the given path, from the distribution
 // site configured for this HttpFetcher.
 func (f *IpfsFetcher) Fetch(ctx context.Context, filePath string) ([]byte, error) {
@@ -1662,7 +1662,7 @@ func (f *IpfsFetcher) Fetch(ctx context.Context, filePath string) ([]byte, error
 然后，执行一个判断 `f.ipfsTmpDir` 是否为空，如果是，则执行一个关闭 `IpfsFetcher` 对象的 `closeErr` 方法，并返回一个错误。
 
 
-```
+```go
 func (f *IpfsFetcher) Close() error {
 	f.closeOnce.Do(func() {
 		if f.ipfsStopFunc != nil {
@@ -1689,7 +1689,7 @@ func (f *IpfsFetcher) Close() error {
 `recordFetched` 函数接收一个下载的文件的路径，并将其添加到客户端的 `fetched` 数组中。为了确保同一时间只有一个客户端访问文件系统，此函数使用了 `mutex`(互斥锁)来防止多个客户端同时记录下载的文件。
 
 
-```
+```go
 func (f *IpfsFetcher) AddrInfo() peer.AddrInfo {
 	return f.addrInfo
 }
@@ -1713,7 +1713,7 @@ func (f *IpfsFetcher) recordFetched(fetchedPath path.Path) {
 该函数的作用是创建一个临时IPFS目录，并在其中初始化一个配置了IPFS路由、通过DHT客户端节点、禁止接收远程连接的IPFS节点。同时，如果使用了指定的bootstrap配置，该函数将从bootstrap列表中选择一些地址，如果选择了一些地址失败，函数将返回一个错误。如果函数在创建目录和初始化配置时出现错误，函数将返回一个错误并输出错误信息。
 
 
-```
+```go
 func initTempNode(ctx context.Context, bootstrap []string, peers []peer.AddrInfo) (string, error) {
 	identity, err := config.CreateIdentity(io.Discard, []options.KeyGenerateOption{
 		options.Key.Type(options.Ed25519Key),
@@ -1769,7 +1769,7 @@ func initTempNode(ctx context.Context, bootstrap []string, peers []peer.AddrInfo
 最后，函数创建了一个 `node` 变量来代表 IPFS node，并将其与一个已经打开的 repo 文件系统进行关联。然后，函数返回前一步的结果，即 `nil`。
 
 
-```
+```go
 func (f *IpfsFetcher) startTempNode(ctx context.Context) error {
 	// Open the repo
 	r, err := fsrepo.Open(f.ipfsTmpDir)
@@ -1833,7 +1833,7 @@ func (f *IpfsFetcher) startTempNode(ctx context.Context) error {
 函数首先将 `fetchPath` 解析为 URL 对象，然后根据协议字符串 `proto` 判断是否为 IPFS 路径。如果是，函数将返回一个以 IPFS 路径前缀为前缀的路径，否则返回一个错误对象。
 
 
-```
+```go
 func parsePath(fetchPath string) (path.Path, error) {
 	if ipfsPath, err := path.NewPath(fetchPath); err == nil {
 		return ipfsPath, nil
@@ -1861,7 +1861,7 @@ func parsePath(fetchPath string) (path.Path, error) {
 接下来，函数尝试打开并读取config文件中的配置部分。如果打开成功，它尝试使用json.NewDecoder来解析config文件中的Bootstrap和Peering部分，如果解析失败，将打印错误并返回。如果解析成功，函数将根据需要返回bootstrap和peers。
 
 
-```
+```go
 func readIpfsConfig(repoRoot *string, userConfigFile string) (bootstrap []string, peers []peer.AddrInfo) {
 	if repoRoot == nil {
 		return

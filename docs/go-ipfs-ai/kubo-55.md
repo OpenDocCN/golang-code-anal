@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 55
 
-# `/opt/kubo/test/cli/http_gateway_over_libp2p_test.go`
+# `test/cli/http_gateway_over_libp2p_test.go`
 
 该代码是一个 Go 语言编写的命令行工具 package，主要实现了通过 IPFS(InterPlanetary File System)链接(kvine)与 IPFS-RPC(Remote Planetary File System)的交互来共享文件并测试相关功能。具体来说，该工具包的作用是：
 
@@ -41,7 +41,7 @@
 18. 在 `testCmd` 函数中，使用 IPFS 的 `Show` 函数来打印文件 `/test/data/file.txt` 的内容，以便调试目的。
 
 
-```
+```go
 package cli
 
 import (
@@ -72,7 +72,7 @@ The test starts by connecting to a remote node using the Libp2p library's host m
 The expected output of the test is that the response body should contain the data structure "blockDataOnGatewayNode", as specified by the `require.Equal` test call.
 
 
-```
+```go
 func TestGatewayOverLibp2p(t *testing.T) {
 	t.Parallel()
 	nodes := harness.NewT(t).NewNodes(2).Init()
@@ -171,7 +171,7 @@ func TestGatewayOverLibp2p(t *testing.T) {
 
 ```
 
-# `/opt/kubo/test/cli/init_test.go`
+# `test/cli/init_test.go`
 
 这段代码是一个 Go 语言编写的 CLI 工具链，它包括一个名为 "cli" 的包。这个包通过导入 "fmt" "os" "fp" "strings" "testing" 和 "github.com/ipfs/kubo/test/cli/harness" "github.com/ipfs/kubo/test/cli/testutils" "github.com/libp2p/go-libp2p/core/crypto/pb" "github.com/libp2p/go-libp2p/core/peer" 和 "github.com/stretchr/testify/assert" 和 "github.com/stretchr/testify/require" 来提供测试框架和一些常用的CLI 工具。
 
@@ -180,7 +180,7 @@ func TestGatewayOverLibp2p(t *testing.T) {
 总的来说，这段代码的作用是提供一个方便的CLI工具链，用于测试 libp2p 库的功能，并支持测试框架和日志输出。
 
 
-```
+```go
 package cli
 
 import (
@@ -223,7 +223,7 @@ The tests also check for output format:
 * `node.IPFS("cat", "content/%s/readme") returns a stdout`: the specified content is read from the console and the output format is correct
 
 
-```
+```go
 func validatePeerID(t *testing.T, peerID peer.ID, expErr error, expAlgo pb.KeyType) {
 	assert.NoError(t, peerID.Validate())
 	pub, err := peerID.ExtractPublicKey()
@@ -309,7 +309,7 @@ The tests cover several scenarios, including:
 The tests also cover the case where `ipfs` is already running as a `daemon`, in which case the `RunIPFS` method should not return an error.
 
 
-```
+```go
 func TestInit(t *testing.T) {
 	t.Parallel()
 
@@ -392,7 +392,7 @@ func TestInit(t *testing.T) {
 
 ```
 
-# `/opt/kubo/test/cli/must.go`
+# `test/cli/must.go`
 
 这段代码定义了一个名为MustVal的函数类型，其参数为V和任意错误类型。函数的作用是确保函数调用时的参数V不会发生错误，并且在参数V为空或错误时返回指定的错误类型。
 
@@ -401,7 +401,7 @@ func TestInit(t *testing.T) {
 此外，这段代码还定义了一个名为Val的函数返回类型，其值为V。这个返回类型将在函数定义中用于返回值，而不是值本身。
 
 
-```
+```go
 package cli
 
 func MustVal[V any](val V, err error) V {
@@ -413,7 +413,7 @@ func MustVal[V any](val V, err error) V {
 
 ```
 
-# `/opt/kubo/test/cli/name_test.go`
+# `test/cli/name_test.go`
 
 该代码是一个 Go 语言编写的命令行工具 package，名为 "cli"，用于测试名为 "Kubernetes清道夫" 的 CLI 工具。该工具主要通过 ipfs-kubo-cli 这个库实现对 Kubernetes 集群的命令行工具，通过 ipfs-kubo-cli 库可以方便地执行与 Kubernetes 集群的交互操作，同时提供了一些额外的功能，如检查通用的 ClI 工具的支持，以及在默认情况下对错误输出进行转义。
 
@@ -444,7 +444,7 @@ func MustVal[V any](val V, err error) V {
 	* 调用 "main" 函数中的 "testCmd" 函数，测试代理的输出是否符合预期，如果符合预期，则
 
 
-```
+```go
 package cli
 
 import (
@@ -481,7 +481,7 @@ The function uses the `node` IPFS client to perform the operations, which is par
 The function uses the `ipns` package to perform the operations on the IPFS system. The `ipns` package is a Confluent脾胃 IPFS library that provides functions for working with IPFS on a decentralized system. The `ipns.NameFromString` function is used to extract a name from an IPFS resource, which is then used to publish the data to a specified endpoint.
 
 
-```
+```go
 func TestName(t *testing.T) {
 	const (
 		fixturePath = "fixtures/TestName.car"
@@ -735,7 +735,7 @@ func TestName(t *testing.T) {
 
 ```
 
-# `/opt/kubo/test/cli/peering_test.go`
+# `test/cli/peering_test.go`
 
 This is a Go test that tests the behavior of a Node.js peersocket when it connects, disconnects, and reconnects to a peer. It uses the `tcping` package to create a connection between the peers.
 
@@ -756,7 +756,7 @@ The fifth test case (`To: 1`) checks if the peers have disconnected and checks i
 The sixth test case (`To: 2`) checks if the peers have disconnected and checks if the peers have received any messages using `assertPeerings`.
 
 
-```
+```go
 package cli
 
 import (
@@ -870,7 +870,7 @@ func TestPeering(t *testing.T) {
 
 ```
 
-# `/opt/kubo/test/cli/ping_test.go`
+# `test/cli/ping_test.go`
 
 This is a Go test case that tests the `RunIPFS` function, which is used to execute an IPFS (Inter-Platform File System) command on a specified node.
 
@@ -883,7 +883,7 @@ The second test case (`node2`) checks that the ping command returns the expected
 The third test case (`node2`) checks that the ping command returns an error when passed the `--` argument. It also checks that the output contains the string "ping failed".
 
 
-```
+```go
 package cli
 
 import (
@@ -962,7 +962,7 @@ func TestPing(t *testing.T) {
 
 ```
 
-# `/opt/kubo/test/cli/pinning_remote_test.go`
+# `test/cli/pinning_remote_test.go`
 
 该代码是一个用于测试的 Go 语言工具包。它包含了一个名为 "cli" 的包，其中定义了一些函数和类型。
 
@@ -982,7 +982,7 @@ func TestPing(t *testing.T) {
 该代码主要用于测试一个 HTTP 客户端和相关的工具和服务，例如 PINN 服务器。通过使用该工具包，可以更轻松地编写和执行这些测试，以便更好地验证和调试 HTTP 客户端的操作。
 
 
-```
+```go
 package cli
 
 import (
@@ -1012,7 +1012,7 @@ import (
 函数中还包含一个可选的 `t.Cleanup` 函数，用于在函数内部关闭服务器和清除退出点，该函数在函数退出时调用，以确保在函数意外退出时，所有资源都被正确关闭。
 
 
-```
+```go
 func runPinningService(t *testing.T, authToken string) (*pinningservice.PinningService, string) {
 	svc := pinningservice.New()
 	router := pinningservice.NewRouter(authToken, svc)
@@ -1043,7 +1043,7 @@ The function then checks that the pin has been added by printing the output of t
 If the node is offline, the function also checks that the remote pinning service has been enabled by printing the output of the `node.IPFS("pin", "remote", "ls", "--service=svc").Stdout.Lines()` function. If the output contains only the expected number of lines, the function should print a warning message.
 
 
-```
+```go
 func TestRemotePinning(t *testing.T) {
 	t.Parallel()
 	authToken := "testauthtoken"
@@ -1456,7 +1456,7 @@ func TestRemotePinning(t *testing.T) {
 
 ```
 
-# `/opt/kubo/test/cli/pins_test.go`
+# `test/cli/pins_test.go`
 
 这段代码是一个 Go 语言写的测试框架，用于测试命令行工具 "kubo" 中的 "harness" 功能。它定义了一个名为 "testPinsArgs" 的结构体，用于传递测试过程中需要用到的选项给 "kubo harness" 函数。
 
@@ -1474,7 +1474,7 @@ func TestRemotePinning(t *testing.T) {
 总之，这段代码的主要作用是测试 "kubo harness" 函数的正确性，通过设置不同的选项值，来验证它是否能够正确地运行测试，并且在不同的测试选项上。
 
 
-```
+```go
 package cli
 
 import (
@@ -1541,7 +1541,7 @@ The `assert.Contains` function is used to check that the output of the IPFS comm
 The `assert.NotContains` function is used to check that the output of the IPFS command is not equal to the expected value.
 
 
-```
+```go
 func testPins(t *testing.T, args testPinsArgs) {
 	t.Run(fmt.Sprintf("test pins with args=%+v", args), func(t *testing.T) {
 		t.Parallel()
@@ -1648,7 +1648,7 @@ func testPins(t *testing.T, args testPinsArgs) {
 This is a Go test program that tests two functions: `testPinDAG` and `testPin`. The `testPinDAG` function tests the `pin`1 command with the `--offline` flag and the `testPin` function tests the `pin` command without the `--recursive` flag. Both tests use the `ipld` subcommand to perform operations on the IPFS (Inter-Platform Name-分散式文件系统) cluster.
 
 
-```
+```go
 func testPinsErrorReporting(t *testing.T, args testPinsArgs) {
 	t.Run(fmt.Sprintf("test pins error reporting with args=%+v", args), func(t *testing.T) {
 		t.Parallel()
@@ -1709,7 +1709,7 @@ func testPinDAG(t *testing.T, args testPinsArgs) {
 最后定义了一个名为 `res` 的变量，它的值为 `node.RunIPFS("pin", "add", "--progress", cid)`，这里 `RunIPFS` 是 ` harness.
 
 
-```
+```go
 func testPinProgress(t *testing.T, args testPinsArgs) {
 	t.Run(fmt.Sprintf("test pin progress with args=%+v", args), func(t *testing.T) {
 		t.Parallel()
@@ -1746,7 +1746,7 @@ The `testPinDAG` function appears to handle running the test as a daemon, withou
 The `testPinErrorReporting` function appears to handle reporting errors when `testPins` fails.
 
 
-```
+```go
 func TestPins(t *testing.T) {
 	t.Parallel()
 	t.Run("test pinning without daemon running", func(t *testing.T) {

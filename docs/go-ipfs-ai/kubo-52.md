@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 52
 
-# `/opt/kubo/repo/fsrepo/migrations/ipfsfetcher/ipfsfetcher_test.go`
+# `repo/fsrepo/migrations/ipfsfetcher/ipfsfetcher_test.go`
 
 这段代码是一个名为 "ipfsfetcher" 的包，它的作用是下载一个名为 "example.文本" 的文件，并将其存储在本地磁盘上。
 
@@ -54,7 +54,7 @@ func downloadFile(path string, dest bytes.Buffer, info *load.FileInfo) error {
 函数实现了一个简单的文件下载过程，将下载的文件写入缓冲区并返回。如果下载过程中出现错误，函数返回错误。
 
 
-```
+```go
 package ipfsfetcher
 
 import (
@@ -87,7 +87,7 @@ import (
 11. 如果通过调用 `IpfsFetcher` 函数成功获取到所有预期数据，则不执行任何操作。
 
 
-```
+```go
 func init() {
 	err := setupPlugins()
 	if err != nil {
@@ -161,7 +161,7 @@ func TestIpfsFetcher(t *testing.T) {
 12. 关闭 "f.ipfsStopFunc" 函数，确保所有关闭操作都已停止。
 
 
-```
+```go
 func TestInitIpfsFetcher(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -236,7 +236,7 @@ func TestInitIpfsFetcher(t *testing.T) {
 通过这个测试函数，可以确保 IPFS 配置文件的正确性。
 
 
-```
+```go
 func TestReadIpfsConfig(t *testing.T) {
 	testConfig := `
 {
@@ -272,7 +272,7 @@ func TestReadIpfsConfig(t *testing.T) {
 接下来，代码会将上面读取到的两个IPFS配置文件的内容再读取一遍，并检查其中的bootstrap地址和peers数量是否符合预期。如果两个文件读取失败，则会执行容错处理。
 
 
-```
+```go
 `
 
 	noSuchDir := "no_such_dir-5953aa51-1145-4efd-afd1-a069075fcf76"
@@ -321,7 +321,7 @@ func TestReadIpfsConfig(t *testing.T) {
 3. "Bootstrap": 设置中的 "Bootstrap" 字段指定 IPFS 集群的 bootstrap 过程，它的值为 "unreadable"，即不使用任何现有的配置，然后下载 sources、Keep 和 Migration 设置中定义的文件，最后开始 bootstrap 过程。
 
 
-```
+```go
 func TestBadBootstrappingIpfsConfig(t *testing.T) {
 	const configBadBootstrap = `
 {
@@ -354,7 +354,7 @@ func TestBadBootstrappingIpfsConfig(t *testing.T) {
 最后，程序会使用 `os.RemoveAll` 函数删除 "tmpDir" 目录中的所有文件和子目录，并退出程序。
 
 
-```
+```go
 `
 
 	tmpDir := makeConfig(t, configBadBootstrap)
@@ -399,7 +399,7 @@ func TestBadBootstrappingIpfsConfig(t *testing.T) {
 最后，该函数会检查 `bootstrap` 数组是否包含两个元素，以及 `bootstrap` 中的第一个元素是否等于 `"/dnsaddr/bootstrap.libp2p.io/p2p/QmcZf59bWwK5XFi76CZX8cbJ4BhTzzA3gU1ZjYZcYW3dwt"`。如果所有条件都满足，则表示配置文件中的 bad peers 配置是正确的，否则会输出错误信息并停止执行。
 
 
-```
+```go
 func TestBadPeersIpfsConfig(t *testing.T) {
 	const configBadPeers = `
 {
@@ -443,7 +443,7 @@ func TestBadPeersIpfsConfig(t *testing.T) {
 通过这段代码，可以实现创建一个临时目录，并将一个或多个测试函数的配置数据存储到其中的某个文件中。
 
 
-```
+```go
 func makeConfig(t *testing.T, configData string) string {
 	tmpDir := t.TempDir()
 
@@ -500,7 +500,7 @@ func setupPlugins() error {
 上述函数的主要作用是加载 IPFS 插件并初始化，如果初始化过程中出现错误，则返回一个错误，并跳过当前测试用例。
 
 
-```
+```go
 func skipUnlessEpic(t *testing.T) {
 	if os.Getenv("IPFS_EPIC_TEST") == "" {
 		t.SkipNow()
@@ -536,7 +536,7 @@ func setupPlugins() error {
 
 ```
 
-# `/opt/kubo/routing/composer.go`
+# `routing/composer.go`
 
 这段代码定义了一个名为 "routing" 的 package，它包含了两个相关的类：`Composer` 和 `Router`. 
 
@@ -555,7 +555,7 @@ func setupPlugins() error {
 另外，该代码还定义了一个名为 `Composer` 的内部类，它实现了 `Composable` 的接口，用于组合多个路由器实例。
 
 
-```
+```go
 package routing
 
 import (
@@ -588,7 +588,7 @@ var (
 该结构体还包含一个名为 Provide 的方法，用于提供服务器的值。在 Provide 方法中，首先调用 Composer 中的 ProvideRouter 中的 Provide 方法，然后根据需要将值设置为给定 ID 的值，最后返回是否成功调用 Provide 方法。
 
 
-```
+```go
 type Composer struct {
 	GetValueRouter      routing.Routing
 	PutValueRouter      routing.Routing
@@ -618,7 +618,7 @@ func (c *Composer) Provide(ctx context.Context, cid cid.Cid, provide bool) error
 函数的副作用是输出一条日志消息，指出调用 `ProvideMany` 函数时出现的问题，然后返回一个错误。
 
 
-```
+```go
 func (c *Composer) ProvideMany(ctx context.Context, keys []multihash.Multihash) error {
 	log.Debug("composer: calling provide many: ", len(keys))
 	pmr, ok := c.ProvideRouter.(routinghelpers.ProvideManyRouter)
@@ -644,7 +644,7 @@ func (c *Composer) ProvideMany(ctx context.Context, keys []multihash.Multihash) 
 2. `FindProvidersAsync()` 函数的作用是调用 `c` 指向的 `Composer` 对象的 `FindProvidersRouter.FindProvidersAsync()` 方法，该方法将在 `ctx` 上下文中异步执行，并返回一个 `<peer.AddrInfo>` 类型的通道，用于通知 `Composer` 对象有新提供的提供商。在调用该函数时，将 `cid` 和 `count` 参数传递给 `FindProvidersAsync()` 函数，并将结果存储在 `channel` 变量中，最后返回 `channel` 的通道。
 
 
-```
+```go
 func (c *Composer) Ready() bool {
 	log.Debug("composer: calling ready")
 	pmr, ok := c.ProvideRouter.(routinghelpers.ReadyAbleRouter)
@@ -679,7 +679,7 @@ func (c *Composer) FindProvidersAsync(ctx context.Context, cid cid.Cid, count in
 从 `func (c *Composer) PutValue(ctx context.Context, key string, val []byte, opts ...routing.Option) error` 函数中调用 `func (c *Composer) FindPeer(ctx context.Context, pid peer.ID) (peer.AddrInfo, error)` 函数，如果 `func (c *Composer) FindPeer(ctx context.Context, pid peer.ID)` 函数返回一个非 `nil` 的结果，则将其作为 `key` 参数传递给 `func (c *Composer) PutValue(ctx context.Context, key string, val []byte, opts ...routing.Option)` 函数，否则返回 `nil`。
 
 
-```
+```go
 func (c *Composer) FindPeer(ctx context.Context, pid peer.ID) (peer.AddrInfo, error) {
 	log.Debug("composer: calling findPeer: ", pid)
 	addr, err := c.FindPeersRouter.FindPeer(ctx, pid)
@@ -731,7 +731,7 @@ func (c *Composer) SearchValue(ctx context.Context, key string, opts ...routing.
 }
 
 
-```
+```go
 func (c *Composer) GetValue(ctx context.Context, key string, opts ...routing.Option) ([]byte, error) {
 	log.Debug("composer: calling getValue: ", key)
 	val, err := c.GetValueRouter.GetValue(ctx, key, opts...)
@@ -771,7 +771,7 @@ func (c *Composer) SearchValue(ctx context.Context, key string, opts ...routing.
 最后，函数使用 `multierror.Append` 函数将上述五个 `Bootstrap` 操作的结果进行合并，并将错误信息添加到结果中。如果执行过程中出现错误，函数将输出错误信息并返回。
 
 
-```
+```go
 func (c *Composer) Bootstrap(ctx context.Context) error {
 	log.Debug("composer: calling bootstrap")
 	errfp := c.FindPeersRouter.Bootstrap(ctx)
@@ -788,7 +788,7 @@ func (c *Composer) Bootstrap(ctx context.Context) error {
 
 ```
 
-# `/opt/kubo/routing/delegated.go`
+# `routing/delegated.go`
 
 这段代码是一个 Go 语言的包，名为 "routing"，它实现了从 IPFS 存储桶中获取数据并路由到本地客户端。它主要通过以下几个步骤实现：
 
@@ -805,7 +805,7 @@ func (c *Composer) Bootstrap(ctx context.Context) error {
 综上，这段代码的作用是实现从 IPFS 存储桶中获取数据并路由到本地客户端。
 
 
-```
+```go
 package routing
 
 import (
@@ -845,7 +845,7 @@ import (
 最后，如果 "Parse" 函数成功创建一个代表所有路由器的 "finalRouter" 对象，那么 "Parse" 函数返回该对象，否则返回一个空对象并记录错误。
 
 
-```
+```go
 var log = logging.Logger("routing/delegated")
 
 func Parse(routers config.Routers, methods config.Methods, extraDHT *ExtraDHTParams, extraHTTP *ExtraHTTPParams) (routing.Routing, error) {
@@ -887,7 +887,7 @@ func Parse(routers config.Routers, methods config.Methods, extraDHT *ExtraDHTPar
 This is a Go language function that creates a router and returns it. The router can
 
 
-```
+```go
 func parse(visited map[string]bool,
 	createdRouters map[string]routing.Routing,
 	routerName string,
@@ -983,7 +983,7 @@ func parse(visited map[string]bool,
 最后，该函数使用httpRoutingFromConfig函数构建一个HTTP路由实例，将构建出的路由实例返回，并且错误处理函数也在该函数中实现。
 
 
-```
+```go
 type ExtraHTTPParams struct {
 	PeerID     string
 	Addrs      []string
@@ -1017,7 +1017,7 @@ The `httpRoutingWrapper` struct includes fields for the HTTP client, HTTP provid
 It appears that the `createAddrInfo` function is used to set up the IP address and port information for the HTTP provider, and this information is passed to the `drclient` constructor.
 
 
-```
+```go
 func httpRoutingFromConfig(conf config.Router, extraHTTP *ExtraHTTPParams) (routing.Routing, error) {
 	params := conf.Parameters.(*config.HTTPRouterParams)
 	if params.Endpoint == "" {
@@ -1087,7 +1087,7 @@ func httpRoutingFromConfig(conf config.Router, extraHTTP *ExtraHTTPParams) (rout
 2. `createAddrInfo` 函数的作用是在一个 `peerID` 和多个 `addrs` 的基础上生成一个 `peer.AddrInfo` 对象。首先，它使用 `peer.Decode` 函数将 `peerID` 解码为具体的 `peer.ID` 类型。然后，它创建一个 `ma.Multiaddr` 切片，将 `addrs` 中的每个地址添加到 `mas` 中。接下来，它使用 `peer.AddrInfo` 的函数创建一个 `peer.AddrInfo` 对象，包含 `peerID` 和 `addrs`。最后，如果没有错误，它返回该 `peer.AddrInfo` 对象。
 
 
-```
+```go
 func decodePrivKey(keyB64 string) (ic.PrivKey, error) {
 	pk, err := base64.StdEncoding.DecodeString(keyB64)
 	if err != nil {
@@ -1138,7 +1138,7 @@ func createAddrInfo(peerID string, addrs []string) (peer.AddrInfo, error) {
 - peer.AddrInfo：用于保存对等机端口号的参数实例
 
 
-```
+```go
 type ExtraDHTParams struct {
 	BootstrapPeers []peer.AddrInfo
 	Host           host.Host
@@ -1198,7 +1198,7 @@ func dhtRoutingFromConfig(conf config.Router, extra *ExtraDHTParams) (routing.Ro
   - error：错误对象(如果创建DHT时出现错误)。
 
 
-```
+```go
 func createDHT(params *ExtraDHTParams, public bool, mode dht.ModeOpt) (routing.Routing, error) {
 	var opts []dht.Option
 
@@ -1240,7 +1240,7 @@ func createDHT(params *ExtraDHTParams, public bool, mode dht.ModeOpt) (routing.R
 最后，函数调用路由器的 NewFullRT() 函数来创建新的路由器实例，并将其返回。如果设置一切正常，函数将返回一个指向新路由器实例的指针，否则会输出一个错误。
 
 
-```
+```go
 func createFullRT(params *ExtraDHTParams) (routing.Routing, error) {
 	return fullrt.NewFullRT(params.Host,
 		dht.DefaultPrefix,
@@ -1255,7 +1255,7 @@ func createFullRT(params *ExtraDHTParams) (routing.Routing, error) {
 
 ```
 
-# `/opt/kubo/routing/delegated_test.go`
+# `routing/delegated_test.go`
 
 This is a Go program that configures a network router. The router supports the HTTP and sequence router types.
 
@@ -1266,7 +1266,7 @@ The `Methods` configuration section defines the endpoints that can be invoked by
 The router also supports an extra-Https (eHttps) endpoint, which is not defined in the configuration.
 
 
-```
+```go
 package routing
 
 import (
@@ -1354,7 +1354,7 @@ The `Routers` property is a slice of `ConfigRouter` objects, each of which defin
 Finally, the router is initialized with a `Kty` of `http1` and an `ID` of `"http1:1"`.
 
 
-```
+```go
 func TestParserRecursive(t *testing.T) {
 	require := require.New(t)
 
@@ -1452,7 +1452,7 @@ The function first creates a new `require.New` function and then parses the rout
 Finally, the function returns an instance of the `ExtraDHTParams` struct, which includes some extra information for debugging and logging, and then exits the function with an error containing any information about any issues that were found during initialization.
 
 
-```
+```go
 func TestParserRecursiveLoop(t *testing.T) {
 	require := require.New(t)
 
@@ -1517,7 +1517,7 @@ func TestParserRecursiveLoop(t *testing.T) {
 这段代码的主要目的是提供一个从本地随机生成到远程 `pk` 的方法，以便在客户端之间安全地交换消息。
 
 
-```
+```go
 func generatePeerID() (string, string, error) {
 	sk, pk, err := crypto.GenerateEd25519Key(rand.Reader)
 	if err != nil {

@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 32
 
-# `/opt/kubo/core/node/libp2p/routingopt.go`
+# `core/node/libp2p/routingopt.go`
 
 该代码是一个 Go 语言库中的 `libp2p` 包，其中包括了用于实现分布式哈希表 (DHT) 的各种组件。具体来说，该库提供了包括 DHT 路由、DHT 客户端、KV 存储、KV 路由、DHT 客户端、以及一些与 DHT 相关的工具函数。
 
@@ -22,7 +22,7 @@
 - `DHTRouteableHookSleep`：是一个 DHT 路由的钩子函数，可以用来获取 DHT 路由的实例，并执行路由的相关操作。
 
 
-```
+```go
 package libp2p
 
 import (
@@ -62,7 +62,7 @@ import (
 该函数使用一个名为 `defaultHTTPRouters` 的数组，其中包含一些默认 HTTP 路由器，这些路由器在路由器类型为 "auto" 时使用。此外，该函数还定义了一个名为 `peer.AddrInfo` 的用于获取远程主机信息的类型，该类型可能用于在路由器中指定目标主机。
 
 
-```
+```go
 type RoutingOptionArgs struct {
 	Ctx                           context.Context
 	Host                          host.Host
@@ -86,7 +86,7 @@ var defaultHTTPRouters = []string{
 This code checks if any custom HTTP routers were passed via an environment variable, and if so, itSplits them by whitespace and appends them to a default list of routers. The routers are then constructed using the `irouting.ConstructHTTPRouter` function, which composes the router into a `routinghelpers.ParallelRouter` object. This object is then appended to the list of routers, along with any additional HTTP routers constructed from the environment variable. The `DefaultHTTPRouters` function has been tested in this environment.
 
 
-```
+```go
 func init() {
 	// Override HTTP routers if custom ones were passed via env
 	if routers := os.Getenv("IPFS_HTTP_ROUTERS"); routers != "" {
@@ -129,7 +129,7 @@ func constructDefaultHTTPRouters(cfg *config.Config) ([]*routinghelpers.Parallel
 函数内部首先定义了一个名为 `routers` 的字符数组，用于存储定义的路由器。接着，函数调用了名为 `routingOpt` 的 `RoutingOption` 函数，并且如果出现错误，返回一个空字符串。如果 `routingOpt` 返回的值包含有效的路由器，则将其添加到 `routers` 数组中。最后，函数创建了一个名为 `routing` 的路由器对象，使用 `routers` 数组中的路由器，并将 `IgnoreError` 和 `ExecuteAfter` 设置为 0，表示路由器不会等待搜索值的到来，而是立即返回。函数返回这个路由器对象，并且如果出现错误，返回一个空字符串。
 
 
-```
+```go
 // ConstructDefaultRouting returns routers used when Routing.Type is unset or set to "auto"
 func ConstructDefaultRouting(cfg *config.Config, routingOpt RoutingOption) RoutingOption {
 	return func(args RoutingOptionArgs) (routing.Routing, error) {
@@ -191,7 +191,7 @@ func ConstructDefaultRouting(cfg *config.Config, routingOpt RoutingOption) Routi
 		- `return dual.New(args.Ctx, args.Host, ...)`: 返回一个名为 `Dual` 的路由选项对象。其中， `...` 表示该路由选项对象可能包含的其他选项，但不会输出。
 
 
-```
+```go
 // constructDHTRouting is used when Routing.Type = "dht"
 func constructDHTRouting(mode dht.ModeOpt) RoutingOption {
 	return func(args RoutingOptionArgs) (routing.Routing, error) {
@@ -226,7 +226,7 @@ func constructDHTRouting(mode dht.ModeOpt) RoutingOption {
 最后，函数内部调用了`irouting.Irouter.Create`函数，该函数创建一个实现了`Irouter`接口的`Router`对象，并返回该对象的`Create`方法。通过调用这个`Create`方法，可以创建一个新的路由器实例，从而实现路由器的功能。
 
 
-```
+```go
 // ConstructDelegatedRouting is used when Routing.Type = "custom"
 func ConstructDelegatedRouting(routers config.Routers, methods config.Methods, peerID string, addrs config.Addresses, privKey string) RoutingOption {
 	return func(args RoutingOptionArgs) (routing.Routing, error) {
@@ -259,7 +259,7 @@ func ConstructDelegatedRouting(routers config.Routers, methods config.Methods, p
 此外，函数还定义了一个名为 `httpAddrsFromConfig` 的函数，它接受一个名为 `cfgAddrs` 的配置参数。这个函数的作用是将配置中指定的地址列表返回给 HTTP 代理，覆盖了默认的 Swarm 地址列表。函数的实现可以简单理解为根据配置参数中的 `Announce` 和 `NoAnnounce` 字段来决定是否使用 Swarm 或者不使用 Swarm 路由。如果 `Announce` 字段指定，则使用 Swarm 路由；否则，如果 `NoAnnounce` 字段指定，则过滤掉 Swarm 路由，使用 `DHTServerOption` 和 `DHTClientOption` 中指定的路由。最后，函数返回一个包含所有配置中指定的地址列表的切片。
 
 
-```
+```go
 func constructNilRouting(_ RoutingOptionArgs) (routing.Routing, error) {
 	return routinghelpers.Null{}, nil
 }
@@ -301,7 +301,7 @@ func httpAddrsFromConfig(cfgAddrs config.Addresses) []string {
 
 ```
 
-# `/opt/kubo/core/node/libp2p/routingopt_test.go`
+# `core/node/libp2p/routingopt_test.go`
 
 This is a Go test that tests the `httpAddrsFromConfig` function, which parses an HTTP address configuration string and returns the corresponding IP addresses for a given list of addresses.
 
@@ -310,7 +310,7 @@ The test includes several scenarios, such as a) testing the behavior of `httpAdd
 The expected outcome of each test is that the function returns the correct IP addresses for the given configuration settings.
 
 
-```
+```go
 package libp2p
 
 import (
@@ -348,7 +348,7 @@ func TestHttpAddrsFromConfig(t *testing.T) {
 
 ```
 
-# `/opt/kubo/core/node/libp2p/sec.go`
+# `core/node/libp2p/sec.go`
 
 这段代码是一个 Go-IPFS 库中的包，它的作用是引入了 libp2p、go-libp2p 和 tls 等依赖，用于实现了一个基于 libp2p 的加密和安全性支持。
 
@@ -360,7 +360,7 @@ func TestHttpAddrsFromConfig(t *testing.T) {
 4. 定义了一个名为 "secioEnabledWarning" 的警告，用于在使用 SECIO 安全传输时发出警告，因为 SECIO 安全传输已经在Go-IPFS 0.7 中被移除，而在 Go-IPFS 0.9 中仍然支持。
 
 
-```
+```go
 package libp2p
 
 import (
@@ -391,7 +391,7 @@ Swarm.Transports.Security.SECIO from your IPFS config.`
 2. 如果已经配置了安全选项，函数将打印一个警告消息，`secioEnabledWarning`函数将打印一个警告消息，表示已配置的安全选项将会生效。然后函数将尝试使用新的配置选项。函数的`secioEnabledWarning`函数使用`tptConfig.Security.SECIO.WithDefault`函数来设置默认的安全选项。如果已经配置了`WithDefault`选项，函数将使用该选项中指定的安全选项，否则将尝试使用新的安全选项。函数的具体实现可能因为具体的`tptConfig`参数而有所不同。
 
 
-```
+```go
 func Security(enabled bool, tptConfig config.Transports) interface{} {
 	if !enabled {
 		return func() (opts Libp2pOpts) {
@@ -423,7 +423,7 @@ func Security(enabled bool, tptConfig config.Transports) interface{} {
 
 ```
 
-# `/opt/kubo/core/node/libp2p/smux.go`
+# `core/node/libp2p/smux.go`
 
 This is a function that configures a Chain of上坡 plants using the `Swarm.Transports.Multiplexers` library. It takes a priority option and an optional array of `libp2p.Option` structs containing the configurations for each muxer.
 
@@ -436,7 +436,7 @@ If the `Swarm.Transports.Multiplexers` configuration field is specified, the fun
 If the `Swarm.Transports.Multiplexers` configuration field is specified, the function returns the `ChainOptions` method of the `libp2p.Chain` class with the configurations specified in the `opts` array.
 
 
-```
+```go
 package libp2p
 
 import (
@@ -496,7 +496,7 @@ func makeSmuxTransportOption(tptConfig config.Transports) (libp2p.Option, error)
 具体来说，此函数的作用是创建一个名为 "SmapuxTransport" 的函数，该函数接收一个名为 "config.Transports" 的参数，然后使用接收到的参数调用 "makeSmuxTransportOption" 函数，获取一个选项对象。如果 "makeSmuxTransportOption" 函数返回的值包含错误，则将其封装在 "opts" 类型的变量中，并返回。如果 "makeSmuxTransportOption" 函数返回的值是有效的，则将其封装在 "opts" 类型的变量中，并返回。
 
 
-```
+```go
 func SmuxTransport(tptConfig config.Transports) func() (opts Libp2pOpts, err error) {
 	return func() (opts Libp2pOpts, err error) {
 		res, err := makeSmuxTransportOption(tptConfig)
@@ -510,7 +510,7 @@ func SmuxTransport(tptConfig config.Transports) func() (opts Libp2pOpts, err err
 
 ```
 
-# `/opt/kubo/core/node/libp2p/topicdiscovery.go`
+# `core/node/libp2p/topicdiscovery.go`
 
 该代码定义了一个名为 TopicDiscovery 的函数，它返回一个主题发现的元组。具体来说，它实现了基于随机化的 P2P 路由协议中的主题发现功能。
 
@@ -519,7 +519,7 @@ func SmuxTransport(tptConfig config.Transports) func() (opts Libp2pOpts, err err
 函数内部，首先创建一个底层的主题发现路由器（discovery.NewRoutingDiscovery）。接着，实现了一个基于最大后退时间（maxBackoff）的 exponential 后退算法，用于在主题发现失败时进行重试。如果成功发现主题，该函数将返回发现服务。
 
 
-```
+```go
 package libp2p
 
 import (
@@ -553,7 +553,7 @@ func TopicDiscovery() interface{} {
 
 ```
 
-# `/opt/kubo/core/node/libp2p/transport.go`
+# `core/node/libp2p/transport.go`
 
 这段代码定义了一个名为 "libp2p" 的包，其中包含了一些用于实现 QuIC、TCP 和 WebSocket 网络传输协议的函数和变量。
 
@@ -564,7 +564,7 @@ func TopicDiscovery() interface{} {
 最后，这段代码还定义了一个名为 "quic" 和 "tcp" 的函数指针，它们分别对应 QuIC 和 TCP 传输协议的实现。这些函数指针可以被用来创建和管理与远程服务器或客户端的 QuIC 或 TCP 连接。
 
 
-```
+```go
 package libp2p
 
 import (
@@ -601,7 +601,7 @@ import (
 12. 如果 "privateNetworkEnabled" 是 false 并且 "config.Network.QUIC.WithDefault(!privateNetworkEnabled)" 是 true，则设置 QUIC 传输为使用 Private 类型。
 
 
-```
+```go
 func Transports(tptConfig config.Transports) interface{} {
 	return func(pnet struct {
 		fx.In
@@ -652,7 +652,7 @@ func Transports(tptConfig config.Transports) interface{} {
 该函数的作用是创建一个可以测量网络带宽的`BandwidthCounter`实例，并将其作为参数传递给其他函数或使用。通过使用`libp2p.BandwidthReporter`来报告网络带宽，可以确保在函数中进行网络带宽测量。
 
 
-```
+```go
 func BandwidthCounter() (opts Libp2pOpts, reporter *metrics.BandwidthCounter) {
 	reporter = metrics.NewBandwidthCounter()
 	opts.Opts = append(opts.Opts, libp2p.BandwidthReporter(reporter))
@@ -661,7 +661,7 @@ func BandwidthCounter() (opts Libp2pOpts, reporter *metrics.BandwidthCounter) {
 
 ```
 
-# `/opt/kubo/core/node/libp2p/fd/sys_not_unix.go`
+# `core/node/libp2p/fd/sys_not_unix.go`
 
 这段代码是一个 Go 语言编写的工具函数，它的作用是返回操作系统上所有文件描述符（FD）的数量。然后将其输出到控制台。
 
@@ -672,7 +672,7 @@ func BandwidthCounter() (opts Libp2pOpts, reporter *metrics.BandwidthCounter) {
 最后，该代码导入了 `fmt` 包的 `Printf` 函数，并在控制台上输出字符串 "所有文件描述符的数量"。
 
 
-```
+```go
 //go:build !linux && !darwin && !windows
 
 package fd
@@ -683,7 +683,7 @@ func GetNumFDs() int {
 
 ```
 
-# `/opt/kubo/core/node/libp2p/fd/sys_unix.go`
+# `core/node/libp2p/fd/sys_unix.go`
 
 这段代码是一个用于在Go语言中编译Linux和Darwin操作系统的脚本。它使用了Go语言的`build`包来编译这个脚本。
 
@@ -698,7 +698,7 @@ func GetNumFDs() int {
 最后，没有其他代码在导入或定义任何函数，所以函数的行为将不可预测。
 
 
-```
+```go
 //go:build linux || darwin
 // +build linux darwin
 
@@ -718,7 +718,7 @@ func GetNumFDs() int {
 
 ```
 
-# `/opt/kubo/core/node/libp2p/fd/sys_windows.go`
+# `core/node/libp2p/fd/sys_windows.go`
 
 这段代码是一个 Go 语言编写的 Go 语言函数，它返回了一个 `math.MaxInt`，主要用于返回两个整数的最大值。
 
@@ -727,7 +727,7 @@ func GetNumFDs() int {
 此外，该函数没有返回任何其他类型的值，它仅仅返回一个整数。
 
 
-```
+```go
 //go:build windows
 
 package fd
@@ -742,7 +742,7 @@ func GetNumFDs() int {
 
 ```
 
-# `/opt/kubo/core/node/libp2p/internal/mplex/conn.go`
+# `core/node/libp2p/internal/mplex/conn.go`
 
 该代码定义了一个名为 "mplex" 的 "conn" 类型，它使用名为 "mp" 的 "Multiplex" 类型来支持 "network.MuxedConn" 接口。
 
@@ -751,7 +751,7 @@ func GetNumFDs() int {
 通过使用 "mp" "Multiplex" 类型，我们可以实现多个底层网络的复用，从而实现在一个应用程序中同时使用不同的网络连接，例如 TCP 和 UDP。而 "conn" 类型中的 "network.MuxedConn" 接口允许我们对复用的连接进行统一的管理和配置，使得我们能够更加方便地实现实时的数据传输。
 
 
-```
+```go
 // Code copied from https://github.com/libp2p/go-libp2p/blob/9bd85029550a084fca63ec6ff9184122cdf06591/p2p/muxer/mplex/conn.go
 package mplex
 
@@ -778,7 +778,7 @@ var _ network.MuxedConn = &conn{}
 总的来说，这段代码定义了一个用于创建网络.MuxedConn实例的函数，该函数创建的连接可以通过Close和IsClosed函数进行管理，并可以使用OpenStream函数来打开或关闭连接。
 
 
-```
+```go
 // NewMuxedConn constructs a new Conn from a *mp.Multiplex.
 func NewMuxedConn(m *mp.Multiplex) network.MuxedConn {
 	return (*conn)(m)
@@ -810,7 +810,7 @@ func (c *conn) OpenStream(ctx context.Context) (network.MuxedStream, error) {
 函数内部还定义了一个名为mplex的函数，该函数接收一个Multiplex对象和一个网络连接对象，并返回一个Multiplex类型的接受流。Multiplex对象代表一个支持多种流接受（如文件、网络数据等）的套接字，通过该对象可以设置或获取接受哪些流。
 
 
-```
+```go
 // AcceptStream accepts a stream opened by the other side.
 func (c *conn) AcceptStream() (network.MuxedStream, error) {
 	s, err := c.mplex().Accept()
@@ -826,7 +826,7 @@ func (c *conn) mplex() *mp.Multiplex {
 
 ```
 
-# `/opt/kubo/core/node/libp2p/internal/mplex/stream.go`
+# `core/node/libp2p/internal/mplex/stream.go`
 
 该代码是一个名为"mplex"的包，它实现了"network.MuxedStream"接口，用于在基于Mux的流中传输数据。具体来说，这个包实现了一个名为"Stream"的类型，该类型代表了一个可以传输数据的流。
 
@@ -837,7 +837,7 @@ func (c *conn) mplex() *mp.Multiplex {
 最后，定义了一个名为"mpStream"的函数，该函数接受一个"stream"类型的参数，并返回一个指向该流对象的指针。通过创建这个指针，就可以使得"network.MuxedStream"接口在代码中生效，从而实现对数据流的支持。
 
 
-```
+```go
 // Code copied from https://github.com/libp2p/go-libp2p/blob/9bd85029550a084fca63ec6ff9184122cdf06591/p2p/muxer/mplex/stream.go
 package mplex
 
@@ -863,7 +863,7 @@ var _ network.MuxedStream = &stream{}
 `func (s *stream) Write(b []byte) (n int, err error)`函数接收一个字节切片（[]byte），然后将字节流（s.mplex().）进行缓冲区写入（Write）操作。如果写入操作成功，将返回写入的字节数（n）和错误（err）。如果错误，将返回一个非空（n为0，err为非空值）错误。这里的状态判断中，使用了`net.ErrReset`错误。
 
 
-```
+```go
 func (s *stream) Read(b []byte) (n int, err error) {
 	n, err = s.mplex().Read(b)
 	if err == mp.ErrStreamReset {
@@ -897,7 +897,7 @@ func (s *stream) Write(b []byte) (n int, err error) {
 这些函数的作用都是关闭流中的数据读写操作，但是它们实现在方法上略有不同。具体来说，第一个函数会尝试关闭流中的数据读写操作，如果关闭失败，则会返回一个错误；而其他函数会尝试关闭流中的数据读写操作，如果关闭成功，则不会返回任何错误。
 
 
-```
+```go
 func (s *stream) Close() error {
 	return s.mplex().Close()
 }
@@ -923,7 +923,7 @@ func (s *stream) Reset() error {
 `mplex` 函数也定义在函数内部，它是通过 `(*mp.Stream)(s)` 返回的 `mp.Stream` 类型指针。这个指针可能用来从 `s` 对象中获取 `mp.Stream` 类型的实例。
 
 
-```
+```go
 func (s *stream) SetDeadline(t time.Time) error {
 	return s.mplex().SetDeadline(t)
 }
@@ -942,7 +942,7 @@ func (s *stream) mplex() *mp.Stream {
 
 ```
 
-# `/opt/kubo/core/node/libp2p/internal/mplex/transport.go`
+# `core/node/libp2p/internal/mplex/transport.go`
 
 这段代码定义了一个名为 "mplex" 的包，其作用是实现一个名为 "mplex.Transport" 的接口，该接口负责在 MPEG transport协议中实现与网络的交互。
 
@@ -955,7 +955,7 @@ func (s *stream) mplex() *mp.Stream {
 最后，它导入了 "mp" 包中的 "Transport" 接口，该接口用于实现 MPEG transport协议与网络的交互。
 
 
-```
+```go
 // Code copied from https://github.com/libp2p/go-libp2p/blob/9bd85029550a084fca63ec6ff9184122cdf06591/p2p/muxer/mplex/transport.go
 package mplex
 
@@ -983,7 +983,7 @@ const ID = "/mplex/6.7.0"
 由于 `Transport` 实体的具体实现没有明确的定义，因此无法提供更多细节。
 
 
-```
+```go
 var _ network.Multiplexer = &Transport{}
 
 // Transport implements mux.Multiplexer that constructs
@@ -1000,7 +1000,7 @@ func (t *Transport) NewConn(nc net.Conn, isServer bool, scope network.PeerScope)
 
 ```
 
-# `/opt/kubo/core/node/libp2p/internal/mplex/transport_test.go`
+# `core/node/libp2p/internal/mplex/transport_test.go`
 
 这段代码是一个 Go 语言编写的测试用例，用于测试 Libp2p 中的 Mplex 传输层的默认实现。主要作用是创建一个 Mplex 传输实例，然后使用该实例进行测试。
 
@@ -1023,7 +1023,7 @@ func (t *Transport) NewConn(nc net.Conn, isServer bool, scope network.PeerScope)
 	* "testsuite.TestCases" 表示该函数需要使用 "github.com/libp2p/go-libp2p/p2p/muxer/testsuite/TestCases" 函数来创建测试实例。
 
 
-```
+```go
 // Code copied from https://github.com/libp2p/go-libp2p/blob/9bd85029550a084fca63ec6ff9184122cdf06591/p2p/muxer/mplex/transport_test.go
 package mplex
 
@@ -1056,7 +1056,7 @@ func TestDefaultTransport(t *testing.T) {
 该内存区域的作用是管理一个共享内存区域，可以根据需要对其进行保留或释放。
 
 
-```
+```go
 type memoryScope struct {
 	network.PeerScope
 	limit    int
@@ -1089,7 +1089,7 @@ func (m *memoryScope) ReleaseMemory(size int) {
 该代码的主要目的是创建一个可以设置最大内存限制的传输协议，以便在网络应用程序中对客户端和服务器之间的连接设置硬限制。通过`memoryLimitedTransport`，我们可以创建一个客户端和服务器之间的连接，使得服务器能够在一定的情况下允许客户端使用尽可能多的内存，但客户端的内存使用不会超出设置的最大限制。
 
 
-```
+```go
 type memoryLimitedTransport struct {
 	Transport
 }
@@ -1109,7 +1109,7 @@ func TestDefaultTransportWithMemoryLimit(t *testing.T) {
 
 ```
 
-# `/opt/kubo/coverage/main/main.go`
+# `coverage/main/main.go`
 
 这段代码是一个 Go 语言程序，它执行以下操作：
 
@@ -1123,7 +1123,7 @@ func TestDefaultTransportWithMemoryLimit(t *testing.T) {
 8. 将第 5 步和第 6 步的结果传递给第 3 步，以便输出结果。
 
 
-```
+```go
 //go:build testrunmain
 // +build testrunmain
 
@@ -1148,7 +1148,7 @@ The program takes several arguments, including the name of the cover file to gen
 If any errors occur during the execution of the program, it prints an error message and exits with a non-zero status code. Otherwise, it returns 0 to indicate successful execution.
 
 
-```
+```go
 func main() {
 	coverDir := os.Getenv("IPFS_COVER_DIR")
 	if len(coverDir) == 0 {
@@ -1232,7 +1232,7 @@ The goal of this document is to capture the code flow for adding a file (see the
 
 **Try this yourself**
 > 
-> ```
+> ```go
 > # Convert a file to the IPFS format.
 > echo "Hello World" > new-file
 > ipfs add new-file
@@ -1331,7 +1331,7 @@ sub-commands.
 
 The simplest way to "eval" the completions logic:
 
-```bash
+```gobash
 > eval "$(ipfs commands completion bash)"
 ```
 
@@ -1344,7 +1344,7 @@ The fish shell is also supported:
 
 The simplest way to use the completions logic:
 
-```bash
+```gobash
 > ipfs commands completion fish | source
 ```
 
@@ -1357,7 +1357,7 @@ The zsh shell is also supported:
 
 The simplest way to "eval" the completions logic:
 
-```bash
+```gobash
 > eval "$(ipfs commands completion zsh)"
 ```
 
@@ -1747,7 +1747,7 @@ Supported Transports:
 Note that quic (Draft-29) used to be supported with the format `/ipN/.../udp/.../quic`, but has since been [removed](https://github.com/libp2p/go-libp2p/releases/tag/v0.30.0).
 
 Default:
-```json
+```gojson
 [
   "/ip4/0.0.0.0/tcp/4001",
   "/ip6/::/tcp/4001",
@@ -1794,7 +1794,7 @@ Contains information used by the API gateway.
 Map of HTTP headers to set on responses from the API HTTP server.
 
 Example:
-```json
+```gojson
 {
 	"Foo": ["bar"]
 }
@@ -1938,7 +1938,7 @@ For more information on possible values for this configuration option, see
 [docs/datastores.md](datastores.md)
 
 Default:
-```
+```go
 {
   "mounts": [
 	{
@@ -2096,7 +2096,7 @@ Examples:
 An array of paths that should be exposed on the hostname.
 
 Example:
-```json
+```gojson
 {
   "Gateway": {
     "PublicGateways": {
@@ -2122,7 +2122,7 @@ between content roots.
 - `true` - enables [subdomain gateway](https://docs.ipfs.tech/how-to/address-ipfs-on-web/#subdomain-gateway) at `http://*.{hostname}/`
     - **Requires whitelist:** make sure respective `Paths` are set.
       For example, `Paths: ["/ipfs", "/ipns"]` are required for `http://{cid}.ipfs.{hostname}` and `http://{foo}.ipns.{hostname}` to work:
-        ```json
+        ```gojson
         "Gateway": {
             "PublicGateways": {
                 "dweb.link": {
@@ -2137,7 +2137,7 @@ between content roots.
 
 - `false` - enables [path gateway](https://docs.ipfs.tech/how-to/address-ipfs-on-web/#path-gateway) at `http://{hostname}/*`
   - Example:
-    ```json
+    ```gojson
     "Gateway": {
         "PublicGateways": {
             "ipfs.io": {
@@ -2168,7 +2168,7 @@ An optional flag to explicitly configure whether subdomain gateway's redirects
 (enabled by `UseSubdomains: true`) should always inline a DNSLink name (FQDN)
 into a single DNS label:
 
-```
+```go
 //example.com/ipns/example.net → HTTP 301 → //example-net.ipns.example.com
 ```
 
@@ -2196,7 +2196,7 @@ Type: `flag`
 
 Default entries for `localhost` hostname and loopback IPs are always present.
 If additional config is provided for those hostnames, it will be merged on top of implicit values:
-```json
+```gojson
 {
   "Gateway": {
     "PublicGateways": {
@@ -2214,7 +2214,7 @@ It is also possible to remove a default by setting it to `null`.
 For example, to disable subdomain gateway on `localhost`
 and make that hostname act the same as `127.0.0.1`:
 
-```console
+```goconsole
 $ ipfs config --json Gateway.PublicGateways '{"localhost": null }'
 ```
 
@@ -2223,7 +2223,7 @@ $ ipfs config --json Gateway.PublicGateways '{"localhost": null }'
 Below is a list of the most common public gateway setups.
 
 * Public [subdomain gateway](https://docs.ipfs.tech/how-to/address-ipfs-on-web/#subdomain-gateway) at `http://{cid}.ipfs.dweb.link` (each content root gets its own Origin)
-   ```console
+   ```goconsole
    $ ipfs config --json Gateway.PublicGateways '{
        "dweb.link": {
          "UseSubdomains": true,
@@ -2247,7 +2247,7 @@ Below is a list of the most common public gateway setups.
 
 
 * Public [path gateway](https://docs.ipfs.tech/how-to/address-ipfs-on-web/#path-gateway) at `http://ipfs.io/ipfs/{cid}` (no Origin separation)
-   ```console
+   ```goconsole
    $ ipfs config --json Gateway.PublicGateways '{
        "ipfs.io": {
          "UseSubdomains": false,
@@ -2257,7 +2257,7 @@ Below is a list of the most common public gateway setups.
    ```
 
 * Public [DNSLink](https://dnslink.io/) gateway resolving every hostname passed in `Host` header.
-  ```console
+  ```goconsole
   $ ipfs config --json Gateway.NoDNSLink false
   ```
   * Note that `NoDNSLink: false` is the default (it works out of the box unless set to `true` manually)
@@ -2268,7 +2268,7 @@ Below is a list of the most common public gateway setups.
   Then, enable DNSLink gateway only for the specific hostname (for which data
   is already present on the node), without exposing any content-addressing `Paths`:
 
-   ```console
+   ```goconsole
    $ ipfs config --json Gateway.NoFetch true
    $ ipfs config --json Gateway.NoDNSLink true
    $ ipfs config --json Gateway.PublicGateways '{
@@ -2491,7 +2491,7 @@ https://ipfs.github.io/pinning-services-api-spec/
 Contains information relevant to utilizing the remote pinning service
 
 Example:
-```json
+```gojson
 {
   "Pinning": {
     "RemoteServices": {
@@ -2697,7 +2697,7 @@ Peering can be asymmetric or symmetric:
 
 The set of peers with which to peer.
 
-```json
+```gojson
 {
   "Peering": {
     "Peers": [
@@ -2927,7 +2927,7 @@ Type: `object[string->object]`
 
 Complete example using 2 Routers, Amino DHT (LAN/WAN) and parallel.
 
-```
+```go
 $ ipfs config Routing.Type --json '"custom"'
 
 $ ipfs config Routing.Routers.WanDHT --json '{
@@ -3244,7 +3244,7 @@ The connection manager considers a connection idle if:
 
 **Example:**
 
-```json
+```gojson
 {
   "Swarm": {
     "ConnMgr": {
@@ -3536,7 +3536,7 @@ This allows for overriding the default DNS resolver provided by the operating sy
 and using different resolvers per domain or TLD (including ones from alternative, non-ICANN naming systems).
 
 Example:
-```json
+```gojson
 {
   "DNS": {
     "Resolvers": {
@@ -3553,7 +3553,7 @@ Be mindful that:
 - Currently only `https://` URLs for [DNS over HTTPS (DoH)](https://en.wikipedia.org/wiki/DNS_over_HTTPS) endpoints are supported as values.
 - The default catch-all resolver is the cleartext one provided by your operating system. It can be overridden by adding a DoH entry for the DNS root indicated by  `.` as illustrated above.
 - Out-of-the-box support for selected decentralized TLDs relies on a [centralized service which is provided on best-effort basis](https://www.cloudflare.com/distributed-web-gateway-terms/). The implicit DoH resolvers are:
-  ```json
+  ```gojson
   {
     "eth.": "https://resolver.cloudflare-eth.com/dns-query",
     "crypto.": "https://resolver.cloudflare-eth.com/dns-query"

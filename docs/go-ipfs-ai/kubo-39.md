@@ -329,7 +329,7 @@ Backpressure is provided by **Yamux** and **QUIC**.
 
 In case you need compatibility with older implementations that do not ship with
 Yamux (like default's JS-IPFS) you can turned it back ON in the config with:
-```console
+```goconsole
 $ ipfs config --json Swarm.Transports.Multiplexers.Mplex 200
 ```
 
@@ -1537,7 +1537,7 @@ wide terminal,
 
 **Before**
 
-```
+```go
 USAGE
   ipfs add <path>... - Add a file or directory to ipfs.
 
@@ -1597,7 +1597,7 @@ less an option that depends on CIDv1 is passed. (experimental).
 
 **After**
 
-```
+```go
 USAGE
   ipfs add <path>... - Add a file or directory to ipfs.
 
@@ -1668,7 +1668,7 @@ are working on replacing it with TLS1.3
 To choose this protocol by default, set the `Experimental.PreferTLS` config
 variable:
 
-```bash
+```gobash
 > ipfs config --bool Experimental.PreferTLS true
 ```
 
@@ -1687,7 +1687,7 @@ receiving multiple inbound connections per second.
 
 To enable openssl support, rebuild go-ipfs with:
 
-```bash
+```gobash
 > make build GOTAGS=openssl
 ```
 
@@ -1919,7 +1919,7 @@ some discussion on this matter.
 As of this release, it's now much easier to run arbitrary IPFS commands within
 the docker container:
 
-```bash
+```gobash
 > docker run --name my-ipfs ipfs/go-ipfs:v0.4.20 config profile apply server # apply the server profile
 > docker start my-ipfs # start the daemon
 ```
@@ -1974,7 +1974,7 @@ Finally, `ipfs swarm connect` now returns _all_ errors on failure. This should
 make it much easier to debug connectivity issues. For example, one might see an
 error like:
 
-```
+```go
 Error: connect QmYou failure: dial attempt failed: 6 errors occurred:
 	* <peer.ID Qm*Me> --> <peer.ID Qm*You> (/ip4/127.0.0.1/tcp/4001) dial attempt failed: dial tcp4 127.0.0.1:4001: connect: connection refused
 	* <peer.ID Qm*Me> --> <peer.ID Qm*You> (/ip6/::1/tcp/4001) dial attempt failed: dial tcp6 [::1]:4001: connect: connection refused
@@ -1989,7 +1989,7 @@ Error: connect QmYou failure: dial attempt failed: 6 errors occurred:
 `ipfs bitswap stat` no longer lists bitswap partners unless the `-v` flag is
 passed. That is, it will now return:
 
-```
+```go
 > ipfs bitswap stat
 bitswap status
 	provides buffer: 0 / 256
@@ -2005,7 +2005,7 @@ bitswap status
 
 Instead of:
 
-```
+```go
 > ipfs bitswap stat -v
 bitswap status
 	provides buffer: 0 / 256
@@ -2115,7 +2115,7 @@ when files are added when the go-ipfs daemon isn't running.
 
 By example, let's add a directory tree to go-ipfs:
 
-```bash
+```gobash
 > # We're going to do this in "online" mode first so let's start the daemon.
 > ipfs daemon &
 ...
@@ -2401,7 +2401,7 @@ machine.
 
 To initialize a go-ipfs instance with a randomly chosen port, run:
 
-```bash
+```gobash
 > ipfs init --profile=randomports
 ```
 
@@ -2487,7 +2487,7 @@ for historical reasons, `ipfs ls` would report the size of a file/directory as
 seen by IPFS _including_ all the filesystem datastructures and metadata.
 However, this meant that `ls -l` and `ipfs ls` would print _different_ sizes:
 
-```bash
+```gobash
 > ipfs ls /ipfs/QmS4ustL54uo8FzR9455qaxZwuMiUhyvMcX9Ba8nUH4uVv
 
 QmZTR5bcpQD7cFgTorqxZDYaew1Wqgfbd2ud9QqGPAkK2V 1688 about
@@ -3122,7 +3122,7 @@ resolution, and complete inline block support.
 The new `ipfs cid` command allows users to both inspect CIDs and convert them
 between various formats and versions. For example:
 
-```sh
+```gosh
 # Print out the CID metadata (prefix)
 > ipfs cid format -f %P QmT78zSuBmuS4z925WZfrqQ1qHaJ56DQaTfyMUF7F8ff5o
 cidv0-protobuf-sha2-256-32
@@ -4501,7 +4501,7 @@ Currently, when too many items are added into a unixfs directory, the object
 gets too large and you may experience issues. To prevent this problem, and
 generally make working really large directories more efficient, we have
 implemented a HAMT structure for unixfs. To enable this feature, run:
-```
+```go
 ipfs config --json Experimental.ShardingEnabled true
 ```
 
@@ -4551,7 +4551,7 @@ the option to not have ipfs store chunked copies of added files in the
 blockstore, pushing to burden of ensuring those files are not changed to the
 user. The filestore feature is currently still experimental, and must be
 enabled in your config with:
-```
+```go
 ipfs config --json Experimental.FilestoreEnabled true
 ```
 before it can be used. Please see [this issue](https://github.com/ipfs/go-ipfs/issues/3397#issuecomment-284337564) for more details.

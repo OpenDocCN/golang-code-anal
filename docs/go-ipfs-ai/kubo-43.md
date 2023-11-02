@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 43
 
-# `/opt/kubo/fuse/ipns/ipns_unix.go`
+# `fuse/ipns/ipns_unix.go`
 
 这段代码是一个 Go 语言编写的 FUSE 文件系统实现，用于支持类似于 IPv6 名称空间（IPNS）的命名系统。它实现了 FUSE 规范中的基本功能，但没有包含一些可能不需要的代码，如网络文件系统（NetFS）和 Plan 9 文件系统。
 
@@ -22,7 +22,7 @@
 最后，该代码导出了来自 `ipns` 包的 `ipns_fuse` 函数。
 
 
-```
+```go
 //go:build !nofuse && !openbsd && !netbsd && !plan9
 // +build !nofuse,!openbsd,!netbsd,!plan9
 
@@ -61,7 +61,7 @@ import (
 最后，定义了一个名为“FileSystem”的类型，该类型表示IPFS文件系统。该类型有一个名为“Ipfs”的成员变量，它是一个iface.CoreAPI类型，表示IPFS的根节点。还有一个名为“RootNode”的成员变量，它是一个指向IPFS根节点的指针类型。
 
 
-```
+```go
 func init() {
 	if os.Getenv("IPFS_FUSE_DEBUG") != "" {
 		fuse.Debug = func(msg interface{}) {
@@ -85,7 +85,7 @@ type FileSystem struct {
 进一步地，该函数首先尝试从IPFS网络中获取一个名为“local”的密钥，并使用上下文上下文和密钥来创建一个名为“root”的根目录对象。然后，它返回一个新的FileSystem实例，其中IPFS表示IPFS网络接口，RootNode表示根目录对象。最后，如果函数在创建根目录对象时遇到任何错误，它将返回一个error。
 
 
-```
+```go
 // NewFileSystem constructs new fs using given core.IpfsNode instance.
 func NewFileSystem(ctx context.Context, ipfs iface.CoreAPI, ipfspath, ipnspath string) (*FileSystem, error) {
 	key, err := ipfs.Key().Self(ctx)
@@ -110,7 +110,7 @@ func NewFileSystem(ctx context.Context, ipfs iface.CoreAPI, ipfspath, ipnspath s
 `Destroy()`函数用于关闭整个文件系统并输出错误。首先，使用`f.RootNode.Close()`关闭整个文件系统。如果关闭失败，函数输出错误并关闭`f.RootNode`。然后，所有关闭的文件系统节点都会被关闭，并输出错误。
 
 
-```
+```go
 func (f *FileSystem) Root() (fs.Node, error) {
 	log.Debug("filesystem, get root")
 	return f.RootNode, nil
@@ -146,7 +146,7 @@ ipnsPubFunc 函数接收两个参数：mfs.PubFunc 和 iface.Key。函数内部�
 loadRoot 函数接收两个参数：mfs.Context 和 iface.Key。函数内部首先使用 ipfs.ResolveNode 函数查找 iface.Key 对应的路径节点，然后使用 ft.EmptyDirNode 函数创建一个新的空目录节点。如果过程中出现错误，函数会记录错误并返回。最后，函数调用 mfs.NewRoot 将创建的根目录节点设置为 root，并将根目录的目录设置为 iface.Key 对应的目录。
 
 
-```
+```go
 func ipnsPubFunc(ipfs iface.CoreAPI, key iface.Key) mfs.PubFunc {
 	return func(ctx context.Context, c cid.Cid) error {
 		_, err := ipfs.Name().Publish(ctx, path.FromCid(c), options.Name.Key(key.Name()))
@@ -185,7 +185,7 @@ func loadRoot(ctx context.Context, ipfs iface.CoreAPI, key iface.Key) (*mfs.Root
 函数首先加载每个键值对中的根目录，如果遇到错误，就返回。然后，它遍历存储键值对中的每个节点，设置一个节点对应的文件系统节点，并设置一个键值对，用于存储符号链接。最后，函数返回一个根目录结构对象，其中包含IPFS实例，根目录的文件系统路径和键值对中存储的键值对。
 
 
-```
+```go
 func CreateRoot(ctx context.Context, ipfs iface.CoreAPI, keys map[string]iface.Key, ipfspath, ipnspath string) (*Root, error) {
 	ldirs := make(map[string]fs.Node)
 	roots := make(map[string]*mfs.Root)
@@ -233,7 +233,7 @@ func CreateRoot(ctx context.Context, ipfs iface.CoreAPI, keys map[string]iface.K
 4. 格式化输出：在函数实现中，定义了一个名为"ipfs: namesys resolve error："的错误日志格式。如果Ipfs上获取资源名称时出现错误，则使用该格式输出错误信息。
 
 
-```
+```go
 // Attr returns file attributes.
 func (r *Root) Attr(ctx context.Context, a *fuse.Attr) error {
 	log.Debug("Root Attr")
@@ -308,7 +308,7 @@ func (r *Root) Lookup(ctx context.Context, name string) (fs.Node, error) {
 3. 调用根目录的 forget() 函数，使得根目录及其子目录的 close() 函数不会返回错误。
 
 
-```
+```go
 func (r *Root) Close() error {
 	for _, mr := range r.Roots {
 		err := mr.Close()
@@ -343,7 +343,7 @@ func (r *Root) Forget() {
 5. 在函数头部，没有做其他操作，只是定义了一个名为 "ReadDirAll" 的函数。
 
 
-```
+```go
 // ReadDirAll reads a particular directory. Will show locally available keys
 // as well as a symlink to the peerID key.
 func (r *Root) ReadDirAll(ctx context.Context) ([]fuse.Dirent, error) {
@@ -375,7 +375,7 @@ func (r *Root) ReadDirAll(ctx context.Context) ([]fuse.Dirent, error) {
 该代码看起来是为了定义一个目录节点（Directory）和一些与目录节点相关的类型，以及一个文件节点（FileNode）和与文件节点相关的类型。这些类型和结构体看起来用于在名为mfs的文件系统上提供一些fs接口的功能。
 
 
-```
+```go
 // Directory is wrapper over an mfs directory to satisfy the fuse fs interface.
 type Directory struct {
 	dir *mfs.Directory
@@ -400,7 +400,7 @@ type File struct {
 第二段代码的作用是获取文件 Attr。在函数中，首先输出一条日志消息，然后设置所选文件 Node 对象的 Attr 对象的 Mode、Size 和 Uid，最后返回 nil，表示操作成功。
 
 
-```
+```go
 func (d *Directory) Attr(ctx context.Context, a *fuse.Attr) error {
 	log.Debug("Directory Attr")
 	a.Mode = os.ModeDir | 0o555
@@ -435,7 +435,7 @@ func (fi *FileNode) Attr(ctx context.Context, a *fuse.Attr) error {
 函数的作用是帮助用户查找给定目录中给定名称的子目录或文件的路径，并在需要时返回指定的路径。
 
 
-```
+```go
 // Lookup performs a lookup under this node.
 func (d *Directory) Lookup(ctx context.Context, name string) (fs.Node, error) {
 	child, err := d.dir.Child(name)
@@ -469,7 +469,7 @@ func (d *Directory) Lookup(ctx context.Context, name string) (fs.Node, error) {
 在循环结束后，如果 `listing` 中所有链接结构都被成功读取，则返回 `entries` 切片，否则返回一个非空错误。
 
 
-```
+```go
 // ReadDirAll reads the link structure as directory entries.
 func (d *Directory) ReadDirAll(ctx context.Context) ([]fuse.Dirent, error) {
 	listing, err := d.dir.List(ctx)
@@ -510,7 +510,7 @@ func (d *Directory) ReadDirAll(ctx context.Context) ([]fuse.Dirent, error) {
 6. 在`Read`函数中，如果文件读取操作遇到错误，则返回错误信息，否则，根据`min`函数计算出的最小数据长度，读取文件全部的数据并返回。
 
 
-```
+```go
 func (fi *File) Read(ctx context.Context, req *fuse.ReadRequest, resp *fuse.ReadResponse) error {
 	_, err := fi.fi.Seek(req.Offset, io.SeekStart)
 	if err != nil {
@@ -566,7 +566,7 @@ func (fi *File) Flush(ctx context.Context, req *fuse.FlushRequest) error {
 这两函数还会一起使用一个channel来传递errs。如果一个错误发生了，我们将 err作为返回值。如果所有的操作都成功完成，我们将err为空。
 
 
-```
+```go
 func (fi *File) Write(ctx context.Context, req *fuse.WriteRequest, resp *fuse.WriteResponse) error {
 	// TODO: at some point, ensure that WriteAt here respects the context
 	wrote, err := fi.fi.WriteAt(req.Data, req.Offset)
@@ -595,7 +595,7 @@ func (fi *File) Flush(ctx context.Context, req *fuse.FlushRequest) error {
 这段代码是一个函数，名为 `func (fi *File) Setattr(ctx context.Context, req *fuse.SetattrRequest, resp *fuse.SetattrResponse) error`。它接收两个指针参数：`fi` 和 `req`，分别代表一个文件设备和请求设置属性。函数的作用是在文件系统上设置一个名为 `req.Name` 的属性，并将给定的大小设置给 `req.Size`。如果 `req.Valid` 的长度小于给定的大小，函数不会执行。如果已设置的大小不正确，函数会尝试截断文件系统以设置正确的大小，并返回相应的错误。如果函数在执行过程中遇到任何错误，它将返回一个非空错误对象。
 
 
-```
+```go
 func (fi *File) Setattr(ctx context.Context, req *fuse.SetattrRequest, resp *fuse.SetattrResponse) error {
 	if req.Valid.Size() {
 		cursize, err := fi.fi.Size()
@@ -621,7 +621,7 @@ func (fi *File) Setattr(ctx context.Context, req *fuse.SetattrRequest, resp *fus
 由于flush操作需要写入磁盘，因此必须确保所有读写操作都已完成，才能保证flush操作成功。如果在这个过程中出现错误，则返回错误。如果flush操作完成后，由于任何原因操作未完成，则返回上一个错误。
 
 
-```
+```go
 // Fsync flushes the content in the file to disk.
 func (fi *FileNode) Fsync(ctx context.Context, req *fuse.FsyncRequest) error {
 	// This needs to perform a *full* flush because, in MFS, a write isn't
@@ -649,7 +649,7 @@ func (fi *FileNode) Fsync(ctx context.Context, req *fuse.FsyncRequest) error {
 这两个函数在实际的应用场景中，可能会被其他更核心的函数或业务逻辑所依赖，所以具体的使用方式还需要根据具体需求来调整。
 
 
-```
+```go
 func (fi *File) Forget() {
 	// TODO(steb): this seems like a place where we should be *uncaching*, not flushing.
 	err := fi.fi.Flush()
@@ -690,7 +690,7 @@ func (d *Directory) Mkdir(ctx context.Context, req *fuse.MkdirRequest) (fs.Node,
 另外，如果函数在执行过程中遇到错误，会将其记录在函数内部，并返回错误代码。
 
 
-```
+```go
 func (fi *FileNode) Open(ctx context.Context, req *fuse.OpenRequest, resp *fuse.OpenResponse) (fs.Handle, error) {
 	fd, err := fi.fi.Open(mfs.Flags{
 		Read:  req.Flags.IsReadOnly() || req.Flags.IsReadWrite(),
@@ -745,7 +745,7 @@ func (fi *FileNode) Open(ctx context.Context, req *fuse.OpenRequest, resp *fuse.
 `d.Create` 函数接收一个目录名称 `req.Name` 和一个 `fuse.CreateRequest` 结构体，负责创建一个新的目录。它首先检查 `d` 是否为空，如果是，则创建一个新目录并返回其名称。如果 `d` 不是空，则创建目录中的新文件并返回其名称、文件类型和错误。
 
 
-```
+```go
 func (fi *File) Release(ctx context.Context, req *fuse.ReleaseRequest) error {
 	return fi.fi.Close()
 }
@@ -831,7 +831,7 @@ func (d *Directory) Create(ctx context.Context, req *fuse.CreateRequest, resp *f
 这两个函数都接受一个 `fuse.RemoveRequest` 和一个 `fs.Node` 类型的参数，并返回一个 `error`。第一个函数是 `Directory` 类的 `Remove` 函数，它通过调用 `Unlink` 和 `Link` 方法来删除文件或者目录。第二个函数是 `Directory` 类的 `Rename` 函数，它实现了 `NodeRenamer` 接口，实现了 FUSE 文件系统的 `rename` 操作。
 
 
-```
+```go
 func (d *Directory) Remove(ctx context.Context, req *fuse.RemoveRequest) error {
 	err := d.dir.Unlink(req.Name)
 	if err != nil {
@@ -886,7 +886,7 @@ func (d *Directory) Rename(ctx context.Context, req *fuse.RenameRequest, newDir 
 最后，该函数创建了一个名为_ipnsRoot的指针变量，该指针被初始化为nil，即没有实际值。
 
 
-```
+```go
 func min(a, b int) int {
 	if a < b {
 		return a
@@ -912,7 +912,7 @@ ipnsDirectory是一个指针类型变量，它存储了一个FS目录对象。�
 ipnsFile是一个指针类型变量，它存储了一个FS文件对象。在代码的后续部分，ipnsFile被用来创建和操作FS文件。
 
 
-```
+```go
 type ipnsDirectory interface {
 	fs.HandleReadDirAller
 	fs.Node
@@ -941,7 +941,7 @@ type ipnsFile interface {
 通过这两行代码，ipnsFileNode和_ipnsFileNode都被初始化了，但ipnsFileNode是类型，而_ipnsFileNode是变量。类型通常用于定义变量所需的数据类型，而变量则用于存储该类型的实例。
 
 
-```
+```go
 type ipnsFileNode interface {
 	fs.Node
 	fs.NodeFsyncer
@@ -955,7 +955,7 @@ var (
 
 ```
 
-# `/opt/kubo/fuse/ipns/link_unix.go`
+# `fuse/ipns/link_unix.go`
 
 这段代码是一个 Go 语言编写的 FUSE 文件系统模块，它定义了一个名为 "ipns" 的包。这个模块的作用是创建一个名为 "/ipns" 的目录，并在其中创建一个名为 "ipns-manifest.yaml" 的文件。
 
@@ -968,7 +968,7 @@ var (
 5. 创建名为 "ipns-manifest.yaml" 的文件，其中包含一个名为 "ipns" 的 FUSE 文件系统模块定义。
 
 
-```
+```go
 //go:build !nofuse && !openbsd && !netbsd && !plan9
 // +build !nofuse,!openbsd,!netbsd,!plan9
 
@@ -1008,7 +1008,7 @@ func (l *Link) Readlink(ctx context.Context, req *fuse.ReadlinkRequest) (string,
 另外，该代码还定义了一个`var _ fs.NodeReadlinker = (*Link)(nil)`类型的变量，用于表示`Link`类型的指针`l`。
 
 
-```
+```go
 func (l *Link) Attr(ctx context.Context, a *fuse.Attr) error {
 	log.Debug("Link attr.")
 	a.Mode = os.ModeSymlink | 0o555
@@ -1024,7 +1024,7 @@ var _ fs.NodeReadlinker = (*Link)(nil)
 
 ```
 
-# `/opt/kubo/fuse/ipns/mount_unix.go`
+# `fuse/ipns/mount_unix.go`
 
 这段代码是一个用于在IPFS中挂载不同发行版Linux、Darwin、FreeBSD和NetBSD的IPNS子系统的工具。它通过在IPFS中安装所需的软件包，并检查IPFS是否支持挂载其他发行版，从而允许用户在不同发行版之间进行无缝的IPFS共享。
 
@@ -1033,7 +1033,7 @@ var _ fs.NodeReadlinker = (*Link)(nil)
 接下来，代码通过使用"github.com/ipfs/kubo/core"库从IPFS中导入"core"和"coreapi"功能，并使用"github.com/ipfs/kubo/fuse/mount"库中的"mount"函数来创建一个挂载点。最后，代码通过检查IPFS配置中的"Mounts.FuseAllowOther"选项来决定是否允许其他发行版的IPNS。
 
 
-```
+```go
 //go:build (linux || darwin || freebsd || netbsd || openbsd) && !nofuse
 // +build linux darwin freebsd netbsd openbsd
 // +build !nofuse
@@ -1070,7 +1070,7 @@ func Mount(ipfs *core.IpfsNode, ipnsmp, ipfsmp string) (mount.Mount, error) {
 
 ```
 
-# `/opt/kubo/fuse/mount/fuse.go`
+# `fuse/mount/fuse.go`
 
 这段代码是一个 Go 语言编写的 FUSE 文件系统相关的构建脚本，用于编译依赖库并安装必要的工具和设置环境。
 
@@ -1087,7 +1087,7 @@ func Mount(ipfs *core.IpfsNode, ipnsmp, ipfsmp string) (mount.Mount, error) {
 该代码主要用于在 FUSE 文件系统环境中编译必要的工具和设置环境，以便从 FUSE 仓库中构建自定义的 Go 语言应用程序。
 
 
-```
+```go
 //go:build !nofuse && !windows && !openbsd && !netbsd && !plan9
 // +build !nofuse,!windows,!openbsd,!netbsd,!plan9
 
@@ -1115,7 +1115,7 @@ import (
 最后，该结构体包含一个名为“proc”的 Go 进程函数，用于执行挂载操作的上下文处理和错误处理。
 
 
-```
+```go
 var ErrNotMounted = errors.New("not mounted")
 
 // mount implements go-ipfs/fuse/mount.
@@ -1140,7 +1140,7 @@ type mount struct {
 由于在代码中没有对传入参数进行校验，因此在实际应用中需要添加相应的错误处理和参数检查。
 
 
-```
+```go
 // parent is a ContextGroup to bind the mount's ContextGroup to.
 func NewMount(p goprocess.Process, fsys fs.FS, mountpoint string, allowOther bool) (Mount, error) {
 	var conn *fuse.Conn
@@ -1188,7 +1188,7 @@ func NewMount(p goprocess.Process, fsys fs.FS, mountpoint string, allowOther boo
 如果挂载过程中出现错误，函数会返回该错误，否则将文件系统设置为可用，并输出已挂载的文件系统的名称。
 
 
-```
+```go
 func (m *mount) mount() error {
 	log.Infof("Mounting %s", m.MountPoint())
 
@@ -1239,7 +1239,7 @@ func (m *mount) mount() error {
 该函数的作用是确保在尝试失败时，能够正确地关闭与 fuse 连接的客户端，以免对系统造成不必要的伤害。
 
 
-```
+```go
 // umount is called exactly once to unmount this service.
 // note that closing the connection will not always unmount
 // properly. If that happens, we bring out the big guns
@@ -1287,7 +1287,7 @@ func (m *mount) unmount() error {
 该函数接收一个名为mount的整数指针变量，并在该结构体中名为isActive的成员为假时执行。函数的作用是关闭与mount相关的事务，并返回一个非-错误的结果。
 
 
-```
+```go
 func (m *mount) Process() goprocess.Process {
 	return m.proc
 }
@@ -1329,7 +1329,7 @@ func (m *mount) Unmount() error {
 这两段代码，通过对`mount`数据结构的锁操作与访问操作的分离，使得多个开发人员可以在多个并发请求下，对数据结构进行操作，而不会导致数据结构的竞争条件。
 
 
-```
+```go
 func (m *mount) IsActive() bool {
 	m.activeLock.RLock()
 	defer m.activeLock.RUnlock()
@@ -1345,12 +1345,12 @@ func (m *mount) setActive(a bool) {
 
 ```
 
-# `/opt/kubo/fuse/mount/mount.go`
+# `fuse/mount/mount.go`
 
 这段代码定义了一个名为"mount"的包，提供了一个对挂载点的简单抽象。这个包通过使用"fmt"函数打印日志信息，以及使用"io"、"os/exec"和"time"包来处理文件系统操作，来实现在挂载点上执行命令。最后，使用"github.com/ipfs/go-log"和"github.com/jbenet/goprocess"包来在执行操作时记录和处理I/O操作和进程。
 
 
-```
+```go
 // package mount provides a simple abstraction around a mount point
 package mount
 
@@ -1376,7 +1376,7 @@ MountTimeout定义了一个名为MountTimeout的常量，表示挂载超时的�
 该代码没有输出任何函数或变量，因此它无法直接挂载文件系统。它定义了一个Mount接口，可以用来定义文件系统的挂载点，是否处于活跃状态以及返回一个Process类型的挂载的goprocess.Process。
 
 
-```
+```go
 var MountTimeout = time.Second * 5
 
 // Mount represents a filesystem mount.
@@ -1410,7 +1410,7 @@ type Mount interface {
 通过 `ForceUnmount` 函数，可以强制卸载挂载点文件系统的挂载点。
 
 
-```
+```go
 // ForceUnmount attempts to forcibly unmount a given mount.
 // It does so by calling diskutil or fusermount directly.
 func ForceUnmount(m Mount) error {
@@ -1452,7 +1452,7 @@ func ForceUnmount(m Mount) error {
 函数的实现依赖于运行时编译器设置的目标操作系统。如果目标操作系统没有被设置，函数的行为将会是未定义的。
 
 
-```
+```go
 // UnmountCmd creates an exec.Cmd that is GOOS-specific
 // for unmount a FUSE mount.
 func UnmountCmd(point string) (*exec.Cmd, error) {
@@ -1479,7 +1479,7 @@ func UnmountCmd(point string) (*exec.Cmd, error) {
 最后，代码块通过调用 "fmt.Errorf" 函数并传入一个字符串和一个目录的挂载点，来输出错误消息。
 
 
-```
+```go
 // Attempts a given number of times.
 func ForceUnmountManyTimes(m Mount, attempts int) error {
 	var err error
@@ -1507,7 +1507,7 @@ type closer struct {
 Close函数的实现主要依赖于Closer类型的代表c，它包含一个Unmount函数，用于关闭与设备的联系。由于没有定义Unmount函数，因此无法确定Close函数的行为。
 
 
-```
+```go
 func (c *closer) Close() error {
 	log.Warn(" (c *closer) Close(),", c.M.MountPoint())
 	return c.M.Unmount()

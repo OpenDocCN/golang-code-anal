@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 6
 
-# `/opt/kubo/commands/context.go`
+# `commands/context.go`
 
 这段代码定义了一个名为 "commands" 的包，其中定义了一些与 IPFS(InterPlanetary File System) 相关的命令。
 
@@ -20,7 +20,7 @@
 - "err" 函数，设置一个错误缓冲区，用于将错误输出到 "stderr" 端口上。
 
 
-```
+```go
 package commands
 
 import (
@@ -57,7 +57,7 @@ import (
 最后，上下文还定义了一个名为 "ConstructNode" 的函数，该函数接受一个 " core.IpfsNode" 类型的参数和一个 "error" 类型的参数，该函数可以用来创建一个新的 "core.IpfsNode"。
 
 
-```
+```go
 var log = logging.Logger("command")
 
 // Context represents request context.
@@ -89,7 +89,7 @@ type Context struct {
 8. 返回生成的节点。
 
 
-```
+```go
 func (c *Context) GetConfig() (*config.Config, error) {
 	node, err := c.GetNode()
 	if err != nil {
@@ -128,7 +128,7 @@ func (c *Context) GetNode() (*core.IpfsNode, error) {
 4. 创建新的 CoreAPI 实例时，使用 `coreapi.NewCoreAPI` 函数将提供的节点传递给 `options.Api.FetchBlocks` 函数，并将 fetchBlocks 选项设置为 `fetchBlocks` 设置为 `false` 时提供。
 
 
-```
+```go
 // GetAPI returns CoreAPI instance backed by ipfs node.
 // It may construct the node with the provided function.
 func (c *Context) GetAPI() (coreiface.CoreAPI, error) {
@@ -174,7 +174,7 @@ func (c *Context) GetAPI() (coreiface.CoreAPI, error) {
 5. 在函数中，使用ReqLog.Finish函数来完成对ReqLog的提交。
 
 
-```
+```go
 // Context returns the node's context.
 func (c *Context) Context() context.Context {
 	n, err := c.GetNode()
@@ -214,7 +214,7 @@ func (c *Context) LogRequest(req *cmds.Request) func() {
 该函数还有个可选的参数 `c`，代表当前上下文对象 `Context`，如果该参数被传递，则该函数将作为 `Close` 函数的一部分在其他函数中重复使用。
 
 
-```
+```go
 // Close cleans up the application state.
 func (c *Context) Close() {
 	// let's not forget teardown. If a node was initialized, we must close it.
@@ -228,7 +228,7 @@ func (c *Context) Close() {
 
 ```
 
-# `/opt/kubo/commands/reqlog.go`
+# `commands/reqlog.go`
 
 这段代码定义了一个名为 "requests" 的包，它包含一个名为 "ReqLogEntry" 的结构体，用于表示请求日志条目。
 
@@ -250,7 +250,7 @@ func (c *Context) Close() {
 总之，这段代码描述了一个用于记录 HTTP 请求信息的 "ReqLogEntry" 结构体，以及一个用于创建和添加 "ReqLogEntry" 实例的 "requests" 包。
 
 
-```
+```go
 package commands
 
 import (
@@ -280,7 +280,7 @@ type ReqLogEntry struct {
 此外，该体有一个名为ReqLog的函数，该函数创建一个ReqLog类型的变量，其中Requests是ReqLogEntry类型的切片，nextID是NextReqLogEntry类型的指针，keep是锁锁定的时间间隔，用于在Requests列表中维护一个后继的ReqLogEntry类型。
 
 
-```
+```go
 // Copy returns a copy of the ReqLogEntry.
 func (r *ReqLogEntry) Copy() *ReqLogEntry {
 	out := *r
@@ -305,7 +305,7 @@ AddEntry函数接收一个ReqLogEntry类型的参数，这个函数会尝试获�
 ClearInactive函数用于清除未活动的ReqLogEntry。该函数没有做任何实际的读写操作，只是简单地将inactive状态设置给输入的ReqLogEntry。
 
 
-```
+```go
 // AddEntry adds an entry to the log.
 func (rl *ReqLog) AddEntry(rle *ReqLogEntry) {
 	rl.lock.Lock()
@@ -330,7 +330,7 @@ func (rl *ReqLog) AddEntry(rle *ReqLogEntry) {
 `maybeCleanup()`函数的作用是定期检查请求列表是否符合某种条件（在本例中是每10个请求清理一次），如果是，就执行`ClearInactive()`函数。如果不清理，则继续等待。这样可以避免在大多数情况下阻塞 `ClearInactive()`函数的执行。
 
 
-```
+```go
 func (rl *ReqLog) ClearInactive() {
 	rl.lock.Lock()
 	defer rl.lock.Unlock()
@@ -360,7 +360,7 @@ SetKeepTime()函数的作用是设置一个超时时间，在超时时间之后�
 总的来说，这两个函数都是对ReqLog对象进行操作的函数，用于管理ReqLog对象的状态和生命周期。
 
 
-```
+```go
 func (rl *ReqLog) cleanup() {
 	i := 0
 	now := time.Now()
@@ -393,7 +393,7 @@ func (rl *ReqLog) SetKeepTime(t time.Duration) {
 该代码片段是请求日志库中的两个重要函数，它们用于处理请求条目的记录和更新。通过这两个函数，可以确保记录的请求条目始终存在于请求日志中，即使某些请求已经结束或被取消。
 
 
-```
+```go
 // Report generates a copy of all the entries in the requestlog.
 func (rl *ReqLog) Report() []*ReqLogEntry {
 	rl.lock.Lock()
@@ -420,7 +420,7 @@ func (rl *ReqLog) Finish(rle *ReqLogEntry) {
 
 ```
 
-# `/opt/kubo/config/addresses.go`
+# `config/addresses.go`
 
 这段代码定义了一个名为 `config` 的包，其中包含一个名为 `Addresses` 的结构体。
 
@@ -431,7 +431,7 @@ func (rl *ReqLog) Finish(rle *ReqLogEntry) {
 最后，`API` 和 `Gateway` 字段分别用于存储本地API（RPC）地址和IPFS HTTP对象网关的地址，用于与节点通信。
 
 
-```
+```go
 package config
 
 // Addresses stores the (string) multiaddr addresses for the node.
@@ -446,7 +446,7 @@ type Addresses struct {
 
 ```
 
-# `/opt/kubo/config/api.go`
+# `config/api.go`
 
 这段代码定义了一个名为`API`的结构体，用于表示一个API。该结构体有一个`HTTPHeaders`字段，类型为`map[string][]string`，表示一个二元组，其中每个元素都是`string`类型，且可以有多个元素。
 
@@ -455,7 +455,7 @@ type Addresses struct {
 `API`结构体提供了一个`HTTPHeaders`字段，用于返回HTTP请求头中的数据。通过使用该字段，可以定义一个接口，让其他代码可以使用这个API。例如，可以在代码中创建一个`API`实例，设置请求头，并调用其中的方法来发送HTTP请求。
 
 
-```
+```go
 package config
 
 type API struct {
@@ -464,7 +464,7 @@ type API struct {
 
 ```
 
-# `/opt/kubo/config/autonat.go`
+# `config/autonat.go`
 
 这段代码定义了一个名为“config”的包，其中包含了一些通用的功能函数。
 
@@ -480,7 +480,7 @@ type API struct {
 最后，它没有定义任何函数，但是使用了“fmt.Println”函数输出上述定义的这些变量。
 
 
-```
+```go
 package config
 
 import (
@@ -540,7 +540,7 @@ default:
 * 第二，是字节切片，用于在将来的 JSON 编码中还原。
 
 
-```
+```go
 func (m *AutoNATServiceMode) UnmarshalText(text []byte) error {
 	switch string(text) {
 	case "":
@@ -589,7 +589,7 @@ func (m AutoNATServiceMode) MarshalText() ([]byte, error) {
 这段代码描述了一个自动NAT服务的配置，通过设置`ServiceMode`和`Throttle`字段来配置节点如何与对等设备进行通信，并确定自动NAT服务的参数。
 
 
-```
+```go
 // AutoNATConfig configures the node's AutoNAT subsystem.
 type AutoNATConfig struct {
 	// ServiceMode configures the node's AutoNAT service mode.
@@ -618,7 +618,7 @@ type AutoNATConfig struct {
 最后，该结构体还包含一个名为 AutoNATThrottleConfig 的字段，该字段用于配置 AutoNAT 的阈值。
 
 
-```
+```go
 // AutoNATThrottleConfig configures the throttle limites.
 type AutoNATThrottleConfig struct {
 	// GlobalLimit and PeerLimit sets the global and per-peer dialback
@@ -637,7 +637,7 @@ type AutoNATThrottleConfig struct {
 
 ```
 
-# `/opt/kubo/config/bootstrap_peers.go`
+# `config/bootstrap_peers.go`
 
 这段代码定义了一个名为`config`的包，其中包含了以下导入语句：
 
@@ -662,7 +662,7 @@ type DefaultBootstrapAddresses struct {
 最后，该包没有定义任何函数，方法或变量。
 
 
-```
+```go
 package config
 
 import (
@@ -689,7 +689,7 @@ The function first sets up a connection to the IPFS endpoint using the Mars Netw
 If an error occurs, the function will return an error.
 
 
-```
+```go
 // import dependency issue. TODO: move this into a config/default/ package.
 var DefaultBootstrapAddresses = []string{
 	"/dnsaddr/bootstrap.libp2p.io/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN",
@@ -718,7 +718,7 @@ func (c *Config) BootstrapPeers() ([]peer.AddrInfo, error) {
 总结一下，这段代码定义了一个用于设置IPFS网络预设服务器地址的函数。它依赖于两个辅助函数，`ParseBootstrapPeers`函数用于解析预设服务器地址，而`BootstrapPeerStrings`函数用于将解析后的服务器地址字符串转换为实际的预设服务器地址。
 
 
-```
+```go
 // DefaultBootstrapPeers returns the (parsed) set of default bootstrap peers.
 // if it fails, it returns a meaningful error for the user.
 // This is here (and not inside cmd/ipfs/init) because of module dependency problems.
@@ -744,7 +744,7 @@ func (c *Config) SetBootstrapPeers(bps []peer.AddrInfo) {
 最后，函数调用另一个函数 `peer.AddrInfosFromP2pAddrs`，该函数接收一个 `ma.Multiaddr` 数组作为参数，并返回一个包含 `peer.AddrInfo` 结构体的 slice。由于 `maddrs` 数组中的每个 `ma.Multiaddr` 对象都代表了一个 `peer.AddrInfo` 结构体，因此函数返回的值也是一个包含 `peer.AddrInfo` 结构体的 slice。
 
 
-```
+```go
 // ParseBootstrapPeer parses a bootstrap list into a list of AddrInfos.
 func ParseBootstrapPeers(addrs []string) ([]peer.AddrInfo, error) {
 	maddrs := make([]ma.Multiaddr, len(addrs))
@@ -782,7 +782,7 @@ func ParseBootstrapPeers(addrs []string) ([]peer.AddrInfo, error) {
 - 如果 `bps` 数组长度为 0，该函数可能会导致编译错误或运行时错误。
 
 
-```
+```go
 func BootstrapPeerStrings(bps []peer.AddrInfo) []string {
 	bpss := make([]string, 0, len(bps))
 	for _, pi := range bps {
@@ -800,7 +800,7 @@ func BootstrapPeerStrings(bps []peer.AddrInfo) []string {
 
 ```
 
-# `/opt/kubo/config/bootstrap_peers_test.go`
+# `config/bootstrap_peers_test.go`
 
 这段代码的作用是测试一个名为`BootstrapPeerStrings`的函数，它接收一个`ParseBootstrapPeers`函数返回的参数，对这个参数中的地址进行排序，并返回排序后的结果。
 
@@ -818,7 +818,7 @@ func BootstrapPeerStrings(bps []peer.AddrInfo) []string {
 函数`BootstrapPeerStrings`的作用是测试`ParseBootstrapPeers`函数返回的地址是否正确排序，并且确保排序后的结果与预期的结果一致。
 
 
-```
+```go
 package config
 
 import (
@@ -846,7 +846,7 @@ func TestBoostrapPeerStrings(t *testing.T) {
 
 ```
 
-# `/opt/kubo/config/config.go`
+# `config/config.go`
 
 这段代码定义了一个名为`config`的包，它实现了IPFS(InterPlanetary File System)的配置文件数据结构和工具。它通过导入来自`github.com/mitchellh/go-homedir`和`encoding/json`等库来自动设置IPFS相关参数，然后定义了一个`Config`函数，该函数可以用来加载和设置IPFS的配置文件。
 
@@ -861,7 +861,7 @@ func TestBoostrapPeerStrings(t *testing.T) {
 通过这些功能，`config`包使得IPFS的配置文件变得非常灵活，用户可以通过`config`函数轻松地设置IPFS的各种参数。
 
 
-```
+```go
 // package config implements the ipfs config file datastructures and utilities.
 package config
 
@@ -907,7 +907,7 @@ import (
 * `Internal`：内部设置，包括实验设置。
 
 
-```
+```go
 type Config struct {
 	Identity  Identity  // local node's peer identity
 	Datastore Datastore // local node's storage
@@ -947,7 +947,7 @@ type Config struct {
 另外，还定义了一个名为 PathRoot 的函数，返回了默认配置目录的位置，同时也处理了环境变量 homedir 的使用。
 
 
-```
+```go
 const (
 	// DefaultPathName is the default config dir name.
 	DefaultPathName = ".ipfs"
@@ -978,7 +978,7 @@ func PathRoot() (string, error) {
 如果 `configroot` 参数中提供了路径，函数将返回一个字符串，该字符串将包含相对于 `configroot` 的 `extension` 扩展的路径。如果 `PathRoot` 函数成功获取了路径，函数将返回它。
 
 
-```
+```go
 // Path returns the path `extension` relative to the configuration root. If an
 // empty string is provided for `configroot`, the default root is used.
 func Path(configroot, extension string) (string, error) {
@@ -1010,7 +1010,7 @@ func Path(configroot, extension string) (string, error) {
 函数的实现基于 `path/filepath` 和 `error` 包的 `Path` 和 `filepath.Dir` 函数。
 
 
-```
+```go
 // directory and a user-provided configuration file path argument with the
 // following rules:
 //   - If the user-provided configuration file path is empty, use the default one.
@@ -1041,7 +1041,7 @@ Marshal函数用于将具有特定配置意图的值编码为JSON。它接收一
 这两个函数都在函数式编程风格中定义，具有明确的接口和参数，以及明确的错误处理。
 
 
-```
+```go
 // HumanOutput gets a config value ready for printing.
 func HumanOutput(value interface{}) ([]byte, error) {
 	s, ok := value.(string)
@@ -1078,7 +1078,7 @@ func Marshal(value interface{}) ([]byte, error) {
 3. 返回刚刚创建的 `m` 类型变量，以及没有错误的情况。
 
 
-```
+```go
 func FromMap(v map[string]interface{}) (*Config, error) {
 	buf := new(bytes.Buffer)
 	if err := json.NewEncoder(buf).Encode(v); err != nil {
@@ -1115,7 +1115,7 @@ func ToMap(conf *Config) (map[string]interface{}, error) {
 4. 返回新创建的 `newConfig` 和一个错误对象 `error`。
 
 
-```
+```go
 // Clone copies the config. Use when updating.
 func (c *Config) Clone() (*Config, error) {
 	var newConfig Config
@@ -1134,7 +1134,7 @@ func (c *Config) Clone() (*Config, error) {
 
 ```
 
-# `/opt/kubo/config/config_test.go`
+# `config/config_test.go`
 
 这段代码是一个 Go 语言中的测试用例，它描述了一个名为 `Clone` 的函数，该函数接收一个 `Config` 类型的实例，并对 `Identity` 和 `API` 字段进行了一些设置。
 
@@ -1143,7 +1143,7 @@ func (c *Config) Clone() (*Config, error) {
 在测试过程中，首先创建了一个名为 `c` 的 `Config` 实例，并对 `Identity` 和 `API` 字段进行了设置。接着，调用 `c.Clone` 函数，对 `Clone` 返回的 `Config` 实例进行了一些修改。最后，测试了修改后的 `Clone` 返回的 `Config` 实例是否能正确地反映到 `Identity` 和 `API` 字段上。
 
 
-```
+```go
 package config
 
 import (
@@ -1176,7 +1176,7 @@ func TestClone(t *testing.T) {
 
 ```
 
-# `/opt/kubo/config/datastore.go`
+# `config/datastore.go`
 
 这段代码定义了一个名为 "config" 的包，其中包含一个名为 "Datastore" 的结构体。
 
@@ -1198,7 +1198,7 @@ func TestClone(t *testing.T) {
 最后，这个结构体还包含一个名为 "BloomFilterSize" 的字段，表示使用散列过滤垃圾回收的软阈值。
 
 
-```
+```go
 package config
 
 import (
@@ -1235,7 +1235,7 @@ type Datastore struct {
 函数的实现非常简单，仅仅是为了提供一个默认的数据存储目录，并没有做更多的处理。
 
 
-```
+```go
 // DataStorePath returns the default data store path given a configuration root
 // (set an empty string to have the default configuration root).
 func DataStorePath(configroot string) (string, error) {
@@ -1244,7 +1244,7 @@ func DataStorePath(configroot string) (string, error) {
 
 ```
 
-# `/opt/kubo/config/discovery.go`
+# `config/discovery.go`
 
 这段代码定义了一个名为 "config" 的包，其中定义了一个名为 "Discovery" 的结构体类型 "MDNS"，以及一个名为 "MDNS" 的结构体类型 "MDNS"。
 
@@ -1253,7 +1253,7 @@ func DataStorePath(configroot string) (string, error) {
 另外， "MDNS" 类型中还有一个名为 "DEPRECATED" 的注释，指出该类型的配置时间(或定时器)已不再受支持，并且建议参考 https://github.com/ipfs/go-ipfs/pull/9048#discussion_r906814717。
 
 
-```
+```go
 package config
 
 type Discovery struct {
@@ -1270,7 +1270,7 @@ type MDNS struct {
 
 ```
 
-# `/opt/kubo/config/dns.go`
+# `config/dns.go`
 
 这段代码定义了一个名为`config`的包，其中包含一个名为`DNS`的结构体，用于指定自定义的DNS解析规则。
 
@@ -1279,7 +1279,7 @@ type MDNS struct {
 通过使用`DNS`结构体，用户可以定义自己的DNS解析规则，包括使用自定义解析器以及指定DNS查询服务的FQDN。这些规则将被缓存并在缓存超时后失效。
 
 
-```
+```go
 package config
 
 // DNS specifies DNS resolution rules using custom resolvers.
@@ -1300,7 +1300,7 @@ type DNS struct {
 
 ```
 
-# `/opt/kubo/config/experiments.go`
+# `config/experiments.go`
 
 这段代码定义了一个名为“Experiments”的结构体，用于存储离散存储（Experiments）的配置。
 
@@ -1323,7 +1323,7 @@ var experiments Experiments
 
 
 
-```
+```go
 package config
 
 type Experiments struct {
@@ -1342,7 +1342,7 @@ type Experiments struct {
 
 ```
 
-# `/opt/kubo/config/gateway.go`
+# `config/gateway.go`
 
 这段代码定义了一个名为 config 的包，其中包含了一些用于配置网络网关的常量。
 
@@ -1364,7 +1364,7 @@ type GatewaySpec 是网关配置结构体，它包含以下字段：
 总的来说，这段代码定义了一个可扩展的配置包，用于配置网络网关的行为。通过设置不同的选项和布尔值，可以控制这个网关如何处理 incoming requests，并可以影响要不要将 FQDN 解析为 DNS 标签。
 
 
-```
+```go
 package config
 
 const (
@@ -1409,7 +1409,7 @@ type GatewaySpec struct {
 This object represents a Kubernetes Service. The direct pointer to `/api/v1/services/root` indicates that requests to the root path `/` on this service will be directed to the specified path. The `RootRedirect` field specifies the path to which requests to `/` on this gateway should be redirected. The `ExposeRoutingAPI` field configures the gateway port to expose routing as an HTTP API at `/api/v1/services/routing/http-routing-v1`.
 
 
-```
+```go
 // Gateway contains options for the HTTP gateway server.
 type Gateway struct {
 	// HTTPHeaders configures the headers that should be returned by this
@@ -1459,7 +1459,7 @@ type Gateway struct {
 
 ```
 
-# `/opt/kubo/config/identity.go`
+# `config/identity.go`
 
 这段代码定义了一个名为`config`的包，它import了`base64`和`encoding/pem`库，以及一个名为`ic`的依赖项。接下来，它定义了两个常量`IdentityTag`和`PrivKeyTag`，它们分别表示本地节点身份标识信息和私钥的选择器。
 
@@ -1470,7 +1470,7 @@ type Gateway struct {
 最后，代码还定义了一个名为`writeConfig`的函数，它接收一个名为`configMap`的参数。函数将`base64.DecodeString`解码一个`base64`编码的字节数组，然后创建一个自定义的配置地图，将身份标识和私钥选择器字段设置为配置标记，然后将配置标记编码为字节，最后将字节写入`configMap`。
 
 
-```
+```go
 package config
 
 import (
@@ -1497,7 +1497,7 @@ const (
 总结起来，这段代码定义了一个 Identity 结构体，其中包括一个名为 PeerID 的字符串类型成员和一个名为 PrivKey 的字符串类型成员，以及一个 DecodePrivateKey 的函数。DecodePrivateKey 函数用于从 JSON 字段中恢复出 Identity 结构体中的PrivKey类型字段的值，并支持将字符串作为参数传递。
 
 
-```
+```go
 type Identity struct {
 	PeerID  string
 	PrivKey string `json:",omitempty"`

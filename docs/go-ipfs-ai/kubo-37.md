@@ -46,7 +46,7 @@ This enables granular customization of Kubo behavior by plugins, such as:
 
 Here's an example plugin that overrides the default Pinner with a custom one:
 
-```go
+```gogo
 func (p *PinnerPlugin) Options(info core.FXNodeInfo) ([]fx.Option, error) {
 	pinner := mypinner.New()    
 	return append(info.FXOptions, fx.Replace(fx.Annotate(pinner, fx.As(new(pin.Pinner))))), nil
@@ -61,7 +61,7 @@ This adds a new file in the `IPFS_PATH` folder similar to `$IPFS_PATH/api` conta
 
 This file is in URL (RFC1738) format.
 
-```console
+```goconsole
 $ cat ~/.ipfs/gateway
 http://127.0.0.1:8080
 ```
@@ -385,7 +385,7 @@ Now, we allow to configure several routers working together, so you can have sev
 
 Example configuration usage using the [Filecoin Network Indexer](https://docs.cid.contact/filecoin-network-indexer/overview) and the DHT, making first a query to the indexer, and timing out after 3 seconds.
 
-```console
+```goconsole
 $ ipfs config Routing.Type --json '"custom"'
 
 $ ipfs config Routing.Routers.CidContact --json '{
@@ -465,7 +465,7 @@ Thoses steps are temporary and wont be needed once we make it enabled by default
 1. Enable the WebTransport transport:
    `ipfs config Swarm.Transports.Network.WebTransport --json true`
 1. Add a listener address for WebTransport to your `Addresses.Swarm` key, for example:
-   ```json
+   ```gojson
    [
      "/ip4/0.0.0.0/tcp/4001",
      "/ip4/0.0.0.0/udp/4001/quic",
@@ -513,7 +513,7 @@ a low level pin.
 Before (Kubo <0.16.0):
 
 
-```console
+```goconsole
 $ ipfs add cat.jpg
 QmCID
 $ ipfs files cp /ipfs/QmCID /mfs-cats/cat.jpg
@@ -522,13 +522,13 @@ $ ipfs pin rm QmCID # removing low level pin, since MFS is protecting from gc
 
 Kubo 0.16.0 collapses the above steps into one:
 
-```console
+```goconsole
 $ ipfs add --pin=false cat.jpg --to-files /mfs-cats/
 ```
 
 A recursive add to MFS works too (below line will create `/lots-of-cats/` directory in MFS):
 
-```console
+```goconsole
 $ ipfs add -r ./lots-of-cats/ --to-files /
 ```
 
@@ -963,7 +963,7 @@ cases, the defaults provided with the latest Kubo release should be sufficient.
 
 To remove any custom limits and switch to the implicit defaults managed by Kubo:
 
-```console
+```goconsole
 $ ipfs config --json Swarm.ConnMgr '{}'
 ```
 
@@ -977,7 +977,7 @@ support for requesting deserialized UnixFS directory as a TAR stream.
 HTTP clients can request TAR response by passing the `?format=tar` URL
 parameter, or setting `Accept: application/x-tar` HTTP header:
 
-```console
+```goconsole
 $ export DIR_CID=bafybeigccimv3zqm5g4jt363faybagywkvqbrismoquogimy7kvz2sj7sq
 $ curl -H "Accept: application/x-tar" "http://127.0.0.1:8080/ipfs/$DIR_CID" > dir.tar
 $ curl "http://127.0.0.1:8080/ipfs/$DIR_CID?format=tar" | tar xv
@@ -1161,7 +1161,7 @@ first time a message is seen, you can set `Pubsub.SeenMessagesStrategy` to
 TL;DR: limit autoscaling improved, most users should start with default settings.
 If you have old configuration, switch to implicit defaults:
 
-```
+```go
 ipfs config --json -- Swarm.ResourceMgr '{}'
 ipfs config --json -- Swarm.ConnMgr '{}'
 ```
@@ -1295,7 +1295,7 @@ The Gateway supports conversion between DAG-CBOR and DAG-JSON for efficient
 end-to-end data structure management: author in CBOR or JSON, store as binary
 CBOR and retrieve as JSON via HTTP:
 
-```console
+```goconsole
 $ echo '{"test": "json"}' | ipfs dag put # implicit --input-codec dag-json --store-codec dag-cbor
 bafyreico7mjtqtqhvawro3yud5uqn6sc33nzqb7b5j2d7pdmzer5nab4t4
 
@@ -1318,7 +1318,7 @@ to different blocks is represented by `{ "/": "cid" }`.
 The Gateway supports traversing these links, enabling access to data
 referenced by structures other than regular UnixFS directories:
 
-```console
+```goconsole
 $ echo '{"test.jpg": {"/": "bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi"}}' | ipfs dag put
 bafyreihspwy3zlkzgphmec5d3xb5g5njrqwotd46lyubnelbzktnmsxkq4 # dag-cbor document linking to unixfs file
 
@@ -1336,7 +1336,7 @@ $ curl "http://127.0.0.1:8080/ipfs/bafyreihspwy3zlkzgphmec5d3xb5g5njrqwotd46lyub
 Finally, Gateway now supports the same [logical format projection](https://ipld.io/specs/codecs/dag-pb/spec/#logical-format) from
 DAG-PB to DAG-JSON as the `ipfs dag get` command, enabling the retrieval of directory listings as JSON instead of HTML:
 
-```console
+```goconsole
 $ export DIR_CID=bafybeigccimv3zqm5g4jt363faybagywkvqbrismoquogimy7kvz2sj7sq
 $ curl -H "Accept: application/vnd.ipld.dag-json" "http://127.0.0.1:8080/ipfs/$DIR_CID" | jq
 $ curl "http://127.0.0.1:8080/ipfs/$DIR_CID?format=dag-json" | jq

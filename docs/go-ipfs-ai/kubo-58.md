@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 58
 
-# `/opt/kubo/test/cli/harness/nodes.go`
+# `test/cli/harness/nodes.go`
 
 该代码定义了一个名为“harness”的包，该包包含一个名为“Nodes”的类型，该类型表示一维节点切片，以及一个名为“Init”的函数，用于初始化节点。
 
@@ -9,7 +9,7 @@
 通过创建一个名为“harness”的包，可以很方便地创建一个包含多个节点的“Nodes”实例，并使用其中的“Init”函数来初始化节点。这使得代码可以更轻松地与Kubernetes风格的节点进行交互，并支持对节点群组的操作。
 
 
-```
+```go
 package harness
 
 import (
@@ -42,7 +42,7 @@ func (n Nodes) Init(args ...string) Nodes {
 6. 最后，函数等待名为“group.Wait”的函数的输出，如果输出为非空，则表示所有节点都成功执行了给定的函数f，否则将输出错误并停止执行。
 
 
-```
+```go
 func (n Nodes) ForEachPar(f func(*Node)) {
 	group := &errgroup.Group{}
 	for _, node := range n {
@@ -69,7 +69,7 @@ func (n Nodes) ForEachPar(f func(*Node)) {
 函数最终返回网络中的节点数量。
 
 
-```
+```go
 func (n Nodes) Connect() Nodes {
 	wg := sync.WaitGroup{}
 	for i, node := range n {
@@ -107,7 +107,7 @@ func (n Nodes) Connect() Nodes {
 这两个函数的具体实现没有其他代码，所以无法判断它们的行为。
 
 
-```
+```go
 func (n Nodes) StartDaemons(args ...string) Nodes {
 	ForEachPar(n, func(node *Node) { node.StartDaemon(args...) })
 	return n
@@ -120,7 +120,7 @@ func (n Nodes) StopDaemons() Nodes {
 
 ```
 
-# `/opt/kubo/test/cli/harness/peering.go`
+# `test/cli/harness/peering.go`
 
 这段代码定义了一个名为 `Peering` 的结构体，用于表示两个主机之间的对等连接。该结构体包含两个整数字段 `From` 和 `To`，分别表示两个主机之间的网络接口。
 
@@ -133,7 +133,7 @@ func (n Nodes) StopDaemons() Nodes {
 该 `config.Peering` 函数的输出是一个 `config.Peering` 类型的实例，它包含了两个字段 `from` 和 `to`，分别表示两个主机之间的网络接口。
 
 
-```
+```go
 package harness
 
 import (
@@ -158,7 +158,7 @@ type Peering struct {
 函数2 `CreatePeerNodes()` 用于创建一个 `PeerNodes` 类型，该类型表示网络中的对等节点。该函数接受一个整数参数 `n`，表示网络中的节点数量，以及一个 `Peerings` 类型的参数 `peerings`，其中每个 `Peerings` 都包含一个对等节点组的配置。函数内部使用一个 `NewT` 函数创建一个 `Harness` 类型的实例，然后使用 `NewNodes` 函数创建 `PeerNodes` 类型的节点，并将这些节点初始化为 `CreateConfig` 函数设置，其中 `config.Routing.Type` 被设置为 `none`，`addresses.Swarm` 属性设置为一个 IP 地址，然后使用 `CreatePeerWith` 函数将节点与对等节点组进行对等连接。最后，函数返回一个 `Harness` 类型的实例和一个包含 `PeerNodes` 类型节点的 `Nodes` 类型的返回值。
 
 
-```
+```go
 func NewRandPort() int {
 	n := rand.Int()
 	return 3000 + (n % 1000)
@@ -183,7 +183,7 @@ func CreatePeerNodes(t *testing.T, n int, peerings []Peering) (*Harness, Nodes) 
 
 ```
 
-# `/opt/kubo/test/cli/harness/run.go`
+# `test/cli/harness/run.go`
 
 这段代码定义了一个名为“ harness”的包，其中定义了一个名为“Runner”的类，用于运行子进程和汇总输出。
 
@@ -192,7 +192,7 @@ func CreatePeerNodes(t *testing.T, n int, peerings []Peering) (*Harness, Nodes) 
 整个包的作用是提供一个可以运行子进程并汇总输出的工具，可以方便地运行程序并获取其输出。
 
 
-```
+```go
 package harness
 
 import (
@@ -224,7 +224,7 @@ type Runner struct {
 `type` 最后定义了一个名为 `RunRequest` 的结构体类型，其中包含了一个名为 `Verbose` 的布尔选项，表示是否在运行命令前设置 `--verbose` 选项。
 
 
-```
+```go
 type (
 	CmdOpt  func(*exec.Cmd)
 	RunFunc func(*exec.Cmd) error
@@ -263,7 +263,7 @@ type RunRequest struct {
 该代码定义了一个 `RunResult` 结构体，用于在命令行中运行 `CMD` 命令并获取其输出。通过组合 `Stdout` 和 `Stderr` 字段，可以获取到命令行输出的详细信息。通过调用 `ExitCode()` 方法，可以获取到执行结果的退出代码。通过调用 `environToMap()` 方法，可以将 `environ` 环境变量中的每个环境变量映射到一个字符串上，这对于某些程序在需要使用 environment 变量时，可以使用 `os.Getenv()` 函数获取环境变量，但需要注意的是该方法仅适用于需要获取命令行输出（如 Linux、macOS）的程序。
 
 
-```
+```go
 type RunResult struct {
 	Stdout  *Buffer
 	Stderr  *Buffer
@@ -305,7 +305,7 @@ func environToMap(environ []string) map[string]string {
 函数的实现是非常通用的，因为它假设 Runner 对象中定义了 `runFunc` 函数，它接收一个 RunRequest 对象并执行命令。如果请求中定义了其他的命令选项或函数，可以传递给 `runFunc` 进行处理。
 
 
-```
+```go
 func (r *Runner) Run(req RunRequest) *RunResult {
 	cmd := exec.Command(req.Path, req.Args...)
 	stdout := &Buffer{}
@@ -353,7 +353,7 @@ func (r *Runner) Run(req RunRequest) *RunResult {
 MustRun函数的作用是确保RunRequest的运行成功并输出失败的结果，以便在测试执行过程中进行日志记录和调试。AssertNoError函数用于在结果解析后对结果进行处理，进一步提高代码的可读性和可维护性。
 
 
-```
+```go
 // MustRun runs the command and fails the test if the command fails.
 func (r *Runner) MustRun(req RunRequest) *RunResult {
 	result := r.Run(req)
@@ -380,7 +380,7 @@ func (r *Runner) AssertNoError(result *RunResult) {
 而 RunWithPath 函数，则接收一个路径参数，并创建一个新的执行上下文环境。它遍历 fcntl 命令的参数 Env 字段，然后将每个参数 key 提取出来，如果该参数是 "PATH"，就使用指定的路径替换 Env 数组中相应的条目，最后将修改后的 Env 数组添加到 NewEnv 数组中。最后，将 NewEnv 数组中的所有字符串按照 "=" 字符串分隔并连接，并将其添加到 Env 数组中。这样，当 fcntl 命令运行时，使用 fcntl.RunWithPath 函数时，可以保证所有传递给 fcntl 的参数都将被添加到 Env 数组中，无论这些参数是本地文件还是系统路径。
 
 
-```
+```go
 func RunWithEnv(env map[string]string) CmdOpt {
 	return func(cmd *exec.Cmd) {
 		for k, v := range env {
@@ -419,7 +419,7 @@ func RunWithPath(path string) CmdOpt {
 总结起来，这段代码定义了三个接受io.Reader或io.Writer类型的函数，它们分别将执行命令的输入或输出设置为Reader或Writer类型。
 
 
-```
+```go
 func RunWithStdin(reader io.Reader) CmdOpt {
 	return func(cmd *exec.Cmd) {
 		cmd.Stdin = reader
@@ -447,7 +447,7 @@ func RunWithStdout(writer io.Writer) CmdOpt {
 因此，这段代码的作用是将 "stdout" 的输出同时写入 "writer"。
 
 
-```
+```go
 func RunWithStderr(writer io.Writer) CmdOpt {
 	return func(cmd *exec.Cmd) {
 		cmd.Stderr = io.MultiWriter(writer, cmd.Stdout)
@@ -456,7 +456,7 @@ func RunWithStderr(writer io.Writer) CmdOpt {
 
 ```
 
-# `/opt/kubo/test/cli/testutils/asserts.go`
+# `test/cli/testutils/asserts.go`
 
 这段代码定义了一个名为 "testutils" 的包，其中包含一个名为 "AssertStringContainsOneOf" 的函数。
 
@@ -476,7 +476,7 @@ func RunWithStderr(writer io.Writer) CmdOpt {
 4. 函数最后使用 t.Errorf() 函数输出错误消息。
 
 
-```
+```go
 package testutils
 
 import (
@@ -495,7 +495,7 @@ func AssertStringContainsOneOf(t *testing.T, str string, ss ...string) {
 
 ```
 
-# `/opt/kubo/test/cli/testutils/cids.go`
+# `test/cli/testutils/cids.go`
 
 这段代码定义了一个名为`testutils`的包，以及其中两个常量`CIDWelcomeDocs`和`CIDEmptyDir`。
 
@@ -504,7 +504,7 @@ func AssertStringContainsOneOf(t *testing.T, str string, ss ...string) {
 `CIDWelcomeDocs`和`CIDEmptyDir`是该包中的两个常量，它们分别表示欢迎文件的ID和空目录的ID。这些常量可能在测试中用于某些用例的定义或者数据结构之中。
 
 
-```
+```go
 package testutils
 
 const (
@@ -514,7 +514,7 @@ const (
 
 ```
 
-# `/opt/kubo/test/cli/testutils/files.go`
+# `test/cli/testutils/files.go`
 
 这段代码定义了一个名为 `MustOpen` 的函数，它接受一个字符串参数 `name`，然后返回一个指向文件的 `*os.File` 类型。
 
@@ -523,7 +523,7 @@ const (
 函数的实现中，首先导入了一些依赖库，包括 `log`、`os` 和 `path/filepath`。然后定义了 `MustOpen` 函数，函数内部使用 `os.Open` 函数打开一个文件，并返回该文件的 `*os.File` 类型。函数的参数是一个字符串 `name`，表示要打开的文件的名称。函数内部先调用 `os.Open` 函数打开文件，如果文件不存在，则使用 `log.Printf` 函数抛出错误信息，并返回 ` nil`。如果文件存在，函数返回该文件的 `*os.File` 类型，即一个指向文件的引用。
 
 
-```
+```go
 package testutils
 
 import (
@@ -549,7 +549,7 @@ func MustOpen(name string) *os.File {
 如果函数在搜索过程中遇到目录为空或非递归目录等情况，函数会循环退出搜索并返回一个空字符串。
 
 
-```
+```go
 // Searches for a file in a dir, then the parent dir, etc.
 // If the file is not found, an empty string is returned.
 func FindUp(name, dir string) string {
@@ -574,7 +574,7 @@ func FindUp(name, dir string) string {
 
 ```
 
-# `/opt/kubo/test/cli/testutils/floats.go`
+# `test/cli/testutils/floats.go`
 
 这段代码定义了一个名为 `FloatTruncate` 的函数，它的作用是截取一个浮点数的指定位数并将结果四舍五入为浮点数。
 
@@ -583,7 +583,7 @@ func FindUp(name, dir string) string {
 接下来，在循环的外部，将 `value` 乘以 `pow`，再将结果除以 `pow`，最后将得到的结果赋值给输入的 `value`，这样就可以截取浮点数的指定位数并将其四舍五入为浮点数。
 
 
-```
+```go
 package testutils
 
 func FloatTruncate(value float64, decimalPlaces int) float64 {
@@ -596,7 +596,7 @@ func FloatTruncate(value float64, decimalPlaces int) float64 {
 
 ```
 
-# `/opt/kubo/test/cli/testutils/json.go`
+# `test/cli/testutils/json.go`
 
 这段代码定义了一个名为 `testutils` 的包，其中包含了一些用于测试的实用工具函数。
 
@@ -613,7 +613,7 @@ func FloatTruncate(value float64, decimalPlaces int) float64 {
 6. `ToJSONStr` 函数的实现没有具体的功能，只是一个简单的包裹，将 `m` 对象序列化为 JSON 字符串，然后返回该字符串。
 
 
-```
+```go
 package testutils
 
 import "encoding/json"
@@ -630,7 +630,7 @@ func ToJSONStr(m JSONObj) string {
 
 ```
 
-# `/opt/kubo/test/cli/testutils/random.go`
+# `test/cli/testutils/random.go`
 
 这段代码定义了两个名为 "RandomBytes" 和 "RandomStr" 的函数，以及它们的作用范围。
 
@@ -641,7 +641,7 @@ func ToJSONStr(m JSONObj) string {
 函数 "RandomBytes" 和 "RandomStr" 的作用范围都是在 "testutils" 包中，可能用于测试其他函数或包。
 
 
-```
+```go
 package testutils
 
 import "crypto/rand"
@@ -661,7 +661,7 @@ func RandomStr(n int) string {
 
 ```
 
-# `/opt/kubo/test/cli/testutils/random_files.go`
+# `test/cli/testutils/random_files.go`
 
 该代码定义了一个名为 `testutils` 的包，其中包含了一些通用的功能和工具方法。
 
@@ -674,7 +674,7 @@ func RandomStr(n int) string {
 该包最后还定义了一个名为 `generateLicenseText` 的函数，它会使用 `generateUniqueString` 函数生成一段随机的许可证文本字符串，并输出该字符串。
 
 
-```
+```go
 package testutils
 
 import (
@@ -731,7 +731,7 @@ var (
 该结构体的 `Randomize` 函数可以通过在 `RandFiles` 实例上设置 `RandomSize` 和 `RandomFanout` 来显式地随机化文件大小和目录数。
 
 
-```
+```go
 type RandFiles struct {
 	Rand         *rand.Rand
 	FileSize     int // the size per file.
@@ -770,7 +770,7 @@ func NewRandFiles() *RandFiles {
 最终，函数返回 `nil` 表示没有错误。
 
 
-```
+```go
 func (r *RandFiles) WriteRandomFiles(root string, depth int) error {
 	numfiles := r.FanoutFiles
 	if r.RandomFanout {
@@ -814,7 +814,7 @@ c. 使用`io.CopyN`函数将`r.Rand`和`r.FileSize`字节数据分别写入到�
 d. 最后，使用`f.Close`函数关闭写入到文件中。
 
 
-```
+```go
 func (r *RandFiles) RandomFilename(length int) string {
 	b := make([]rune, length)
 	for i := range b {
@@ -853,7 +853,7 @@ func (r *RandFiles) WriteRandomFile(root string) error {
 该函数的实现符合 Google Rust 编程语言中的 `fmt` 函数的要求，即具有可读性和可理解性。
 
 
-```
+```go
 func (r *RandFiles) WriteRandomDir(root string, depth int) error {
 	if depth > r.FanoutDepth {
 		return nil
@@ -875,14 +875,14 @@ func (r *RandFiles) WriteRandomDir(root string, depth int) error {
 
 ```
 
-# `/opt/kubo/test/cli/testutils/requires.go`
+# `test/cli/testutils/requires.go`
 
 这段代码定义了两个名为"RequiresDocker"和"RequiresFUSE"的函数，它们的作用是检查测试程序是否使用了Docker和/或FUSE。具体来说，这两个函数会检查当前运行环境是否包含名为"TEST_DOCKER"和"TEST_FUSE"的等环境变量，如果缺少其中任何一个，则会输出一条错误消息并暂停测试程序的执行。
 
 函数内部使用Runtime.Newline()创建一个新的字符串，然后将其附加到测试函数的参数列表中。这样做是为了确保每次调用函数时，都会输出一个新的空行，以便在控制台留下清晰的行间距离，并使得输出更易于阅读。
 
 
-```
+```go
 package testutils
 
 import (
@@ -914,7 +914,7 @@ func RequiresFUSE(t *testing.T) {
 第三个函数名为"RequiresLinux"，其作用是检查运行时程序的操作系统是否为"linux"，如果不是，则执行t.SkipNow()。该函数同样用于测试是否使用了无用测试代码，以及在测试之前需要进行的一些设置。
 
 
-```
+```go
 func RequiresExpensive(t *testing.T) {
 	if os.Getenv("TEST_EXPENSIVE") == "1" || testing.Short() {
 		t.SkipNow()
@@ -935,7 +935,7 @@ func RequiresLinux(t *testing.T) {
 
 ```
 
-# `/opt/kubo/test/cli/testutils/strings.go`
+# `test/cli/testutils/strings.go`
 
 这段代码定义了一个名为`testutils`的包，其中定义了一些`fmt`函数和一个`testutils`常量。
 
@@ -952,7 +952,7 @@ func RequiresLinux(t *testing.T) {
 由于`fmt`函数在这里没有被定义，所以它们的具体实现不会被输出。而`testutils`常量的具体实现，由于代码没有给出，所以我们也不清楚它具体会被用于什么目的。
 
 
-```
+```go
 package testutils
 
 import (
@@ -979,7 +979,7 @@ import (
 函数返回一个空字符串切片，其中包含所有附加到结果上的字符串。
 
 
-```
+```go
 // StrCat takes a bunch of strings or string slices
 // and concats them all together into one string slice.
 // If an arg is not one of those types, this panics.
@@ -1015,7 +1015,7 @@ func StrCat(args ...interface{}) []string {
 2. `SplitLines` 函数接收一个字符串参数 `s`，将其拆分为多个字符串并返回。函数首先使用 `bufio.NewScanner` 实例从 `s` 读取字符，然后使用 `scanner.Scan` 方法循环读取字符。在读取的字符串中，将空格和换行符作为分割符，并将剩余的字符串返回。这样，`SplitLines` 函数可以处理包含换行符的字符串，使其可以被 `bufio.S平均分割`。
 
 
-```
+```go
 // PreviewStr returns a preview of s, which is a prefix for logging that avoids dumping a huge string to logs.
 func PreviewStr(s string) string {
 	suffix := "..."
@@ -1045,7 +1045,7 @@ func SplitLines(s string) []string {
 如果解析过程中出现错误，函数会输出错误信息并退出。
 
 
-```
+```go
 // URLStrToMultiaddr converts a URL string like http://localhost:80 to a multiaddr.
 func URLStrToMultiaddr(u string) multiaddr.Multiaddr {
 	parsedURL, err := url.Parse(u)
@@ -1071,7 +1071,7 @@ func URLStrToMultiaddr(u string) multiaddr.Multiaddr {
 具体来说，这段代码的作用是等待 `s` 中的每个元素执行 `f` 中的函数，并在所有元素都完成之后返回。由于 `ForEachPar` 函数使用了 `sync.WaitGroup` 对象，因此它会阻塞当前线程，直到所有元素都完成。如果某个元素出现异常终止程序，那么其他元素也会等待该异常被处理。
 
 
-```
+```go
 // ForEachPar invokes f in a new goroutine for each element of s and waits for all to complete.
 func ForEachPar[T any](s []T, f func(T)) {
 	wg := sync.WaitGroup{}
@@ -1087,7 +1087,7 @@ func ForEachPar[T any](s []T, f func(T)) {
 
 ```
 
-# `/opt/kubo/test/cli/testutils/pinningservice/pinning.go`
+# `test/cli/testutils/pinningservice/pinning.go`
 
 这段代码定义了一个名为 "pinningservice" 的包，其中包含了一些用于与外部服务器进行交互的函数和变量。
 
@@ -1116,7 +1116,7 @@ func ForEachPar[T any](s []T, f func(T)) {
 - "createAndSendPostRequestResponse" 和 "createAndSendHTTPSRequestResponsePinResponse" 两个函数均通过调用 "createAndSendPostRequestResponse" 函数来创建和发送 HTTP 请求，然后通过调用 "createPinClientRequest" 和 "createPinClientResponse" 函数来获取 PIN 客户端，再通过调用 "fmt.Printf" 函数来将 PIN 客户端发送回客户端，并最终将客户端发送的 HTTP 请求和响应发送回服务器。
 
 
-```
+```go
 package pinningservice
 
 import (
@@ -1150,7 +1150,7 @@ DELETE 请求方法指向到 `/api/v1/pins/:requestID` 接口，并且传递了�
 该函数还定义了一个名为 `authHandler` 的函数，用于处理身份验证。在 `authHandler` 中，使用了一个传递给路由器的 `authToken` 和一个指向 `PinningService` 类型的 `svc`。`authHandler` 函数的逻辑在路由器创建后开始执行，在处理一个 HTTP 请求时，首先检查请求是否需要身份验证，然后提取出授权头部中的访问令牌，检查它是否与传递给路由器的令牌匹配。如果令牌不正确或者没有传递令牌，则会返回相应的错误信息。如果令牌正确，则会继续执行路由器的业务逻辑，并将结果返回给客户端。
 
 
-```
+```go
 func NewRouter(authToken string, svc *PinningService) http.Handler {
 	router := httprouter.New()
 	router.GET("/api/v1/pins", svc.listPins)
@@ -1193,7 +1193,7 @@ PinningService结构体包含一个PinAdded函数，该函数接受两个参数�
 该函数的作用是创建一个基本的PinningService实例，该实例可以使用AddPinRequest和PinStatus作为其参数，并在PinAdded函数中执行相应的操作，以保持Pin的状态。通过调用New函数，可以创建一个新的PinningService实例，从而在需要时进行测试。
 
 
-```
+```go
 func New() *PinningService {
 	return &PinningService{
 		PinAdded: func(*AddPinRequest, *PinStatus) {},
@@ -1231,7 +1231,7 @@ PinStatus结构体包含以下字段：
 * Info：包含一个map类型的字段，用于存储与当前正在进行的操作相关的元数据。
 
 
-```
+```go
 type Pin struct {
 	CID     string                 `json:"cid"`
 	Name    string                 `json:"name"`
@@ -1282,7 +1282,7 @@ json
 如果此操作失败，函数将返回一个非空错误对象。
 
 
-```
+```go
 func (p *PinStatus) MarshalJSON() ([]byte, error) {
 	type pinStatusJSON struct {
 		RequestID string                 `json:"requestid"`
@@ -1319,7 +1319,7 @@ func (p *PinStatus) MarshalJSON() ([]byte, error) {
 最后，函数使用了 `timeLayout` 常量来设置格式化时间，格式为 `"YYYY-MM-DD HH:MM:SS.999Z"`。
 
 
-```
+```go
 func (p *PinStatus) Clone() PinStatus {
 	return PinStatus{
 		RequestID: p.RequestID,
@@ -1365,7 +1365,7 @@ const (
 最后，该函数将 `errResp` 对象写入到 HTTP 响应writer对象 `w` 中，并调用 `writeJSON` 函数来写入 JSON 数据。
 
 
-```
+```go
 func errResp(w http.ResponseWriter, reason, details string, statusCode int) {
 	type errorObj struct {
 		Reason  string `json:"reason"`
@@ -1394,7 +1394,7 @@ func errResp(w http.ResponseWriter, reason, details string, statusCode int) {
 该函数的作用是将`val`参数的JSON字节切片写入到一个HTTP响应中，并设置响应头为`Content-Type: application/json`。
 
 
-```
+```go
 func writeJSON(w http.ResponseWriter, val any, statusCode int) {
 	b, err := json.Marshal(val)
 	if err != nil {
@@ -1423,7 +1423,7 @@ type AddPinRequest struct {
 接下来，它互斥锁住PinningService的m对象，将新的PinAdd操作添加到队列的末尾，然后写入JSON格式的响应并返回。最后，它调用PinningService的PinAdded函数，传递AddReq参数，将新的PinStatus加入队列。
 
 
-```
+```go
 func (p *PinningService) addPin(writer http.ResponseWriter, req *http.Request, params httprouter.Params) {
 	var addReq AddPinRequest
 	err := json.NewDecoder(req.Body).Decode(&addReq)
@@ -1458,7 +1458,7 @@ The function also handles the case where the afterString is not present or inval
 The function returns an instance of the struct `ListPinsResponse`, which contains the pin data in the response body.
 
 
-```
+```go
 type ListPinsResponse struct {
 	Count   int          `json:"count"`
 	Results []*PinStatus `json:"results"`
@@ -1630,7 +1630,7 @@ func (p *PinningService) listPins(writer http.ResponseWriter, req *http.Request,
 2. `replacePin` 函数同样接收一个 HTTP 请求、一个 HTTP 请求参数和 PiningService 的实例，它用于将给定 `requestID` 的逻辑删除点（pin）替换为传入的 `replaceReq`。该函数首先获取参数中的 `requestID`，然后使用 `json.NewDecoder(req.Body)` 将请求体中的 `replaceReq` 解码为 `Pin` 类型，并返回。接着，该函数使用 `p.m.Lock()` 和 `p.m.Unlock()` 操作来获取要替换的 pin 的锁定状态。在更新 pin 时，该函数使用 `p.m.Lock()` 锁定 pin，并尝试使用 `decode` 函数从请求中读取更新 `replaceReq`。如果解码过程中出现错误，函数将 HTTP 状态码 `http.StatusBadRequest` 写入 `writer`，并返回。如果更新成功，函数将 HTTP 状态码 `http.StatusAccepted` 写入 `writer`，并返回。
 
 
-```
+```go
 func (p *PinningService) getPin(writer http.ResponseWriter, req *http.Request, params httprouter.Params) {
 	requestID := params.ByName("requestID")
 	p.m.Lock()
@@ -1679,7 +1679,7 @@ func (p *PinningService) replacePin(writer http.ResponseWriter, req *http.Reques
 函数的作用是移除具有给定`requestID`的`PinningService`实例中的所有挂载。首先，它确保`writer`已经写入`http.ResponseWriter`。然后，它遍历`p.pins`列表，查找具有给定`requestID`的`PinningService`实例。如果找到，它将其移动到`p.pins`的起始位置，并继续遍历。如果遍历完所有`PinningService`实例，则返回`http.StatusNotFound`错误。否则，返回`http.StatusAccepted`。
 
 
-```
+```go
 func (p *PinningService) removePin(writer http.ResponseWriter, req *http.Request, params httprouter.Params) {
 	requestID := params.ByName("requestID")
 

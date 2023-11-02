@@ -1,13 +1,13 @@
 # go-ipfs 源码解析 4
 
-# `/opt/kubo/cmd/ipfs/daemon_linux.go`
+# `cmd/ipfs/daemon_linux.go`
 
 这段代码定义了两个函数 `notifyReady()` 和 `notifyStopping()`，它们都使用了 `daemon.SdNotify()` 函数来触发系统消息通知。 `notifyReady()` 和 `notifyStopping()` 函数分别设置 `SdNotify()` 函数的 `stdout` 和 `stderr` 通道的 `notify_queue` 属性为 `"/usr/行政机关/系统的服务在启动时通知"` 和 `"/usr/行政机关/系统的服务在停止时通知"`，以便在系统启动和停止时接收通知。
 
 这两个函数的主要目的是在系统启动或停止时通知相关进程，以便用户可以知道系统是否正在运行或准备就绪。
 
 
-```
+```go
 //go:build linux
 // +build linux
 
@@ -27,7 +27,7 @@ func notifyStopping() {
 
 ```
 
-# `/opt/kubo/cmd/ipfs/daemon_other.go`
+# `cmd/ipfs/daemon_other.go`
 
 这段代码是一个 Go 语言编写的工具链，用于构建 Go 应用程序。这里主要包括两个函数：
 
@@ -37,7 +37,7 @@ func notifyStopping() {
 具体而言，这两函数可能被用于操作系统的 `/proc/<package_name>/notify_ready` 或 `/proc/<package_name>/notify_stopping` 系统调用。当调用者准备工作或停止时，调用这些函数并传递一个或多个 `notify_status` 标志，以通知操作系统特定于该操作的准备或停止状态。
 
 
-```
+```go
 //go:build !linux
 // +build !linux
 
@@ -49,7 +49,7 @@ func notifyStopping() {}
 
 ```
 
-# `/opt/kubo/cmd/ipfs/debug.go`
+# `cmd/ipfs/debug.go`
 
 这段代码是一个用于将Kubernetes的容许端口与本地debug客户端通信的Python应用程序。它包含以下几个主要部分：
 
@@ -70,7 +70,7 @@ func notifyStopping() {}
 在`<net/http>`导入的帮助下，我们能够创建一个HTTP服务器来监听debug客户端的请求。通过将请求转发给`profile.WriteAllGoroutineStacks(w)`函数，我们能够捕获容许端口的输出并将其记录下来，从而让我们在调试过程中更好地理解应用程序的性能和错误。
 
 
-```
+```go
 package main
 
 import (
@@ -89,7 +89,7 @@ func init() {
 
 ```
 
-# `/opt/kubo/cmd/ipfs/dnsresolve_test.go`
+# `cmd/ipfs/dnsresolve_test.go`
 
 该代码的作用是进行网络连通性测试，尤其是测试服务器（也称为TCP连通性服务器）与客户端之间的连通性。
 
@@ -114,7 +114,7 @@ func init() {
 总结起来，该代码将测试服务器与客户端之间的连通性，并验证服务器是否能够正确地响应客户端发送的数据。
 
 
-```
+```go
 package main
 
 import (
@@ -138,7 +138,7 @@ var (
 该函数的作用是创建一个名为“example.com”的 DNS 解析器，并为该解析器设置了一个包含多个 IP 地址的回显链。该函数使用了一个 `make` 函数来创建一个 `net.IPAddr` 数组，并使用循环来为每个 IP 地址分配一个 IP 地址。然后，该函数创建了一个 `madns.MockResolver` 对象，该对象使用一个键值对 `IP` 映射来存储解析器的回显链。接下来，该函数使用 `madns.NewResolver` 函数将解析器设置为该回显链，并返回该解析器。如果函数在创建解析器时出现错误，则执行 `t.Fatal` 函数并输出错误信息。
 
 
-```
+```go
 func makeResolver(t *testing.T, n uint8) *madns.Resolver {
 	results := make([]net.IPAddr, n)
 	for i := uint8(0); i < n; i++ {
@@ -169,7 +169,7 @@ func makeResolver(t *testing.T, n uint8) *madns.Resolver {
 这两段代码都是使用 Go 的 `testing` 包实现的。
 
 
-```
+```go
 func TestApiEndpointResolveDNSOneResult(t *testing.T) {
 	dnsResolver = makeResolver(t, 1)
 
@@ -205,7 +205,7 @@ func TestApiEndpointResolveDNSMultipleResults(t *testing.T) {
 接下来，如果分辨率成功，则检查是否存在 "non-resolvable API endpoint" 错误。这里使用了字符串方法 HasPrefix，如果错误消息的前缀与 "non-resolvable API endpoint" 字符串相同，则认为解析失败，并输出错误信息。否则，即使解析成功，该函数也会输出 "expected error not thrown; actual: %v" 的错误信息，以便测试人员检查是否有类似错误发生。
 
 
-```
+```go
 func TestApiEndpointResolveDNSNoResults(t *testing.T) {
 	dnsResolver = makeResolver(t, 0)
 
@@ -221,7 +221,7 @@ func TestApiEndpointResolveDNSNoResults(t *testing.T) {
 
 ```
 
-# `/opt/kubo/cmd/ipfs/init.go`
+# `cmd/ipfs/init.go`
 
 该代码是一个 Go 语言程序，它主要实现了 `io/ioutil.铺平原 OS 文件系统并设置树状目录结构。具体来说，程序实现了以下功能：
 
@@ -244,7 +244,7 @@ func TestApiEndpointResolveDNSNoResults(t *testing.T) {
 9. 初始化时会读取配置文件，例如 `kubo.yaml`，从而设置树状目录结构等选项。
 
 
-```
+```go
 package main
 
 import (
@@ -287,7 +287,7 @@ These constants are used to configure the various options that can be specified 
 If the IPFS config file already exists, the code will throw an error. Otherwise, the code will initialize the config file and set the default values for the various options.
 
 
-```
+```go
 const (
 	algorithmDefault    = options.Ed25519Key
 	algorithmOptionName = "algorithm"
@@ -317,7 +317,7 @@ The program then performs a keypair generation using the specified algorithm and
 Finally, the program performs the initialization with the identity and the specified profile. It returns any errors.
 
 
-```
+```go
 Initializes ipfs configuration files and generates a new keypair.
 
 If you are going to run IPFS in server environment, you may want to
@@ -411,7 +411,7 @@ environment variable:
 具体来说，函数首先检查 `profiles` 参数是否为空字符串。如果是，函数直接返回一个空错误。否则，函数将遍历 `profiles` 字符串中的每个配置文件配置对象。对于每个配置文件，函数首先查找一个名为 `profile` 的子配置文件，如果找不到，就返回一个错误消息。然后，函数调用一个名为 `transformer` 的配置文件配置对象，并传递一个 `conf` 作为参数。如果 `transformer` 在调用过程中遇到错误，函数将返回一个错误消息。最后，函数返回一个与 `profile` 参数相关的错误消息，如果没有错误，函数将返回 `nil`。
 
 
-```
+```go
 func applyProfiles(conf *config.Config, profiles string) error {
 	if profiles == "" {
 		return nil
@@ -445,7 +445,7 @@ func applyProfiles(conf *config.Config, profiles string) error {
 函数的实现中，首先读取配置文件中的参数，然后执行相应的操作，最后返回初始化是否成功。如果初始化过程中出现错误，函数将返回一个错误。
 
 
-```
+```go
 func doInit(out io.Writer, repoRoot string, empty bool, confProfiles string, conf *config.Config) error {
 	if _, err := fmt.Fprintf(out, "initializing IPFS node at %s\n", repoRoot); err != nil {
 		return err
@@ -485,7 +485,7 @@ func doInit(out io.Writer, repoRoot string, empty bool, confProfiles string, con
 如果文件夹存在且文件夹可以写入，则函数返回 `os.Errorf`，并指出现有用户无法写入文件夹。如果文件夹不存在，则返回 `os.IsNotExist` 和一个错误消息，指出文件夹不存在。如果文件夹存在但文件夹的写入权限不正确，则返回 `os.IsPermission` 和一个错误消息。
 
 
-```
+```go
 func checkWritable(dir string) error {
 	_, err := os.Stat(dir)
 	if err == nil {
@@ -529,7 +529,7 @@ func checkWritable(dir string) error {
 如果在任何一步出现了错误，它将会使用cancel函数取消当前操作并返回一个错误。
 
 
-```
+```go
 func addDefaultAssets(out io.Writer, repoRoot string) error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -573,7 +573,7 @@ func addDefaultAssets(out io.Writer, repoRoot string) error {
 函数的作用是创建一个新的节点对象，将指定的仓库目录 `repoRoot` 中的所有节点遍历并压入到磁盘中的 `pin` 方法。通过调用 `nd.Pinning.Pin` 和 `nd.Pinning.Flush` 方法，将目录中的节点数据刷写到磁盘并发布给主节点。
 
 
-```
+```go
 func initializeIpnsKeyspace(repoRoot string) error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -608,7 +608,7 @@ func initializeIpnsKeyspace(repoRoot string) error {
 
 ```
 
-# `/opt/kubo/cmd/ipfs/ipfs.go`
+# `cmd/ipfs/ipfs.go`
 
 这段代码是一个 Go 语言编写的包 main 文件，其中包含两个导入语句和一些定义变量。
 
@@ -625,7 +625,7 @@ func initializeIpnsKeyspace(repoRoot string) error {
 最后，通过 "var" 关键字将 "Root" 和 "Root.Options"、"Root.Helptext" 变量暴露给外部的 "cmds" 库。
 
 
-```
+```go
 package main
 
 import (
@@ -651,7 +651,7 @@ var Root = &cmds.Command{
 在"init"函数中，它创建了一个名为"localCommands"的Map，该Map的值是使用map[string]*cmds.Command{"daemon": daemonCmd, "init": initCmd, "commands": commandsClientCmd}定义的，并且设置Root的子命令为localCommands中的命令。它还遍历Root的子命令，如果子命令没有定义，就定义一个默认的同名命令。最后，它还设置Root的子命令为localCommands中的命令。
 
 
-```
+```go
 // commandsClientCmd is the "ipfs commands" command for local cli.
 var commandsClientCmd = commands.CommandsCmd(Root)
 
@@ -677,7 +677,7 @@ func init() {
 
 ```
 
-# `/opt/kubo/cmd/ipfs/main.go`
+# `cmd/ipfs/main.go`
 
 Go置件的作者为"multiformats/go-multiaddr".
 
@@ -696,7 +696,7 @@ Go置件的作者为"multiformats/go-multiaddr".
 该置件支持使用Go的"ipfs/kubo"类型来操作Kubernetes集群。
 
 
-```
+```go
 // cmd/ipfs implements the primary CLI binary for ipfs
 package main
 
@@ -759,7 +759,7 @@ log.DNSLookup("google.com", "PENDING", "全面建设社会主义现代化国家�
 该函数的作用是在向 `log.Logger` 输出一个名为 `"google.com"` 的 DNS 查询名称，并在查询结果中填充 `PENDING` 字段，同时记录查询的来源。
 
 
-```
+```go
 // log is the command logger.
 var (
 	log    = logging.Logger("cmd/ipfs")
@@ -788,7 +788,7 @@ const (
 最后，它返回一个指向`loader.PluginLoader`类型的指针，如果没有错误，插件加载器将返回给函数调用者。
 
 
-```
+```go
 func loadPlugins(repoPath string) (*loader.PluginLoader, error) {
 	plugins, err := loader.NewPluginLoader(repoPath)
 	if err != nil {
@@ -816,7 +816,7 @@ main函数中的printErr函数用于在函数发生错误时向用户输出错�
 main函数中的mainRet函数是另一个名为main的函数，该函数在main函数中设置为-1，表示该函数本身就是一个内部函数。这个内部函数将在main函数返回时执行，其返回值将作为main函数的返回值。
 
 
-```
+```go
 // main roadmap:
 // - parse the commandline to get a cmdInvocation
 // - if user requests help, print it and exit.
@@ -845,7 +845,7 @@ After that, the function constructs the node by opening the repository, setting 
 Finally, the function returns the initialized node in the `oldcmds.Context` struct.
 
 
-```
+```go
 func newUUID(key string) logging.Metadata {
 	ids := "#UUID-ERROR#"
 	if id, err := uuid.NewRandom(); err == nil {
@@ -973,7 +973,7 @@ func mainRet() (exitCode int) {
 函数的作用是检查用户是否选择了调试选项或者通过环境变量设置了`debug`选项，如果是，则打开调试日志，否则关闭调试日志。
 
 
-```
+```go
 func insideGUI() bool {
 	return util.InsideGUI()
 }
@@ -996,7 +996,7 @@ This is a Go function that dials a managed agent endpoint and executes a `manet`
 
 
 
-```
+```go
 func apiAddrOption(req *cmds.Request) (ma.Multiaddr, error) {
 	apiAddrStr, apiSpecified := req.Options[corecmds.ApiOption].(string)
 	if !apiSpecified {
@@ -1125,7 +1125,7 @@ func makeExecutor(req *cmds.Request, env interface{}) (cmds.Executor, error) {
 如果 `err` 字段为非 `nil`，则代表请求执行失败，函数将记录错误信息并设置 `span` 的状态为 `codes.Error`，错误信息将在 `span.SetStatus` 函数中设置。函数最终返回错误信息。
 
 
-```
+```go
 type tracingWrappedExecutor struct {
 	exec cmds.Executor
 }
@@ -1153,7 +1153,7 @@ func (twe tracingWrappedExecutor) Execute(req *cmds.Request, re cmds.ResponseEmi
 函数还使用了`startProfiling`和`stop`函数来进行CPU profiling。`startProfiling`函数开始CPU profiling，并在函数内捕获所有内存分配。`stop`函数在尽可能晚的时间内返回，并捕获函数内所有内存分配。
 
 
-```
+```go
 func getRepoPath(req *cmds.Request) (string, error) {
 	repoOpt, found := req.Options[corecmds.RepoDirOption].(string)
 	if found && repoOpt != "" {
@@ -1180,7 +1180,7 @@ func getRepoPath(req *cmds.Request) (string, error) {
 startProfiling() 函数返回 stopProfiling() 函数，该函数会关闭 cpuProfile 文件并停止计数。
 
 
-```
+```go
 func startProfiling() (func(), error) {
 	// start CPU profiling as early as possible
 	ofi, err := os.Create(cpuProfile)
@@ -1217,7 +1217,7 @@ func startProfiling() (func(), error) {
 第二段代码 `profileIfEnabled()` 函数用于在启用了堆转储的情况下打印一些日志信息，以便开发人员更好地调试和分析应用程序。函数返回两个参数，一个是停止打印堆转储的函数，另一个是错误。如果设置了 `EnvEnableProfiling` 环境变量，则函数将启动堆转储打印。如果函数在尝试启动堆转储时出现错误，则返回两个空值。
 
 
-```
+```go
 func writeHeapProfileToFile() error {
 	mprof, err := os.Create(heapProfile)
 	if err != nil {
@@ -1249,7 +1249,7 @@ func profileIfEnabled() (func(), error) {
 如果解析成功，它将返回指定地址的`ma.Multiaddr`。如果解析失败或者时间超出了超时，它将返回一个非`ma.Multiaddr`的`error`。
 
 
-```
+```go
 func resolveAddr(ctx context.Context, addr ma.Multiaddr) (ma.Multiaddr, error) {
 	ctx, cancelFunc := context.WithTimeout(ctx, 10*time.Second)
 	defer cancelFunc()
@@ -1282,7 +1282,7 @@ func resolveAddr(ctx context.Context, addr ma.Multiaddr) (ma.Multiaddr, error) {
 `getRemoteVersion`函数使用了一个`io.Reader`和一个`io.Writer`风格的`cmds.Executor`实例，首先通过调用`exe.Execute`函数发送一个请求来获取远程系统的`version`命令的输出。然后，它使用一个`io.Reader`来读取该命令的输出，并使用一个`io.Writer`风格的`cmds.Executor`实例来将输出写入一个 `semver.VersionInfo` 类型的变量中，该变量表示最新的`semver`版本。最后，函数返回一个`semver.Version`结构体，该结构体包含对`version`字段的引用，该字段指向最新的`semver`版本。
 
 
-```
+```go
 type nopWriter struct {
 	io.Writer
 }
@@ -1322,7 +1322,7 @@ func getRemoteVersion(exe cmds.Executor) (*semver.Version, error) {
 
 ```
 
-# `/opt/kubo/cmd/ipfs/pinmfs.go`
+# `cmd/ipfs/pinmfs.go`
 
 该代码的作用是实现一个Pin客户端，用于在IPFS网络上获取和上传文件。具体来说，它包括以下步骤：
 
@@ -1357,7 +1357,7 @@ func getRemoteVersion(exe cmds.Executor) (*semver.Version, error) {
 15. 通过`ipfs/kubo/向南耐心`库，将文件从本地文件系统上传到IPFS节点。
 
 
-```
+```go
 package main
 
 import (
@@ -1394,7 +1394,7 @@ import (
 整个代码的作用是创建一个远程 MFS 内存映像器日志输出器，该输出器将上面定义的日志条目发送到远程 MFS 内存映像器中的日志。
 
 
-```
+```go
 // mfslog is the logger for remote mfs pinning.
 var mfslog = logging.Logger("remotepinning/mfs")
 
@@ -1418,7 +1418,7 @@ var daemonConfigPollInterval = time.Minute / 2
 接下来，该函数定义了一个名为`pinMFSContext`的接口，该接口代表MFS守护进程的上下文。该函数还定义了一个名为`defaultRepinInterval`的常量，该常量表示MFS守护进程的轮询间隔的默认值，为5分钟。
 
 
-```
+```go
 func init() {
 	// this environment variable is solely for testing, use at your own risk
 	if pollDurStr := os.Getenv("MFS_PIN_POLL_INTERVAL"); pollDurStr != "" {
@@ -1450,7 +1450,7 @@ ipfsPinMFSNode结构体包含一个指向core.IpfsNode的引用，以及一个�
 函数PeerHost()返回ipfsPinMFSNode的peer.ID，并使用ipfsPinMFSNode的结构体中PeerHost()函数来获取它。
 
 
-```
+```go
 type pinMFSNode interface {
 	RootNode() (ipld.Node, error)
 	Identity() peer.ID
@@ -1480,7 +1480,7 @@ func (x *ipfsPinMFSNode) Identity() peer.ID {
 函数 `startPinMFS` 还定义了一个 `go` 子句，用于在 `for` 循环中运行一个无限循环，它会等待 `errCh` 中的错误通道，并在检测到错误或到达配置 Poll 间隔时退出循环。如果检测到 `cctx.Context().Done()`，它将退出循环并返回。
 
 
-```
+```go
 func (x *ipfsPinMFSNode) PeerHost() host.Host {
 	return x.node.PeerHost
 }
@@ -1521,7 +1521,7 @@ The function uses a looping mechanism to repeatedly check the configuration and 
 Overall, this function is designed to ensure that the MFS services are regularly pinned to the specified remote services in a pinning cluster, using a config poll interval to periodically check for changes to the configuration.
 
 
-```
+```go
 func pinMFSOnChange(configPollInterval time.Duration, cctx pinMFSContext, node pinMFSNode, errCh chan<- error) {
 	defer close(errCh)
 
@@ -1591,7 +1591,7 @@ The function takes in an MFS node, and a list of services to check for changes i
 It should be noted that the pinning interval is defined by the `repinInterval` field in the `pinningMFS` function, and it is the field that should be set to the appropriate value for this function to work correctly.
 
 
-```
+```go
 // pinAllMFS pins on all remote services in parallel to overcome DoS attacks.
 func pinAllMFS(ctx context.Context, node pinMFSNode, cfg *config.Config, rootCid cid.Cid, lastPins map[string]lastPin, errCh chan<- error) {
 	ch := make(chan lastPin, len(cfg.Pinning.RemoteServices))
@@ -1665,7 +1665,7 @@ The function uses the `c.` method to interact with the root, which is typically 
 Finally, the function logs a message indicating the result of the pin operation.
 
 
-```
+```go
 func pinMFS(
 	ctx context.Context,
 	node pinMFSNode,

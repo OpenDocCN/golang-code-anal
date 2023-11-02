@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 29
 
-# `/opt/kubo/core/node/dns.go`
+# `core/node/dns.go`
 
 该代码是一个在 Node.js 中使用的库，它的目的是提供 DNS 解析功能。具体来说，它实现了以下功能：
 
@@ -11,7 +11,7 @@
 5. 返回了一个 `madns.Resolver` 实例和一个错误，该错误可能是由于解析器设置的选项不正确、网络连接不稳定或者 DNS 服务器不可用等原因。
 
 
-```
+```go
 package node
 
 import (
@@ -35,7 +35,7 @@ func DNSResolver(cfg *config.Config) (*madns.Resolver, error) {
 
 ```
 
-# `/opt/kubo/core/node/graphsync.go`
+# `core/node/graphsync.go`
 
 这段代码定义了一个名为 "node" 的包，它导入了以下依赖项：
 
@@ -50,7 +50,7 @@ func DNSResolver(cfg *config.Config) (*madns.Resolver, error) {
 这段代码的作用是定义了一个 Graphsync 节点存储库，并实现了与 libp2p 通信的块存储和 Graphsync 存储库的交互。这个 Graphsync 节点存储库可以在 IPFS 网络中提供高度可靠性的块存储，并支持异步操作，提供了高性能的图形数据结构存储。
 
 
-```
+```go
 package node
 
 import (
@@ -79,7 +79,7 @@ import (
 总的来说，Graphsync 函数的作用是创建一个可以与区块链进行交互的 GraphExchange 对象，该对象可以在不泄露任何实现细节的情况下与区块链进行通信。
 
 
-```
+```go
 func Graphsync(lc fx.Lifecycle, mctx helpers.MetricsCtx, host libp2p.Host, bs blockstore.GCBlockstore) graphsync.GraphExchange {
 	ctx := helpers.LifecycleCtx(mctx, lc)
 
@@ -91,7 +91,7 @@ func Graphsync(lc fx.Lifecycle, mctx helpers.MetricsCtx, host libp2p.Host, bs bl
 
 ```
 
-# `/opt/kubo/core/node/groups.go`
+# `core/node/groups.go`
 
 该代码的作用是定义了一个名为 "node" 的包，其中定义了一些可以用于管理节点工具的函数和变量。
 
@@ -112,7 +112,7 @@ func Graphsync(lc fx.Lifecycle, mctx helpers.MetricsCtx, host libp2p.Host, bs bl
 - `rcmgr.垂悬草 Grpc`：实现 IPFS 中的 libp2p-host 库中的资源管理器。
 
 
-```
+```go
 package node
 
 import (
@@ -146,7 +146,7 @@ This is a Rust implementation of the Netty低延迟网络库中的一个`SocketS
 该实现中还包含了一些辅助函数，如`黄瓜技能`等，用于帮助开发者处理网络连接、路由、安全性和其他设置。
 
 
-```
+```go
 var logger = log.Logger("core:constructor")
 
 var BaseLibP2P = fx.Options(
@@ -318,7 +318,7 @@ Storage函数通过提供一组选项，将datastore设置为基于持久性和�
 最后，函数将提供的选项（Datastore，BaseBlockstoreCtor，RepoConfig和提供选项）作为返回值。
 
 
-```
+```go
 // Storage groups units which setup datastore based persistence and blockstore layers
 func Storage(bcfg *BuildCfg, cfg *config.Config) fx.Option {
 	cacheOpts := blockstore.DefaultCacheOpts()
@@ -384,7 +384,7 @@ func Identity(cfg *config.Config) fx.Option {
 首先，函数检查配置选项是否已设置。如果没有设置，它将返回一个错误。然后，它验证自定义标识符 "PeerID" 是否已设置，如果是，则尝试将该标识符解析为对应的客户端 ID。接下来，它验证是否有私钥并将其 decode。然后，它尝试通过调用 libp2p.PstoreAddSelfKeys 函数来验证私钥。最后，它根据验证结果返回一个 fx.Option。
 
 
-```
+```go
 // Identity groups units providing cryptographic identity
 func Identity(cfg *config.Config) fx.Option {
 	// PeerID
@@ -436,7 +436,7 @@ The function then sets up the IPNS service, including providing any necessary co
 Finally, the function invokes the `IpnsRepublisher` service to begin the republation of the DNS records, and provides the necessary configurations for the `p2p` and `LibP2P` services.
 
 
-```
+```go
 // IPNS groups namesys related units
 var IPNS = fx.Options(
 	fx.Provide(RecordValidator),
@@ -528,7 +528,7 @@ func Online(bcfg *BuildCfg, cfg *config.Config, userResourceOverrides rcmgr.Part
 * `fx.Provide(Files)`：这是 File 选项，用于启用或禁用 IPFS 上的文件系统。
 
 
-```
+```go
 // Offline groups offline alternatives to Online units
 func Offline(cfg *config.Config) fx.Option {
 	return fx.Options(
@@ -569,7 +569,7 @@ The `useGit` function appears to check if the `Experimental.ShardingEnabled` fie
 The `WithUserResourceOverrides` function appears to get the user resource overrides from the `BuildCfg`. It is not defined in the code provided, but its behavior is not used in the `IPFS` struct.
 
 
-```
+```go
 func Networked(bcfg *BuildCfg, cfg *config.Config, userResourceOverrides rcmgr.PartialLimitConfig) fx.Option {
 	if bcfg.Online {
 		return Online(bcfg, cfg, userResourceOverrides)
@@ -624,7 +624,7 @@ func IPFS(ctx context.Context, bcfg *BuildCfg) fx.Option {
 
 ```
 
-# `/opt/kubo/core/node/helpers.go`
+# `core/node/helpers.go`
 
 这段代码定义了一个名为 `lcProcess` 的类，该类使用了 `github.com/jbenet/goprocess` 和 `github.com/pkg/errors` 两个 packages。这个类的实例代表了一个正在运行的 gRPC 服务，使用了 gRPC 声明的 ` serve` 函数来启动服务。
 
@@ -633,7 +633,7 @@ func IPFS(ctx context.Context, bcfg *BuildCfg) fx.Option {
 最后，该类实例了一个 `goprocess.Process` 类型的 `Proc` 字段，然后使用 `serve` 函数启动了该进程。这个进程接收来自外部 gRPC 应用程序的输入，并在运行时执行服务。
 
 
-```
+```go
 package node
 
 import (
@@ -663,7 +663,7 @@ type lcProcess struct {
 4. 在 `Append` 方法的回调中，如果 `proc` 失败创建，则返回一个错误。否则，将 `proc` 的 `Close()` 方法返回，表示整个过程成功完成。
 
 
-```
+```go
 // Append wraps ProcessFunc into a goprocess, and appends it to the lifecycle
 func (lp *lcProcess) Append(f goprocess.ProcessFunc) {
 	// Hooks are guaranteed to run in sequence. If a hook fails to start, its
@@ -694,7 +694,7 @@ func (lp *lcProcess) Append(f goprocess.ProcessFunc) {
 `func maybeProvide` 和 `func maybeInvoke` 的作用是在函数签名中声明默认实现，如果 `enable` 为 `true`，则调用 `fx.Provide` 和 `fx.Invoke`，否则返回默认实现，即 `fx.Options()`。
 
 
-```
+```go
 func maybeProvide(opt interface{}, enable bool) fx.Option {
 	if enable {
 		return fx.Provide(opt)
@@ -719,7 +719,7 @@ func maybeInvoke(opt interface{}, enable bool) fx.Option {
 具体来说，当函数创建的进程被停止时，将调用“OnStop”信号，信号的参数是一个名为“context”的匿名接口，该接口包含一个“close”方法，用于关闭与当前进程相关的资源，然后返回一个“error”类型的值，表示关闭过程中发生的情况。
 
 
-```
+```go
 // baseProcess creates a goprocess which is closed when the lifecycle signals it to stop
 func baseProcess(lc fx.Lifecycle) goprocess.Process {
 	p := goprocess.WithParent(goprocess.Background())
@@ -733,7 +733,7 @@ func baseProcess(lc fx.Lifecycle) goprocess.Process {
 
 ```
 
-# `/opt/kubo/core/node/identity.go`
+# `core/node/identity.go`
 
 这段代码定义了一个名为 `PeerID` 的函数，它接受一个名为 `id` 的 `peer.ID` 参数，并返回一个函数，使得该函数调用时可以获得 `id` 的值。
 
@@ -746,7 +746,7 @@ func baseProcess(lc fx.Lifecycle) goprocess.Process {
 通过 `PeerID` 函数，可以很方便地获取传入参数 `id` 的值，这对于后续的区块链网络通信等操作非常有用。
 
 
-```
+```go
 package node
 
 import (
@@ -769,7 +769,7 @@ func PeerID(id peer.ID) func() peer.ID {
 具体来说，这段代码实现了一个私有函数，它接收一个 `crypto.PrivKey` 类型的参数，并将其封装为 `func(id peer.ID) (crypto.PrivKey, error)` 类型的函数。函数首先尝试从配置中读取私钥，并将其转换为一个 `peer.ID` 类型的变量 `id2`。然后，函数比较传入的 `id` 和 `id2` 是否相等。如果两个 `peer.ID` 不相等，函数返回 `nil` 和错误信息。否则，函数返回私钥并 `nil`，以表明传入的 `id` 格式正确。
 
 
-```
+```go
 // PrivateKey loads the private key from config
 func PrivateKey(sk crypto.PrivKey) func(id peer.ID) (crypto.PrivKey, error) {
 	return func(id peer.ID) (crypto.PrivKey, error) {
@@ -787,7 +787,7 @@ func PrivateKey(sk crypto.PrivKey) func(id peer.ID) (crypto.PrivKey, error) {
 
 ```
 
-# `/opt/kubo/core/node/ipns.go`
+# `core/node/ipns.go`
 
 该代码是一个 Node 包，其中包含了一些用于在 Node.js 中操作 IPFS(InterPlanetary File System)的函数和结构体。IPFS 是一个去中心化的点对点文件存储网络，可以用来存储和共享文件和数据。
 
@@ -814,7 +814,7 @@ func PrivateKey(sk crypto.PrivKey) func(id peer.ID) (crypto.PrivKey, error) {
 10. 实现了 `irouting.Irp` 类，用于管理 IPFS 路由。该类实现了 `irouting.Irp` 类中的 `parse` 和 `route` 方法，用于解析和路由 IPFS 路由。
 
 
-```
+```go
 package node
 
 import (
@@ -845,7 +845,7 @@ import (
 通过调用`Namesys`函数并传入所需的参数，可以创建一个新的Namesys实例，用于路由记录的验证。
 
 
-```
+```go
 const DefaultIpnsCacheSize = 128
 
 // RecordValidator provides namesys compatible routing record validator
@@ -903,7 +903,7 @@ func Namesys(cacheSize int) func(rt irouting.ProvideManyRouter, rslv *madns.Reso
   - 返回`nil`表示`IpnsRepublisher`函数没有返回任何错误。
 
 
-```
+```go
 // IpnsRepublisher runs new IPNS republisher service
 func IpnsRepublisher(repubPeriod time.Duration, recordLifetime time.Duration) func(lcProcess, namesys.NameSystem, repo.Repo, crypto.PrivKey) error {
 	return func(lc lcProcess, namesys namesys.NameSystem, repo repo.Repo, privKey crypto.PrivKey) error {
@@ -928,7 +928,7 @@ func IpnsRepublisher(repubPeriod time.Duration, recordLifetime time.Duration) fu
 
 ```
 
-# `/opt/kubo/core/node/peering.go`
+# `core/node/peering.go`
 
 这段代码定义了一个名为 `Peering` 的函数，它接受两个参数：`lc` 和 `host`。`lc` 是一个 `fx.Lifecycle` 类型的函数，它表示整个应用程序的生命周期，`host` 是一个 `host.Host` 类型的函数，它表示要连接到的主机。
 
@@ -937,7 +937,7 @@ func IpnsRepublisher(repubPeriod time.Duration, recordLifetime time.Duration) fu
 接下来，该函数实现了两个钩子：`OnStart` 和 `OnStop`。`OnStart` 钩子将在组件启动时执行，它返回一个 `nil`，确保 `PeeringService` 开始时不会产生任何错误。`OnStop` 钩子将在组件停止时执行，它清除 `PeeringService` 并停止其与主机的连接，确保在组件关闭时停止任何可能产生的操作。
 
 
-```
+```go
 package node
 
 import (
@@ -978,7 +978,7 @@ func Peering(lc fx.Lifecycle, host host.Host) *peering.PeeringService {
 这段代码的作用是定义了一个`PeerWith`函数，用于配置一个`peer.PeeringService`与指定的`peer.AddrInfo`类型的服务器进行对等连接。
 
 
-```
+```go
 // PeerWith configures the peering service to peer with the specified peers.
 func PeerWith(peers ...peer.AddrInfo) fx.Option {
 	return fx.Invoke(func(ps *peering.PeeringService) {
@@ -990,7 +990,7 @@ func PeerWith(peers ...peer.AddrInfo) fx.Option {
 
 ```
 
-# `/opt/kubo/core/node/provider.go`
+# `core/node/provider.go`
 
 这段代码是一个 Node 包，它定义了一系列用于与 IPFS 存储桶进行交互的函数和变量。
 
@@ -1023,7 +1023,7 @@ import (
 最后，它还定义了一个 "irouting" 函数，用于设置路由和路由规则，以及一个 "node" 函数，用于将所有与 IPFS 存储桶相关的操作封装成一个函数。
 
 
-```
+```go
 package node
 
 import (
@@ -1053,7 +1053,7 @@ So, it would be 10/5.76=1719200 block.
 However, it is important to note that this is a rough estimate and the actual number of blocks that can be fetched may vary depending on the specific implementation and the properties of the blockstore.
 
 
-```
+```go
 func ProviderSys(reprovideInterval time.Duration, acceleratedDHTClient bool) fx.Option {
 	const magicThroughputReportCount = 128
 	return fx.Provide(func(lc fx.Lifecycle, cr irouting.ProvideManyRouter, keyProvider provider.KeyChanFunc, repo repo.Repo, bs blockstore.Blockstore) (provider.System, error) {
@@ -1144,7 +1144,7 @@ https://github.com/ipfs/kubo/blob/master/docs/config.md#routingaccelerateddhtcli
 					expectedProvideSpeed := reprovideInterval / time.Duration(count)
 					if avgProvideSpeed > expectedProvideSpeed {
 						logger.Errorf(`
-```
+```go
 
 这段代码是一个 Go 语言编写的库函数，主要作用是使用 DHT (Distributed Hash Table) 进行数据并行复制。函数中使用了两个非常量字段，一个是 `keysProvided`，另一个是 `count`。
 
@@ -1188,7 +1188,7 @@ https://github.com/ipfs/kubo/blob/master/docs/config.md#routingaccelerateddhtcli
 	})
 }
 
-```
+```go
 
 这段代码定义了一个名为 `OnlineProviders` 的函数，用于在线提供提供商路由记录。
 
@@ -1226,7 +1226,7 @@ func OnlineProviders(useStrategicProviding bool, reprovideStrategy string, repro
 	)
 }
 
-```
+```go
 
 这段代码定义了两个函数，它们都接受一个名为"offlineProviderStrategy"的参数，并返回一个名为"pinnedProviderStrategy"的接口类型。
 
@@ -1254,9 +1254,9 @@ func pinnedProviderStrategy(onlyRoots bool) interface{} {
 	}
 }
 
-```
+```go
 
-# `/opt/kubo/core/node/storage.go`
+# `core/node/storage.go`
 
 这段代码是一个 Node.js  package，它实现了基于 IPFS（InterPlanetary File System）的 BlockStore 和 Repo 服务。以下是它的主要功能和作用：
 
@@ -1297,7 +1297,7 @@ import (
 )
 
 // RepoConfig loads configuration from the repo
-```
+```go
 
 此代码定义了三个函数，分别作用如下：
 
@@ -1346,7 +1346,7 @@ func BaseBlockstoreCtor(cacheOpts blockstore.CacheOpts, nilRepo bool, hashOnRead
 	}
 }
 
-```
+```go
 
 这是一个使用Go语言编写的块存储器类，其中GcBlockstoreCtor函数使用GC和FileStore层来封装块存储器。该函数创建一个新的GC块存储器和一个GCLocker对象，然后将块存储器设置为GcBlockstore和FileStore的组合。
 
@@ -1378,9 +1378,9 @@ func FilestoreBlockstoreCtor(repo repo.Repo, bb BaseBlocks) (gclocker blockstore
 	return
 }
 
-```
+```go
 
-# `/opt/kubo/core/node/helpers/helpers.go`
+# `core/node/helpers/helpers.go`
 
 这段代码定义了一个名为 "helpers" 的包，其中包含了一些与上下文和取消上下文相关的函数。
 
@@ -1421,9 +1421,9 @@ func LifecycleCtx(mctx MetricsCtx, lc fx.Lifecycle) context.Context {
 	return ctx
 }
 
-```
+```go
 
-# `/opt/kubo/core/node/libp2p/addrs.go`
+# `core/node/libp2p/addrs.go`
 
 这段代码定义了一个名为 AddrFilters 的函数，它接受一个字符串数组作为输入参数，并返回一个 Ma.Filters 类型的函数指针、Libp2pOpts 类型的选项和错误。
 
@@ -1465,7 +1465,7 @@ func AddrFilters(filters []string) func() (*ma.Filters, Libp2pOpts, error) {
 	}
 }
 
-```
+```go
 
 This is a JavaScript function that seems to be part of a smart contract on the Ethereum blockchain. It appears to be a method for adding a user to a "no-announce" list, which appears to be a list of addresses that should not be included in the user's下去 bundles.
 
@@ -1540,7 +1540,7 @@ func makeAddrsFactory(announce []string, appendAnnouce []string, noAnnounce []st
 	}, nil
 }
 
-```
+```go
 
 这两个函数的主要作用是创建一个名为"addrsFactory"的函数，该函数接收三个参数：announce、appendAnnounce和noAnnounce，它们都是字符串类型的数组。
 

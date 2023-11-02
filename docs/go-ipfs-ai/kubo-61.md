@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 61
 
-# `/opt/kubo/thirdparty/assert/assert.go`
+# `thirdparty/assert/assert.go`
 
 这两段代码定义了两个函数：`Nil` 和 `True`。它们的作用是在 `testing` 包中的 `Nil` 和 `True` 测试函数中进行断言。
 
@@ -9,7 +9,7 @@
 这两段代码通过使用 `t.Fatal` 和 `t.Run` 函数来触发断言。如果 `Nil` 或 `True` 条件为 `false`，则函数将引发断言，并通过 `t.Fatal` 函数打印错误消息和 `msgs` 参数。如果 `Nil` 或 `True` 条件为 `true`，则函数不会引发断言，而是直接返回。
 
 
-```
+```go
 package assert
 
 import "testing"
@@ -39,7 +39,7 @@ func True(v bool, t *testing.T, msgs ...string) {
 这两个函数的作用是用来在 `testing` 测试套中进行断言的，通过调用 `func` 函数体，可以让测试套中的断言函数在测试中更方便地进行错误处理和调试。
 
 
-```
+```go
 func False(v bool, t *testing.T, msgs ...string) {
 	True(!v, t, msgs...)
 }
@@ -52,7 +52,7 @@ func Err(err error, t *testing.T, msgs ...string) {
 
 ```
 
-# `/opt/kubo/thirdparty/dir/dir.go`
+# `thirdparty/dir/dir.go`
 
 这段代码定义了一个名为“dir”的包，其中包含一个名为“Writable”的函数。函数的目的是确保创建的目录存在，并且是可读写的。
 
@@ -61,7 +61,7 @@ func Err(err error, t *testing.T, msgs ...string) {
 如果上述步骤中出现任何错误，函数将返回一个相应的错误，或者返回一个空错误，表示操作成功。
 
 
-```
+```go
 package dir
 
 // TODO move somewhere generic
@@ -90,7 +90,7 @@ func Writable(path string) error {
 
 ```
 
-# `/opt/kubo/thirdparty/notifier/notifier.go`
+# `thirdparty/notifier/notifier.go`
 
 这段代码定义了一个名为`Notifiee`的通用接口，它用于定义客户端实现的通知接口。这个接口多个实现，客户端需要根据自己的需要实现具体的`Notifiee`接口。
 
@@ -101,7 +101,7 @@ func Writable(path string) error {
 接下来，定义了一个名为`ratelimitNotifier`函数，这个函数与`processNotifier`函数类似，只不过这个函数使用的是`ratelimit.Ratelimit`包装的`ratelimit.Proc`，而不是普通的`process.Proc`。这个函数的作用是启动一个新进程，用于实现通知的功能，并使用`ratelimit`包限制进程的速率，避免对系统造成过高的负载。
 
 
-```
+```go
 // Package notifier provides a simple notification dispatcher
 // meant to be embedded in larger structures who wish to allow
 // clients to sign up for event notifications.
@@ -134,7 +134,7 @@ Notifiee接口定义了一个通知代理，具有composite类型的零值，它
 最后，定义了一个名为Rocket上的notifier.Notifier类型的字段，它是Rocket上的notifiee.Notifiee接口的成员变量。
 
 
-```
+```go
 //
 //	type RocketNotifiee interface{
 //	  Countdown(r Rocket, countdown time.Duration)
@@ -161,7 +161,7 @@ type Notifiee interface{}
 具体来说，创建通知实例时，会创建一个 "mu" 锁，并且在 "lim" 变量上设置限速器。如果调用 "rateLimited" 函数并传入一个非零限制器，则会创建一个通知实例，并设置其 "lim" 和 "mu" 变量。如果调用 "rateLimited" 函数并传入一个零限制器，则会返回一个空通知实例。
 
 
-```
+```go
 //	}
 type Notifier struct {
 	mu   sync.RWMutex // guards notifiees
@@ -189,7 +189,7 @@ func RateLimited(limit int) *Notifier {
 这段代码可以被用来实现在代码中跟随类型安全的函数，例如在组合模式（pattern-following）中使用。
 
 
-```
+```go
 // Notify signs up Notifiee e for notifications. This function
 // is meant to be called behind your own type-safe function(s):
 //
@@ -224,7 +224,7 @@ func (n *Notifier) Notify(e Notifiee) {
 由于 `StopNotify` 函数没有返回值，因此您需要在调用它时提供所需的通知对象。
 
 
-```
+```go
 // StopNotify stops notifying Notifiee e. This function
 // is meant to be called behind your own type-safe function(s):
 //
@@ -255,7 +255,7 @@ func (n *Notifier) StopNotify(e Notifiee) {
 通过调用"make it private"的方式，该函数只能被"NotifyAll"函数内部使用，从而保证了通知者的通知不会被其他地方滥用。
 
 
-```
+```go
 // NotifyAll messages the notifier's notifiees with a given notification.
 // This is done by calling the given function with each notifiee. It is
 // meant to be called with your own type-safe notification functions:
@@ -278,7 +278,7 @@ func (n *Notifier) StopNotify(e Notifiee) {
 函数内部，首先对 `notifier` 变量进行锁定，以确保在函数内部对 `notify` 函数进行操作时只有一个实例被创建。函数内部，如果 `notifier` 为 `nil`，则直接返回，因为此时不需要做任何操作。否则，如果 `lim` 也为 `nil`，则循环遍历 `nots` 数组，并在循环内部调用 `notify` 函数。最后，如果 `lim` 为非 `nil`，则在 `lim` 的 `Go` 函数中循环遍历 `nots` 数组，并为每个 `notify` 函数设置一个限速运行的 `worker`，同时使用 `lim` 进行速率限制。
 
 
-```
+```go
 //	func (r *Rocket) notifyAll(notify func(Notifiee)) {
 //	  r.notifier.NotifyAll(func(n notifier.Notifiee) {
 //	    notify(n.(Notifiee))
@@ -318,7 +318,7 @@ func (n *Notifier) NotifyAll(notify func(Notifiee)) {
 
 ```
 
-# `/opt/kubo/thirdparty/notifier/notifier_test.go`
+# `thirdparty/notifier/notifier_test.go`
 
 这段代码定义了一个名为 "notifier" 的包，它包含了以下结构体：
 
@@ -337,7 +337,7 @@ package notifier
 总之，这段代码实现了一个通知系统，用于在测试中发送测试消息给注册了通知路由器的用户。
 
 
-```
+```go
 package notifier
 
 import (
@@ -370,7 +370,7 @@ type Router struct {
 	* (r *Router) StopNotify：实现 StopNotify 方法，停止通知所有 RouterNotifiee 接口关于一个 Packet 数据包的状态变更。
 
 
-```
+```go
 type Packet struct{}
 
 type RouterNotifiee interface {
@@ -402,7 +402,7 @@ func (r *Router) StopNotify(n RouterNotifiee) {
 注意：`r.notifyAll` 函数是 `func` 函数的回调函数，因此它接收一个通知者（RouterNotifiee）和一个通知函数，而不是接收一个函数作为参数。
 
 
-```
+```go
 func (r *Router) notifyAll(notify func(n RouterNotifiee)) {
 	r.notifier.NotifyAll(func(n Notifiee) {
 		notify(n.(RouterNotifiee))
@@ -440,7 +440,7 @@ func (r *Router) Receive(p Packet) {
 - `sync.Mutex`：一个互斥锁，用于在 `Router` 实例上锁定 `Metrics` 类型的变量，以确保在同一时间只能有一个实例访问它们。
 
 
-```
+```go
 func (r *Router) Forward() {
 	p := <-r.queue
 	r.notifyAll(func(n RouterNotifiee) {
@@ -465,7 +465,7 @@ type Metrics struct {
 Forwarded 函数与 Enqueued 函数类似，只是处理的是一个 Packet 对象，同样使用了 `m.Lock()` 函数获取 Metrics 链表结构的所有节点锁，然后使用 `m.forwarded++` 函数将当前节点 forwarded 计数器加 1，最后使用 `m.Unlock()` 函数释放锁。然后判断是否已经接收到新节点，如果是，则使用 `m.received` 指针和 `struct{}` 构建一个新的 Packet 对象，将新节点加入链表中。
 
 
-```
+```go
 func (m *Metrics) Enqueued(*Router, Packet) {
 	m.Lock()
 	m.enqueued++
@@ -493,7 +493,7 @@ func (m *Metrics) Forwarded(*Router, Packet) {
 第二段代码的作用是计算并返回 Metrics 类型中有关路由器接收、发送数据包数量的信息。代码首先使用 Lock 函数获取 Metrics 类型中的锁，然后使用 range 循环计算并打印 Enqueued、Forwarded 和 dropped 变量。最后，代码使用 fmt.Sprintf 函数将计算结果格式化并返回。
 
 
-```
+```go
 func (m *Metrics) Dropped(*Router, Packet) {
 	m.Lock()
 	m.dropped++
@@ -523,7 +523,7 @@ func (m *Metrics) String() string {
 最后，该函数使用另一个循环来接收 Packet 数据并将其发送给 "m.received" 通道。在循环中，如果 "m.enqueued" 通道的值不是 10，则函数会输出一条错误消息，并指出 "m.enqueued" 和 10 之间的差异。
 
 
-```
+```go
 func TestNotifies(t *testing.T) {
 	m := Metrics{received: make(chan struct{})}
 	r := Router{queue: make(chan Packet, 10)}
@@ -568,7 +568,7 @@ func TestNotifies(t *testing.T) {
 函数接收五个 Packet，停止 notifier 函数。
 
 
-```
+```go
 func TestStopsNotifying(t *testing.T) {
 	m := Metrics{received: make(chan struct{})}
 	r := Router{queue: make(chan Packet, 10)}
@@ -612,7 +612,7 @@ func TestStopsNotifying(t *testing.T) {
 接下来，该实例会输出 `m1`、`m2` 和 `m3` 实例的接收到的数据，并比较这三个接收到的数据是否相同。如果三个接收到的数据不相同，那么该实例就会输出错误信息并错误地检测到 counts 不一致的情况。
 
 
-```
+```go
 func TestThreadsafe(t *testing.T) {
 	N := 1000
 	r := Router{queue: make(chan Packet, 10)}
@@ -681,7 +681,7 @@ func TestThreadsafe(t *testing.T) {
 该 `highwatermark` 结构体可以被用于锁定一组对同一时间有限制的高水标记(float、int 等)，以防止同时有多个进程对它们进行写操作，从而避免潜在的并发问题。
 
 
-```
+```go
 type highwatermark struct {
 	mu    sync.Mutex
 	mark  int
@@ -720,7 +720,7 @@ The `NotifyAll` is a callback that is used to register a closure that will be in
 The `close` method is used to close the `errs` channel that is passed as an argument to the `RateLimited` function.
 
 
-```
+```go
 func (m *highwatermark) decr() {
 	m.mu.Lock()
 	m.mark--
@@ -789,7 +789,7 @@ func TestLimited(t *testing.T) {
 
 ```
 
-# `/opt/kubo/thirdparty/unit/unit.go`
+# `thirdparty/unit/unit.go`
 
 这段代码定义了一个名为 "Information" 的枚举类型，它有两个成员变量：
 
@@ -803,7 +803,7 @@ func TestLimited(t *testing.T) {
 - 如果 `i` 是奇数，输出对应阶数的计数单位并输出一个换行符。
 
 
-```
+```go
 package unit
 
 import "fmt"
@@ -834,7 +834,7 @@ const (
 这段代码主要实现了将一个整数参数转换成对应的字符串类型功能。
 
 
-```
+```go
 func (i Information) String() string {
 	tmp := int64(i)
 
@@ -867,7 +867,7 @@ func (i Information) String() string {
 
 ```
 
-# `/opt/kubo/thirdparty/unit/unit_test.go`
+# `thirdparty/unit/unit_test.go`
 
 这段代码是一个名为 "unit" 的包，其中包含了一些函数来测试不同 "容量" 大小的整数是否符合预期的字节数。
 
@@ -882,7 +882,7 @@ func (i Information) String() string {
 这些测试用例基于一组已知的容量单位，包括千克(KB)、兆字节(MB)、吉字节(GB)、太字节(TB)和拍字节(PB)，以及一个尚未知的单位 "艾字节"(EB)。程序将检查这些单位是否符合预期的字节数。如果任何一个测试用例失败，程序将会崩溃并打印错误信息。
 
 
-```
+```go
 package unit
 
 import "testing"
@@ -912,14 +912,14 @@ func TestByteSizeUnit(t *testing.T) {
 
 ```
 
-# `/opt/kubo/thirdparty/verifbs/verifbs.go`
+# `thirdparty/verifbs/verifbs.go`
 
 该代码定义了一个名为 VerifBSGC 的 struct，它包含一个指向名为 bstore 的 gcBlockstore 的引用。该 struct 还包含一个名为 VerifCID 的成员变量，该成员变量引用了一个名为 verifCID 的 gcCID，以及一个名为 blocks 的成员变量，该成员变量引用了一个名为 blocks 的 gcBlockFormat。
 
 VerifBSGC  struct 代表了一个基于 Boxo 协议的验证事务，可以在 Boxo 网络中使用。通过使用 bstore 和 verifCID，可以安全地在 Boxo 网络中存储和验证数据。使用 blocks 和 cid 可以生成并验证 blocks， blocks 是块的 JSON 格式描述，cid 是 Content ID，用于标识和跟踪文件的来源。
 
 
-```
+```go
 package verifbs
 
 import (
@@ -944,7 +944,7 @@ type VerifBSGC struct {
 两个函数的实现都在一个名为`VerifBSGC`的`Verif`链上下文中定义，该上下文提供了一个块系统中的` GCBlockstore`实例，可以让用户通过`Put`和`PutMany`函数来执行块的写入和提交操作。
 
 
-```
+```go
 func (bs *VerifBSGC) Put(ctx context.Context, b blocks.Block) error {
 	if err := verifcid.ValidateCid(verifcid.DefaultAllowlist, b.Cid()); err != nil {
 		return err
@@ -988,7 +988,7 @@ func (bs *VerifBS) Put(ctx context.Context, b blocks.Block) error {
 另外，`blockstore.GCBlockstore` 和 `verifcid.Verifcid` 是直接从 `blockstore` 和 `verifcid` 包中使用的。
 
 
-```
+```go
 func (bs *VerifBSGC) Get(ctx context.Context, c cid.Cid) (blocks.Block, error) {
 	if err := verifcid.ValidateCid(verifcid.DefaultAllowlist, c); err != nil {
 		return nil, err
@@ -1016,7 +1016,7 @@ func (bs *VerifBS) Put(ctx context.Context, b blocks.Block) error {
 2. `Get`函数接收一个`context.Context`和一个白名单`c`，并在`ctx`上下文上下期内执行。该函数的作用是从白名单中获取指定的`cid`，并返回相应的块。如果给定的`cid`不在白名单中，函数将返回`nil`。
 
 
-```
+```go
 func (bs *VerifBS) PutMany(ctx context.Context, blks []blocks.Block) error {
 	for _, b := range blks {
 		if err := verifcid.ValidateCid(verifcid.DefaultAllowlist, b.Cid()); err != nil {
@@ -1035,7 +1035,7 @@ func (bs *VerifBS) Get(ctx context.Context, c cid.Cid) (blocks.Block, error) {
 
 ```
 
-# `/opt/kubo/tracing/doc.go`
+# `tracing/doc.go`
 
 这段代码是一个 Go 语言写的开源库中的跟踪逻辑配置代码。它用于配置用于 go-ipfs 的跟踪器，并帮助在栈中保持一致的命名约定。
 
@@ -1046,7 +1046,7 @@ func (bs *VerifBS) Get(ctx context.Context, c cid.Cid) (blocks.Block, error) {
 最后，它通过在配置文件中设置一系列选项来进一步配置跟踪器的行为。它包括设置跟踪器输出目录、设置 exporter 的时间跨度以及设置跟踪器的一些选项，如不输出 span、不存储 span 等。
 
 
-```
+```go
 // Package tracing contains the tracing logic for go-ipfs, including configuring the tracer and
 // helping keep consistent naming conventions across the stack.
 //
@@ -1067,7 +1067,7 @@ func (bs *VerifBS) Get(ctx context.Context, c cid.Cid) (blocks.Block, error) {
 这段代码定义了一系列环境变量，具体作用取决于将这些变量分配给了哪个出口。这些变量通常被称为标准环境变量，包括但不限于OTEL_EXPORTER_JAEGER_AGENT_HOST、OTEL_EXPORTER_JAEGER_AGENT_PORT、OTEL_EXPORTER_JAEGER_ENDPOINT、OTEL_EXPORTER_JAEGER_USER和OTEL_EXPORTER_JAEGER_PASSWORD。这些变量对于使用Jaeger和OTLP HTTP/gRPC等出口 exporter 来说非常重要，进口 exporter 不需要关心这些变量。
 
 
-```
+```go
 //
 // Different exporters have their own set of environment variables, depending on the exporter. These are typically
 // standard environment variables. Some common ones:
@@ -1103,7 +1103,7 @@ func (bs *VerifBS) Get(ctx context.Context, c cid.Cid) (blocks.Block, error) {
 2. 使用Kubernetes Service：创建一个Service，将otel-exporter的port 8080、endpoint、path和tokenizer一起指定，并将其部署到Kubernetes集群中。
 
 
-```
+```go
 //     one of [grpc, http/protobuf]
 //     default: grpc
 //   - OTEL_EXPORTER_OTLP_ENDPOINT
@@ -1128,7 +1128,7 @@ func (bs *VerifBS) Get(ctx context.Context, c cid.Cid) (blocks.Block, error) {
 具体来说，这段代码的作用是配置一个Docker容器，将包含Jaeger经纪人组件的环境变量，并指定Jaeger经纪人代理的端口，以便在代理的端口上监听来自代理的 trace。同时，还可以配置其他代理的端口，以便在代理的端口上监听来自代理的 trace。
 
 
-```
+```go
 //     file path to write JSON traces
 //     default: `$PWD/traces.json`
 //
@@ -1155,7 +1155,7 @@ func (bs *VerifBS) Get(ctx context.Context, c cid.Cid) (blocks.Block, error) {
 此外，这段代码还定义了一个名为RequestedSpan的变量，它是一个 span，可能会用于在一些验证请求的操作中。
 
 
-```
+```go
 //	  -p 14250:14250 \
 //	  -p 9411:9411 \
 //	  jaegertracing/all-in-one
@@ -1173,7 +1173,7 @@ package tracing
 
 ```
 
-# `/opt/kubo/tracing/tracing.go`
+# `tracing/tracing.go`
 
 这段代码是一个 Go 语言中的 package，它定义了一个名为 "tracing" 的包。通过导入其他包，它实现了对整个应用程序的跟踪，并将其输出到设置的输出设备。
 
@@ -1190,7 +1190,7 @@ package tracing
 通过这些函数和变量，可以创建一个 Tracer 实例，并设置跟踪配置，例如，将输出设备设置为文件，每秒 50 秒记录一次数据。在 "main" 函数中，创建了一个新的上下文实例，并使用上面创建的 Tracer 记录一个 API 调用。最后，输出了记录的数据，格式化为字符串并输出到控制台。
 
 
-```
+```go
 package tracing
 
 import (
@@ -1217,7 +1217,7 @@ noopShutdownTracerProvider结构体实现了一个名为“Shutdown”的函数�
 最后，该代码创建了一个名为“NewTracerProvider”的函数，该函数接收一个TracerProvider接口的实现，然后使用它创建和配置一个TracerProvider。
 
 
-```
+```go
 // shutdownTracerProvider adds a shutdown method for tracer providers.
 //
 // Note that this doesn't directly use the provided TracerProvider interface
@@ -1255,7 +1255,7 @@ func (n *noopShutdownTracerProvider) Shutdown(ctx context.Context) error { retur
 3. 创建了一个新的 Tracer Provider。
 
 
-```
+```go
 func NewTracerProvider(ctx context.Context) (shutdownTracerProvider, error) {
 	exporters, err := tracing.NewSpanExporters(ctx)
 	if err != nil {
@@ -1295,7 +1295,7 @@ func NewTracerProvider(ctx context.Context) (shutdownTracerProvider, error) {
 函数返回两个值：一个是 `ctx` 上下文，另一个是新生成的 `traceapi.Span`。函数内部使用 `otel.Tracer("Kubo").Start` 来开始一个新的跟踪旅程，并传递给 `traceapi.SpanStartOption` 类型的参数，用于开始一个新的跨度。
 
 
-```
+```go
 // Span starts a new span using the standard IPFS tracing conventions.
 func Span(ctx context.Context, componentName string, spanName string, opts ...traceapi.SpanStartOption) (context.Context, traceapi.Span) {
 	return otel.Tracer("Kubo").Start(ctx, fmt.Sprintf("%s.%s", componentName, spanName), opts...)

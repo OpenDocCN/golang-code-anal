@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 7
 
-# `/opt/kubo/config/init.go`
+# `config/init.go`
 
 这段代码定义了一个名为 "config" 的包，其中包含了一些用于配置本地安全哈希库的函数。
 
@@ -13,7 +13,7 @@
 这里使用了libp2p库，它是Ipfs Boxo项目的核心libp2p库，提供了一些用于创建和管理本地安全哈希库的函数。
 
 
-```
+```go
 package config
 
 import (
@@ -105,7 +105,7 @@ import (
 	"github.com/coreos/node/datastore/trans
 
 
-```
+```go
 func InitWithIdentity(identity Identity) (*Config, error) {
 	bootstrapPeers, err := DefaultBootstrapPeers()
 	if err != nil {
@@ -185,7 +185,7 @@ func InitWithIdentity(identity Identity) (*Config, error) {
 这段代码还定义了一个常量DefaultConnMgrType，表示连接管理器的默认类型为"basic"。
 
 
-```
+```go
 // DefaultConnMgrHighWater is the default value for the connection managers
 // 'high water' mark.
 const DefaultConnMgrHighWater = 96
@@ -216,7 +216,7 @@ const DefaultConnMgrType = "basic"
 * addressesConfig：这个函数的名称，也就是函数内部要配置的地址池。
 
 
-```
+```go
 // DefaultResourceMgrMinInboundConns is a MAGIC number that probably a good
 // enough number of inbound conns to be a good network citizen.
 const DefaultResourceMgrMinInboundConns = 800
@@ -250,7 +250,7 @@ func addressesConfig() Addresses {
 最后，该函数的作用域为`badgerSpec`，返回的`Map[string:]interface{}`类型的数据为`badgerSpec`函数作用域内的所有键的值的Map类型实例。
 
 
-```
+```go
 // DefaultDatastoreConfig is an internal function exported to aid in testing.
 func DefaultDatastoreConfig() Datastore {
 	return Datastore{
@@ -282,7 +282,7 @@ func badgerSpec() map[string]interface{} {
 这个函数的作用是返回一个用于将 "flatfs" 挂载点的数据库的配置参数的 map 类型对象.其中，第一个键 "type" 的值为 "mount"，表示将 "flatfs" 挂载到一个数据存储库中，第二个键 "mounts" 的值是一个包含两个 "type" 键，每个键都有一个 "value" 值为 "measure"，这表示该数据存储库支持测量数据存储，第三个键 "mountpoint" 的值设置为 "/blocks"，表示数据存储库的挂载点是数据存储库中的 "blocks" 目录的子目录.第四个键 "type" 的值为 "measure"，表示该数据存储库支持列族数据存储，第五个键 "prefix" 的值设置为 "flatfs.datastore"，表示数据存储库中的数据文件前缀是 "flatfs.datastore".第六个键 "child" 的值是一个包含一个名为 "type" 的键，其值为 "flatfs"，表示该数据存储库的父数据存储库是 "flatfs".第七个键 "path" 的值设置为 "/"，表示数据存储库中的目录根目录是数据存储库的根目录.
 
 
-```
+```go
 func flatfsSpec() map[string]interface{} {
 	return map[string]interface{}{
 		"type": "mount",
@@ -321,7 +321,7 @@ The function first sets the `settings.Algorithm` to the desired key type, and th
 Finally, the function checks the generated key type and, if it's not specified, an error is returned. The encoded version of the key is also stored in the `skbytes` field, but that is only done for the `rsa` algorithm, which requires this field to be set to `true`.
 
 
-```
+```go
 // CreateIdentity initializes a new identity.
 func CreateIdentity(out io.Writer, opts []options.KeyGenerateOption) (Identity, error) {
 	// TODO guard higher up
@@ -386,7 +386,7 @@ func CreateIdentity(out io.Writer, opts []options.KeyGenerateOption) (Identity, 
 
 ```
 
-# `/opt/kubo/config/init_test.go`
+# `config/init_test.go`
 
 这段代码定义了一个名为 config 的包，其中包含了一些用于测试身份验证创建工具的函数。
 
@@ -416,7 +416,7 @@ func CreateIdentity(out io.Writer, opts []options.KeyGenerateOption) (Identity, 
 6. 重复 step 3 和 4 两次，确保创建两个不同的身份，并测试 CreateIdentity 函数的正确性。
 
 
-```
+```go
 package config
 
 import (
@@ -465,7 +465,7 @@ func TestCreateIdentity(t *testing.T) {
 如果函数在执行时遇到错误，它将输出一个错误信息并 `t` 变量，具体错误信息将在 `t` 参数上被预定。
 
 
-```
+```go
 func TestCreateIdentityOptions(t *testing.T) {
 	var w bytes.Buffer
 
@@ -481,7 +481,7 @@ func TestCreateIdentityOptions(t *testing.T) {
 
 ```
 
-# `/opt/kubo/config/internal.go`
+# `config/internal.go`
 
 这段代码定义了一个名为`Internal`的结构体类型，它代表了应用程序内部的一个组件。这个组件包含了以下字段：
 
@@ -493,7 +493,7 @@ func TestCreateIdentityOptions(t *testing.T) {
 此外，还有一段注释。
 
 
-```
+```go
 package config
 
 type Internal struct {
@@ -514,7 +514,7 @@ type InternalBitswap struct {
 
 ```
 
-# `/opt/kubo/config/ipns.go`
+# `config/ipns.go`
 
 这段代码定义了一个名为`Ipns`的结构体，它包含了`RepublishPeriod`和`RecordLifetime`字段，以及一个名为`ResolveCacheSize`的整数字段。同时，它还包含一个名为`UsePubsub`的布尔字段，它的值为`true`，意味着它 Enable namesys-pubsub。
 
@@ -523,7 +523,7 @@ type InternalBitswap struct {
 `UsePubsub`字段用于配置是否启用`pubsub`系统。当`UsePubsub`为`true`时，它将启用所有的`pubsub`配置选项。
 
 
-```
+```go
 package config
 
 type Ipns struct {
@@ -538,7 +538,7 @@ type Ipns struct {
 
 ```
 
-# `/opt/kubo/config/migration.go`
+# `config/migration.go`
 
 这段代码定义了一个名为 config 的包，其中包含一个名为 DefaultMigrationKeep 的常量，一个名为 DefaultMigrationDownloads 的字符串数组，以及一个名为 Migration 的结构体。
 
@@ -553,7 +553,7 @@ Migration 是一个结构体，它定义了如何下载迁移，以及是否在�
 Migration 的字段包括 DownloadSources、Keep 和 Options。DownloadSources 是用于下载迁移的源，Keep 是用于下载完成后保存迁移的选项，而 Options 是用于下载源的选项。
 
 
-```
+```go
 package config
 
 const DefaultMigrationKeep = "cache"
@@ -574,7 +574,7 @@ type Migration struct {
 
 ```
 
-# `/opt/kubo/config/migration_test.go`
+# `config/migration_test.go`
 
 这段代码是一个 Go 语言中的 Go-标准库中的测试函数，用于测试一个名为 `Migration` 的结构体。
 
@@ -598,7 +598,7 @@ type Migration struct {
 整个函数的作用是测试一个名为 `Migration` 的结构体，以验证其是否符合预期。
 
 
-```
+```go
 package config
 
 import (
@@ -636,7 +636,7 @@ func TestMigrationDecode(t *testing.T) {
 
 ```
 
-# `/opt/kubo/config/mounts.go`
+# `config/mounts.go`
 
 这段代码定义了一个名为 config 的包，其中包含一个名为 Mounts 的结构体类型。Mounts 结构体包含三个字段，分别表示文件系统的类型、挂载点的类型和允许 FUSE 协议的其他选项。
 
@@ -649,7 +649,7 @@ func TestMigrationDecode(t *testing.T) {
 这段代码并没有定义任何函数或其他结构体，也没有输出任何内容。它仅仅定义了一个名为 Mounts 的结构体类型，用于表示文件系统的挂载点选项。
 
 
-```
+```go
 package config
 
 // Mounts stores the (string) mount points.
@@ -661,7 +661,7 @@ type Mounts struct {
 
 ```
 
-# `/opt/kubo/config/peering.go`
+# `config/peering.go`
 
 这段代码定义了一个名为`Peering`的结构体，用于配置网络中的对等连接。该结构体包含一个或多个`peer.AddrInfo`类型的`Peers`字段，用于指定要与哪些对等节点建立连接。
 
@@ -676,7 +676,7 @@ type Mounts struct {
 `}`定义了一个名为`Peering`的结构体，包含一个或多个`peer.AddrInfo`类型的字段，用于指定要与哪些对等节点建立连接。
 
 
-```
+```go
 package config
 
 import "github.com/libp2p/go-libp2p/core/peer"
@@ -689,7 +689,7 @@ type Peering struct {
 
 ```
 
-# `/opt/kubo/config/plugins.go`
+# `config/plugins.go`
 
 这段代码定义了一个名为`config`的包，其中包含一个名为`Plugins`的结构体，它是一个键值对类型的地图，包含一个键`Plugin`类型和一个`Plugin`类型的变量。这里，`Plugin`类型被定义为`type Plugin struct {`的结构体，其中包含一个名为`Disabled`的布尔类型和一个`Config`类型的`interface{}`接口。
 
@@ -698,7 +698,7 @@ type Peering struct {
 该代码段省略了一个名为`TODO: Loader Path?`的注释，它提示您在不安全的代码中不应该包含加载器路径。因此，这个注释并没有对代码的功能产生影响。
 
 
-```
+```go
 package config
 
 type Plugins struct {
@@ -713,7 +713,7 @@ type Plugin struct {
 
 ```
 
-# `/opt/kubo/config/profile.go`
+# `config/profile.go`
 
 这段代码定义了一个名为“config”的包，其中包含了一个名为“Profile”的结构体。这个结构体定义了一个名为“Transformer”的函数，它接收一个名为“Config”的参数，并对它应用一些处理，然后返回一个错误。
 
@@ -724,7 +724,7 @@ type Plugin struct {
 然后，定义了一个名为“Profile”的结构体，这个结构体包含一个名为“Description”的属性和一个名为“Transform”的函数，还有一个名为“InitOnly”的布尔属性和一个通用的“Transform”函数。这个结构体表示了一个配置文件中的一个配置项，这个配置项可以被任何具体的“Profile”函数所应用，但是这个配置项只能在“InitOnly”为真时被应用。
 
 
-```
+```go
 package config
 
 import (
@@ -771,7 +771,7 @@ The `/ip6/fe80::/` prefix is defined as a multicast route that is intended for u
 The `/ip6/fe80:0:0:0:0:0/` prefix is defined as a one-to-one, global, unicast route that is intended for use by devices using Zigbee and other low-power, low-data-rate communications protocols.
 
 
-```
+```go
 // defaultServerFilters has is a list of IPv4 and IPv6 prefixes that are private, local only, or unrouteable.
 // according to https://www.iana.org/assignments/iana-ipv4-special-registry/iana-ipv4-special-registry.xhtml
 // and https://www.iana.org/assignments/iana-ipv6-special-registry/iana-ipv6-special-registry.xhtml
@@ -834,7 +834,7 @@ running IPFS on machines with public IPv4 addresses.`,
 }
 
 
-```
+```go
 // Profiles is a map holding configuration transformers. Docs are in docs/config.md.
 var Profiles = map[string]Profile{
 	"server": {
@@ -865,7 +865,7 @@ In the `test` section, a transformation is applied to the configuration when a n
 In the `default-networking` section, the default settings for the network are restored. This means that the IPFS daemon will not use any of the default settings for the network, such as the local IP address for NAT port mapping.
 
 
-```
+```go
 profile, enables discovery in local networks.`,
 
 		Transform: func(c *Config) error {
@@ -910,7 +910,7 @@ is useful when using the daemon in test environments.`,
 这个函数的作用是设置一个测试程序的逆向剖分报告，用于报告程序在启动时使用的默认网关对等体和键值 DNS 服务的设置。
 
 
-```
+```go
 Inverse profile of the test profile.`,
 
 		Transform: func(c *Config) error {
@@ -935,7 +935,7 @@ Inverse profile of the test profile.`,
 这段代码的作用是初始化一个名为"flatfs"的datastore，当创建节点时，只允许在节点初始化时应用此配置，然后将datastore的配置设置为flatfsSpec()，实现对datastore的初始化。Transform函数确保flatfsSpec()设置正确，并返回一个nil值，从而避免在运行时抛出错误。
 
 
-```
+```go
 Read the "flatfs" profile description for more information on this datastore.
 
 This profile may only be applied when first initializing the node.
@@ -964,7 +964,7 @@ The third condition states that the node is fine with the default speed of data 
 The `InitOnly` condition is set to `true`, which means that the profile should only be applied when the node is first initialized.
 
 
-```
+```go
 You should use this datastore if:
 
 * You need a very simple and very reliable datastore, and you trust your
@@ -998,7 +998,7 @@ This profile may only be applied when first initializing the node.
 这个配置文件仅在节点初始化时应用。
 
 
-```
+```go
 Use this datastore if some aspects of performance, 
 especially the speed of adding many gigabytes of files, are critical.
 However, be aware that:
@@ -1034,7 +1034,7 @@ This profile may only be applied when first initializing the node.`,
 最后，函数的实现包含在两个可选的函数中：`Transform: func(c *Config) error` 和 `"randomports": {...}`。第一个函数定义了内容发现的参数，而第二个函数定义了使用随机端口的参数。
 
 
-```
+```go
 functionality - performance of content discovery and data
 fetching may be degraded.
 `,
@@ -1079,7 +1079,7 @@ fetching may be degraded.
 2. appendSingle函数的作用是将两个输入的字符串a和b合并，并将它们存储在一个新的字符串out中。函数会遍历a和b中的所有字符串，并检查它们是否存在于一个名为m的map中。如果它们不在map中，则将它们添加到out中。如果它们已经在map中，但需要更新map以包含它们，则m中相应的字段将被更新为true。最后，函数返回out。
 
 
-```
+```go
 func getAvailablePort() (port int, err error) {
 	ln, err := net.Listen("tcp", "[::]:0")
 	if err != nil {
@@ -1117,7 +1117,7 @@ func appendSingle(a []string, b []string) []string {
 函数 `mapKeys` 接收一个 `map[string]struct{}` 类型的参数 `m`。函数的作用是返回一个字符串数组，其中包含所有键，这些键属于 `map` 中的所有元素。函数的实现类似于 `map.String` 函数，但会删除其中的键值对。具体实现是，遍历 `map` 中的所有键，将键存储在一个新数组中，并返回新数组。
 
 
-```
+```go
 func deleteEntries(arr []string, del []string) []string {
 	m := map[string]struct{}{}
 	for _, f := range arr {
@@ -1139,7 +1139,7 @@ func mapKeys(m map[string]struct{}) []string {
 
 ```
 
-# `/opt/kubo/config/provider.go`
+# `config/provider.go`
 
 这段代码定义了一个名为`Provider`的结构体类型，它包含一个名为`Strategy`的整型字段，用于指定在暴露服务时应该宣告哪些策略。
 
@@ -1148,7 +1148,7 @@ func mapKeys(m map[string]struct{}) []string {
 这个结构体类型的实例可以用来创建一个`Provider`对象，这个对象可以用来访问一个键值对，包含键的策略名称和键的描述。通过创建一个`Provider`实例并设置其`Strategy`字段的值，可以指定在暴露服务时应该宣告哪些策略。例如，如果将`Provider`实例设置为`Provider{Strategy: "whitelist", Description: "Exclusive access to the protected resource."}`，那么当暴露服务时，它将只宣告键名为`"whitelist"`的策略，并将其描述为`"Exclusive access to the protected resource."`。
 
 
-```
+```go
 package config
 
 type Provider struct {
@@ -1157,12 +1157,12 @@ type Provider struct {
 
 ```
 
-# `/opt/kubo/config/pubsub.go`
+# `config/pubsub.go`
 
 这段代码定义了一个名为 config 的包，其中包含两个字符串类型的变量 LastSeenMessagesStrategy 和 FirstSeenMessagesStrategy，它们都表示消息TTL策略的类型。LastSeenMessagesStrategy 表示基于最后一次看到消息的时间来计算TTL数量，而 FirstSeenMessagesStrategy 表示基于消息第一次被看到的时间来计算TTL数量。DefaultSeenMessagesStrategy 是如果没有特定的策略被指定，则使用 LastSeenMessagesStrategy 的策略，这个策略基于上次看到消息的时间来计算TTL数量。
 
 
-```
+```go
 package config
 
 const (
@@ -1199,7 +1199,7 @@ const (
 该结构体的 `json` 字段定义了如何使用 JSON 数据序列化或反序列化它。
 
 
-```
+```go
 type PubsubConfig struct {
 	// Router can be either floodsub (legacy) or gossipsub (new and
 	// backwards compatible).
@@ -1223,7 +1223,7 @@ type PubsubConfig struct {
 
 ```
 
-# `/opt/kubo/config/remotepin.go`
+# `config/remotepin.go`
 
 这段代码定义了一个名为`config`的包，其中包含以下变量：
 
@@ -1237,7 +1237,7 @@ type PubsubConfig struct {
 最后，通过创建一个名为`config`的包来定义这些结构体，并为这些变量提供默认值。
 
 
-```
+```go
 package config
 
 var (
@@ -1267,7 +1267,7 @@ type RemotePinningService struct {
 最后，在RemotePinningServiceAPI的定义中，定义了Endpoint字段和Key字段，它们都是该结构体所需的成员变量。
 
 
-```
+```go
 type RemotePinningServiceAPI struct {
 	Endpoint string
 	Key      string
@@ -1288,7 +1288,7 @@ type RemotePinningServiceMFSPolicy struct {
 
 ```
 
-# `/opt/kubo/config/reprovider.go`
+# `config/reprovider.go`
 
 这段代码定义了一个名为 `Reprovider` 的结构体，它用于设置本地存储的对象何时将其复制到网络中。
 
@@ -1301,7 +1301,7 @@ type RemotePinningServiceMFSPolicy struct {
 该代码定义了一个 `Reprovider` 结构体类型，用于设置本地存储的对象何时将其复制到网络中。我们可以创建一个 `Reprovider` 实例，并使用它的 `Interval` 和 `Strategy` 字段来设置本地存储的对象的复制策略。
 
 
-```
+```go
 package config
 
 import "time"
@@ -1318,7 +1318,7 @@ type Reprovider struct {
 
 ```
 
-# `/opt/kubo/config/routing.go`
+# `config/routing.go`
 
 这段代码定义了一个名为 `config` 的包，其中包含一个名为 `Routing` 的结构体，它定义了在 libp2p 路由中使用的配置选项。
 
@@ -1335,7 +1335,7 @@ type Reprovider struct {
 该 `config` 包的作用是定义了 libp2p 路由器使用的配置选项，从而使开发者能够更轻松地设置路由器，并选择如何使用加速 DHT。
 
 
-```
+```go
 package config
 
 import (
@@ -1371,7 +1371,7 @@ type Routing struct {
 该 struct 的主要作用是定义一个 HTTP 路由器，并管理一个包含多个 HTTP 路由器的方法的集合。通过 "Methods" 中的键值对，可以指定路由器要执行的 HTTP 方法，而通过 "Routers" 中的键值对，可以设置路由器的参数。
 
 
-```
+```go
 type Router struct {
 	// Router type ID. See RouterType for more info.
 	Type RouterType
@@ -1428,7 +1428,7 @@ func (m Methods) Check() error {
 最后，由于在序列化过程中可能出现错误，可能会导致有些参数被丢失，因此在实际应用中需要进行适当的错误处理。
 
 
-```
+```go
 type RouterParser struct {
 	Router
 }
@@ -1474,7 +1474,7 @@ func (r *RouterParser) UnmarshalJSON(b []byte) error {
 最后，定义了一个名为 `Router` 的函数，它接受一个路由类型和 DHT 模式作为参数。这个函数会根据这些设置返回一个具体的路由实例，我们可以通过调用 `Router.Execute()` 来执行路由操作。
 
 
-```
+```go
 // Type is the routing type.
 // Depending of the type we need to instantiate different Routing implementations.
 type RouterType string
@@ -1508,7 +1508,7 @@ HTTPRouterParams包含以下字段：
 另外，还定义了一个名为MethodName的一维字符数组，用于表示HTTPRouter中可用的方法名称。
 
 
-```
+```go
 type MethodName string
 
 const (
@@ -1545,7 +1545,7 @@ type HTTPRouterParams struct {
 这个函数的作用是设置HTTPRouterParams类型的参数以使用DHT（分布式哈希表）协议，以便在默认情况下正确处理DHT路由参数。
 
 
-```
+```go
 func (hrp *HTTPRouterParams) FillDefaults() {
 	if hrp.MaxProvideBatchSize == 0 {
 		hrp.MaxProvideBatchSize = 100
@@ -1575,7 +1575,7 @@ type DHTRouterParams struct {
 `Method` 字段是一个包含路由名称的 `Method` 类型，通常在路由处理程序中使用。
 
 
-```
+```go
 type ComposableRouterParams struct {
 	Routers []ConfigRouter
 	Timeout *OptionalDuration `json:",omitempty"`

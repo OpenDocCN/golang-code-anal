@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 60
 
-# `/opt/kubo/test/integration/pubsub_msg_seen_cache_test.go`
+# `test/integration/pubsub_msg_seen_cache_test.go`
 
 该代码是一个 Go 语言编写的测试框架，用于测试 Kubernetes 集群中的数据存储库（如 ByteSHA256、Gomake、以及一些其他工具）的 integration。
 
@@ -23,7 +23,7 @@
 该框架中的一些函数和变量被初始化为常量，用于提供测试数据的来源。
 
 
-```
+```go
 package integrationtest
 
 import (
@@ -74,7 +74,7 @@ The `RunMessageSeenCacheTTLTest` function sends a message and waits for it to ex
 The `mockNode` function is used to create a `core.IpfsNode` object and
 
 
-```
+```go
 func TestMessageSeenCacheTTL(t *testing.T) {
 	t.Skip("skipping PubSub seen cache TTL test due to flakiness")
 	if err := RunMessageSeenCacheTTLTest(t, "10s"); err != nil {
@@ -123,7 +123,7 @@ func mockNode(ctx context.Context, mn mocknet.Mocknet, pubsubEnabled bool, seenM
 This is a function that handles sending a message with a unique message ID to a SeenMessagesTTL window. The window is implemented using a sliding window algorithm, and messages are sent with increasing IDs, so that messages sent one minute after the last message have not been seen yet. The function takes a message text (`msgTxt`) as input, and sends the message with a unique message ID (`MsgID`) in response. It then checks if the message has already been sent to the window, and if not, sends it. Once the message has been sent, the expiration for the message should also be pushed out for a whole SeenMessagesTTL window.
 
 
-```
+```go
 func RunMessageSeenCacheTTLTest(t *testing.T, seenMessagesCacheTTL string) error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -338,7 +338,7 @@ func RunMessageSeenCacheTTLTest(t *testing.T, seenMessagesCacheTTL string) error
 
 ```
 
-# `/opt/kubo/test/integration/three_legged_cat_test.go`
+# `test/integration/three_legged_cat_test.go`
 
 这段代码是一个 Go 语言编写的测试框架，用于测试 Libp2p 库中的Integrationtest 包。
 
@@ -377,7 +377,7 @@ func RunMessageSeenCacheTTLTest(t *testing.T, seenMessagesCacheTTL string) error
 接着，该代码定义了一个名为 "test_asyncWrite" 的函数，该函数使用 Go 的 "context" 和 "time" 包，实现了异步操作的 "WithContext" 选项。该函数可以在主函数中使用 "context.WithAnonymousContext" 的方式获取当前的上下文，然后使用 "time.sleep" 函数来模拟延迟操作。该函数的实现在 "test_writeFile"
 
 
-```
+```go
 package integrationtest
 
 import (
@@ -409,7 +409,7 @@ import (
 第二个测试函数“TestThreeLeggedCatDegenerateSlowBlockstore”的作用是测试“RunThreeLeggedCat”函数在延迟配置为50微秒的情况下是否能够正常工作。如果函数运行时出现了错误，那么这个错误会被记录下来，并输出错误信息。由于这个测试函数中使用了“SkipUnlessEpic”函数，因此只有当第一个测试失败时才会输出错误信息，否则不会输出错误信息。
 
 
-```
+```go
 func TestThreeLeggedCatTransfer(t *testing.T) {
 	conf := testutil.LatencyConfig{
 		NetworkLatency:    0,
@@ -454,7 +454,7 @@ func TestThreeLeggedCatDegenerateSlowRouting(t *testing.T) {
 注意，上述代码非常简短，无法获取到具体的函数实现。
 
 
-```
+```go
 func TestThreeLeggedCatDegenerateSlowNetwork(t *testing.T) {
 	SkipUnlessEpic(t)
 	conf := testutil.LatencyConfig{NetworkLatency: 400 * time.Millisecond}
@@ -522,7 +522,7 @@ The `附加的` field is a `math.MaxInt32` configuration, which limits the value
 The `math.MaxInt32` configuration is applied to the `附加的` field, which is set in the `math.MaxInt32` configuration.
 
 
-```
+```go
 func TestThreeLeggedCat100MBMacbookCoastToCoast(t *testing.T) {
 	SkipUnlessEpic(t)
 	conf := testutil.LatencyConfig{}.NetworkNYtoSF().BlockstoreSlowSSD2014().RoutingSlow()
@@ -609,7 +609,7 @@ func RunThreeLeggedCat(data []byte, conf testutil.LatencyConfig) error {
 
 ```
 
-# `/opt/kubo/test/integration/wan_lan_dht_test.go`
+# `test/integration/wan_lan_dht_test.go`
 
 这段代码是一个 Go 语言编写的测试框架，用于测试 Kubernetes Peerset 中基于 libp2p 的节点选举过程。具体来说，这个测试框架实现了以下功能：
 
@@ -632,7 +632,7 @@ func RunThreeLeggedCat(data []byte, conf testutil.LatencyConfig) error {
 9. 最后，通过 `Coverage` 标签来覆盖 `integrationtest` 包的其他部分，从而将测试应用程序的运行结果保存在代码中，以便稍后覆盖代码以进行调试。
 
 
-```
+```go
 package integrationtest
 
 import (
@@ -669,7 +669,7 @@ import (
 这两个函数的目的是测试DHT在不同的网络连接设置下的连通性。如果任何函数发生错误，那么说明DHT的连通性存在问题。
 
 
-```
+```go
 func TestDHTConnectivityFast(t *testing.T) {
 	conf := testutil.LatencyConfig{
 		NetworkLatency:    0,
@@ -702,7 +702,7 @@ func TestDHTConnectivitySlowNetwork(t *testing.T) {
 最后，由于以上代码片段，无法提供有关函数实际作用的信息，因此无法提供代码的更多解释。
 
 
-```
+```go
 func TestDHTConnectivitySlowRouting(t *testing.T) {
 	SkipUnlessEpic(t)
 	conf := testutil.LatencyConfig{RoutingLatency: 400 * time.Millisecond}
@@ -748,7 +748,7 @@ It looks like you are testing the behavior of a Peer using the "wanPeer" and "la
 It's difficult to say what you are trying to test without more information about the implementation and the expected behavior. If you have any specific questions or concerns, please let me know.
 
 
-```
+```go
 func RunDHTConnectivity(conf testutil.LatencyConfig, numPeers int) error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -833,7 +833,7 @@ func RunDHTConnectivity(conf testutil.LatencyConfig, numPeers int) error {
 It looks like you are implementing a network test to validate that a remote device is able to establish a connection with a test device and provide a new CID (CID is a metric that is used to measure the legibility of a host in a network). The test is starting by connecting to a wan peer and then moving to a lan peer. The lan peer is providing a new CID, and the test device is expected to validate that it can find the CID. If the test device is unable to find the CID, it will consider that the remote device is not providing a valid metric and the connection will be terminated. If the lan peer provides a CID, the test device will validate that it can find the CID by connecting to a wan peer and then using the FindProvidersAsync method to check for available providers. The LanPeer class is used to implement the network connections and the CID is used to metric the connectability of the remote device.
 
 
-```
+```go
 StartupWait:
 	for {
 		select {
@@ -910,7 +910,7 @@ This is a function that performs a DHT providers Discovery operation on a WAN pe
 This function should be called within a context that has a timeout specified, such as a `context.WithTimeout`.
 
 
-```
+```go
 WanStartupWait:
 	for {
 		select {
@@ -992,20 +992,20 @@ WanStartupWait:
 Just use `make` in this directory to run all the tests.
 Run with `TEST_VERBOSE=1` to get helpful verbose output.
 
-```
+```go
 TEST_VERBOSE=1 make
 ```
 
 The usual ipfs env flags also apply:
 
-```sh
+```gosh
 # the output will make your eyes bleed
 IPFS_LOGGING=debug TEST_VERBOSE=1 make
 ```
 
 To make the tests abort as soon as an error occurs, use the TEST_IMMEDIATE env variable:
 
-```sh
+```gosh
 # this will abort as soon the first error occurs
 TEST_IMMEDIATE=1 make
 ```
@@ -1015,7 +1015,7 @@ TEST_IMMEDIATE=1 make
 You can run only one test script by launching it like a regular shell
 script:
 
-```
+```go
 $ ./t0010-basic-commands.sh
 ```
 
@@ -1025,7 +1025,7 @@ You can use the `-v` option to make it verbose and the `-i` option to
 make it stop as soon as one test fails.
 For example:
 
-```
+```go
 $ ./t0010-basic-commands.sh -v -i
 ```
 
@@ -1062,7 +1062,7 @@ Make your test case output helpful for when running sharness verbosely.
 This means cating certain files, or running diagnostic commands.
 For example:
 
-```
+```go
 test_expect_success ".ipfs/ has been created" '
   test -d ".ipfs" &&
   test -f ".ipfs/config" &&
@@ -1085,7 +1085,7 @@ Use the provided functions in `lib/test-lib.sh` to run the daemon or mount:
 
 To init, run daemon, and mount in one go:
 
-```sh
+```gosh
 test_launch_ipfs_daemon_and_mount
 
 test_expect_success "'ipfs add --help' succeeds" '
@@ -1100,7 +1100,7 @@ test_kill_ipfs_daemon
 
 To init, run daemon, and then mount separately:
 
-```sh
+```gosh
 test_init_ipfs
 
 # tests inited but not running here
@@ -1165,7 +1165,7 @@ test_kill_ipfs_daemon
 
 Generated with:
 
-```sh
+```gosh
 # using ipfs version 0.21.0-dev (03a98280e3e642774776cd3d0435ab53e5dfa867)
 
 # CIDv0to1 is necessary because raw-leaves are enabled by default during
@@ -1272,7 +1272,7 @@ echo IPNS_ED25519_B36CID=${IPNS_ED25519_B36CID}
 
 generated with:
 
-```sh
+```gosh
 # using ipfs version 0.18.1
 mkdir -p rootDir/ipfs &&
 mkdir -p rootDir/ipns &&
@@ -1306,7 +1306,7 @@ ipfs dag export ${DIR_CID} > ./fixtures.car
 
 generated with:
 
-```sh
+```gosh
 # using ipfs version 0.21.0-dev (03a98280e3e642774776cd3d0435ab53e5dfa867)
 
 mkdir -p root2/root3/root4 &&
@@ -1344,14 +1344,14 @@ ipfs dag export ${ROOT1_CID} > ./fixtures.car
 
 Created with commands:
 
-```bash
+```gobash
 openssl genpkey -algorithm ED25519 > openssl_ed25519.pem
 openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 > openssl_rsa.pem
 ```
 
 secp key used in the 'restrict import key' test.
 From: https://www.openssl.org/docs/man1.1.1/man1/openssl-genpkey.html
-```bash
+```gobash
 openssl genpkey -genparam -algorithm EC -out ecp.pem \
         -pkeyopt ec_paramgen_curve:secp384r1 \
         -pkeyopt ec_param_enc:named_curve
@@ -1361,14 +1361,14 @@ rm ecp.pem
 Note: The Bitcoin `secp256k1` curve which is what `go-libp2p-core/crypto`
 actually generates and would be of interest to test against is not
 recognized by the Go library:
-```
+```go
 Error: parsing PKCS8 format: x509: failed to parse EC private key embedded
  in PKCS#8: x509: unknown elliptic curve
 ```
 We keep the `secp384r1` type instead from the original openssl example.
 
 
-# `/opt/kubo/test/sharness/t0280-plugin-data/example.go`
+# `test/sharness/t0280-plugin-data/example.go`
 
 这段代码是一个Java程序，其中包含以下几个主要部分：
 
@@ -1423,7 +1423,7 @@ package main
 总体来说，这段代码定义了一个用于测试Kubernetes集群的`plugin.Plugin`集合，并导出了其中的一个名为`testPlugin`的实例。通过循环遍历`Plugins`切片，程序将输出每个`plugin.Plugin`实例的名称，以及一个包含所有实例的`&plugin.Plugin`类型实例。
 
 
-```
+```go
 package main
 
 import (
@@ -1458,7 +1458,7 @@ var _ = Plugins // used
 6. 在 `Init` 方法中，返回值为 `nil`，表示初始化操作成功。
 
 
-```
+```go
 type testPlugin struct{}
 
 func (*testPlugin) Name() string {
@@ -1484,7 +1484,7 @@ func (*testPlugin) Init(env *plugin.Environment) error {
 
 generated with:
 
-```sh
+```gosh
 # using ipfs version 0.18.1
 HASH=$(echo "testing" | ipfs add -q)
 ipfs dag export $HASH > fixtures.car

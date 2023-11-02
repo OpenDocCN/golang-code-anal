@@ -51,7 +51,7 @@ This is significant refactor of a core component that touches many parts of IPFS
 
 go-ipfs now provides utility commands for working with [multibase](https://docs.ipfs.tech/concepts/glossary/#multibase):
 
-```console
+```goconsole
 $ echo -n hello | ipfs multibase encode -b base16 > file-mbase16
 $ cat file-mbase16
 f68656c6c6f

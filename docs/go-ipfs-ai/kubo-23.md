@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 23
 
-# `/opt/kubo/core/commands/pin/remotepin_test.go`
+# `core/commands/pin/remotepin_test.go`
 
 This appears to be a testing function that evaluates a series of input URLs against a known good output. The input URLs are provided as strings, and the expected output for each URL is also provided as a string. If the output for a given input URL is not what is expected, the test will report an error.
 
@@ -9,7 +9,7 @@ The expected output for a valid input URL is prefixed with a URL schema, such as
 Note that some of the input URLs are missing the protocol and some of the ports, this is because the service endpoint they are requesting may not have those specified.
 
 
-```
+```go
 package pin
 
 import (
@@ -79,7 +79,7 @@ func TestNormalizeEndpoint(t *testing.T) {
 
 ```
 
-# `/opt/kubo/core/commands/unixfs/ls.go`
+# `core/commands/unixfs/ls.go`
 
 这段代码定义了一个名为“unixfs”的包。它导入了多个其他包，包括“fmt”用于格式化输出、“io”用于输入/输出操作、“sort”用于排序、“text/tabwriter”用于处理表格数据等。
 
@@ -88,7 +88,7 @@ func TestNormalizeEndpoint(t *testing.T) {
 最后，它导入了两个与“ipfs”相关的包——“merkledag”和“unixfs”。这里我们猜测“ipfs”可能是指一个名为“iparsers”的包，它提供了一些用于解析IPLD的工具。但是，我们无法确定这一点，因为我们缺少关于“ipfs”和“unixfs”的更多上下文信息。
 
 
-```
+```go
 package unixfs
 
 import (
@@ -118,7 +118,7 @@ LsOutput 结构体包含三个字段：Arguments、Objects 和 Links，分别表
 这段代码的目的是定义一个链接类型（LsLink）和两个对象类型（LsObject 和 LsOutput）。LsObject 和 LsOutput 都包含一个名为 "Links" 的字段，该字段包含一个 LsLink 类型的成员变量。
 
 
-```
+```go
 type LsLink struct {
 	Name, Hash string
 	Size       uint64
@@ -168,7 +168,7 @@ d. 设置命令的短描述为"Displays the contents of an IPFS or IPNS object(s
 e. 设置命令的长描述为"This functionality is deprecated, and will be removed in future versions as it duplicates the functionality of 'ipfs ls'. If possible, please use 'ipfs ls' instead."，以通知用户该命令的功能已经过时，并建议使用其他命令或库来实现相同的功能。
 
 
-```
+```go
 var LsCmd = &cmds.Command{
 	Status: cmds.Deprecated, // https://github.com/ipfs/kubo/pull/7755
 	Helptext: cmds.HelpText{
@@ -203,7 +203,7 @@ cat.jpg
 这段代码会显示给定的路径下的所有文件夹内容，包括文件和子目录。
 
 
-```
+```go
 Displays the contents of an IPFS or IPNS object(s) at the given path.
 
 The JSON output contains size information. For files, the child size
@@ -231,7 +231,7 @@ Next, the program watches for updates to the files listed in the `filers` list. 
 Finally, the program watches for updates to the files and prints any relevant information.
 
 
-```
+```go
 This functionality is deprecated, and will be removed in future versions as it duplicates the functionality of 'ipfs ls'.
 If possible, please use 'ipfs ls' instead.
 `,
@@ -406,7 +406,7 @@ If possible, please use 'ipfs ls' instead.
 
 ```
 
-# `/opt/kubo/core/commands/unixfs/unixfs.go`
+# `core/commands/unixfs/unixfs.go`
 
 这段代码是一个 UnixFS 命令行工具的实现，该工具提供了与 IPFS（InterPlanetary File System，IPFS）对象中 Unix 文件系统进行交互的功能。具体来说，这段代码定义了一个名为 "UnixFSCmd" 的命令对象，该对象表示对 UnixFS 工具的支持。
 
@@ -420,7 +420,7 @@ If possible, please use 'ipfs ls' instead.
 整个 UnixFS 命令行工具的作用是帮助用户在 Unix 文件系统中执行各种操作，通过使用 ipfs-cmds 包提供的 UnixFS 命令，可以方便地与 IPFS 对象中 Unix 文件系统进行交互。
 
 
-```
+```go
 package unixfs
 
 import (
@@ -444,7 +444,7 @@ Superseded by modern alternatives: 'ipfs ls' and 'ipfs files'
 
 ```
 
-# `/opt/kubo/core/coreapi/block.go`
+# `core/coreapi/block.go`
 
 该代码的作用是定义了一个名为 "coreapi" 的包，该包包含了一些与 PIN 相关的工具和类。
 
@@ -455,7 +455,7 @@ Superseded by modern alternatives: 'ipfs ls' and 'ipfs files'
 综上所述，该代码定义了一个 PIN 工具包，用于管理 PIN 相关操作。
 
 
-```
+```go
 package coreapi
 
 import (
@@ -493,7 +493,7 @@ import (
 该函数的实现需要依赖一些其他的外部工具和数据结构，如caopts.BlockPutOption、blocks.Block、tracing.Span、io.Reader、int类型等。
 
 
-```
+```go
 type BlockAPI CoreAPI
 
 type BlockStat struct {
@@ -551,7 +551,7 @@ func (api *BlockAPI) Put(ctx context.Context, src io.Reader, opts ...caopts.Bloc
 此函数的作用是获取给定路径的块（BlockAPI中的block）。它使用Tracing（追踪）和BlockAPI作为对外接口，通过调用API的`core.BlockAPI.ResolvePath`函数并获取块的根控制器ID（RootCID），然后使用`blocks.GetBlock`函数获取块。如果块获取成功，函数将返回一个内存中的字节切片（io.Reader）和零错误（error）。如果块获取失败，函数将返回一个空值（nil）或错误。
 
 
-```
+```go
 func (api *BlockAPI) Get(ctx context.Context, p path.Path) (io.Reader, error) {
 	ctx, span := tracing.Span(ctx, "CoreAPI.BlockAPI", "Get", trace.WithAttributes(attribute.String("path", p.String())))
 	defer span.End()
@@ -585,7 +585,7 @@ func (api *BlockAPI) Get(ctx context.Context, p path.Path) (io.Reader, error) {
 3. 设置Block Rm选项（包括力
 
 
-```
+```go
 func (api *BlockAPI) Rm(ctx context.Context, p path.Path, opts ...caopts.BlockRmOption) error {
 	ctx, span := tracing.Span(ctx, "CoreAPI.BlockAPI", "Rm", trace.WithAttributes(attribute.String("path", p.String())))
 	defer span.End()
@@ -642,7 +642,7 @@ func (api *BlockAPI) Rm(ctx context.Context, p path.Path, opts ...caopts.BlockRm
 最后，函数创建一个表示块的`BlockStat`对象，将路径、块的大小设置为`path.FromCid`和`len(b.RawData())`，然后将其返回。
 
 
-```
+```go
 func (api *BlockAPI) Stat(ctx context.Context, p path.Path) (coreiface.BlockStat, error) {
 	ctx, span := tracing.Span(ctx, "CoreAPI.BlockAPI", "Stat", trace.WithAttributes(attribute.String("path", p.String())))
 	defer span.End()
@@ -674,7 +674,7 @@ func (api *BlockAPI) Stat(ctx context.Context, p path.Path) (coreiface.BlockStat
 3. "func (api *BlockAPI) core() coreiface.CoreAPI"函数接收一个名为"api"的指针类型，代表一个BlockAPI对象，函数返回一个指向CoreAPI类型"coreiface.CoreAPI"的指针，即api对象的CoreAPI接口。
 
 
-```
+```go
 func (bs *BlockStat) Size() int {
 	return bs.size
 }
@@ -689,7 +689,7 @@ func (api *BlockAPI) core() coreiface.CoreAPI {
 
 ```
 
-# `/opt/kubo/core/coreapi/coreapi.go`
+# `core/coreapi/coreapi.go`
 
 This is a Go package that implements the Boxo blockchain storage layer. It includes the following components:
 
@@ -719,7 +719,7 @@ This is a Go package that implements the Boxo blockchain storage layer. It inclu
 * The `repo` struct provides a Repo implementation.
 
 
-```
+```go
 /*
 **NOTE: this package is experimental.**
 
@@ -803,7 +803,7 @@ import (
 该代码定义的 Hyperledger Fabric 节点是一个 Hyperledger Fabric 链的节点，该节点使用 Hyperledger Fabric 链作为其数据存储库。该节点还支持与外部的网络交互，并支持存储和检索 Hyperledger Fabric 区块链上的数据。
 
 
-```
+```go
 type CoreAPI struct {
 	nctx context.Context
 
@@ -847,7 +847,7 @@ type CoreAPI struct {
 这段代码定义了一个名为NewCoreAPI的函数，该函数接收一个IPFS Node对象和一个或多个options.ApiOption选项对象，然后返回一个coreiface.CoreAPI实例。它还定义了一个名为Unixfs的函数，该函数返回一个核心iface.UnixfsAPI接口，该接口实现了go-ipfs Node中的UnixfsAPI。最后，该函数使用WithOptions选项器将一个或多个options.ApiOption选项传递给coreiface.CoreAPI构造函数，以便在创建新实例时初始化它。
 
 
-```
+```go
 // NewCoreAPI creates new instance of IPFS CoreAPI backed by go-ipfs Node.
 func NewCoreAPI(n *core.IpfsNode, opts ...options.ApiOption) (coreiface.CoreAPI, error) {
 	parentOpts, err := options.ApiOptions()
@@ -883,7 +883,7 @@ if err != nil {
 类似地，可以创建Dag和Name的API实例，分别对应于api.Dag和api.Name方法。这些API接口都实现了coreiface.BlockAPI、coreiface.APIDagService和coreiface.NameAPI接口，具有对应的数据存储和操作能力。
 
 
-```
+```go
 // Block returns the BlockAPI interface implementation backed by the go-ipfs node
 func (api *CoreAPI) Block() coreiface.BlockAPI {
 	return (*BlockAPI)(api)
@@ -915,7 +915,7 @@ func (api *CoreAPI) Name() coreiface.NameAPI {
 这些接口都在Go-IPFS节点中用于与IPFS进行交互操作，这里的实现主要涉及到API的使用。
 
 
-```
+```go
 // Key returns the KeyAPI interface implementation backed by the go-ipfs node
 func (api *CoreAPI) Key() coreiface.KeyAPI {
 	return (*KeyAPI)(api)
@@ -938,7 +938,7 @@ func (api *CoreAPI) Pin() coreiface.PinAPI {
 具体来说，这些函数的作用可能是在某个系统或项目中，通过使用Go-IPFS节点来管理分布式文件系统。这些函数允许通过核心API来注册、发现和使用Swarm、PubSub和Dht API，从而实现更高级别的分布式文件系统管理。
 
 
-```
+```go
 // Dht returns the DhtAPI interface implementation backed by the go-ipfs node
 func (api *CoreAPI) Dht() coreiface.DhtAPI {
 	return (*DhtAPI)(api)
@@ -965,7 +965,7 @@ Finally, it sets up the `Exchange` and `Blockstore` components for the Sub-API, 
 The function returns the initialized Sub-API and a nil error.
 
 
-```
+```go
 // Routing returns the RoutingAPI interface implementation backed by the kubo node
 func (api *CoreAPI) Routing() coreiface.RoutingAPI {
 	return (*RoutingAPI)(api)
@@ -1088,7 +1088,7 @@ func (api *CoreAPI) WithOptions(opts ...options.ApiOption) (coreiface.CoreAPI, e
 该函数简化了使用DAG服务的方式，使得函数更加容易理解和维护。
 
 
-```
+```go
 // getSession returns new api backed by the same node with a read-only session DAG
 func (api *CoreAPI) getSession(ctx context.Context) *CoreAPI {
 	sesAPI := *api
@@ -1102,7 +1102,7 @@ func (api *CoreAPI) getSession(ctx context.Context) *CoreAPI {
 
 ```
 
-# `/opt/kubo/core/coreapi/dag.go`
+# `core/coreapi/dag.go`
 
 这段代码定义了一个名为 "coreapi" 的包。这个包通过导入其它包的方式，将一些库的功能组合在一起，然后导出常用的功能。
 
@@ -1120,7 +1120,7 @@ func (api *CoreAPI) getSession(ctx context.Context) *CoreAPI {
 通过导入这些库，我们可以使用它们的接口来创建和操作各种 Merkled Atomic 和 Pin 实例。
 
 
-```
+```go
 package coreapi
 
 import (
@@ -1145,7 +1145,7 @@ import (
 接着，使用 `span.End()` 函数来关闭 `tracing.Span`，然后使用 `blockstore.PinLock` 函数尝试获取对 `adder.blockstore` 中的 `PinWithMode` 函数的锁，如果失败，则继续执行。最后，使用 `adder.pinning.Flush` 函数来刷新 pin，其中 `Flush` 函数会尝试将所有 pin 都刷新的值都设置为 `ipld.Node` 类型的 `Pin` 结构体，其中 `Pin` 是 `ipld.Node` 类型，它包含一个 `Cid` 字段和一个 `Recursive` 字段，用于在 pin 刷新的模式下工作。
 
 
-```
+```go
 type dagAPI struct {
 	ipld.DAGService
 
@@ -1187,7 +1187,7 @@ func (adder *pinningAdder) Add(ctx context.Context, nd ipld.Node) error {
 5. 如果所有`cid.Set`都已经处理完毕，使用`adder.pinning.Flush`方法将`adder.pinning.Flush`操作的结果返回，该操作会将所有已经创建好的`cid`立即释放。
 
 
-```
+```go
 func (adder *pinningAdder) AddMany(ctx context.Context, nds []ipld.Node) error {
 	ctx, span := tracing.Span(ctx, "CoreAPI.PinningAdder", "AddMany", trace.WithAttributes(attribute.Int("nodes.count", len(nds))))
 	defer span.End()
@@ -1221,7 +1221,7 @@ func (adder *pinningAdder) AddMany(ctx context.Context, nds []ipld.Node) error {
 2. `Session` 函数接收一个名为 `ctx` 的 `context.Context` 类型的参数，然后返回一个名为 `ipld.NodeGetter` 的函数类型，该函数类型实现了 `dag.SessionMaker` 接口，负责创建并返回一个 `Session` 对象，将 `api` 参数作为 `dagService` 字段传递给 `NewSession` 函数，从而创建一个新的 `Session` 对象。
 
 
-```
+```go
 func (api *dagAPI) Pinning() ipld.NodeAdder {
 	return (*pinningAdder)(api.core)
 }
@@ -1237,7 +1237,7 @@ var (
 
 ```
 
-# `/opt/kubo/core/coreapi/dht.go`
+# `core/coreapi/dht.go`
 
 该代码包是一个名为"coreapi"的包，它导入了以下依赖项：
 
@@ -1257,7 +1257,7 @@ var (
 该代码可能用于开发块存储服务的SDK或客户端库。
 
 
-```
+```go
 package coreapi
 
 import (
@@ -1293,7 +1293,7 @@ import (
 3. 如果 `api.routing.FindPeer` 函数没有返回错误，步骤 2 的操作成功。步骤 3 尝试返回 `pi` 和一个非错误的结果。如果返回非错误，则将结果赋给 `pi` 并返回。如果返回错误，则将错误作为 `err` 返回。
 
 
-```
+```go
 type DhtAPI CoreAPI
 
 func (api *DhtAPI) FindPeer(ctx context.Context, p peer.ID) (peer.AddrInfo, error) {
@@ -1317,7 +1317,7 @@ func (api *DhtAPI) FindPeer(ctx context.Context, p peer.ID) (peer.AddrInfo, erro
 该函数的作用是使用DhtAPI协议中的`FindProviders`函数查找Dht网络中的提供者。它接收一个名为`ctx`的上下文和两个路径参数`p`和`opts`。`opts`参数是一个传递给`caopts.DhtFindProvidersOption`的选项参数数组，用于设置Dht API查找提供者的选项。函数返回一个`<-chan peer.AddrInfo, error>`类型的通道，用于返回发现的可用的提供者地址。如果函数在执行期间出现错误，它将返回一个`error`类型的参数。
 
 
-```
+```go
 func (api *DhtAPI) FindProviders(ctx context.Context, p path.Path, opts ...caopts.DhtFindProvidersOption) (<-chan peer.AddrInfo, error) {
 	ctx, span := tracing.Span(ctx, "CoreAPI.DhtAPI", "FindProviders", trace.WithAttributes(attribute.String("path", p.String())))
 	defer span.End()
@@ -1363,7 +1363,7 @@ func (api *DhtAPI) FindProviders(ctx context.Context, p path.Path, opts ...caopt
 8. 最后，返回一个`error`，如果没有错误，则返回`nil`。
 
 
-```
+```go
 func (api *DhtAPI) Provide(ctx context.Context, path path.Path, opts ...caopts.DhtProvideOption) error {
 	ctx, span := tracing.Span(ctx, "CoreAPI.DhtAPI", "Provide", trace.WithAttributes(attribute.String("path", path.String())))
 	defer span.End()
@@ -1418,7 +1418,7 @@ func (api *DhtAPI) Provide(ctx context.Context, path path.Path, opts ...caopts.D
 在函数内部，它使用一个名为 dag 的受保护的 DAG 服务创建一个 DAG 服务。它使用 dag.Walk 函数跟踪从受害人处获取到的客户端 ID，并使用 blockservice 的 blockservice.New 函数创建一个块存储服务客户端。然后，它使用 dag.GetLinksDirect 函数获取与每个客户端 ID 相关的链接，并使用 provided.Visitor 函数将其传递给受害人。如果受害人返回一个非空错误，它将在函数中返回。否则，它将返回一个非空空集，表示成功提供了客户端ID。
 
 
-```
+```go
 func provideKeys(ctx context.Context, r routing.Routing, cids []cid.Cid) error {
 	for _, c := range cids {
 		err := r.Provide(ctx, c, true)
@@ -1471,14 +1471,14 @@ func provideKeysRec(ctx context.Context, r routing.Routing, bs blockstore.Blocks
 函数返回的是一个指向CoreAPI类型中包含"core"函数的指针，这个函数接收一个DhtAPI类型的参数，然后执行DhtAPI中包含的"core"函数。
 
 
-```
+```go
 func (api *DhtAPI) core() coreiface.CoreAPI {
 	return (*CoreAPI)(api)
 }
 
 ```
 
-# `/opt/kubo/core/coreapi/key.go`
+# `core/coreapi/key.go`
 
 这段代码定义了一个名为 "coreapi" 的包。它导入了来自以下外部库的依赖项：
 
@@ -1499,7 +1499,7 @@ func (api *DhtAPI) core() coreiface.CoreAPI {
 这个包的主要目的是提供用于与 IPFS 存储桶进行交互的库。它允许用户通过提供配置选项来使用不同的存储桶。
 
 
-```
+```go
 package coreapi
 
 import (
@@ -1531,7 +1531,7 @@ import (
 最后，该函数将返回一个指向key类型的元组，如果没有错误，则该元组包含一个名为key的实参和一个名为error的实参。
 
 
-```
+```go
 type KeyAPI CoreAPI
 
 type key struct {
@@ -1580,7 +1580,7 @@ func (k *key) ID() peer.ID {
 第三个函数`ID`函数返回键的PeerID，它通过`key.peerID`访问键的PeerID并返回。
 
 
-```
+```go
 // Name returns the key name
 func (k *key) Name() string {
 	return k.name
@@ -1613,7 +1613,7 @@ Here is how you can use it:
 * The `newKey` function returns a new keystore entry with the specified name. This function returns a `coreiface.Key` object.
 
 
-```
+```go
 // Generate generates new key, stores it in the keystore under the specified
 // name and returns a base58 encoded multihash of its public key.
 func (api *KeyAPI) Generate(ctx context.Context, name string, opts ...caopts.KeyGenerateOption) (coreiface.Key, error) {
@@ -1688,7 +1688,7 @@ func (api *KeyAPI) Generate(ctx context.Context, name string, opts ...caopts.Key
 函数的输入参数是一个名为 `ctx` 的 `Context` 实例，它包含了当前的上下文信息。函数的输出是一个由 `coreiface.Key` 类型组成的切片，它包含了按键值排序后的键。
 
 
-```
+```go
 // List returns a list keys stored in keystore.
 func (api *KeyAPI) List(ctx context.Context) ([]coreiface.Key, error) {
 	_, span := tracing.Span(ctx, "CoreAPI.KeyAPI", "List")
@@ -1744,7 +1744,7 @@ It works as follows:
 It is written in the Go programming language and is using the `peer` package to handle the `peer.IDFromPublicKey` function.
 
 
-```
+```go
 // Rename renames `oldName` to `newName`. Returns the key and whether another
 // key was overwritten, or an error.
 func (api *KeyAPI) Rename(ctx context.Context, oldName string, newName string, opts ...caopts.KeyRenameOption) (coreiface.Key, bool, error) {
@@ -1831,7 +1831,7 @@ func (api *KeyAPI) Rename(ctx context.Context, oldName string, newName string, o
 如果出现任何错误，函数将在栈中记录一条名为 "CoreAPI.KeyAPI.Remove" 的跟踪，以便稍后进行调试。
 
 
-```
+```go
 // Remove removes keys from keystore. Returns ipns path of the removed key.
 func (api *KeyAPI) Remove(ctx context.Context, name string) (coreiface.Key, error) {
 	_, span := tracing.Span(ctx, "CoreAPI.KeyAPI", "Remove", trace.WithAttributes(attribute.String("name", name)))
@@ -1876,7 +1876,7 @@ func (api *KeyAPI) Remove(ctx context.Context, name string) (coreiface.Key, erro
 3. 如果函数在调用时失败，它将抛出一个名为"error"的错误。
 
 
-```
+```go
 func (api *KeyAPI) Self(ctx context.Context) (coreiface.Key, error) {
 	if api.identity == "" {
 		return nil, errors.New("identity not loaded")

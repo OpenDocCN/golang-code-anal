@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 9
 
-# `/opt/kubo/config/serialize/serialize.go`
+# `config/serialize/serialize.go`
 
 这段代码是一个 Go 语言 package，名为 "fsrepo"，旨在实现文件系统 (File System) 存储资源 (File System Storage Resource) 的封装和访问。它实现了两个主要功能：创建一个新的文件系统存储资源 (File System Storage Resource) 对象，以及在文件系统存储资源上执行原子操作 (Atomic Operations)。
 
@@ -10,7 +10,7 @@
 2. 在文件系统存储资源上执行原子操作。当调用 `原子` 函数并传递一个操作对象时，该函数会在文件系统存储资源上执行指定的操作。这里的操作对象是 `原子file` 包中的一个类型，它实现了原子操作的功能。
 
 
-```
+```go
 package fsrepo
 
 import (
@@ -37,7 +37,7 @@ import (
 
 
 
-```
+```go
 // ErrNotInitialized is returned when we fail to read the config because the
 // repo doesn't exist.
 var ErrNotInitialized = errors.New("ipfs not initialized, please run 'ipfs init'")
@@ -67,7 +67,7 @@ func ReadConfigFile(filename string, cfg interface{}) error {
 接着，代码创建一个名为`cfg`的接口，并尝试将其写入到`filename`中。如果写入失败，代码返回错误。如果写入成功，代码关闭文件并返回0。
 
 
-```
+```go
 // WriteConfigFile writes the config from `cfg` into `filename`.
 func WriteConfigFile(filename string, cfg interface{}) error {
 	err := os.MkdirAll(filepath.Dir(filename), 0o755)
@@ -95,7 +95,7 @@ func WriteConfigFile(filename string, cfg interface{}) error {
 这两个函数都在`config.conf`文件中定义，文件中包含了`encode`函数的定义。
 
 
-```
+```go
 // encode configuration with JSON.
 func encode(w io.Writer, value interface{}) error {
 	// need to prettyprint, hence MarshalIndent, instead of Encoder
@@ -120,7 +120,7 @@ func Load(filename string) (*config.Config, error) {
 
 ```
 
-# `/opt/kubo/config/serialize/serialize_test.go`
+# `config/serialize/serialize_test.go`
 
 这段代码的作用是测试一个名为"fsrepo"的包中的一部分，主要功能是向指定文件夹下的".ipfsconfig"文件中写入配置文件。具体来说，代码实现了以下步骤：
 
@@ -143,7 +143,7 @@ func Load(filename string) (*config.Config, error) {
 9. 因为生成的随机整数在测试中失败，所以程序可能会崩溃或产生不可预测的行为。
 
 
-```
+```go
 package fsrepo
 
 import (
@@ -184,7 +184,7 @@ func TestConfig(t *testing.T) {
 
 ```
 
-# `/opt/kubo/core/builder.go`
+# `core/builder.go`
 
 这段代码是一个名为 "core" 的包，它定义了一系列函数和结构体，以及一些常量。
 
@@ -205,7 +205,7 @@ func TestConfig(t *testing.T) {
 此外，该包还导入了 "github.com/ipfs/go-metrics-interface" 和 "go.uber.org/dig" 和 "go.ipfs.org/v6/kepters" 等 packages，这些 packages 有助于收集 IPFS 对象的统计信息。
 
 
-```
+```go
 package core
 
 import (
@@ -232,7 +232,7 @@ import (
 最后，注册了一个名为注册FXOptionFunc的函数，它将在fx应用程序启动之前运行。这个函数会按注册顺序 invoke fxOptionFuncs 数组中的每个函数，并将返回的选项和错误类型的切片传递给下一个函数的 FXNodeInfo。
 
 
-```
+```go
 // FXNodeInfo contains information useful for adding fx options.
 // This is the extension point for providing more info/context to fx plugins
 // to make decisions about what options to include.
@@ -257,7 +257,7 @@ var fxOptionFuncs []fxOptFunc
 这段代码还提醒说，如果您的 `fx` 选项中包含了一些复杂的行为，您应该考虑到这种情况下可能会发生的问题。例如，如果在使用一个禁止使用非允许 CID 的 blockservice，可能会导致一些迁移失败。
 
 
-```
+```go
 //
 // Note that these are applied globally, by all invocations of NewNode.
 // There are multiple places in Kubo that construct nodes, such as:
@@ -358,7 +358,7 @@ If the input configuration is missing any of these options, the function will lo
 If the function creates a service successfully, it will return a `fixture.ServiceBootstrapper` object. If an error occurs, it will return an error.
 
 
-```
+```go
 // from https://stackoverflow.com/a/59348871
 type valueContext struct {
 	context.Context
@@ -452,7 +452,7 @@ func NewNode(ctx context.Context, cfg *BuildCfg) (*IpfsNode, error) {
 这段代码的作用是输出应用程序错误信息中的仅 Inner 层错误信息，以便用户更好地理解应用程序的构建过程。现有的错误信息通常包含应用程序依赖项（如 `dig` 包）中的未公开错误。这些错误信息可能会包含应用程序错误日志的多个层次结构，因此在应用程序中解决错误通常需要查看错误链的详细信息。但是，对于开发人员来说，了解错误发生的位置是有用的。因此，这段代码允许用户更好地了解应用程序的构建过程，同时输出仅 Inner 层错误信息，以便用户更好地理解应用程序的构建过程。
 
 
-```
+```go
 // Log the entire `app.Err()` but return only the innermost one to the user
 // given the full error can be very long (as it can expose the entire build
 // graph in a single string).
@@ -479,7 +479,7 @@ func NewNode(ctx context.Context, cfg *BuildCfg) (*IpfsNode, error) {
 最后，函数会返回一个格式化错误消息，其中包含 `err` 的详细信息，并输出该错误消息。
 
 
-```
+```go
 // just have the generic `RootCause` API.
 func logAndUnwrapFxError(fxAppErr error) error {
 	if fxAppErr == nil {
@@ -510,7 +510,7 @@ func logAndUnwrapFxError(fxAppErr error) error {
 
 ```
 
-# `/opt/kubo/core/core.go`
+# `core/core.go`
 
 This is a list of packages in the libp2p project that are related to the peers-to-peers (P2P) network. The P2P network is designed to allow for decentralized, peer-to-peer networking.
 
@@ -532,7 +532,7 @@ The packages in this list include:
 * `p2p/go-libp2p/core/connmgr"	ic: This package provides the`
 
 
-```
+```go
 /*
 Package core implements the IpfsNode object and related methods.
 
@@ -640,7 +640,7 @@ The `IsOnline` field is set to `bool` and is responsible for determining whether
 The `IsDaemon` field is set to `bool` and is responsible for determining if the service is running as a daemon or not.
 
 
-```
+```go
 var log = logging.Logger("core")
 
 // IpfsNode is IPFS Core module. It represents an IPFS instance.
@@ -720,7 +720,7 @@ type IpfsNode struct {
 最后，在 "IpfsNode" 的 "Close" 方法中，调用了 "stop" 方法来关闭节点，这个方法可能需要在 ipfs 服务自身进行实现。
 
 
-```
+```go
 // Mounts defines what the node's mount state is. This should
 // perhaps be moved to the daemon or mount. It's here because
 // it needs to be accessible across daemon requests.
@@ -751,7 +751,7 @@ It first checks if the bootstrap peers configuration is set, if not, it will att
 Finally, it sets the BackupBootstrapInterval configuration, which controls how often the internal backup bootstrap peers are updated.
 
 
-```
+```go
 // Bootstrap will set and call the IpfsNodes bootstrap function.
 func (n *IpfsNode) Bootstrap(cfg bootstrap.BootstrapConfig) error {
 	// TODO what should return value be when in offlineMode?
@@ -818,7 +818,7 @@ func (n *IpfsNode) Bootstrap(cfg bootstrap.BootstrapConfig) error {
 代码中定义了两个函数，分别用于加载和保存本地temp bootstrap peer的注册信息。这两个函数都在函数式接口中定义，使用了 gRPC 协程的单例模式来管理状态。同时，代码中还定义了一个名为 IpfsNode 的 struct，用于封装有关 IpfsNode 类型的信息。
 
 
-```
+```go
 var TempBootstrapPeersKey = datastore.NewKey("/local/temp_bootstrap_peers")
 
 func (n *IpfsNode) loadBootstrapPeers() ([]peer.AddrInfo, error) {
@@ -854,7 +854,7 @@ func (n *IpfsNode) saveTempBootstrapPeers(ctx context.Context, peerList []peer.A
 此外，这段代码定义了一个名为ConstructPeerHostOpts的结构体，其中包含用于配置对等网络主机选项的属性和方法。这些选项包括添加自定义对等网络主机以设置默认端口映射、禁用NAT端口映射、禁用中继、启用中继等。
 
 
-```
+```go
 func (n *IpfsNode) loadTempBootstrapPeers(ctx context.Context) ([]peer.AddrInfo, error) {
 	ds := n.Repo.Datastore()
 	bytes, err := ds.Get(ctx, TempBootstrapPeersKey)
@@ -879,7 +879,7 @@ type ConstructPeerHostOpts struct {
 
 ```
 
-# `/opt/kubo/core/core_test.go`
+# `core/core_test.go`
 
 This is a testing function that checks if the `NewNode` function correctly constructs a Quasar service instance with the given configuration. The function uses the `repo.Mock` struct to simulate the interactions with the `datastore` package, and the `syncds.MutexWrap` struct to create a mock implementation of a `MapDatastore`.
 
@@ -888,7 +888,7 @@ The function checks whether the `bad` slice is populated with `config.Config` ob
 If the `bad` slice is not populated with `Node` instances, the function logs the error and then tries to create a `Node` instance for each bad configuration using the `NewNode` function again. If the `bad` slice still contains `Node` instances for all configurations, the function logs the error and then aborts.
 
 
-```
+```go
 package core
 
 import (
@@ -957,7 +957,7 @@ func TestInitialization(t *testing.T) {
 Yes, the text you provided includes a valid Base64 encoded PNG image. When decoded, the image is a PNG file that can be opened and viewed in a variety of image editors and devices, such as Google Chrome, Microsoft Paint, and the like.
 
 
-```
+```go
 var testIdentity = config.Identity{
 	PeerID:  "QmNgdzLieYi8tgfo2WfTUzNVH5hQK9oAYGVf6dxN12NrHt",
 	PrivKey: "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",
@@ -965,7 +965,7 @@ var testIdentity = config.Identity{
 
 ```
 
-# `/opt/kubo/core/commands/active.go`
+# `core/commands/active.go`
 
 这段代码定义了一个名为 "commands" 的包，其中定义了一些常用的命令，包括打印命令、打印输出、打印所有命令、将命令输出到控制台、并行执行命令等。
 
@@ -976,7 +976,7 @@ var testIdentity = config.Identity{
 最后，定义了一个名为 "verbose" 的选项，设置了是否在命令行工具的输出中显示更多的信息。
 
 
-```
+```go
 package commands
 
 import (
@@ -1012,7 +1012,7 @@ The program has a function named `main` that initializes the program and runs it
 I hope this helps! Let me know if you have any questions.
 
 
-```
+```go
 var ActiveReqsCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "List commands run on this IPFS node.",
@@ -1091,7 +1091,7 @@ Lists running and recently run commands.
 "setRequestClearCmd"命令的作用是设置在日志中保留多少未活动的请求。具体来说，它创建了一个新的"oldcmds.Context"类型的变量"ctx"，然后设置了一个名为"ReqLog.SetKeepTime"的函数来设置请求保留时间。该函数接受一个名为"time"的参数，它是一个时间戳类型。最后，它返回一个 nil 表示成功。
 
 
-```
+```go
 var clearInactiveCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
 		Tagline: "Clear inactive requests from the log.",
@@ -1124,7 +1124,7 @@ var setRequestClearCmd = &cmds.Command{
 
 ```
 
-# `/opt/kubo/core/commands/add.go`
+# `core/commands/add.go`
 
 这段代码定义了一个名为 "commands" 的包，其中定义了一些函数和变量，包括：
 
@@ -1145,7 +1145,7 @@ var setRequestClearCmd = &cmds.Command{
 这些函数和变量的作用不明确，具体取决于使用场景。
 
 
-```
+```go
 package commands
 
 import (
@@ -1180,7 +1180,7 @@ import (
 最后，定义了一个名为 `ToFileOptionName` 的选项，它的含义是将 JSON 字段输出到文件中。
 
 
-```
+```go
 // ErrDepthLimitExceeded indicates that the max depth has been exceeded.
 var ErrDepthLimitExceeded = fmt.Errorf("depth limit exceeded")
 
@@ -1216,7 +1216,7 @@ const (
 这段代码定义了一个名为"adderOutChanSize"的变量，其值为8。这个变量可能是在某种情况下需要的一个常量，但并没有进一步的定义或说明，所以它的作用是什么并不清楚。
 
 
-```
+```go
 const adderOutChanSize = 8
 
 var AddCmd = &cmds.Command{
@@ -1253,7 +1253,7 @@ ipfs repo info <graph_url>
 最后，`seconds`的作用是让IPFS的repovider在运行时知道要等待多长时间，以确保在repoinfo命令执行完成后可以得到最新的repo信息。
 
 
-```
+```go
 seconds when the reprovider runs.
 
 The wrap option, '-w', wraps the file (or files, if using the
@@ -1282,7 +1282,7 @@ You can now refer to the added file in a gateway, like so:
 此外，代码中提到了 "chunker" 选项，它是 IPFS 文件系统 chunking（切分）策略的指定。通过指定 "chunker" 选项，您可以指定 IPFS 文件系统将文件分成多少个独立的 chunk进行传输。这可以提高文件系统的性能和效率，特别是在需要大量文件或需要频繁地传输文件时。
 
 
-```
+```go
 Files imported with 'ipfs add' are protected from GC (implicit '--pin=true'),
 but it is up to you to remember the returned CID to get the data back later.
 
@@ -1305,7 +1305,7 @@ The chunker option, '-s', specifies the chunking strategy that dictates
 该命令行的作用是：将一个文件分割成指定大小的块，并且允许用户指定块的大小。通过指定不同的块大小，用户可以获得不同的块，对同一块内容进行去重，然后将文件保存到块中。
 
 
-```
+```go
 how to break files into blocks. Blocks with same content can
 be deduplicated. Different chunking strategies will produce different
 hashes for the same file. The default is a fixed block size of
@@ -1334,7 +1334,7 @@ IPFS 对象链接是 IPFS 中的一个概念，允许您将 IPFS 对象与哈希
 这段代码还输出了一个关于 CID determinism 注点和 'ipfs add' 命令的说明。CID determinism 是指 IPFS 对象链接的哈希值是否发生变化。而 'ipfs add' 命令是一个用于添加 IPFS 对象的常用命令。
 
 
-```
+```go
 You can now check what blocks have been created by:
 
   > ipfs object links QmafrLBfzRLV4XSH1XcaMMeaXEUhDJjmtDfsYU95TrWG87
@@ -1373,7 +1373,7 @@ The program has several parameters:
 * `resChan`: a channel to receive the result of the `res.Result` field. This is used to send the result of the `bar` operation to the outside systems.
 
 
-```
+```go
 IPFS software to use the same import parameters as Kubo.
 
 If you need to back up or transport content-addressed data using a non-IPFS

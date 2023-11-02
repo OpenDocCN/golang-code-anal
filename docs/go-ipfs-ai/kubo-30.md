@@ -1,6 +1,6 @@
 # go-ipfs 源码解析 30
 
-# `/opt/kubo/core/node/libp2p/discovery.go`
+# `core/node/libp2p/discovery.go`
 
 这段代码定义了一个名为 "libp2p" 的包，其中包含了一些用于实现 libp2p 协议的函数和变量。具体来说，这段代码包括以下几个部分：
 
@@ -123,7 +123,7 @@ func CheckURI(ctx context.Context, uri string) bool {
 
 
 
-```
+```go
 package libp2p
 
 import (
@@ -150,7 +150,7 @@ import (
 最后，该代码还定义了一个名为 `discoveryConnTimeout` 的常量，使用 `time.Second * 30` 秒作为其值。
 
 
-```
+```go
 const discoveryConnTimeout = time.Second * 30
 
 type discoveryHandler struct {
@@ -182,7 +182,7 @@ SetupDiscovery函数将在运行时创建一个mdns.Service，并使用mctx和lc
 最后，在帮助函数中输出使用mdns服务的情况。
 
 
-```
+```go
 func DiscoveryHandler(mctx helpers.MetricsCtx, lc fx.Lifecycle, host host.Host) *discoveryHandler {
 	return &discoveryHandler{
 		ctx:  helpers.LifecycleCtx(mctx, lc),
@@ -205,7 +205,7 @@ func SetupDiscovery(useMdns bool) func(helpers.MetricsCtx, fx.Lifecycle, host.Ho
 
 ```
 
-# `/opt/kubo/core/node/libp2p/dns.go`
+# `core/node/libp2p/dns.go`
 
 这段代码定义了一个名为`MultiaddrResolver`的函数，它是`libp2p`包中的一个函数。其作用是接收一个`madns.Resolver`类型的参数`rslv`，并返回一个`Libp2pOpts`类型的选项和一个错误。
 
@@ -217,7 +217,7 @@ func SetupDiscovery(useMdns bool) func(helpers.MetricsCtx, fx.Lifecycle, host.Ho
 4. 返回`opts`和`nil`，表示成功。
 
 
-```
+```go
 package libp2p
 
 import (
@@ -232,7 +232,7 @@ func MultiaddrResolver(rslv *madns.Resolver) (opts Libp2pOpts, err error) {
 
 ```
 
-# `/opt/kubo/core/node/libp2p/filters.go`
+# `core/node/libp2p/filters.go`
 
 该代码是一个名为"libp2p"的包，它导入了以下依赖项：
 
@@ -252,7 +252,7 @@ func MultiaddrResolver(rslv *madns.Resolver) (opts Libp2pOpts, err error) {
 - 在"libp2p.core.connmgr"的"Create心率保证连接"函数中，使用了"filtersConnectionGater"实现了心率保证连接。
 
 
-```
+```go
 package libp2p
 
 import (
@@ -275,7 +275,7 @@ type filtersConnectionGater ma.Filters
 第一个函数`InterceptAddrDial`接收一个`peer.ID`和`addr`参数，然后返回一个布尔值，表示是否允许通过`filtersConnectionGater`与连接。函数`InterceptPeerDial`接收一个`peer.ID`参数，返回一个布尔值，表示是否允许与连接。函数`InterceptAccept`接收一个`network.ConnMultiaddrs`参数，返回一个布尔值，表示是否允许通过`filtersConnectionGater`与连接。函数`InterceptSecured`接收一个`network.Direction`和一个`peer.ID`参数，然后返回一个布尔值，表示是否允许通过`filtersConnectionGater`与连接。
 
 
-```
+```go
 var _ connmgr.ConnectionGater = (*filtersConnectionGater)(nil)
 
 func (f *filtersConnectionGater) InterceptAddrDial(_ peer.ID, addr ma.Multiaddr) (allow bool) {
@@ -301,14 +301,14 @@ func (f *filtersConnectionGater) InterceptSecured(_ network.Direction, _ peer.ID
 函数实现了一个简单的链路拦截功能，当网络连接升级时，允许客户端继续尝试重新连接，即不会立即断开连接。当客户端成功连接并可以发送数据时，函数返回允许连接的布尔值（true）和升级原因（0）作为答案，否则返回不允许连接的布尔值（false）和丢连接的原因（控制.DisconnectReason）作为答案。
 
 
-```
+```go
 func (f *filtersConnectionGater) InterceptUpgraded(_ network.Conn) (allow bool, reason control.DisconnectReason) {
 	return true, 0
 }
 
 ```
 
-# `/opt/kubo/core/node/libp2p/host.go`
+# `core/node/libp2p/host.go`
 
 这段代码定义了一个名为"libp2p"的包，其中包含了与libp2p相关的代码。具体来说，它导入了以下几个相关的库：
 
@@ -320,7 +320,7 @@ func (f *filtersConnectionGater) InterceptUpgraded(_ network.Conn) (allow bool, 
 此外，还导入了一些与libp2p相关的上下文，如peer、peerstore、routed等。
 
 
-```
+```go
 package libp2p
 
 import (
@@ -363,7 +363,7 @@ P2PHostOut结构体包含以下字段：
 这两 struct 一起定义了 libp2p.host.Hostable 的输出接口，用于将数据从本地主机发送到远程主机。在定义 P2PHostIn 时，它包含了许多与输入数据相关的选项和字段，这些选项和字段对于将数据发送到远程主机是非常重要的。在定义 P2PHostOut 时，它包含了一些与主机属性相关的选项，例如主机名称和路由选项，这些选项在将数据发送到远程主机时用于指定主机和路由。
 
 
-```
+```go
 type P2PHostIn struct {
 	fx.In
 
@@ -397,7 +397,7 @@ Finally, it configures the router and sets the host to the endpoint specified by
 It also includes some unnecessary code for testing purposes.
 
 
-```
+```go
 func Host(mctx helpers.MetricsCtx, lc fx.Lifecycle, params P2PHostIn) (out P2PHostOut, err error) {
 	opts := []libp2p.Option{libp2p.NoListenAddrs}
 	for _, o := range params.Opts {
@@ -459,7 +459,7 @@ func Host(mctx helpers.MetricsCtx, lc fx.Lifecycle, params P2PHostIn) (out P2PHo
 
 ```
 
-# `/opt/kubo/core/node/libp2p/hostopt.go`
+# `core/node/libp2p/hostopt.go`
 
 这段代码定义了一个名为 libp2p 的包，其中包含了一些用于在 libp2p 网络中管理主机和连接的函数和类型。
 
@@ -470,7 +470,7 @@ func Host(mctx helpers.MetricsCtx, lc fx.Lifecycle, params P2PHostIn) (out P2PHo
 最后，在 libp2p 包中定义了一些名为 peerset 和 host 的函数，它们用于在 libp2p 网络中连接到主机和创建连接。这些函数使用了 libp2p 中定义的一些类型和方法，例如 `host.Host` 类型表示主机对象，`peerstore.Peerstore` 类型表示存储连接的 peerstore 对象，以及一些选项类型。
 
 
-```
+```go
 package libp2p
 
 import (
@@ -493,7 +493,7 @@ var DefaultHostOption HostOption = constructPeerHost
 具体来说，函数首先从`peerstore`的`PrivKey`函数中获取与给定`peer.ID`相对应的私钥。如果私钥为`nil`，函数将返回一个错误，并指出原因。否则，函数将私钥和`peerstore`作为`options...`数组的一个元素，并使用`libp2p.New`函数创建一个新的`libp2p`实例。最后，函数返回新创建的`libp2p`实例。
 
 
-```
+```go
 // isolates the complex initialization steps
 func constructPeerHost(id peer.ID, ps peerstore.Peerstore, options ...libp2p.Option) (host.Host, error) {
 	pkey := ps.PrivKey(id)
@@ -506,7 +506,7 @@ func constructPeerHost(id peer.ID, ps peerstore.Peerstore, options ...libp2p.Opt
 
 ```
 
-# `/opt/kubo/core/node/libp2p/libp2p.go`
+# `core/node/libp2p/libp2p.go`
 
 这段代码是一个 Go 语言编写的库 libp2p 的包。libp2p 是一个基于 libp2p 协议的分布式系统，用于创建和管理点对点网络连接。
 
@@ -520,7 +520,7 @@ func constructPeerHost(id peer.ID, ps peerstore.Peerstore, options ...libp2p.Opt
 6. 实现了时间轴包时钟同步，使得节点之间的时钟同步。
 
 
-```
+```go
 package libp2p
 
 import (
@@ -549,7 +549,7 @@ import (
 接着，该代码将名为 "libp2p.ConnectionManager" 的函数传入 "connmgr.NewConnManager" 的回调函数中，从而实现了一个 P2P 网络节点连接管理器的功能。
 
 
-```
+```go
 var log = logging.Logger("p2pnode")
 
 type Libp2pOpts struct {
@@ -578,7 +578,7 @@ func ConnectionManager(low, high int, grace time.Duration) func() (opts Libp2pOp
 函数UserAgent的作用是获取一个 Libp2p 选项，返回一个选项对象，函数需要接收一个 Libp2p 选项，函数将选项添加到选项对象中，并返回。函数 simpleOpt 是一个 simple 的选项函数，通过创建一个空选项对象，将传递的选项添加到选项对象中，并返回。
 
 
-```
+```go
 func PstoreAddSelfKeys(id peer.ID, sk crypto.PrivKey, ps peerstore.Peerstore) error {
 	if err := ps.AddPubKey(id, sk.GetPublic()); err != nil {
 		return err
@@ -605,7 +605,7 @@ func simpleOpt(opt libp2p.Option) func() (opts Libp2pOpts, err error) {
 该函数`prioritizeOptions`接收一个`priorityOption`类型的参数数组`opts`，并返回一个`Option`类型的值，它由一个具有`priority`字段和`Option`字段的`priorityOption`和一个没有`priority`字段和`Option`字段的`defaultOption`组成。`prioritizeOptions`的实现主要通过遍历`opts`数组，根据其`priority`字段的值设置相应的`option`结构体。其中，`priority`字段和`defaultPriority`字段的具体实现主要依赖于传入的`config.Priority`和`libp2p.Option`类型。
 
 
-```
+```go
 type priorityOption struct {
 	priority, defaultPriority config.Priority
 	opt                       libp2p.Option
@@ -646,7 +646,7 @@ func prioritizeOptions(opts []priorityOption) libp2p.Option {
 函数的作用是设置一个选项参数为 "public" 或 "private" 时，选项参数 `opts` 中的 `libp2p.ForceReachability` 函数的设置。
 
 
-```
+```go
 func ForceReachability(val *config.OptionalString) func() (opts Libp2pOpts, err error) {
 	return func() (opts Libp2pOpts, err error) {
 		if val.IsDefault() {
@@ -667,7 +667,7 @@ func ForceReachability(val *config.OptionalString) func() (opts Libp2pOpts, err 
 
 ```
 
-# `/opt/kubo/core/node/libp2p/libp2p_test.go`
+# `core/node/libp2p/libp2p_test.go`
 
 This is a benchmark test case for the libp2p.extractNums function. The function is used to extract a list of integers from a binary string that contains nums separated by whitespaces.
 
@@ -686,7 +686,7 @@ The benchmark test case for the custom priorities uses the following configurati
 The `extractNums` function is extracted from the `libp2p.Config` struct and is tested in this benchmark test case. The function is expected to return the list of nums [1, 200, 300]
 
 
-```
+```go
 package libp2p
 
 import (
@@ -748,7 +748,7 @@ func TestPrioritize(t *testing.T) {
 
 ```
 
-# `/opt/kubo/core/node/libp2p/nat.go`
+# `core/node/libp2p/nat.go`
 
 这段代码定义了一个名为`AutoNATService`的函数，它通过自动检测并配置Libp2p网络适配器的NAT服务，实现优化网络性能的功能。
 
@@ -761,7 +761,7 @@ func TestPrioritize(t *testing.T) {
 最后，函数使用`append`函数将`libp2p.EnableNATService()`和`libp2p.AutoNATServiceRateLimit()`函数添加到`opts`选项的配置中，从而实现自动NAT服务的功能。
 
 
-```
+```go
 package libp2p
 
 import (
@@ -791,7 +791,7 @@ func AutoNATService(throttle *config.AutoNATThrottleConfig) func() Libp2pOpts {
 
 ```
 
-# `/opt/kubo/core/node/libp2p/peerstore.go`
+# `core/node/libp2p/peerstore.go`
 
 该代码定义了一个名为Peerstore的函数，它使用Go libp2p库创建一个Peerstore实例。
 
@@ -806,7 +806,7 @@ func AutoNATService(throttle *config.AutoNATThrottleConfig) func() Libp2pOpts {
 如果创建Peerstore出现错误，该函数将返回一个 nil 错误。
 
 
-```
+```go
 package libp2p
 
 import (
@@ -833,7 +833,7 @@ func Peerstore(lc fx.Lifecycle) (peerstore.Peerstore, error) {
 
 ```
 
-# `/opt/kubo/core/node/libp2p/pnet.go`
+# `core/node/libp2p/pnet.go`
 
 这段代码定义了一个名为 libp2p 的包，并导入了多个依赖项，包括：
 
@@ -877,7 +877,7 @@ func Peerstore(lc fx.Lifecycle) (peerstore.Peerstore, error) {
 在这段注释中，作者解释了这段代码的作用，但没有输出具体的源代码。
 
 
-```
+```go
 package libp2p
 
 import (
@@ -909,7 +909,7 @@ import (
 3. 返回 PNet 网络实例：调用 PNetFingerprint，将其存储在 PNet 选项中并返回。
 
 
-```
+```go
 type PNetFingerprint []byte
 
 func PNet(repo repo.Repo) (opts Libp2pOpts, fp PNetFingerprint, err error) {
@@ -944,7 +944,7 @@ func PNet(repo repo.Repo) (opts Libp2pOpts, fp PNetFingerprint, err error) {
 最后，函数创建一个 Append函数，用于将"OnStart"钩子添加到代理的生命周期(lifecycle)中。该函数将一个带有"OnStart"钩子和一个空钩子的对象作为参数传入，并返回一个用于通知代理在开始时执行适当的操作的代理。
 
 
-```
+```go
 func PNetChecker(repo repo.Repo, ph host.Host, lc fx.Lifecycle) error {
 	// TODO: better check?
 	swarmkey, err := repo.SwarmKey()
@@ -996,7 +996,7 @@ func PNetChecker(repo repo.Repo, ph host.Host, lc fx.Lifecycle) error {
 从代码中可以看出，这段代码主要实现了对 PSK 的加密和解密。函数的实现采用了 Salsa20 和 Shake-128 算法，其中 Salsa20 算法是一种不可逆的哈希算法，而 Shake-128 算法可以用来减少哈希算法的长度。
 
 
-```
+```go
 func pnetFingerprint(psk pnet.PSK) []byte {
 	var pskArr [32]byte
 	copy(pskArr[:], psk)
@@ -1019,7 +1019,7 @@ func pnetFingerprint(psk pnet.PSK) []byte {
 
 ```
 
-# `/opt/kubo/core/node/libp2p/pubsub.go`
+# `core/node/libp2p/pubsub.go`
 
 这段代码定义了一个名为`FloodSub`的函数，它接受一个`pubsub.Option`作为参数，并返回一个`pubsub.PubSub`实例。它通过在`helpers.MetricsCtx`上下文中使用`fx.Lifecycle`和`host.Host`以及传递给`pubsub.NewFloodSub`的`pubsubOptions`来创建一个服务。
 
@@ -1035,7 +1035,7 @@ pubsub.NewFloodSub(helpers.LifecycleCtx(mctx, lc), host, append(pubsubOptions, p
 综上所述，`FloodSub`函数通过创建一个订阅或发布消息的服务，使用`pubsub.WithDiscovery`设置服务是否使用发现服务，以及`host.Host`和`helpers.MetricsCtx`上下文来创建一个完整的`pubsub.PubSub`实例。
 
 
-```
+```go
 package libp2p
 
 import (
@@ -1070,7 +1070,7 @@ func FloodSub(pubsubOptions ...pubsub.Option) interface{} {
 7. 如果错误发生，返回一个 "pubsub.PubSub" 实例，或者调用 "error" 函数并返回一个非空错误。
 
 
-```
+```go
 func GossipSub(pubsubOptions ...pubsub.Option) interface{} {
 	return func(mctx helpers.MetricsCtx, lc fx.Lifecycle, host host.Host, disc discovery.Discovery) (service *pubsub.PubSub, err error) {
 		return pubsub.NewGossipSub(helpers.LifecycleCtx(mctx, lc), host, append(
@@ -1083,7 +1083,7 @@ func GossipSub(pubsubOptions ...pubsub.Option) interface{} {
 
 ```
 
-# `/opt/kubo/core/node/libp2p/rcmgr.go`
+# `core/node/libp2p/rcmgr.go`
 
 这段代码是一个 Go 语言编写的库 libp2p，它实现了 libp2p 协议，用于在 IPFS 网络中实现点对点连接和数据传输。
 
@@ -1116,7 +1116,7 @@ func GossipSub(pubsubOptions ...pubsub.Option) interface{} {
 由于这段代码实现了 libp2p 协议，因此它可以与 IPFS 网络上的其他节点通信，并允许你创建和管理路由表。
 
 
-```
+```go
 package libp2p
 
 import (
@@ -1154,7 +1154,7 @@ If the ResourceMgr is not configured, or if the daemon is not running with Swarm
 Overall, this code sets up a logging mechanism and a resource manager for a Swarm-based container.
 
 
-```
+```go
 var rcmgrLogger = logging.Logger("rcmgr")
 
 const NetLimitTraceFilename = "rcmgr.json.gz"
@@ -1202,7 +1202,7 @@ It then creates a logging resource manager and sets it as the resource manager f
 It returns the libp2p manager, the logging resource manager options, and a netlimit pointer.
 
 
-```
+```go
 libp2p-resource-limit-overrides.json has been loaded, "default" fields will be
 filled in with autocomputed defaults.`)
 			}
@@ -1279,7 +1279,7 @@ filled in with autocomputed defaults.`)
 接下来，函数遍历`cfg.Service`，如果`cfg.Service`中的任何一项不等于`emptyResourceConfig`，函数就返回`false`。接着，函数遍历`cfg.ServicePeer`，同样如果`cfg.ServicePeer`中的任何一项不等于`emptyResourceConfig`，函数就返回`false`。然后，函数遍历`cfg.Protocol`，如果`cfg.Protocol`中的任何一项不等于`emptyResourceConfig`，函数就返回`false`。接着，函数遍历`cfg.ProtocolPeer`，同样如果`cfg.ProtocolPeer`中的任何一项不等于`emptyResourceConfig`，函数就返回`false`。然后，函数遍历`cfg.Peer`，如果`cfg.Peer`中的任何一项不等于`emptyResourceConfig`，函数就返回`false`。最后，函数判断`cfg.System`是否等于`emptyResourceConfig`，如果是，函数就返回`true`。
 
 
-```
+```go
 func isPartialConfigEmpty(cfg rcmgr.PartialLimitConfig) bool {
 	var emptyResourceConfig rcmgr.ResourceLimits
 	if cfg.System != emptyResourceConfig ||
@@ -1336,7 +1336,7 @@ func isPartialConfigEmpty(cfg rcmgr.PartialLimitConfig) bool {
 最后，函数返回限速配置对象`limitConfig`、日志消息`msg`和一个错误`err`，具体值可以根据函数实现的需求进行相应的调整。
 
 
-```
+```go
 // LimitConfig returns the union of the Computed Default Limits and the User Supplied Override Limits.
 func LimitConfig(cfg config.SwarmConfig, userResourceOverrides rcmgr.PartialLimitConfig) (limitConfig rcmgr.ConcreteLimitConfig, logMessageForStartup string, err error) {
 	limitConfig, msg, err := createDefaultLimitConfig(cfg)
@@ -1380,7 +1380,7 @@ func LimitConfig(cfg config.SwarmConfig, userResourceOverrides rcmgr.PartialLimi
 - `StreamsOutboundUsage`字段是一个`rcmgr.LimitVal64`类型的字段，表示当前出站流媒体服务使用量。
 
 
-```
+```go
 type ResourceLimitsAndUsage struct {
 	// This is duplicated from rcmgr.ResourceResourceLimits but adding *Usage fields.
 	Memory               rcmgr.LimitVal64
@@ -1422,7 +1422,7 @@ type ResourceLimitsAndUsage struct {
 另外，函数内部还定义了一个名为"transient"的结构体，它包含了一些与上面创建的"rcmgr.ResourceLimits"对象中"transient"字段相同的字段，但资源类型不同。
 
 
-```
+```go
 func (u ResourceLimitsAndUsage) ToResourceLimits() rcmgr.ResourceLimits {
 	return rcmgr.ResourceLimits{
 		Memory:          u.Memory,
@@ -1464,7 +1464,7 @@ type LimitsConfigAndUsage struct {
 注意：由于该函数使用了"map[string]ResourceLimitsAndUsage"，因此它接受一个大小为len(u.Peers)的切片，即所有peer的ResourceLimitsAndUsage类型的切片。
 
 
-```
+```go
 func (u LimitsConfigAndUsage) MarshalJSON() ([]byte, error) {
 	// we want to marshal the encoded peer id
 	encodedPeerMap := make(map[string]ResourceLimitsAndUsage, len(u.Peers))
@@ -1493,7 +1493,7 @@ func (u LimitsConfigAndUsage) MarshalJSON() ([]byte, error) {
 最后，函数返回 `rcmgr.PartialLimitConfig`。
 
 
-```
+```go
 func (u LimitsConfigAndUsage) ToPartialLimitConfig() (result rcmgr.PartialLimitConfig) {
 	result.System = u.System.ToResourceLimits()
 	result.Transient = u.Transient.ToResourceLimits()
@@ -1591,7 +1591,7 @@ func mergeResourceLimitsAndScopeStatToResourceLimitsAndUsage(l rcmgr.ResourceLim
 		: map[K
 
 
-```
+```go
 func MergeLimitsAndStatsIntoLimitsConfigAndUsage(l rcmgr.ConcreteLimitConfig, stats rcmgr.ResourceManagerStat) LimitsConfigAndUsage {
 	limits := l.ToPartialLimitConfig()
 
@@ -1638,7 +1638,7 @@ func mergeLimitsAndStatsMapIntoLimitsConfigAndUsageMap[K comparable](limits map[
 3. 对于`mergeResourceLimitsAndScopeStatToResourceLimitsAndUsage`函数，首先将两个整数的内存限制、范围统计和利用率合并成一个`ResourceLimitsAndUsage`结构体。然后，对于`Memory`字段，如果两个整数的内存限制不同，则将`x`的内存限制保留，并将`y`的内存限制设置为`x`的内存限制。接下来，对于`MemoryUsage`字段，如果两个整数的内存限制不同，则将`x`的内存利用率保留，并将`y`的内存利用率设置为`x`的内存利用率。最后，对于其他字段，根据两个整数中哪个整数的值保留或覆盖了该字段，来设置或更新对应的值。最终，返回一个满足`maxInt`函数描述并且包含两个整数的`ResourceLimitsAndUsage`结构体。
 
 
-```
+```go
 func maxInt(x, y int) int {
 	if x > y {
 		return x
@@ -1681,7 +1681,7 @@ func mergeResourceLimitsAndScopeStatToResourceLimitsAndUsage(rl rcmgr.ResourceLi
 最后，该代码还实现了两个循环：一个循环遍历 `stats.Services`，另一个循环遍历 `stats.Protocols`，将它们生成的限制和统计信息添加到 `result` 字段中。
 
 
-```
+```go
 type ResourceInfos []ResourceInfo
 
 type ResourceInfo struct {
@@ -1729,7 +1729,7 @@ func LimitConfigsToInfo(stats LimitsConfigAndUsage) ResourceInfos {
 这个作用是定义了一个限制对象，其中包含了一些限制的名称，可以用来对应用程序中的资源进行限制。例如，可以使用`limitNameMemory`来限制应用程序的内存使用量，或者使用`limitNameConns`来限制应用程序的并发连接数。通过定义这些限制，开发人员可以使用这些名称来理解和调试应用程序的性能和行为。
 
 
-```
+```go
 const (
 	limitNameMemory          = "Memory"
 	limitNameFD              = "FD"
@@ -1767,7 +1767,7 @@ Finally, the function checks if the rate limit has an name of "limitNameConnsInb
 The function returns a list of rate limit objects that have been modified in some way, such as the limit names, values, or usage.
 
 
-```
+```go
 func resourceLimitsAndUsageToResourceInfo(scopeName string, stats ResourceLimitsAndUsage) ResourceInfos {
 	result := ResourceInfos{}
 	for _, l := range limits {
@@ -1833,7 +1833,7 @@ If a whitelist is set, the function calculates the HighWater limit for the Conne
 The function appears to be ensuring that connections to the system are only allowed from within the specified whitelist and that the Connection Manager is not modified by the user in cases where DoS defense is being implemented.
 
 
-```
+```go
 func ensureConnMgrMakeSenseVsResourceMgr(concreteLimits rcmgr.ConcreteLimitConfig, cfg config.SwarmConfig) error {
 	if cfg.ConnMgr.Type.WithDefault(config.DefaultConnMgrType) == "none" || len(cfg.ResourceMgr.Allowlist) != 0 {
 		// no connmgr OR
@@ -1859,7 +1859,7 @@ The error message at the end of the code is indicating that there is a conflict 
 It looks like the code is checking if the value of `rcm.System.ConnsInbound` (the number of incoming connections from the API server) is greater than the value of `rcmgr.DefaultLimit` (the maximum number of incoming connections allowed by the resource manager), and if that is the case, it returns an error.
 
 
-```
+```go
 Unable to initialize libp2p due to conflicting resource manager limit configuration.
 resource manager System.Conns (%d) must be bigger than ConnMgr.HighWater (%d)
 See: https://github.com/ipfs/kubo/blob/master/docs/libp2p-resource-management.md#how-does-the-resource-manager-resourcemgr-relate-to-the-connection-manager-connmgr
@@ -1887,7 +1887,7 @@ See: https://github.com/ipfs/kubo/blob/master/docs/libp2p-resource-management.md
 从代码中可以看出，这个函数的作用是设置P2P网络的服务器连接限制，以避免在Kubernetes集群中出现资源浪费和连接不稳定的情况。
 
 
-```
+```go
 Unable to initialize libp2p due to conflicting resource manager limit configuration.
 resource manager System.Streams (%d) must be bigger than ConnMgr.HighWater (%d)
 See: https://github.com/ipfs/kubo/blob/master/docs/libp2p-resource-management.md#how-does-the-resource-manager-resourcemgr-relate-to-the-connection-manager-connmgr
