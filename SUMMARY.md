@@ -3,3 +3,4 @@
 +   [go-ipfs 源码解析](docs/go-ipfs-ai/README.md)
 +   [trojan-go 源码解析](docs/trojan-go-ai/README.md)
 +   [v2ray-core 源码解析](docs/v2ray-core-ai/README.md)
++   [KubeSploit 源码解析](docs/kubesploit-ai/README.md)
