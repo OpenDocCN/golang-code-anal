@@ -5,3 +5,4 @@
 +   [v2ray-core 源码解析](docs/v2ray-core-ai/README.md)
 +   [KubeSploit 源码解析](docs/kubesploit-ai/README.md)
 +   [KubeBench 源码解析](docs/kubebench-ai/README.md)
++   [Grype 源码解析](docs/grype-ai/README.md)
