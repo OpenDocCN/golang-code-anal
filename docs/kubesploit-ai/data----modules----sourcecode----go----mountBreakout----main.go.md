@@ -4,167 +4,137 @@
 package main
 
 import (
-	"fmt" // 导入 fmt 包，用于格式化输出
-	"io/ioutil" // 导入 ioutil 包，用于读取文件内容
-	"os" // 导入 os 包，用于操作系统功能
-	"os/exec" // 导入 exec 包，用于执行外部命令
-	"strconv" // 导入 strconv 包，用于字符串和基本数据类型之间的转换
-	"strings" // 导入 strings 包，用于处理字符串
+    "fmt"  // 导入 fmt 包，用于格式化输出
+    "io/ioutil"  // 导入 ioutil 包，用于读取文件内容
+    "os"  // 导入 os 包，提供操作系统功能
+    "os/exec"  // 导入 exec 包，用于执行外部命令
+    "strconv"  // 导入 strconv 包，用于字符串和数字之间的转换
+    "strings"  // 导入 strings 包，提供字符串操作函数
 )
 
+// 根据设备类型提取设备信息
 func extractDeviceType(deviceType string) (string,error) {
-	var err error // 声明 err 变量，用于存储错误信息
-	var device string // 声明 device 变量，用于存储设备类型
+    var err error  // 定义错误变量
+    var device string  // 定义设备变量
 
-    if deviceType != "" { // 如果设备类型不为空
-		cmd := exec.Command("blkid") // 创建一个执行外部命令的对象
-		stdout, err := cmd.Output() // 执行命令并获取输出结果
-		if err == nil { // 如果执行命令没有错误
-			//fmt.Println(string(stdout)) // 打印命令输出结果
-			// 将 stdout 转换为字符串并按行分割
-			lines := strings.Split(string(stdout), "\n")
-			// 遍历每一行
-			for _, line := range lines {
-				// 如果行包含 "ext4"
-				if strings.Contains(line, "ext4") {
-					// 以 ":" 分割行，并获取设备信息
-					deviceSplitted := strings.Split(line, ":")
-					device = deviceSplitted[0]
-					// 结束循环
-					break
-				}
-			}
-		}
+    if deviceType != "" {  // 如果设备类型不为空
+        cmd := exec.Command("blkid")  // 创建执行命令对象
+        stdout, err := cmd.Output()  // 执行命令并获取输出
+        if err == nil {  // 如果执行命令没有错误
+            //fmt.Println(string(stdout))  // 打印命令输出
+            lines := strings.Split(string(stdout), "\n")  // 将输出按行分割
+            for _, line := range lines {  // 遍历每一行
+                if strings.Contains(line, "ext4") {  // 如果行包含 "ext4"
+                    deviceSplitted := strings.Split(line, ":")  // 使用冒号分割行
+                    device = deviceSplitted[0]  // 获取设备信息
+                    break  // 结束循环
+                }
+            }
+        }
 
-	} else {
-		// 初始化 foundUUID 变量
-		foundUUID := false
-		// 读取 /proc/cmdline 文件内容
-		dat, err := ioutil.ReadFile("/proc/cmdline")
-		// 如果没有错误
-		if err == nil {
-			// 将文件内容转换为字符串
-			cmdline := string(dat)
-			// 以空格分割命令行参数
-			splittedCmdLine := strings.Split(cmdline, " ")
+    } else {  // 如果设备类型为空
+        foundUUID := false  // 定义是否找到 UUID 的标志
+        dat, err := ioutil.ReadFile("/proc/cmdline")  // 读取 /proc/cmdline 文件内容
+        if err == nil {  // 如果读取文件没有错误
+            cmdline := string(dat)  // 将文件内容转换为字符串
+            splittedCmdLine := strings.Split(cmdline, " ")  // 使用空格分割字符串
 
-			var uuid string
+            var uuid string  // 定义 UUID 变量
 
-			// 提取设备的 UUID
-# 遍历分割后的命令行参数列表
-for _, splitLine := range splittedCmdLine {
-    # 如果当前行以"root=UUID"开头
-    if strings.HasPrefix(splitLine, "root=UUID") {
-        # 获取UUID值并标记已找到UUID
-        uuid = splitLine[10:]
-        foundUUID = true
-    }
-}
+            // 提取设备的 UUID
+            for _, splitLine := range splittedCmdLine {  // 遍历每个分割后的字符串
+                if strings.HasPrefix(splitLine, "root=UUID") {  // 如果字符串以 "root=UUID" 开头
+                    uuid = splitLine[10:]  // 获取 UUID
+                    foundUUID = true  // 设置找到 UUID 的标志为 true
+                }
+            }
 
-# 如果找到了UUID
-if foundUUID {
-    # 执行命令"blkid"
-    cmd := exec.Command("blkid")
-    # 获取命令执行结果
-    stdout, err := cmd.Output()
+            if foundUUID {  // 如果找到了 UUID
+                cmd := exec.Command("blkid")  // 创建执行命令对象
+                stdout, err := cmd.Output()  // 执行命令并获取输出
 
-    # 如果没有错误
-    if err == nil {
-        # 将输出按行分割
-        lines := strings.Split(string(stdout), "\n")
-        # 遍历每一行
-        for _, line := range lines {
-            # 如果当前行包含UUID
-            if strings.Contains(line, uuid) {
-                # 根据":"分割当前行，获取设备信息
-                deviceSplitted := strings.Split(line, ":")
-                device = deviceSplitted[0]
+                if err == nil {  // 如果执行命令没有错误
+                    //fmt.Println(string(stdout))  // 打印命令输出
+                    lines := strings.Split(string(stdout), "\n")  // 将输出按行分割
+                    for _, line := range lines {  // 遍历每一行
+                        if strings.Contains(line, uuid) {  // 如果行包含 UUID
+                            deviceSplitted := strings.Split(line, ":")  // 使用冒号分割行
+                            device = deviceSplitted[0]  // 获取设备信息
+                        }
+                    }
+                }
             }
         }
     }
+
+    return device,err  // 返回设备信息和错误
 }
-// 返回设备和错误信息
+
+// 主函数，设备列表
 func mainfunc(device string, useBruteforce string, deviceType string){
-    var err error
-    var devices []string
-    // TODO: 需要移除 'device == "none"` 并在 pkg/modules/modules.go 中的 Run 函数中修复它。
-    // 出现这种情况是因为当没有值时，它使用 'append' 命令删除了数组。
-    // "none" 目前只是一个临时解决方法
+    var err error  // 定义错误变量
+    var devices []string  // 定义设备列表
+    // 检查设备是否为空或者为"none"
+    // 如果是，根据是否使用暴力破解来添加已知设备到设备列表中
     if device == "" || device == "none" {
-// 如果 useBruteforce 变量的值为 "true"，则执行以下操作
-if useBruteforce == "true" {
-    // 打印提示信息
-    fmt.Println("[*] Using brute force on known devices [\"/dev/sda1\", \"/dev/xvda1\"]")
-    // 将已知设备 "/dev/sda1" 和 "/dev/xvda1" 添加到 devices 切片中
-    devices = append(devices, "/dev/sda1")
-    devices = append(devices, "/dev/xvda1")
-} else {
-    // 否则，根据设备类型提取设备名称
-    device, err = extractDeviceType(deviceType)
-    // 如果设备名称为空或者提取出错，则执行以下操作
-    if device == "" || err != nil {
-        // 打印提示信息
-        fmt.Println("[*] Didn't find device name, using brute force on known devices [\"/dev/sda1\", \"/dev/xvda1\"]")
-        // 将已知设备 "/dev/sda1" 和 "/dev/xvda1" 添加到 devices 切片中
-        devices = append(devices, "/dev/sda1")
-        devices = append(devices, "/dev/xvda1")
+        if useBruteforce == "true" {
+            // 使用暴力破解已知设备
+            fmt.Println("[*] Using brute force on known devices [\"/dev/sda1\", \"/dev/xvda1\"]")
+            devices = append(devices, "/dev/sda1")
+            devices = append(devices, "/dev/xvda1")
+        } else {
+            // 如果不使用暴力破解，尝试从设备类型中提取设备名称
+            device, err = extractDeviceType(deviceType)
+            if device == "" || err != nil {
+                // 如果无法找到设备名称，使用暴力破解已知设备
+                fmt.Println("[*] Didn't find device name, using brute force on known devices [\"/dev/sda1\", \"/dev/xvda1\"]")
+                devices = append(devices, "/dev/sda1")
+                devices = append(devices, "/dev/xvda1")
+            } else {
+                // 否则将提取到的设备名称添加到设备列表中
+                devices = append(devices, device)
+            }
+        }
     } else {
-        // 否则，将提取到的设备名称添加到 devices 切片中
+        // 如果设备不为空且不为"none"，直接将设备添加到设备列表中
         devices = append(devices, device)
     }
-}
-// 如果条件不满足，将设备名称添加到 devices 切片中
-} else {
-    devices = append(devices, device)
+
+    // 创建文件夹
+    dirId := 0
+    var dirPath string
+
+    // 如果没有权限在根目录下写入，考虑写入到 /tmp
+    for {
+        dirPath = "/mnt" + strconv.Itoa(dirId)
+        if _, err := os.Stat(dirPath); os.IsNotExist(err) {
+            os.Mkdir(dirPath, os.ModeDir)
+            break
+        } else {
+            dirId += 1
+        }
+    }
+
+    // 遍历设备列表，尝试挂载设备到文件夹
+    for _, deviceName := range devices {
+        fmt.Printf("[*] Trying to mount \"%s\" to \"%s\"\n", deviceName, dirPath)
+        cmd := exec.Command("mount", deviceName, dirPath)
+        _, err = cmd.Output()
+        if err != nil {
+            fmt.Println(err.Error())
+        } else {
+            fmt.Printf("[*] Mounted successfuly \"%s\" to \"%s\"\n", deviceName, dirPath)
+            fmt.Printf("[*] Host folder is in: \"%s\"\n", dirPath)
+        }
+    }
+# 结束 main 函数的定义
 }
 
-// 创建文件夹
-	// 初始化目录ID为0
-	dirId := 0
-	// 声明目录路径变量
-	var dirPath string
-
-	// 循环查找可写入的目录路径，如果没有权限在根目录下写入，则考虑写入到 /tmp 目录
-	for {
-		// 拼接目录路径
-		dirPath = "/mnt" + strconv.Itoa(dirId)
-		// 检查目录路径是否存在
-		if _, err := os.Stat(dirPath); os.IsNotExist(err) {
-			// 如果目录不存在，则创建目录
-			os.Mkdir(dirPath, os.ModeDir)
-			// 跳出循环
-			break
-		} else {
-			// 如果目录已存在，则增加目录ID继续查找
-			dirId += 1
-		}
-	}
-
-	// 遍历设备列表
-	for _, deviceName := range devices {
-		// 打印尝试挂载设备到目录的信息
-		fmt.Printf("[*] Trying to mount \"%s\" to \"%s\"\n", deviceName, dirPath)
-		// 执行挂载命令
-		cmd := exec.Command("mount", deviceName, dirPath)
-		// 获取命令执行结果
-		_, err = cmd.Output()
-		// 如果有错误，则打印错误信息
-		if err != nil {
-			fmt.Println(err.Error())
-// 如果条件不成立，打印挂载失败的信息
-} else {
-    fmt.Printf("[*] Mounted successfuly \"%s\" to \"%s\"\n", deviceName, dirPath)
-    fmt.Printf("[*] Host folder is in: \"%s\"\n", dirPath)
-}
-// 结束 if-else 语句块
-}
-// 结束 mainfunc 函数
-
+# 注释掉的代码块，不会被执行
 /*
 func main(){
     mainfunc("", "false", "ext4")
    // mainfunc("/dev/sda1", "false")
    // mainfunc("", "true")
 }*/
-// 主函数，用于调用 mainfunc 函数
 ```

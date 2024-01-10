@@ -2,146 +2,122 @@
 
 ```
 package main
-// 声明当前文件所属的包为 main
 
 import (
-	"fmt"
-	"github.com/LDCS/qslinux/blkid"
-	// 导入 fmt、blkid、ioutil、log、net、os、strconv、strings、syscall 包
-	"io/ioutil"
-	"log"
-	"net"
-	"os"
-	"strconv"
-	"strings"
-	"syscall"
+    "fmt"  // 导入 fmt 包，用于格式化输出
+    "github.com/LDCS/qslinux/blkid"  // 导入 blkid 包，用于获取设备信息
+    "io/ioutil"  // 导入 ioutil 包，用于读取文件
+    "log"  // 导入 log 包，用于记录日志
+    "net"  // 导入 net 包，用于网络通信
+    "os"  // 导入 os 包，用于操作系统功能
+    "strconv"  // 导入 strconv 包，用于字符串和数字之间的转换
+    "strings"  // 导入 strings 包，用于处理字符串
+    "syscall"  // 导入 syscall 包，用于底层系统调用
 )
 
 func check(e error) {
-	// 定义一个函数 check，用于检查错误
-	if e != nil {
-		// 如果错误不为空，抛出异常
-		panic(e)
-	}
-}
-// 处理客户端请求的函数
-func handleRequest(conn net.Conn) {
-	// 创建一个缓冲区来存储传入的数据
-	buf := make([]byte, 1024)
-	// 读取传入的连接数据到缓冲区中
-	_, err := conn.Read(buf)
-	if err != nil {
-		fmt.Println("Error reading:", err.Error())
-	}
-	// 向连接方发送响应
-	conn.Write([]byte("Message received."))
-	// 处理完连接后关闭连接
-	conn.Close()
+    if e != nil {
+        panic(e)  // 如果错误不为空，触发 panic
+    }
 }
 
-// 主函数，这个负载使用 BLKID 库，不适用于 Yaegi
+func handleRequest(conn net.Conn) {
+    // 创建一个缓冲区来存储传入的数据
+    buf := make([]byte, 1024)
+    // 读取传入连接的数据到缓冲区
+    _, err := conn.Read(buf)
+    if err != nil {
+        fmt.Println("Error reading:", err.Error())  // 如果有错误，打印错误信息
+    }
+    // 向连接方发送响应
+    conn.Write([]byte("Message received."))
+    // 处理完连接后关闭连接
+    conn.Close()
+}
+
+// 这个负载使用 BLKID 库，不适用于 Yaegi
 func main(){
 /*
-	conn, _ := net.Listen("tcp", "127.0.0.1:1330")
+    conn, _ := net.Listen("tcp", "127.0.0.1:1330")
 
-	// 当应用程序关闭时关闭监听器
-// 延迟关闭连接，确保在函数结束时关闭连接
-defer conn.Close()
-// 无限循环，监听传入的连接
-for {
-    // 接受传入的连接
-    conn, err := conn.Accept()
-    if err != nil {
-        fmt.Println("Error accepting: ", err.Error())
-        os.Exit(1)
+    // 程序关闭时关闭监听器
+    defer conn.Close()
+    for {
+        // 监听传入的连接
+        conn, err := conn.Accept()
+        if err != nil {
+            fmt.Println("Error accepting: ", err.Error())
+            os.Exit(1)
+        }
+        // 在新的 goroutine 中处理连接
+        go handleRequest(conn)
     }
-    // 在新的 goroutine 中处理连接
-    go handleRequest(conn)
-}
+*/
+    dat, err := ioutil.ReadFile("/proc/cmdline")
+    check(err)  // 检查读取文件是否出错
+    cmdline := string(dat)
+    splittedCmdLine := strings.Split(cmdline, " ")  // 以空格分割命令行参数
 
-// 读取 /proc/cmdline 文件的内容
-dat, err := ioutil.ReadFile("/proc/cmdline")
-// 检查错误
-check(err)
-// 将文件内容转换为字符串
-cmdline := string(dat)
-// 使用空格分割命令行参数
-splittedCmdLine := strings.Split(cmdline, " ")
+    var uuid string
 
-var uuid string
+    // 提取设备的 UUID
+    for _, splitLine := range splittedCmdLine {
+        if strings.HasPrefix(splitLine, "root=UUID"){
+            uuid = splitLine[10:]
+        }
+    }
 
-// 提取设备的 UUID
-	// 遍历分割后的命令行参数列表
-	for _, splitLine := range splittedCmdLine {
-		// 如果分割后的行以"root=UUID"开头
-		if strings.HasPrefix(splitLine, "root=UUID"){
-			// 提取UUID值
-			uuid = splitLine[10:]
-		}
-	}
+    // 获取 blkid 映射
+    rmap := blkid.Blkid(false)
+    var key string
+    var result *blkid.Blkiddata
 
-	// 获取blkid映射
-	rmap := blkid.Blkid(false)
-	var key string
-	var result *blkid.Blkiddata
+    // 查找匹配 UUID 的设备
+    for key, result = range rmap {
+        if result.Uuid_ == uuid {
+            fmt.Printf("Devname: %q\n", key)  // 打印设备名
+            break
+        }
+    }
 
-	// 寻找匹配UUID的设备
-	for key, result = range rmap {
-		// 如果找到匹配的UUID
-		if result.Uuid_ == uuid {
-			// 打印设备名
-			fmt.Printf("Devname: %q\n", key)
-			// 结束循环
-			break
-		}
-	}
+    /*
+    fmt.Printf("Uuid_=%q\n", result.Uuid_)
+    fmt.Printf("Uuidsub_=%q\n", result.Uuidsub_)
+    fmt.Printf("Type_=%q\n", result.Type_)
+    // 打印结果的标签
+    fmt.Printf("Label_=%q\n", result.Label_)
+    // 打印结果的部分类型
+    fmt.Printf("Parttype_=%q\n", result.Parttype_)
+    // 打印结果的部分 UUID
+    fmt.Printf("Partuuid_=%q\n", result.Partuuid_)
+    // 打印结果的部分标签
+    fmt.Printf("Partlabel_ =%q\n", result.Partlabel_)
 
-	/*
-	// 打印 result 对象的 Uuid_ 字段
-	fmt.Printf("Uuid_=%q\n", result.Uuid_)
-	// 打印 result 对象的 Uuidsub_ 字段
-	fmt.Printf("Uuidsub_=%q\n", result.Uuidsub_)
-	// 打印 result 对象的 Type_ 字段
-	fmt.Printf("Type_=%q\n", result.Type_)
-	// 打印 result 对象的 Label_ 字段
-	fmt.Printf("Label_=%q\n", result.Label_)
-	// 打印 result 对象的 Parttype_ 字段
-	fmt.Printf("Parttype_=%q\n", result.Parttype_)
-	// 打印 result 对象的 Partuuid_ 字段
-	fmt.Printf("Partuuid_=%q\n", result.Partuuid_)
-	// 打印 result 对象的 Partlabel_ 字段
-	fmt.Printf("Partlabel_ =%q\n", result.Partlabel_)
+    // 创建文件夹
+    dirId := 0
+    var dirPath string
 
-	// 创建文件夹
-	dirId := 0
-	var dirPath string
+    // 如果没有权限在根目录下写入，则考虑写入 /tmp
+    for {
+        dirPath = "/mnt" + strconv.Itoa(dirId)
+        if _, err := os.Stat(dirPath); os.IsNotExist(err) {
+            os.Mkdir(dirPath, os.ModeDir)
+            break
+        } else {
+            dirId += 1
+        }
 
-	// 如果没有权限在根目录下写入文件，则考虑写入 /tmp 目录
-	for {
-		// 拼接文件夹路径
-		dirPath = "/mnt" + strconv.Itoa(dirId)
-		// 检查文件夹是否存在
-		if _, err := os.Stat(dirPath); os.IsNotExist(err) {
-			// 如果文件夹不存在，则创建文件夹
-			os.Mkdir(dirPath, os.ModeDir)
-			// 退出循环
-			break
-		} else {
-		// 增加目录ID
-		dirId += 1
-	}
+    }
 
-	// 挂载
-	// 使用系统调用挂载文件系统
-	if err := syscall.Mount(key, dirPath, result.Type_, 0, "w"); err != nil {
-		// 如果挂载失败，记录错误信息并终止程序
-		log.Printf("Mount(\"%s\", \"%s\", \"%s\", 0, \"w\")\n",key, dirPath, result.Type_)
-		log.Fatal(err)
-	}
+    // 挂载
+    if err := syscall.Mount(key, dirPath, result.Type_, 0, "w"); err != nil {
+        log.Printf("Mount(\"%s\", \"%s\", \"%s\", 0, \"w\")\n",key, dirPath, result.Type_)
+        log.Fatal(err)
+    }
 
-	// 打印挂载成功的信息
-	fmt.Printf("[*] 成功挂载 \"%s\" 到 \"%s\"", key, dirPath)
-	// 打印主机文件夹的路径
-	fmt.Printf("[*] 主机文件夹路径为: \"%s\"", dirPath)
-}
+    // 打印挂载成功的消息
+    fmt.Printf("[*] Mounted successfuly \"%s\" to \"%s\"", key, dirPath)
+    // 打印主机文件夹的位置
+    fmt.Printf("[*] Host folder is in: \"%s\"", dirPath)
+# 闭合了一个代码块
 ```
