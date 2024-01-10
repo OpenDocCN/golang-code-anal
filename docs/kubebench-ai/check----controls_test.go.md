@@ -1,124 +1,125 @@
 # `kubebench-aquasecurity\check\controls_test.go`
 
 ```
-// 版权声明，版权归Aqua Security Software Ltd.所有
-// 根据Apache许可证2.0进行许可
-// 除非符合许可证的规定，否则不得使用此文件
-// 您可以在以下网址获取许可证的副本
-// http://www.apache.org/licenses/LICENSE-2.0
-// 除非适用法律要求或书面同意，否则根据许可证分发的软件是基于"按原样"的基础分发的，没有任何明示或暗示的担保或条件
-// 请查看许可证以了解特定语言的权限和限制
+// 版权声明，声明代码版权和许可证信息
+// 该代码遵循 Apache 许可证 2.0 版本
+// 可以在符合许可证的情况下使用该文件
+// 可以在上述链接获取许可证的副本
+// 除非适用法律要求或书面同意，否则不得使用该文件
+// 根据许可证分发的软件是基于"按原样"的基础分发的
+// 没有任何明示或暗示的担保或条件
+// 请查看许可证以获取特定语言的权限和限制
 
 // 导入所需的包
 package check
 
 import (
-    "bytes"  // 导入bytes包，用于操作字节
-    "encoding/json"  // 导入json包，用于JSON编解码
-    "encoding/xml"  // 导入xml包，用于XML编解码
-	"fmt"  // 导入 fmt 包，用于格式化输入输出
-	"io/ioutil"  // 导入 ioutil 包，用于读取文件内容
-	"os"  // 导入 os 包，用于操作系统功能
-	"path/filepath"  // 导入 filepath 包，用于处理文件路径
-	"reflect"  // 导入 reflect 包，用于反射操作
-	"testing"  // 导入 testing 包，用于编写测试函数
-	"github.com/aws/aws-sdk-go/aws"  // 导入 AWS SDK 包，用于访问 AWS 服务
-	"github.com/aws/aws-sdk-go/service/securityhub"  // 导入 AWS Security Hub 包，用于访问安全中心服务
-	"github.com/onsi/ginkgo/reporters"  // 导入 ginkgo 报告包，用于生成测试报告
-	"github.com/spf13/viper"  // 导入 viper 包，用于处理配置文件
-	"github.com/stretchr/testify/assert"  // 导入 testify 断言包，用于编写测试断言
-	"github.com/stretchr/testify/mock"  // 导入 testify mock 包，用于编写测试模拟
-	"gopkg.in/yaml.v2"  // 导入 yaml 包，用于处理 YAML 格式数据
+    "bytes"  // 导入 bytes 包，用于操作字节切片
+    "encoding/json"  // 导入 json 包，用于 JSON 数据的编解码
+    "encoding/xml"  // 导入 xml 包，用于 XML 数据的编解码
+    "fmt"  // 导入 fmt 包，用于格式化输入输出
+    "io/ioutil"  // 导入 ioutil 包，用于读取文件内容
+    "os"  // 导入 os 包，提供对操作系统功能的访问
+    "path/filepath"  // 导入 filepath 包，用于处理文件路径
+    "reflect"  // 导入 reflect 包，用于反射操作
+    "testing"  // 导入 testing 包，用于编写测试函数
+
+    "github.com/aws/aws-sdk-go/aws"  // 导入 AWS SDK 的 aws 包
+    "github.com/aws/aws-sdk-go/service/securityhub"  // 导入 AWS SDK 的 securityhub 包
+    "github.com/onsi/ginkgo/reporters"  // 导入 ginkgo 的 reporters 包
+    "github.com/spf13/viper"  // 导入 viper 包，用于处理配置文件
+    "github.com/stretchr/testify/assert"  // 导入 testify 的 assert 包，用于编写断言
+    "github.com/stretchr/testify/mock"  // 导入 testify 的 mock 包，用于编写模拟对象
+    "gopkg.in/yaml.v2"  // 导入 yaml.v2 包，用于 YAML 数据的编解码
 )
 
-const cfgDir = "../cfg/"  // 定义配置文件目录路径
+// 定义常量 cfgDir，指定配置文件所在的目录
+const cfgDir = "../cfg/"
 
-type mockRunner struct {  // 定义 mockRunner 结构体
-	mock.Mock  // 使用 testify mock 包中的 Mock 结构体
+// 定义 mockRunner 结构体，用于模拟运行器
+type mockRunner struct {
+    mock.Mock
 }
 
-// 定义一个名为 mockRunner 的结构体的方法 Run，接收一个 Check 类型的参数，返回一个 State 类型的值
+// 实现 mockRunner 结构体的 Run 方法，用于运行检查
 func (m *mockRunner) Run(c *Check) State {
-    // 调用 m 的 Called 方法，传入参数 c，返回结果赋值给 args
     args := m.Called(c)
-    // 返回 args 中索引为 0 的值，并断言为 State 类型
     return args.Get(0).(State)
 }
 
-// 测试 YamlFiles 函数
+// 测试函数，验证我们要发送的文件是否是有效的 YAML 格式
 func TestYamlFiles(t *testing.T) {
-    // 遍历 cfgDir 目录下的文件和子目录
+    # 使用 filepath.Walk 遍历指定目录下的所有文件和子目录
     err := filepath.Walk(cfgDir, func(path string, info os.FileInfo, err error) error {
-        // 如果遍历过程中出现错误，输出错误信息并终止测试
+        # 如果在遍历过程中出现错误，输出错误信息并终止测试
         if err != nil {
             t.Fatalf("failure accessing path %q: %v\n", path, err)
         }
-        // 如果当前遍历到的是文件而不是目录，输出正在读取的文件路径
+        # 如果当前路径不是目录
         if !info.IsDir() {
+            # 输出正在读取的文件路径
             t.Logf("reading file: %s", path)
-            // 读取文件内容并赋值给 in，如果出现错误则输出错误信息并终止测试
+            # 读取文件内容
             in, err := ioutil.ReadFile(path)
+            # 如果读取文件出现错误，输出错误信息并终止测试
             if err != nil {
                 t.Fatalf("error opening file %s: %v", path, err)
             }
-// 创建一个新的 Controls 结构体实例
-c := new(Controls)
-// 将输入的 YAML 数据解析为 Controls 结构体实例
-err = yaml.Unmarshal(in, c)
-// 如果解析过程中没有出现错误，则打印成功信息，否则打印失败信息
-if err == nil {
-    t.Logf("YAML file successfully unmarshalled: %s", path)
-} else {
-    t.Fatalf("failed to load YAML from %s: %v", path, err)
-}
-// 返回 nil，表示函数执行成功
-return nil
-// 如果遍历 cfg 目录的过程中出现错误，则打印失败信息
-if err != nil {
-    t.Fatalf("failure walking cfg dir: %v\n", err)
-}
 
-// 测试函数，测试当节点类型未指定时是否返回错误
+            # 创建一个 Controls 结构体实例
+            c := new(Controls)
+            # 将文件内容解析为 YAML 格式，并存储到 Controls 结构体中
+            err = yaml.Unmarshal(in, c)
+            # 如果解析成功，输出成功信息；否则输出失败信息并终止测试
+            if err == nil {
+                t.Logf("YAML file successfully unmarshalled: %s", path)
+            } else {
+                t.Fatalf("failed to load YAML from %s: %v", path, err)
+            }
+        }
+        # 继续遍历
+        return nil
+    })
+    # 如果遍历过程中出现错误，输出错误信息并终止测试
+    if err != nil {
+        t.Fatalf("failure walking cfg dir: %v\n", err)
+    }
+// 测试函数，用于测试NewControls函数
 func TestNewControls(t *testing.T) {
+    // 子测试1：当节点类型未指定时应返回错误
     t.Run("Should return error when node type is not specified", func(t *testing.T) {
-        // 给定输入的 YAML 数据
+        // 给定输入
         in := []byte(`
 ---
 controls:
 type: # not specified
 groups:
 `)
-		// 定义控件类型和组信息，但未指定具体类型
-		// 当
-		_, err := NewControls(MASTER, in)
-		// 调用 NewControls 函数，传入 MASTER 类型和输入数据
-		// 则
-		assert.EqualError(t, err, "non-master controls file specified")
-		// 断言返回的错误信息为"non-master controls file specified"
+        // 当
+        _, err := NewControls(MASTER, in)
+        // 则
+        assert.EqualError(t, err, "non-master controls file specified")
+    })
 
-	})
-
-	t.Run("Should return error when input YAML is invalid", func(t *testing.T) {
-		// 给定
-		in := []byte("BOOM")
-		// 定义输入数据为"BOOM"
-		// 当
-		_, err := NewControls(MASTER, in)
-		// 调用 NewControls 函数，传入 MASTER 类型和输入数据
-		// 则
-		assert.EqualError(t, err, "failed to unmarshal YAML: yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `BOOM` into check.Controls")
-		// 断言返回的错误信息为"failed to unmarshal YAML: yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `BOOM` into check.Controls"
-	})
+    // 子测试2：当输入的YAML无效时应返回错误
+    t.Run("Should return error when input YAML is invalid", func(t *testing.T) {
+        // 给定输入
+        in := []byte("BOOM")
+        // 当
+        _, err := NewControls(MASTER, in)
+        // 则
+        assert.EqualError(t, err, "failed to unmarshal YAML: yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `BOOM` into check.Controls")
+    })
 
 }
-```
+
+// 测试函数，用于测试Controls的RunChecks方法
 func TestControls_RunChecks_SkippedCmd(t *testing.T) {
-    // 定义测试函数，用于测试跳过指定检查和组的情况
+    // 子测试：当skipMap指定时应跳过相应的检查和组
     t.Run("Should skip checks and groups specified by skipMap", func(t *testing.T) {
-        // 给定
+        // 给定普通的运行器
         normalRunner := &defaultRunner{}
-        // 创建一个默认的运行器对象
-        // 并
+        // 和输入
         in := []byte(`
 ---
 type: "master"
@@ -133,43 +134,37 @@ groups:
   - id: G2/C1
   - id: G2/C2
 `)
-        // 定义一个包含 YAML 格式内容的字节切片
-		// 使用 NewControls 函数创建控制器对象，类型为 MASTER，输入参数为 in
-		controls, err := NewControls(MASTER, in)
-		// 断言错误为空
-		assert.NoError(t, err)
+        controls, err := NewControls(MASTER, in)
+        assert.NoError(t, err)
 
-		// 定义一个名为 allChecks 的谓词函数，始终返回 true
-		var allChecks Predicate = func(group *Group, c *Check) bool {
-			return true
-		}
+        var allChecks Predicate = func(group *Group, c *Check) bool {
+            return true
+        }
 
-		// 创建一个名为 skipMap 的空字符串到布尔值的映射
-		skipMap := make(map[string]bool, 0)
-		// 设置 skipMap 中的键值对
-		skipMap["G1"] = true
-		skipMap["G2/C1"] = true
-		skipMap["G2/C2"] = true
-		// 运行控制器对象的检查函数，使用 normalRunner 作为运行器，allChecks 作为谓词函数，skipMap 作为跳过的检查项
-		controls.RunChecks(normalRunner, allChecks, skipMap)
+        // 创建跳过映射
+        skipMap := make(map[string]bool, 0)
+        skipMap["G1"] = true
+        skipMap["G2/C1"] = true
+        skipMap["G2/C2"] = true
+        // 运行RunChecks方法
+        controls.RunChecks(normalRunner, allChecks, skipMap)
 
-		// 获取控制器对象中的第一个组 G1
-		G1 := controls.Groups[0]
-		// 断言 G1 的摘要信息符合预期
-		assertEqualGroupSummary(t, 0, 0, 3, 0, G1)
+        // 断言检查结果
+        G1 := controls.Groups[0]
+        assertEqualGroupSummary(t, 0, 0, 3, 0, G1)
 
-		// 获取控制器对象中的第二个组 G2
-		G2 := controls.Groups[1]
-		// 断言 G2 的摘要信息符合预期
-		assertEqualGroupSummary(t, 0, 0, 2, 0, G2)
-	})
+        G2 := controls.Groups[1]
+        assertEqualGroupSummary(t, 0, 0, 2, 0, G2)
+    })
 }
+
+// 测试函数，用于测试Controls的RunChecks方法
 func TestControls_RunChecks_Skipped(t *testing.T) {
-    // 运行测试用例，检查是否正确跳过标记为跳过的父组的检查
+    // 子测试：当父组标记为跳过时应跳过相应的检查
     t.Run("Should skip checks where the parent group is marked as skip", func(t *testing.T) {
-        // 给定
+        // 给定普通的运行器
         normalRunner := &defaultRunner{}
-        // 并且
+        // 和输入
         in := []byte(`
 ---
 type: "master"
@@ -178,231 +173,223 @@ groups:
   skip: true
   checks:
   - id: G1/C1
-`)
-        // 创建控制对象，并解析输入数据
+        // 创建一个新的控制器对象，类型为 MASTER，输入为 in
         controls, err := NewControls(MASTER, in)
+        // 断言没有错误发生
         assert.NoError(t, err)
 
-        // 定义一个谓词函数，用于判断是否执行所有检查
+        // 定义一个 Predicate 函数，始终返回 true
         var allChecks Predicate = func(group *Group, c *Check) bool {
             return true
-		}
-		// 创建一个空的跳过列表，用于存储需要跳过的检查项
-		emptySkipList := make(map[string]bool, 0)
-		// 运行所有检查项，不跳过任何检查项
-		controls.RunChecks(normalRunner, allChecks, emptySkipList)
+        }
+        // 创建一个空的跳过列表
+        emptySkipList := make(map[string]bool, 0)
+        // 运行所有检查
+        controls.RunChecks(normalRunner, allChecks, emptySkipList)
 
-		// 获取第一个检查组的信息
-		G1 := controls.Groups[0]
-		// 断言第一个检查组的总结信息是否符合预期
-		assertEqualGroupSummary(t, 0, 0, 1, 0, G1)
-	})
+        // 获取第一个组 G1
+        G1 := controls.Groups[0]
+        // 断言组 G1 的摘要与预期值相等
+        assertEqualGroupSummary(t, 0, 0, 1, 0, G1)
+    })
 }
 
 func TestControls_RunChecks(t *testing.T) {
-	t.Run("Should run checks matching the filter and update summaries", func(t *testing.T) {
-		// 给定
-		runner := new(mockRunner)
-		// 并且
-		in := []byte(`
+    t.Run("Should run checks matching the filter and update summaries", func(t *testing.T) {
+        // 给定一个模拟的运行器对象
+        runner := new(mockRunner)
+        // 并且
+        in := []byte(`
 ---
 type: "master"
 groups:
 - id: G1
   checks:
-# 定义了一个名为 G1/C1 的代码段
-# 定义了一个名为 G2 的代码段
-# 验证 SomeSampleFlag 参数是否设置为 true
-# 使用 grep 命令在文件路径 /this/is/a/file/path 中查找 SomeSampleFlag=true，并显示前一行内容
-# 测试项：检查 SomeSampleFlag 是否包含值 true，如果是则设置为 true
-# 修复措施：编辑配置文件 /this/is/a/file/path 并将 SomeSampleFlag 设置为 true
-# 该测试项计入评分
-# 创建一个名为 controls 的变量，用于存储从 MASTER 中读取的控制信息
-# 如果没有错误发生，则断言 controls 变量的值为 nil
-		// 设置对 controls.Groups[0].Checks[0] 的运行结果为 PASS
-		runner.On("Run", controls.Groups[0].Checks[0]).Return(PASS)
-		// 设置对 controls.Groups[1].Checks[0] 的运行结果为 FAIL
-		runner.On("Run", controls.Groups[1].Checks[0]).Return(FAIL)
-		// 定义一个 Predicate 函数类型变量 runAll，始终返回 true
-		var runAll Predicate = func(group *Group, c *Check) bool {
-			return true
-		}
-		// 创建一个空的跳过列表
-		var emptySkipList = make(map[string]bool, 0)
-		// 运行 controls 的所有检查
-		controls.RunChecks(runner, runAll, emptySkipList)
-		// 断言 controls.Groups 的长度为 2
-		assert.Equal(t, 2, len(controls.Groups))
-		// 断言 controls.Groups[0] 的 ID 为 "G1"
-		G1 := controls.Groups[0]
-		assert.Equal(t, "G1", G1.ID)
-		// 断言 controls.Groups[0] 的第一个检查的 ID 为 "G1/C1"
-		assert.Equal(t, "G1/C1", G1.Checks[0].ID)
-		// 断言 controls.Groups[0] 的汇总结果符合预期
-		assertEqualGroupSummary(t, 1, 0, 0, 0, G1)
-		// 断言 controls.Groups[1] 的 ID 为 "G2"
-		G2 := controls.Groups[1]
-		assert.Equal(t, "G2", G2.ID)
-		// 断言检查 G2 对象的属性值是否符合预期
-		assert.Equal(t, "G2/C1", G2.Checks[0].ID)
-		assert.Equal(t, "has", G2.Checks[0].Tests.TestItems[0].Compare.Op)
-		assert.Equal(t, "true", G2.Checks[0].Tests.TestItems[0].Compare.Value)
-		assert.Equal(t, true, G2.Checks[0].Tests.TestItems[0].Set)
-		assert.Equal(t, "SomeSampleFlag=true", G2.Checks[0].Tests.TestItems[0].Flag)
-		assert.Equal(t, "Edit the config file /this/is/a/file/path and set SomeSampleFlag to true.\n", G2.Checks[0].Remediation)
-		assert.Equal(t, true, G2.Checks[0].Scored)
-		assertEqualGroupSummary(t, 0, 1, 0, 0, G2)
-		// and
-		// 断言检查 controls.Summary 对象的属性值是否符合预期
-		assert.Equal(t, 1, controls.Summary.Pass)
-		assert.Equal(t, 1, controls.Summary.Fail)
-		assert.Equal(t, 0, controls.Summary.Info)
-		assert.Equal(t, 0, controls.Summary.Warn)
-		// and
-		// 断言检查 runner 对象的期望行为是否符合预期
-		runner.AssertExpectations(t)
-	})
-}
+  - id: G1/C1
+- id: G2
+  checks:
+  - id: G2/C1
+    text: "Verify that the SomeSampleFlag argument is set to true"
+    audit: "grep -B1 SomeSampleFlag=true /this/is/a/file/path"
+    tests:
+      test_items:
+      - flag: "SomeSampleFlag=true"
+        compare:
+          op: has
+          value: "true"
+        set: true
+    remediation: |
+      Edit the config file /this/is/a/file/path and set SomeSampleFlag to true.
+    scored: true
+        // 创建一个测试用例切片，包含描述、输入和期望输出
+        testCases := []struct {
+            desc   string
+            input  *Controls
+            expect []byte
 
-func TestControls_JUnitIncludesJSON(t *testing.T) {
-	// 定义测试用例
-	testCases := []struct {
-		desc   string  // 描述测试用例的字符串
-		input  *Controls  // 控制参数的指针
-		expect []byte  // 期望的字节数组
-	}{
-		{
-			desc: "Serializes to junit",  // 测试用例描述
-			input: &Controls{  // 控制参数的实例
-				Groups: []*Group{  // 控制参数中的组列表
-					{
-						ID: "g1",  // 组的ID
-						Checks: []*Check{  // 组中的检查列表
-							{ID: "check1id", Text: "check1text", State: PASS},  // 检查的ID、文本和状态
-						},
-					},
-				},
-			},
-			expect: []byte(`<testsuite name="" tests="0" failures="0" errors="0" time="0">  // 期望的字节数组，表示一个测试套件
-    <testcase name="check1id check1text" classname="" time="0">  // 测试用例的名称、类名和时间
-    </testcase>
-</testsuite>`),  // 测试套件的结束标记
-		}, {
-			// 描述：汇总值来自于汇总而不是检查
-			desc: "Summary values come from summary not checks",
-			// 输入：控制结构体
-			input: &Controls{
-				// 汇总：包括失败、通过、警告、信息的数量
-				Summary: Summary{
-					Fail: 99,
-					Pass: 100,
-					Warn: 101,
-					Info: 102,
-				},
-				// 分组：包括分组ID和检查列表
-				Groups: []*Group{
-					{
-						ID: "g1",
-						Checks: []*Check{
-							{ID: "check1id", Text: "check1text", State: PASS},
-						},
-					},
-				},
-			},
-			// 期望：期望的输出结果
-			expect: []byte(`<testsuite name="" tests="402" failures="99" errors="0" time="0">
-    <testcase name="check1id check1text" classname="" time="0">
-// 定义一个结构体 Controls，包含了一组检查项的信息
-input: &Controls{
-    // 定义一个组，包含了一组检查项
-    Groups: []*Group{
-        {
-            // 组的唯一标识符
-            ID: "g1",
-            // 检查项列表
-            Checks: []*Check{
-                // 检查项1
-                {ID: "check1id", Text: "check1text", State: PASS},
-                // 检查项2
-                {ID: "check2id", Text: "check2text", State: INFO},
-                // 检查项3
-                {ID: "check3id", Text: "check3text", State: WARN},
-                // 检查项4
-                {ID: "check4id", Text: "check4text", State: FAIL},
-            },
-        },
-    },
-},
-// 期望的输出结果
-expect: []byte(`<testsuite name="" tests="0" failures="0" errors="0" time="0">
-    // 检查项1的测试结果
-    <testcase name="check1id check1text" classname="" time="0">
-    </testcase>
-```
-# 创建一个名为check2id check2text的测试用例，设置类名为空，执行时间为0
-<testcase name="check2id check2text" classname="" time="0">
-    # 跳过该测试用例
-    <skipped></skipped>
-</testcase>
+- 创建一个测试用例切片，包含描述、输入和期望输出
 
-# 创建一个名为check3id check3text的测试用例，设置类名为空，执行时间为0
-<testcase name="check3id check3text" classname="" time="0">
-    # 跳过该测试用例
-    <skipped></skipped>
-</testcase>
 
-# 创建一个名为check4id check4text的测试用例，设置类名为空，执行时间为0
-<testcase name="check4id check4text" classname="" time="0">
-    # 测试用例执行失败，没有指定失败类型
-    <failure type=""></failure>
-</testcase>
-</testsuite>`),
-		},
-	}
-# 遍历测试用例集合
-for _, tc := range testCases {
-    # 对每个测试用例执行以下操作
-    t.Run(tc.desc, func(t *testing.T) {
-        # 将测试用例转换为JUnit格式的字节流
-        junitBytes, err := tc.input.JUnit()
-        # 如果转换过程中出现错误，输出错误信息
-        if err != nil {
-            t.Fatalf("Failed to serialize to JUnit: %v", err)
-        }
-        # 创建JUnit测试套件对象
-        var out reporters.JUnitTestSuite
-// 使用xml.Unmarshal将junitBytes反序列化为out变量，如果出现错误则输出错误信息
-if err := xml.Unmarshal(junitBytes, &out); err != nil {
-    t.Fatalf("Unable to deserialize from resulting JUnit: %v", err)
-}
-
-// 检查每个检查是否被序列化为json并存储为systemOut
-for iGroup, group := range tc.input.Groups {
-    for iCheck, check := range group.Checks {
-        // 将check序列化为json格式的字节流
-        jsonBytes, err := json.Marshal(check)
-        if err != nil {
-            t.Fatalf("Failed to serialize to JUnit: %v", err)
-        }
-
-        // 检查out.TestCases中的SystemOut是否与jsonBytes相等，如果不相等则输出错误信息
-        if out.TestCases[iGroup*iCheck+iCheck].SystemOut != string(jsonBytes) {
-            t.Errorf("Expected\n\t%v\n\tbut got\n\t%v",
-                out.TestCases[iGroup*iCheck+iCheck].SystemOut,
-                string(jsonBytes),
-            )
+        // 遍历测试用例切片
+        for _, tc := range testCases {
+            // 使用测试框架的 Run 方法执行测试
+            t.Run(tc.desc, func(t *testing.T) {
+                // 设置期望输出
+                expected := string(tc.expect)
+                // 调用 JUnitIncludesJSON 方法，传入输入参数，并获取返回值
+                result := tc.input.JUnitIncludesJSON()
+                // 断言实际输出与期望输出相等
+                assert.Equal(t, expected, string(result))
+            })
         }
     }
 }
-# 如果 JUnit 字节数据与预期不相等，则输出错误信息
-if !bytes.Equal(junitBytes, tc.expect) {
-    t.Errorf("Expected\n\t%v\n\tbut got\n\t%v",
-        string(tc.expect),
-        string(junitBytes),
-    )
+
+- 遍历测试用例切片
+- 使用测试框架的 Run 方法执行测试
+- 设置期望输出
+- 调用 JUnitIncludesJSON 方法，传入输入参数，并获取返回值
+- 断言实际输出与期望输出相等
+    }{
+        {
+            // 描述：序列化为 JUnit 格式
+            desc: "Serializes to junit",
+            // 输入：控制信息
+            input: &Controls{
+                // 分组列表
+                Groups: []*Group{
+                    {
+                        // 分组ID和检查列表
+                        ID: "g1",
+                        Checks: []*Check{
+                            {ID: "check1id", Text: "check1text", State: PASS},
+                        },
+                    },
+                },
+            },
+            // 期望输出：空字节
+            expect: []byte(`<testsuite name="" tests="0" failures="0" errors="0" time="0">
+    <testcase name="check1id check1text" classname="" time="0">
+        <system-out>{&#34;test_number&#34;:&#34;check1id&#34;,&#34;test_desc&#34;:&#34;check1text&#34;,&#34;audit&#34;:&#34;&#34;,&#34;AuditEnv&#34;:&#34;&#34;,&#34;AuditConfig&#34;:&#34;&#34;,&#34;type&#34;:&#34;&#34;,&#34;remediation&#34;:&#34;&#34;,&#34;test_info&#34;:null,&#34;status&#34;:&#34;PASS&#34;,&#34;actual_value&#34;:&#34;&#34;,&#34;scored&#34;:false,&#34;IsMultiple&#34;:false,&#34;expected_result&#34;:&#34;&#34;}</system-out>
+    </testcase>
+# 创建一个包含测试用例结果的 XML 文档
+<testsuite name="" tests="402" failures="99" errors="0" time="0">
+    # 创建一个测试用例，名称为 check1id check1text，状态为 PASS
+    <testcase name="check1id check1text" classname="" time="0">
+        # 在测试用例中输出系统信息，包括测试编号、测试描述、审核信息等
+        <system-out>{&#34;test_number&#34;:&#34;check1id&#34;,&#34;test_desc&#34;:&#34;check1text&#34;,&#34;audit&#34;:&#34;&#34;,&#34;AuditEnv&#34;:&#34;&#34;,&#34;AuditConfig&#34;:&#34;&#34;,&#34;type&#34;:&#34;&#34;,&#34;remediation&#34;:&#34;&#34;,&#34;test_info&#34;:null,&#34;status&#34;:&#34;PASS&#34;,&#34;actual_value&#34;:&#34;&#34;,&#34;scored&#34;:false,&#34;IsMultiple&#34;:false,&#34;expected_result&#34;:&#34;&#34;}</system-out>
+    </testcase>
+</testsuite>
+    # 创建一个测试用例，名称为"check1id check1text"，没有指定类名，执行时间为0
+    <testcase name="check1id check1text" classname="" time="0">
+        # 在系统输出中包含测试信息的 JSON 对象
+        <system-out>{&#34;test_number&#34;:&#34;check1id&#34;,&#34;test_desc&#34;:&#34;check1text&#34;,&#34;audit&#34;:&#34;&#34;,&#34;AuditEnv&#34;:&#34;&#34;,&#34;AuditConfig&#34;:&#34;&#34;,&#34;type&#34;:&#34;&#34;,&#34;remediation&#34;:&#34;&#34;,&#34;test_info&#34;:null,&#34;status&#34;:&#34;PASS&#34;,&#34;actual_value&#34;:&#34;&#34;,&#34;scored&#34;:false,&#34;IsMultiple&#34;:false,&#34;expected_result&#34;:&#34;&#34;}</system-out>
+    </testcase>
+    # 创建另一个测试用例，名称为"check2id check2text"，没有指定类名，执行时间为0
+    <testcase name="check2id check2text" classname="" time="0">
+        # 标记该测试用例被跳过
+        <skipped></skipped>
+        # 在系统输出中包含测试信息的 JSON 对象
+        <system-out>{&#34;test_number&#34;:&#34;check2id&#34;,&#34;test_desc&#34;:&#34;check2text&#34;,&#34;audit&#34;:&#34;&#34;,&#34;AuditEnv&#34;:&#34;&#34;,&#34;AuditConfig&#34;:&#34;&#34;,&#34;type&#34;:&#34;&#34;,&#34;remediation&#34;:&#34;&#34;,&#34;test_info&#34;:null,&#34;status&#34;:&#34;INFO&#34;,&#34;actual_value&#34;:&#34;&#34;,&#34;scored&#34;:false,&#34;IsMultiple&#34;:false,&#34;expected_result&#34;:&#34;&#34;}</system-out>
+    </testcase>
+    # 创建另一个测试用例，名称为"check3id check3text"，没有指定类名，执行时间为0
+    <testcase name="check3id check3text" classname="" time="0">
+        # 标记该测试用例被跳过
+        <skipped></skipped>
+        # 在系统输出中包含测试信息的 JSON 对象
+        <system-out>{&#34;test_number&#34;:&#34;check3id&#34;,&#34;test_desc&#34;:&#34;check3text&#34;,&#34;audit&#34;:&#34;&#34;,&#34;AuditEnv&#34;:&#34;&#34;,&#34;AuditConfig&#34;:&#34;&#34;,&#34;type&#34;:&#34;&#34;,&#34;remediation&#34;:&#34;&#34;,&#34;test_info&#34;:null,&#34;status&#34;:&#34;WARN&#34;,&#34;actual_value&#34;:&#34;&#34;,&#34;scored&#34;:false,&#34;IsMultiple&#34;:false,&#34;expected_result&#34;:&#34;&#34;}</system-out>
+    </testcase>
+    # 创建一个测试用例，名称为"check4id check4text"，时间为0
+    <testcase name="check4id check4text" classname="" time="0">
+        # 用于记录测试失败的信息
+        <failure type=""></failure>
+        # 输出测试结果的详细信息，包括测试编号、描述、审核信息等
+        <system-out>{&#34;test_number&#34;:&#34;check4id&#34;,&#34;test_desc&#34;:&#34;check4text&#34;,&#34;audit&#34;:&#34;&#34;,&#34;AuditEnv&#34;:&#34;&#34;,&#34;AuditConfig&#34;:&#34;&#34;,&#34;type&#34;:&#34;&#34;,&#34;remediation&#34;:&#34;&#34;,&#34;test_info&#34;:null,&#34;status&#34;:&#34;FAIL&#34;,&#34;actual_value&#34;:&#34;&#34;,&#34;scored&#34;:false,&#34;IsMultiple&#34;:false,&#34;expected_result&#34;:&#34;&#34;}</system-out>
+    </testcase>
+# 创建测试用例结构体
+testCases := []struct {
+    desc   string
+    input  reporters.Report
+    expect []byte
+}{
+    {
+        desc: "Test case 1",
+        input: reporters.Report{
+            // 设置测试报告的内容
+            Content: "This is a test report",
+            // 设置测试报告的组
+            Groups: []Group{
+                {
+                    // 设置组的名称
+                    Name: "Group 1",
+                    // 设置组的检查项
+                    Checks: []Check{
+                        {
+                            // 设置检查项的名称
+                            Name: "Check 1",
+                            // 设置检查项的结果
+                            Result: "Pass",
+                        },
+                        {
+                            Name: "Check 2",
+                            Result: "Fail",
+                        },
+                    },
+                },
+            },
+        },
+        // 设置预期的 JUnit 输出
+        expect: []byte(`<testsuite name="Test case 1" tests="2" failures="1" time="0.000">
+    <testcase name="Group 1 - Check 1" time="0.000">
+        <failure message="Check failed">Check 1 failed</failure>
+    </testcase>
+    <testcase name="Group 1 - Check 2" time="0.000"/>
+</testsuite>`),
+    },
+}
+# 遍历测试用例
+for _, tc := range testCases {
+    t.Run(tc.desc, func(t *testing.T) {
+        # 将测试报告序列化为 JUnit 格式
+        junitBytes, err := tc.input.JUnit()
+        if err != nil {
+            t.Fatalf("Failed to serialize to JUnit: %v", err)
+        }
+
+        var out reporters.JUnitTestSuite
+        # 将 JUnit 格式的数据反序列化为结构体
+        if err := xml.Unmarshal(junitBytes, &out); err != nil {
+            t.Fatalf("Unable to deserialize from resulting JUnit: %v", err)
+        }
+
+        # 检查每个检查项是否被序列化为 JSON 并存储在 SystemOut 中
+        for iGroup, group := range tc.input.Groups {
+            for iCheck, check := range group.Checks:
+                jsonBytes, err := json.Marshal(check)
+                if err != nil {
+                    t.Fatalf("Failed to serialize to JUnit: %v", err)
+                }
+
+                if out.TestCases[iGroup*iCheck+iCheck].SystemOut != string(jsonBytes) {
+                    t.Errorf("Expected\n\t%v\n\tbut got\n\t%v",
+                        out.TestCases[iGroup*iCheck+iCheck].SystemOut,
+                        string(jsonBytes),
+                    )
+                }
+            }
+        }
+
+        # 检查序列化后的 JUnit 数据是否与预期值相等
+        if !bytes.Equal(junitBytes, tc.expect) {
+            t.Errorf("Expected\n\t%v\n\tbut got\n\t%v",
+                string(tc.expect),
+                string(junitBytes),
+            )
+        }
+    })
 }
 
-# 辅助函数，用于比较实际值和预期值是否相等
+# 定义辅助函数，用于断言组的摘要信息是否相等
 func assertEqualGroupSummary(t *testing.T, pass, fail, info, warn int, actual *Group) {
     t.Helper()
     assert.Equal(t, pass, actual.Pass)
@@ -411,139 +398,50 @@ func assertEqualGroupSummary(t *testing.T, pass, fail, info, warn int, actual *G
     assert.Equal(t, warn, actual.Warn)
 }
 
-# 测试函数，用于测试 Controls_ASFF 功能
+# 测试 Controls_ASFF 函数
 func TestControls_ASFF(t *testing.T) {
-# 定义结构体 fields，包含 ID、Version、Text、Groups 和 Summary 字段
-type fields struct {
-    ID      string
-    Version string
-    Text    string
-    Groups  []*Group
-    Summary Summary
+    type fields struct {
+        ID      string
+        Version string
+        Text    string
+        Groups  []*Group
+        Summary Summary
+    }
 }
-# 定义测试用例数组 tests，包含 name、fields、want 和 wantErr 字段
-tests := []struct {
-    name    string
-    fields  fields
-    want    []*securityhub.AwsSecurityFinding
-    wantErr bool
-}{
-    # 第一个测试用例
-    {
-        name: "Test simple conversion",
-        fields: fields{
-            ID:      "test1",
-            Version: "1",
-            Text:    "test runnner",
-            Summary: Summary{
-# 定义不同状态的常量值
-Fail: 99,
-Pass: 100,
-Warn: 101,
-Info: 102,
-# 定义一个包含多个组的数组
-Groups: []*Group{
-    # 定义一个组对象
-    {
-        ID:   "g1",
-        Text: "Group text",
-        # 定义一个包含多个检查的数组
-        Checks: []*Check{
-            # 定义一个检查对象
-            {
-                ID:             "check1id",
-                Text:           "check1text",
-                State:          FAIL,  # 设置检查状态为失败
-                Remediation:    "fix me",
-                Reason:         "failed",
-                ExpectedResult: "failed",
-                ActualValue:    "failed",
-            },
-        },
-    },
-},
-// 该部分代码是一个测试用例的期望输出，包含了一些安全发现的详细信息
-// 设置期望的安全发现信息
-want: []*securityhub.AwsSecurityFinding{
-    // 设置安全发现的 AWS 账户 ID
-    {
-        AwsAccountId:  aws.String("foo account"),
-        // 设置安全发现的置信度
-        Confidence:    aws.Int64(100),
-        // 设置安全发现的生成器 ID
-        GeneratorId:   aws.String(fmt.Sprintf("%s/cis-kubernetes-benchmark/%s/%s", fmt.Sprintf(ARN, "somewhere"), "1", "check1id")),
-        // 设置安全发现的描述
-        Description:   aws.String("check1text"),
-        // 设置安全发现的产品 ARN
-        ProductArn:    aws.String(fmt.Sprintf(ARN, "somewhere")),
-        // 设置安全发现的模式版本
-        SchemaVersion: aws.String(SCHEMA),
-        // 设置安全发现的标题
-        Title:         aws.String(fmt.Sprintf("%s %s", "check1id", "check1text")),
-        // 设置安全发现的类型
-        Types:         []*string{aws.String(TYPE)},
-        // 设置安全发现的严重程度
-        Severity: &securityhub.Severity{
-            Label: aws.String(securityhub.SeverityLabelHigh),
-        },
-        // 设置安全发现的修复建议
-        Remediation: &securityhub.Remediation{
-            Recommendation: &securityhub.Recommendation{
-                Text: aws.String("fix me"),
-            },
-        },
-        // 设置安全发现的产品字段
-        ProductFields: map[string]*string{
-            // ...
-        },
-    },
-    // ...
-},
-# 设置 Reason 字段为 "failed"
-"Reason":          aws.String("failed"),
-# 设置 Actual result 字段为 "failed"
-"Actual result":   aws.String("failed"),
-# 设置 Expected result 字段为 "failed"
-"Expected result": aws.String("failed"),
-# 设置 Section 字段为 "test1 test runnner"
-"Section":         aws.String(fmt.Sprintf("%s %s", "test1", "test runnner")),
-# 设置 Subsection 字段为 "g1 Group text"
-"Subsection":      aws.String(fmt.Sprintf("%s %s", "g1", "Group text")),
-# 设置 Resources 字段为包含一个资源对象的数组
-Resources: []*securityhub.Resource{
-    {
-        # 设置资源对象的 Id 字段为 "foo Cluster"
-        Id:   aws.String("foo Cluster"),
-        # 设置资源对象的 Type 字段为 TYPE 变量的值
-        Type: aws.String(TYPE),
-    },
-},
-# 遍历测试用例数组
-for _, tt := range tests {
-    # 对每个测试用例运行测试
-    t.Run(tt.name, func(t *testing.T) {
-        # 设置 viper 库的 AWS_ACCOUNT 变量为 "foo account"
-        viper.Set("AWS_ACCOUNT", "foo account")
-# 设置配置参数 CLUSTER_ARN 为 "foo Cluster"
-viper.Set("CLUSTER_ARN", "foo Cluster")
-# 设置配置参数 AWS_REGION 为 "somewhere"
-viper.Set("AWS_REGION", "somewhere")
-# 创建 Controls 对象，初始化其属性值
-controls := &Controls{
-    ID:      tt.fields.ID,
-    Version: tt.fields.Version,
-    Text:    tt.fields.Text,
-    Groups:  tt.fields.Groups,
-    Summary: tt.fields.Summary,
-}
-# 调用 Controls 对象的 ASFF 方法，获取返回结果
-got, _ := controls.ASFF()
-# 将获取到的结果中的时间属性赋值给期望结果
-tt.want[0].CreatedAt = got[0].CreatedAt
-tt.want[0].UpdatedAt = got[0].UpdatedAt
-tt.want[0].Id = got[0].Id
-# 检查获取到的结果和期望结果是否相等，如果不相等则输出错误信息
-if !reflect.DeepEqual(got, tt.want) {
-    t.Errorf("Controls.ASFF() = %v, want %v", got, tt.want)
-}
+    # 定义测试用例结构体数组，包含名称、字段、期望结果和是否出错的标志
+    tests := []struct {
+        name    string
+        fields  fields
+        want    []*securityhub.AwsSecurityFinding
+        wantErr bool
+    }
+    # 遍历测试用例数组
+    for _, tt := range tests {
+        # 运行测试用例
+        t.Run(tt.name, func(t *testing.T) {
+            # 设置 viper 配置
+            viper.Set("AWS_ACCOUNT", "foo account")
+            viper.Set("CLUSTER_ARN", "foo Cluster")
+            viper.Set("AWS_REGION", "somewhere")
+            # 创建 Controls 对象
+            controls := &Controls{
+                ID:      tt.fields.ID,
+                Version: tt.fields.Version,
+                Text:    tt.fields.Text,
+                Groups:  tt.fields.Groups,
+                Summary: tt.fields.Summary,
+            }
+            # 调用 ASFF 方法获取结果
+            got, _ := controls.ASFF()
+            # 更新期望结果的时间和 ID
+            tt.want[0].CreatedAt = got[0].CreatedAt
+            tt.want[0].UpdatedAt = got[0].UpdatedAt
+            tt.want[0].Id = got[0].Id
+            # 比较实际结果和期望结果
+            if !reflect.DeepEqual(got, tt.want) {
+                t.Errorf("Controls.ASFF() = %v, want %v", got, tt.want)
+            }
+        })
+    }
+# 闭合前面的函数定义
 ```

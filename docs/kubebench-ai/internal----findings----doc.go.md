@@ -2,7 +2,7 @@
 
 ```
 /*
-包 findings 处理将发现发送到安全中心。
+包 findings 处理将发现发送到 Security Hub。
 */
 package findings
 ```

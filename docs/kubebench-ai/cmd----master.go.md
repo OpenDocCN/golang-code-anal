@@ -1,51 +1,47 @@
 # `kubebench-aquasecurity\cmd\master.go`
 
 ```
-// 该代码段是版权声明和许可证信息，指明了代码的版权归属和使用许可
-// 导入了 fmt 和 kube-bench/check 包，用于格式化输出和执行 kube-bench 的检查
-// 导入cobra库，用于创建命令行应用
-"github.com/spf13/cobra"
+// 版权声明，声明代码版权归 Aqua Security Software Ltd. 所有
+// 根据 Apache 许可证 2.0 版本授权，除非符合许可证的规定，否则不得使用此文件
+// 可以在以下网址获取许可证的副本：http://www.apache.org/licenses/LICENSE-2.0
+// 除非适用法律要求或书面同意，否则按“原样”分发软件，不附带任何明示或暗示的担保或条件
+// 请查看许可证以了解特定语言的权限和限制
 
-// 导入viper库，用于处理配置文件
-"github.com/spf13/viper"
+package cmd
+
+import (
+    "fmt"
+
+    "github.com/aquasecurity/kube-bench/check"  // 导入 kube-bench/check 包
+    "github.com/spf13/cobra"  // 导入 spf13/cobra 包
+    "github.com/spf13/viper"  // 导入 spf13/viper 包
 )
 
 // masterCmd 表示 master 命令
-var masterCmd = &cobra.Command{
-	// 命令名称
-	Use:   "master",
-	// 命令简短描述
-	Short: "Run Kubernetes benchmark checks from the master.yaml file.",
-	// 命令详细描述
-	Long:  `Run Kubernetes benchmark checks from the master.yaml file in cfg/<version>.`,
-	// 命令执行函数
-	Run: func(cmd *cobra.Command, args []string) {
-		// 获取基准版本
-		bv, err := getBenchmarkVersion(kubeVersion, benchmarkVersion, viper.GetViper())
-		if err != nil {
-			// 如果获取失败，输出错误信息并退出
-			exitWithError(fmt.Errorf("unable to determine benchmark version: %v", err))
-		}
+var masterCmd = &cobra.Command{  // 创建名为 masterCmd 的命令
+    Use:   "master",  // 使用说明
+    Short: "Run Kubernetes benchmark checks from the master.yaml file.",  // 简短说明
+    Long:  `Run Kubernetes benchmark checks from the master.yaml file in cfg/<version>.`,  // 详细说明
+    Run: func(cmd *cobra.Command, args []string) {  // 运行命令的函数
+        bv, err := getBenchmarkVersion(kubeVersion, benchmarkVersion, viper.GetViper())  // 获取基准版本
+        if err != nil {  // 如果出错
+            exitWithError(fmt.Errorf("unable to determine benchmark version: %v", err))  // 输出错误信息
+        }
 
-		// 加载配置文件
-		filename := loadConfig(check.MASTER, bv)
-		// 运行检查
-		runChecks(check.MASTER, filename)
-		// 写入输出
-		writeOutput(controlsCollection)
-	},
+        filename := loadConfig(check.MASTER, bv)  // 加载配置文件
+        runChecks(check.MASTER, filename)  // 运行检查
+        writeOutput(controlsCollection)  // 写入输出结果
+    },
 }
-# 在程序初始化时执行的函数
+
 func init() {
-    # 为 masterCmd 命令设置持久标志，用于指定 masterFile 变量的值
-    masterCmd.PersistentFlags().StringVarP(&masterFile,
-        "file", # 标志的名称
-        "f",    # 标志的简称
-        "/master.yaml", # 默认值
-        "Alternative YAML file for master checks" # 标志的说明
+    masterCmd.PersistentFlags().StringVarP(&masterFile,  // 初始化 masterCmd 的持久标志
+        "file",  // 标志名称
+        "f",  // 简称
+        "/master.yaml",  // 默认值
+        "Alternative YAML file for master checks",  // 标志说明
     )
 
-    # 将 masterCmd 命令添加到 RootCmd 命令中
-    RootCmd.AddCommand(masterCmd)
+    RootCmd.AddCommand(masterCmd)  // 将 masterCmd 添加到 RootCmd
 }
 ```

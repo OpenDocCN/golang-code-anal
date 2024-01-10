@@ -1,32 +1,28 @@
 # `kubebench-aquasecurity\cmd\kubernetes_version_test.go`
 
 ```
-// 导入所需的包
 package cmd
 
 import (
-	"crypto/tls" // 导入加密包
-	"fmt" // 导入格式化包
-	"io/ioutil" // 导入读取文件包
-	"net/http" // 导入HTTP包
-	"net/http/httptest" // 导入HTTP测试包
-	"os" // 导入操作系统包
-	"strconv" // 导入字符串转换包
-	"testing" // 导入测试包
+    "crypto/tls"  // 导入加密传输层协议包
+    "fmt"  // 导入格式化包
+    "io/ioutil"  // 导入读取文件包
+    "net/http"  // 导入HTTP包
+    "net/http/httptest"  // 导入HTTP测试包
+    "os"  // 导入操作系统包
+    "strconv"  // 导入字符串转换包
+    "testing"  // 导入测试包
 )
 
-// 测试加载证书的函数
 func TestLoadCertficate(t *testing.T) {
-	// 创建临时目录
-	tmp, err := ioutil.TempDir("", "TestFakeLoadCertficate")
-	if err != nil {
-		t.Fatalf("unable to create temp directory: %v", err) // 如果创建失败，输出错误信息
-	}
-	defer os.RemoveAll(tmp) // 在函数返回前删除临时目录
-# 创建临时文件用于存储好的证书
-goodCertFile, _ := ioutil.TempFile(tmp, "good-cert-*")
-# 向临时文件写入好的证书内容
-_, _ = goodCertFile.Write([]byte(`-----BEGIN CERTIFICATE-----
+    tmp, err := ioutil.TempDir("", "TestFakeLoadCertficate")  // 创建临时目录
+    if err != nil {
+        t.Fatalf("unable to create temp directory: %v", err)  // 如果创建临时目录失败，则输出错误信息
+    }
+    defer os.RemoveAll(tmp)  // 在函数返回时删除临时目录
+
+    goodCertFile, _ := ioutil.TempFile(tmp, "good-cert-*")  // 创建临时文件
+    _, _ = goodCertFile.Write([]byte(`-----BEGIN CERTIFICATE-----
 MIICyDCCAbCgAwIBAgIBADANBgkqhkiG9w0BAQsFADAVMRMwEQYDVQQDEwprdWJl
 cm5ldGVzMB4XDTE5MTEwODAxNDAwMFoXDTI5MTEwNTAxNDAwMFowFTETMBEGA1UE
 AxMKa3ViZXJuZXRlczCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMn6
@@ -42,297 +38,293 @@ gzuCRRDMGu25NtG3m67w4e2RzW8Z/lzvbfyJZGoV2c6dN+yP9/Pw2MXlrnMWugd1
 jLv3UYZRHMpuNS8BJU74BuVzVPHd55RAl+bV8yemdZJ7pPzMvGbZ7zRXWODTDlge
 CQb9lY+jYErisH8Sq7uABFPvi7RaTh8SS7V7OxqHZvmttNTdZs4TIkk45JK7Y+Xq
 FAjB57z2NcIgJuVpQnGRYtr/JcH2Qdsq8bLtXaojUIWOOqoTDRLYozdMOOQ=
------END CERTIFICATE-----`))
-# 创建临时文件用于存储坏的证书
-badCertFile, _ := ioutil.TempFile(tmp, "bad-cert-*")
-# 定义一个结构体切片，每个结构体包含文件名和是否失败的标志
-cases := []struct {
-    file string
-    fail bool
-}{
-    {
-        file: "missing cert file",  # 文件名为"missing cert file"，标志为失败
-        fail: true,
-    },
-    {
-        file: badCertFile.Name(),   # 文件名为badCertFile的名称，标志为失败
-        fail: true,
-    },
-    {
-        file: goodCertFile.Name(),  # 文件名为goodCertFile的名称，标志为成功
-        fail: false,
-    },
-}
+-----END CERTIFICATE-----`))  // 写入临时文件内容
+    badCertFile, _ := ioutil.TempFile(tmp, "bad-cert-*")  // 创建另一个临时文件
 
-# 遍历结构体切片中的每个结构体
-for id, c := range cases {
-    # 使用测试框架运行子测试，子测试的名称为当前id的字符串形式
-    t.Run(strconv.Itoa(id), func(t *testing.T) {
-// 加载证书文件并返回证书对象和错误信息
-tlsCert, err := loadCertficate(c.file)
-// 如果不是预期失败，并且有错误发生，则输出错误信息
-if !c.fail {
-    if err != nil {
-        t.Errorf("unexpected error: %v", err)
+    cases := []struct {
+        file string  // 文件名
+        fail bool  // 是否失败
+    }{
+        {
+            file: "missing cert file",  // 缺少证书文件
+            fail: true,  // 失败
+        },
+        {
+            file: badCertFile.Name(),  // 错误的证书文件名
+            fail: true,  // 失败
+        },
+        {
+            file: goodCertFile.Name(),  // 正确的证书文件名
+            fail: false,  // 不失败
+        },
     }
-    // 如果返回的证书对象为空，则输出缺少返回的 TLS 证书的错误信息
-    if tlsCert == nil {
-        t.Errorf("missing returned TLS Certificate")
-    }
-} else {
-    // 如果预期有错误发生，但没有错误发生，则输出预期错误的错误信息
-    if err == nil {
-        t.Errorf("Expected error")
+    # 遍历 cases 列表，id 为索引，c 为值
+    for id, c := range cases {
+        # 使用测试框架运行子测试，子测试名称为当前索引的字符串形式
+        t.Run(strconv.Itoa(id), func(t *testing.T) {
+            # 加载证书文件，返回 TLS 证书和可能的错误
+            tlsCert, err := loadCertficate(c.file)
+            # 如果不是预期的失败情况
+            if !c.fail {
+                # 如果出现了错误
+                if err != nil {
+                    t.Errorf("unexpected error: %v", err)
+                }
+                # 如果返回的 TLS 证书为空
+                if tlsCert == nil {
+                    t.Errorf("missing returned TLS Certificate")
+                }
+            } else {
+                # 如果是预期的失败情况，但没有出现错误
+                if err == nil {
+                    t.Errorf("Expected error")
+                }
+            }
+
+        })
     }
 }
-// 结束测试用例
-})
-}
-// 测试获取网页数据的函数
+# 定义测试函数TestGetWebData，用于测试获取网络数据的函数
 func TestGetWebData(t *testing.T) {
-# 定义一个处理成功请求的函数，向客户端返回指定的 JSON 数据
-okfn := func(w http.ResponseWriter, r *http.Request) {
-    _, _ = fmt.Fprintln(w, `{
-        "major": "1",
-        "minor": "15"}`)
+    # 定义模拟成功响应的函数okfn
+    okfn := func(w http.ResponseWriter, r *http.Request) {
+        _, _ = fmt.Fprintln(w, `{
+            "major": "1",
+            "minor": "15"}`)
+    }
+    # 定义模拟失败响应的函数errfn
+    errfn := func(w http.ResponseWriter, r *http.Request) {
+        http.Error(w, http.StatusText(http.StatusInternalServerError),
+            http.StatusInternalServerError)
+    }
+    # 设置一个虚拟的token
+    token := "dummyToken"
+    # 声明一个空的tls证书
+    var tlsCert tls.Certificate
+
+    # 定义测试用例
+    cases := []struct {
+        fn   http.HandlerFunc
+        fail bool
+    }{
+        {
+            fn:   okfn,
+            fail: false,
+        },
+        {
+            fn:   errfn,
+            fail: true,
+        },
+    }
+
+    # 遍历测试用例
+    for id, c := range cases {
+        # 使用t.Run创建子测试，id为测试用例的索引
+        t.Run(strconv.Itoa(id), func(t *testing.T) {
+            # 创建一个模拟的HTTP服务器
+            ts := httptest.NewServer(c.fn)
+            # 延迟关闭模拟的HTTP服务器
+            defer ts.Close()
+            # 调用getWebData函数获取网络数据
+            data, err := getWebData(ts.URL, token, &tlsCert)
+            # 判断是否预期失败
+            if !c.fail {
+                # 如果不预期失败，判断是否有错误
+                if err != nil {
+                    t.Errorf("unexpected error: %v", err)
+                }
+                # 判断返回的数据长度是否为0
+                if len(data) == 0 {
+                    t.Errorf("missing data")
+                }
+            } else {
+                # 如果预期失败，判断是否有错误
+                if err == nil {
+                    t.Errorf("Expected error")
+                }
+            }
+        })
+    }
+
 }
-
-# 定义一个处理错误请求的函数，向客户端返回指定的错误信息和状态码
-errfn := func(w http.ResponseWriter, r *http.Request) {
-    http.Error(w, http.StatusText(http.StatusInternalServerError),
-        http.StatusInternalServerError)
-}
-
-# 设置一个虚拟的令牌
-token := "dummyToken"
-
-# 声明一个 TLS 证书变量
-var tlsCert tls.Certificate
-
-# 定义一个包含测试用例的数组，每个测试用例包含一个处理函数和一个失败标志
-cases := []struct {
-    fn   http.HandlerFunc  # 处理函数
-    fail bool             # 失败标志
-}{
-    {
-        fn:   okfn,         # 成功处理函数
-        fail: false,        # 不失败
-    },
-		{
-			fn:   errfn,  // 设置测试函数
-			fail: true,  // 设置预期失败
-		},
-	}
-
-	for id, c := range cases {  // 遍历测试用例
-		t.Run(strconv.Itoa(id), func(t *testing.T) {  // 运行测试
-			ts := httptest.NewServer(c.fn)  // 创建一个 HTTP 测试服务器
-			defer ts.Close()  // 延迟关闭测试服务器
-			data, err := getWebData(ts.URL, token, &tlsCert)  // 获取网络数据
-			if !c.fail {  // 如果不是预期失败
-				if err != nil {  // 如果有错误
-					t.Errorf("unexpected error: %v", err)  // 输出意外错误
-				}
-
-				if len(data) == 0 {  // 如果数据长度为0
-					t.Errorf("missing data")  // 输出缺失数据
-				}
-			} else {
-		// 如果 err 为 nil，则输出错误信息 "Expected error"
-		if err == nil {
-			t.Errorf("Expected error")
-		}
-	}
-})
-}
-
-// 测试获取带重试的网络数据
+# 定义测试函数TestGetWebDataWithRetry，用于测试带重试功能的获取网络数据的函数
 func TestGetWebDataWithRetry(t *testing.T) {
-	// 定义成功回调函数
-	okfn := func(w http.ResponseWriter, r *http.Request) {
-		// 向响应写入 JSON 数据
-		_, _ = fmt.Fprintln(w, `{
-			"major": "1",
-			"minor": "15"}`)
-	}
-	// 定义失败回调函数
-	errfn := func(w http.ResponseWriter, r *http.Request) {
-		// 向响应写入内部服务器错误状态码
-		http.Error(w, http.StatusText(http.StatusInternalServerError),
-			http.StatusInternalServerError)
-	}
-	// 定义一个虚拟的令牌
-	token := "dummyToken"
-	// 定义一个空的 TLS 证书
-	var tlsCert tls.Certificate
-# 定义一个包含 http.HandlerFunc 和 fail 标志的结构体切片
-cases := []struct {
-	fn   http.HandlerFunc  # fn 表示 http 处理函数
-	fail bool              # fail 表示是否失败
-}{
-	{
-		fn:   okfn,         # 设置 fn 为 okfn
-		fail: false,        # 设置 fail 为 false
-	},
-	{
-		fn:   errfn,        # 设置 fn 为 errfn
-		fail: true,         # 设置 fail 为 true
-	},
-}
+    # 定义模拟成功响应的函数okfn
+    okfn := func(w http.ResponseWriter, r *http.Request) {
+        _, _ = fmt.Fprintln(w, `{
+            "major": "1",
+            "minor": "15"}`)
+    }
+    # 定义模拟失败响应的函数errfn
+    errfn := func(w http.ResponseWriter, r *http.Request) {
+        http.Error(w, http.StatusText(http.StatusInternalServerError),
+            http.StatusInternalServerError)
+    }
+    # 设置一个虚拟的token
+    token := "dummyToken"
+    # 声明一个空的tls证书
+    var tlsCert tls.Certificate
 
-# 遍历 cases 切片
-for id, c := range cases {
-	# 使用测试工具运行测试
-	t.Run(strconv.Itoa(id), func(t *testing.T) {
-		# 创建一个 HTTP 测试服务器，并在函数返回时关闭
-		ts := httptest.NewServer(c.fn)
-		defer ts.Close()
-		# 使用重试机制获取 Web 数据
-		data, err := getWebDataWithRetry(ts.URL, token, &tlsCert)
-# 检查条件c.fail是否为false，如果是则执行以下代码块
-if !c.fail {
-    # 如果err不为空，则输出错误信息
-    if err != nil {
-        t.Errorf("unexpected error: %v", err)
+    # 定义测试用例
+    cases := []struct {
+        fn   http.HandlerFunc
+        fail bool
+    }{
+        {
+            fn:   okfn,
+            fail: false,
+        },
+        {
+            fn:   errfn,
+            fail: true,
+        },
     }
-    # 如果data的长度为0，则输出错误信息
-    if len(data) == 0 {
-        t.Errorf("missing data")
-    }
-# 如果条件c.fail为true，则执行以下代码块
-} else {
-    # 如果err为空，则输出错误信息
-    if err == nil {
-        t.Errorf("Expected error")
+    # 遍历测试用例集合，id 为索引，c 为测试用例
+    for id, c := range cases {
+        # 使用测试用例的索引作为子测试的名称，运行子测试
+        t.Run(strconv.Itoa(id), func(t *testing.T) {
+            # 创建一个 HTTP 测试服务器，并在函数返回时关闭
+            ts := httptest.NewServer(c.fn)
+            defer ts.Close()
+            # 使用重试机制获取 Web 数据，传入 URL、令牌和 TLS 证书
+            data, err := getWebDataWithRetry(ts.URL, token, &tlsCert)
+            # 如果测试用例不期望失败
+            if !c.fail {
+                # 如果出现错误，输出意外的错误信息
+                if err != nil {
+                    t.Errorf("unexpected error: %v", err)
+                }
+                # 如果数据长度为 0，输出缺失数据的错误信息
+                if len(data) == 0 {
+                    t.Errorf("missing data")
+                }
+            } else {
+                # 如果测试用例期望失败，但没有出现错误，输出预期的错误信息
+                if err == nil {
+                    t.Errorf("Expected error")
+                }
+            }
+        })
     }
 }
-# 结束当前测试用例
-})
-# 结束当前测试函数
-}
-# 定义测试函数TestExtractVersion
+# 测试从 JSON 数据中提取版本信息
 func TestExtractVersion(t *testing.T) {
-    # 定义okJSON变量并赋值
+    # 有效的 JSON 数据
     okJSON := []byte(`{
     "major": "1",
-// 定义一个 JSON 对象，包含了一些版本信息
-"minor": "15",
-"gitVersion": "v1.15.3",
-"gitCommit": "2d3c76f9091b6bec110a5e63777c332469e0cba2",
-"gitTreeState": "clean",
-"buildDate": "2019-08-20T18:57:36Z",
-"goVersion": "go1.12.9",
-"compiler": "gc",
-"platform": "linux/amd64"
-}
+    "minor": "15",
+    "gitVersion": "v1.15.3",
+    "gitCommit": "2d3c76f9091b6bec110a5e63777c332469e0cba2",
+    "gitTreeState": "clean",
+    "buildDate": "2019-08-20T18:57:36Z",
+    "goVersion": "go1.12.9",
+    "compiler": "gc",
+    "platform": "linux/amd64"
+    }`)
 
-// 定义一个无效的 JSON 对象，缺少了一个键值对
-invalidJSON := []byte(`{
-"major": "1",
-"minor": "15",
-"gitVersion": "v1.15.3",
-"gitCommit": "2d3c76f9091b6bec110a5e63777c332469e0cba2",
-"gitTreeState": "clean",`)
+    # 无效的 JSON 数据
+    invalidJSON := []byte(`{
+    "major": "1",
+    "minor": "15",
+    "gitVersion": "v1.15.3",
+    "gitCommit": "2d3c76f9091b6bec110a5e63777c332469e0cba2",
+    "gitTreeState": "clean",`)
 
-// 定义一个测试用例的结构体数组
-cases := []struct {
-    data        []byte  // 数据
-    fail        bool    // 是否失败
-		expectedVer string
-	}{
-		{
-			data:        okJSON,  // 设置测试数据为有效的 JSON
-			fail:        false,   // 设置预期测试结果为不失败
-			expectedVer: "1.15", // 设置预期的版本号为 "1.15"
-		},
-		{
-			data: invalidJSON,  // 设置测试数据为无效的 JSON
-			fail: true,          // 设置预期测试结果为失败
-		},
-	}
+    # 测试用例
+    cases := []struct {
+        data        []byte
+        fail        bool
+        expectedVer string
+    }{
+        {
+            data:        okJSON,
+            fail:        false,
+            expectedVer: "1.15",
+        },
+        {
+            data: invalidJSON,
+            fail: true,
+        },
+    }
 
-	for id, c := range cases {  // 遍历测试用例
-		t.Run(strconv.Itoa(id), func(t *testing.T) {  // 运行测试
-			ver, err := extractVersion(c.data)  // 提取版本号
-			if !c.fail {  // 如果预期测试结果不是失败
-				if err != nil {  // 如果提取版本号时出现错误
-					t.Errorf("unexpected error: %v", err)  // 输出意外的错误信息
-				}
-// 如果期望的版本与基本版本不相符，则输出错误信息
-if c.expectedVer != ver.BaseVersion() {
-    t.Errorf("Expected %q but Got %q", c.expectedVer, ver)
-} 
-// 如果不符合上述条件，则执行以下代码块
-else {
-    // 如果没有错误发生，则输出错误信息
-    if err == nil {
-        t.Errorf("Expected error")
+    # 遍历测试用例
+    for id, c := range cases {
+        t.Run(strconv.Itoa(id), func(t *testing.T) {
+            # 提取版本信息
+            ver, err := extractVersion(c.data)
+            if !c.fail {
+                if err != nil {
+                    t.Errorf("unexpected error: %v", err)
+                }
+                if c.expectedVer != ver.BaseVersion() {
+                    t.Errorf("Expected %q but Got %q", c.expectedVer, ver)
+                }
+            } else {
+                if err == nil {
+                    t.Errorf("Expected error")
+                }
+            }
+        })
     }
 }
-// 结束当前测试用例
-})
-// 结束当前测试函数
-}
 
-// 定义重置环境变量的函数
+# 测试获取 Kubernetes URL
 func TestGetKubernetesURL(t *testing.T) {
+
+    # 重置环境变量
     resetEnvs := func() {
         os.Unsetenv("KUBE_BENCH_K8S_ENV")
         os.Unsetenv("KUBERNETES_SERVICE_HOST")
         os.Unsetenv("KUBERNETES_SERVICE_PORT_HTTPS")
     }
-	// 设置环境变量的匿名函数
-	setEnvs := func() {
-		// 设置环境变量 KUBE_BENCH_K8S_ENV 为 "1"
-		os.Setenv("KUBE_BENCH_K8S_ENV", "1")
-		// 设置环境变量 KUBERNETES_SERVICE_HOST 为 "testHostServer"
-		os.Setenv("KUBERNETES_SERVICE_HOST", "testHostServer")
-		// 设置环境变量 KUBERNETES_SERVICE_PORT_HTTPS 为 "443"
-		os.Setenv("KUBERNETES_SERVICE_PORT_HTTPS", "443")
-	}
 
-	// 定义测试用例数组
-	cases := []struct {
-		useDefault bool   // 是否使用默认值
-		expected   string // 期望的结果
-	}{
-		{
-			useDefault: true, // 使用默认值
-			expected:   "https://kubernetes.default.svc/version", // 期望的结果为默认值
-		},
-		{
-			useDefault: false, // 不使用默认值
-			expected:   "https://testHostServer:443/version", // 期望的结果为自定义值
-		},
-	}
-
-	// 遍历测试用例数组
-	for id, c := range cases {
-# 使用测试框架运行测试用例，每个测试用例的 ID 由 id 转换为字符串后作为名称
-t.Run(strconv.Itoa(id), func(t *testing.T) {
-    # 重置环境变量，确保每个测试用例的环境都是一致的
-    resetEnvs()
-    # 延迟执行重置环境变量的操作，确保在测试用例执行完毕后进行环境的恢复
-    defer resetEnvs()
-    # 如果不使用默认值，则设置环境变量
-    if !c.useDefault {
-        setEnvs()
+    # 设置环境变量
+    setEnvs := func() {
+        os.Setenv("KUBE_BENCH_K8S_ENV", "1")
+        os.Setenv("KUBERNETES_SERVICE_HOST", "testHostServer")
+        os.Setenv("KUBERNETES_SERVICE_PORT_HTTPS", "443")
     }
-    # 获取 Kubernetes 的 URL
-    k8sURL := getKubernetesURL()
 
-    # 如果不使用默认值，则进行预期结果和实际结果的比较，并输出错误信息
-    if !c.useDefault {
-        if k8sURL != c.expected {
-            t.Errorf("Expected %q but Got %q", k8sURL, c.expected)
-        }
-    } 
-    # 如果使用默认值，则进行预期结果和实际结果的比较，并输出错误信息
-    else {
-        if k8sURL != c.expected {
-            t.Errorf("Expected %q but Got %q", k8sURL, c.expected)
-        }
+    # 测试用例
+    cases := []struct {
+        useDefault bool
+        expected   string
+    # 定义测试用例数组，包含两个测试用例对象
+    {
+        useDefault: true,
+        expected:   "https://kubernetes.default.svc/version",
+    },
+    {
+        useDefault: false,
+        expected:   "https://testHostServer:443/version",
     }
-})
-这是一个代码块的结束标记，表示前面的函数或者循环的结束。
+    # 遍历测试用例数组，使用 id 和 c 作为索引和值
+    for id, c := range cases {
+        # 运行子测试，使用 id 作为测试名称
+        t.Run(strconv.Itoa(id), func(t *testing.T) {
+            # 重置环境变量，确保每个测试用例的环境都是一致的
+            resetEnvs()
+            # 延迟重置环境变量，确保在测试结束后环境能够被正确恢复
+            defer resetEnvs()
+            # 如果测试用例中指定不使用默认值，则设置环境变量
+            if !c.useDefault {
+                setEnvs()
+            }
+            # 获取 Kubernetes 的 URL
+            k8sURL := getKubernetesURL()
+
+            # 如果测试用例中指定不使用默认值，则进行相应的断言
+            if !c.useDefault {
+                if k8sURL != c.expected {
+                    t.Errorf("Expected %q but Got %q", k8sURL, c.expected)
+                }
+            } else {
+                # 如果测试用例中指定使用默认值，则进行相应的断言
+                if k8sURL != c.expected {
+                    t.Errorf("Expected %q but Got %q", k8sURL, c.expected)
+                }
+            }
+        })
+    }
+# 闭合前面的函数定义
 ```
