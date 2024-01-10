@@ -4,39 +4,48 @@
 package search
 
 import (
-	"fmt"  // 导入 fmt 包，用于格式化输出
-	"github.com/anchore/grype/grype/distro"  // 导入 distro 包
-	"github.com/anchore/grype/grype/pkg"  // 导入 pkg 包
-	"github.com/anchore/grype/grype/vulnerability"  // 导入 vulnerability 包
+    "fmt"
+
+    "github.com/anchore/grype/grype/distro"
+    "github.com/anchore/grype/grype/pkg"
+    "github.com/anchore/grype/grype/vulnerability"
 )
 
+// onlyQualifiedPackages 函数用于过滤出符合条件的漏洞信息
 func onlyQualifiedPackages(d *distro.Distro, p pkg.Package, allVulns []vulnerability.Vulnerability) ([]vulnerability.Vulnerability, error) {
-	var vulns []vulnerability.Vulnerability  // 定义一个空的漏洞切片
+    var vulns []vulnerability.Vulnerability
 
-	for _, vuln := range allVulns {  // 遍历所有漏洞
-		isVulnerable := true  // 初始化漏洞状态为 true
+    // 遍历所有漏洞信息
+    for _, vuln := range allVulns {
+        isVulnerable := true
 
-		for _, q := range vuln.PackageQualifiers {  // 遍历漏洞的包限定符
-			v, err := q.Satisfied(d, p)  // 判断包是否满足漏洞的限定条件
+        // 遍历漏洞信息中的包限定条件
+        for _, q := range vuln.PackageQualifiers {
+            // 检查包限定条件是否满足
+            v, err := q.Satisfied(d, p)
 
-			if err != nil {  // 如果出现错误
-# 返回一个空值和一个错误，错误信息包括包限定符、发行版和包的信息，以及错误本身
-return nil, fmt.Errorf("failed to check package qualifier=%q for distro=%q package=%q: %w", q, d, p, err)
+            // 如果出现错误，返回错误信息
+            if err != nil {
+                return nil, fmt.Errorf("failed to check package qualifier=%q for distro=%q package=%q: %w", q, d, p, err)
+            }
 
-# 将变量 isVulnerable 设置为 v 的值
-isVulnerable = v
+            // 更新漏洞信息是否受影响的状态
+            isVulnerable = v
+            if !isVulnerable {
+                break
+            }
+        }
 
-# 如果不是易受攻击的，则跳出循环
-if !isVulnerable:
-    break
+        // 如果漏洞信息不受影响，则继续下一个漏洞信息
+        if !isVulnerable {
+            continue
+        }
 
-# 如果不是易受攻击的，则继续下一次循环
-if !isVulnerable:
-    continue
+        // 将受影响的漏洞信息添加到结果列表中
+        vulns = append(vulns, vuln)
+    }
 
-# 将 vuln 添加到 vulns 列表中
-vulns = append(vulns, vuln)
-
-# 返回 vulns 列表和一个空值
-return vulns, nil
+    // 返回符合条件的漏洞信息列表
+    return vulns, nil
+}
 ```

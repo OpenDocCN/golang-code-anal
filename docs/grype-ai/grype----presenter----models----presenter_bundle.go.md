@@ -1,35 +1,25 @@
 # `grype\grype\presenter\models\presenter_bundle.go`
 
 ```
-// 导入所需的包
+package models
+
 import (
-	"github.com/anchore/clio"
-	"github.com/anchore/grype/grype/match"
-	"github.com/anchore/grype/grype/pkg"
-	"github.com/anchore/grype/grype/vulnerability"
-	"github.com/anchore/syft/syft/sbom"
+    "github.com/anchore/clio"  // 导入 clio 包
+    "github.com/anchore/grype/grype/match"  // 导入 match 包
+    "github.com/anchore/grype/grype/pkg"  // 导入 pkg 包
+    "github.com/anchore/grype/grype/vulnerability"  // 导入 vulnerability 包
+    "github.com/anchore/syft/syft/sbom"  // 导入 sbom 包
 )
 
-// 定义 PresenterConfig 结构体，包含各种字段用于展示配置
 type PresenterConfig struct {
-	// ID 用于标识展示配置
-	ID               clio.Identification
-	// Matches 包含匹配项
-	Matches          match.Matches
-	// IgnoredMatches 包含被忽略的匹配项
-	IgnoredMatches   []match.IgnoredMatch
-	// Packages 包含软件包信息
-	Packages         []pkg.Package
-	// Context 包含软件包的上下文信息
-	Context          pkg.Context
-	// MetadataProvider 用于提供漏洞元数据
-	MetadataProvider vulnerability.MetadataProvider
-	// SBOM 用于表示软件构建材料清单
-	SBOM             *sbom.SBOM
-	// AppConfig 用于表示应用程序配置
-	AppConfig        interface{}
-	// DBStatus 用于表示数据库状态
-	DBStatus         interface{}
+    ID               clio.Identification  // 定义 ID 字段，类型为 clio.Identification
+    Matches          match.Matches  // 定义 Matches 字段，类型为 match.Matches
+    IgnoredMatches   []match.IgnoredMatch  // 定义 IgnoredMatches 字段，类型为 match.IgnoredMatch 切片
+    Packages         []pkg.Package  // 定义 Packages 字段，类型为 pkg.Package 切片
+    Context          pkg.Context  // 定义 Context 字段，类型为 pkg.Context
+    MetadataProvider vulnerability.MetadataProvider  // 定义 MetadataProvider 字段，类型为 vulnerability.MetadataProvider
+    SBOM             *sbom.SBOM  // 定义 SBOM 字段，类型为 *sbom.SBOM
+    AppConfig        interface{}  // 定义 AppConfig 字段，类型为 interface{}
+    DBStatus         interface{}  // 定义 DBStatus 字段，类型为 interface{}
 }
-这是一个代码块的结束符号，表示前面的函数或者循环的结束。
 ```

@@ -1,61 +1,49 @@
 # `grype\grype\version\helper_test.go`
 
 ```
-// 定义一个名为 version 的包
 package version
 
-// 引入所需的包
 import (
-	"fmt" // 格式化输出
-	"strings" // 字符串操作
-	"testing" // 测试框架
+    "fmt"  // 导入格式化输出包
+    "strings"  // 导入字符串处理包
+    "testing"  // 导入测试包
 
-	"github.com/stretchr/testify/assert" // 断言库
+    "github.com/stretchr/testify/assert"  // 导入断言包
 )
 
-// 定义测试用例结构
 type testCase struct {
-	name           string // 测试用例名称
-	version        string // 版本号
-	constraint     string // 约束条件
-	satisfied      bool   // 是否满足约束条件
-	shouldErr      bool   // 是否应该出错
-	errorAssertion func(t *testing.T, err error) // 错误断言函数
+    name           string  // 测试用例名称
+    version        string  // 版本号
+    constraint     string  // 约束条件
+    satisfied      bool    // 是否满足约束条件
+    shouldErr      bool    // 是否应该出错
+    errorAssertion func(t *testing.T, err error)  // 错误断言函数
 }
 
-// 定义测试用例结构的方法，返回测试用例名称
 func (c *testCase) tName() string {
-// 如果测试用例的名称不为空，则直接返回该名称
-if c.name != "" {
-    return c.name
+    if c.name != "" {
+        return c.name  // 如果测试用例名称不为空，则返回名称
+    }
+
+    return fmt.Sprintf("ver='%s'const='%s'", c.version, strings.ReplaceAll(c.constraint, " ", ""))  // 否则返回格式化的版本和约束条件
 }
 
-// 如果测试用例的名称为空，则返回格式化后的版本和约束信息
-return fmt.Sprintf("ver='%s'const='%s'", c.version, strings.ReplaceAll(c.constraint, " ", ""))
-}
-
-// 断言版本约束
 func (c *testCase) assertVersionConstraint(t *testing.T, format Format, constraint Constraint) {
-    t.Helper()
+    t.Helper()  // 标记该函数是测试辅助函数
 
-    // 使用测试用例的版本和格式创建新的版本对象
-    version, err := NewVersion(c.version, format)
-    assert.NoError(t, err, "unexpected error from NewVersion: %v", err)
+    version, err := NewVersion(c.version, format)  // 使用给定的格式创建版本对象
+    assert.NoError(t, err, "unexpected error from NewVersion: %v", err)  // 断言没有错误发生
 
-    // 检查约束是否满足
-    isSatisfied, err := constraint.Satisfied(version)
-    if c.shouldErr {
-        // 如果预期出现错误，并且定义了错误断言函数，则调用错误断言函数
+    isSatisfied, err := constraint.Satisfied(version)  // 判断版本是否满足约束条件
+    if c.shouldErr {  // 如果预期应该出错
         if c.errorAssertion != nil {
-            c.errorAssertion(t, err)
+            c.errorAssertion(t, err)  // 使用错误断言函数断言错误
         } else {
-            // 否则，断言应该出现错误
-            assert.Error(t, err)
+            assert.Error(t, err)  // 否则断言出现错误
         }
-# 如果条件不满足，则断言测试失败并输出错误信息
-} else {
-    assert.NoError(t, err, "unexpected error from constraint.Satisfied: %v", err)
+    } else {
+        assert.NoError(t, err, "unexpected error from constraint.Satisfied: %v", err)  // 断言没有错误发生
+    }
+    assert.Equal(t, c.satisfied, isSatisfied, "unexpected constraint check result")  // 断言约束条件检查结果是否符合预期
 }
-# 断言实际结果与预期结果相等，如果不相等则输出错误信息
-assert.Equal(t, c.satisfied, isSatisfied, "unexpected constraint check result")
 ```

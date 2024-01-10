@@ -1,30 +1,37 @@
 # `grype\grype\db\v4\store.go`
 
 ```
-# 定义了一个接口类型 Store，该接口包含了 StoreReader、StoreWriter 和 DBCloser 三个接口的方法
+# 定义接口类型 Store，包含 StoreReader、StoreWriter 和 DBCloser 三个接口
 type Store interface {
     StoreReader
     StoreWriter
     DBCloser
 }
 
-# 定义了 StoreReader 接口，该接口包含了 IDReader、DiffReader、VulnerabilityStoreReader 和 VulnerabilityMetadataStoreReader 四个接口的方法
+# 定义接口类型 StoreReader，包含 IDReader、DiffReader、VulnerabilityStoreReader 和 VulnerabilityMetadataStoreReader 四个接口
 type StoreReader interface {
     IDReader
     DiffReader
     VulnerabilityStoreReader
     VulnerabilityMetadataStoreReader
+    VulnerabilityMatchExclusionStoreReader
 }
 
-# 定义了 StoreWriter 接口，该接口包含了 IDWriter、VulnerabilityStoreWriter 和 VulnerabilityMetadataStoreWriter 三个接口的方法
+# 定义接口类型 StoreWriter，包含 IDWriter、VulnerabilityStoreWriter、VulnerabilityMetadataStoreWriter 和 VulnerabilityMatchExclusionStoreWriter 四个接口
 type StoreWriter interface {
     IDWriter
     VulnerabilityStoreWriter
     VulnerabilityMetadataStoreWriter
+    VulnerabilityMatchExclusionStoreWriter
 }
-# 定义一个接口VulnerabilityMatchExclusionStoreWriter
 
-# 定义一个接口DiffReader，包含DiffStore方法，用于从另一个StoreReader中读取差异数据
+# 定义接口类型 DiffReader，包含 DiffStore 方法，参数为 StoreReader 接口，返回值为 *[]Diff 和 error
+type DiffReader interface {
+    DiffStore(s StoreReader) (*[]Diff, error)
+}
 
-# 定义一个接口DBCloser，包含Close方法，用于关闭数据库连接
+# 定义接口类型 DBCloser，包含 Close 方法
+type DBCloser interface {
+    Close()
+}
 ```

@@ -4,63 +4,55 @@
 package cpe
 
 import (
-	"errors"  // 导入错误处理包
-	"fmt"  // 导入格式化输出包
-	"strings"  // 导入字符串处理包
+    "errors"  // 导入 errors 包，用于创建错误
+    "fmt"  // 导入 fmt 包，用于格式化输出
+    "strings"  // 导入 strings 包，用于处理字符串
 
-	"github.com/anchore/grype/grype/db/v4/pkg/resolver"  // 导入解析器包
-	"github.com/anchore/grype/grype/db/v4/pkg/resolver/stock"  // 导入库存解析器包
+    "github.com/anchore/grype/grype/db/v4/pkg/resolver"  // 导入 resolver 包
+    "github.com/anchore/grype/grype/db/v4/pkg/resolver/stock"  // 导入 stock 包
 )
 
 const ID = "cpe"  // 定义常量 ID 为 "cpe"
 
 type Namespace struct {
-	provider string  // 命名空间结构体包含 provider 字段
-	resolver resolver.Resolver  // 命名空间结构体包含解析器字段
+    provider string  // 定义 Namespace 结构体的 provider 字段为字符串类型
+    resolver resolver.Resolver  // 定义 Namespace 结构体的 resolver 字段为 resolver.Resolver 接口类型
 }
 
 func NewNamespace(provider string) *Namespace {
-	return &Namespace{  // 返回命名空间结构体指针
-		# 设置provider字段为传入的provider参数，resolver字段为stock.Resolver类型的指针
-		provider: provider,
-		resolver: &stock.Resolver{},
-	}
+    return &Namespace{  // 返回一个 Namespace 结构体指针
+        provider: provider,  // 设置 provider 字段的值为传入的参数
+        resolver: &stock.Resolver{},  // 设置 resolver 字段的值为 stock.Resolver 结构体的实例
+    }
 }
 
-# 从字符串创建Namespace对象
 func FromString(namespaceStr string) (*Namespace, error) {
-	# 如果namespaceStr为空字符串，则返回错误
-	if namespaceStr == "" {
-		return nil, errors.New("unable to create CPE namespace from empty string")
-	}
+    if namespaceStr == "" {  // 如果传入的字符串为空
+        return nil, errors.New("unable to create CPE namespace from empty string")  // 返回错误信息
+    }
 
-	# 使用冒号分割namespaceStr，得到components数组
-	components := strings.Split(namespaceStr, ":")
+    components := strings.Split(namespaceStr, ":")  // 使用冒号分割传入的字符串
 
-	# 如果components数组长度不为2，则返回错误
-	if len(components) != 2 {
-		return nil, fmt.Errorf("unable to create CPE namespace from %s: incorrect number of components", namespaceStr)
-	}
+    if len(components) != 2 {  // 如果分割后的数组长度不为 2
+        return nil, fmt.Errorf("unable to create CPE namespace from %s: incorrect number of components", namespaceStr)  // 返回错误信息
+    }
 
-	# 如果components数组第二个元素不等于ID，则返回错误
-	if components[1] != ID {
-		return nil, fmt.Errorf("unable to create CPE namespace from %s: type %s is incorrect", namespaceStr, components[1])
-	}
-# 返回一个新的命名空间对象，其中包含给定组件的第一个元素
-return NewNamespace(components[0]), nil
+    if components[1] != ID {  // 如果分割后的第二个元素不等于常量 ID
+        return nil, fmt.Errorf("unable to create CPE namespace from %s: type %s is incorrect", namespaceStr, components[1])  // 返回错误信息
+    }
 
-# 返回命名空间对象的提供者
+    return NewNamespace(components[0]), nil  // 返回根据分割后的第一个元素创建的 Namespace 结构体指针和 nil
+}
+
 func (n *Namespace) Provider() string {
-    return n.provider
+    return n.provider  // 返回 Namespace 结构体的 provider 字段的值
 }
 
-# 返回命名空间对象的解析器
 func (n *Namespace) Resolver() resolver.Resolver {
-    return n.resolver
+    return n.resolver  // 返回 Namespace 结构体的 resolver 字段的值
 }
 
-# 返回命名空间对象的字符串表示，格式为提供者:ID
 func (n Namespace) String() string {
-    return fmt.Sprintf("%s:%s", n.provider, ID)
+    return fmt.Sprintf("%s:%s", n.provider, ID)  // 返回格式化后的字符串，包含 provider 字段的值和常量 ID
 }
 ```

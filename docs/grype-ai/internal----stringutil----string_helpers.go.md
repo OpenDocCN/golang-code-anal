@@ -1,57 +1,47 @@
 # `grype\internal\stringutil\string_helpers.go`
 
 ```
-package stringutil
-
+// 导入 strings 包，用于处理字符串相关操作
 import "strings"
 
-// HasAnyOfSuffixes函数返回给定字符串是否具有给定后缀的指示。
+// HasAnyOfSuffixes 函数用于判断给定的字符串是否以给定的后缀之一结尾
 func HasAnyOfSuffixes(input string, suffixes ...string) bool {
-	// 遍历后缀数组
-	for _, suffix := range suffixes {
-		// 检查字符串是否以指定后缀结尾
-		if strings.HasSuffix(input, suffix) {
-			// 如果是，则返回true
-			return true
-		}
-	}
-
-	// 如果没有匹配的后缀，则返回false
-	return false
+    // 遍历所有的后缀
+    for _, suffix := range suffixes {
+        // 如果字符串以某个后缀结尾，则返回 true
+        if strings.HasSuffix(input, suffix) {
+            return true
+        }
+    }
+    // 如果没有任何后缀匹配，则返回 false
+    return false
 }
 
-// HasAnyOfPrefixes函数返回给定字符串是否具有给定前缀的指示。
+// HasAnyOfPrefixes 函数用于判断给定的字符串是否以给定的前缀之一开头
 func HasAnyOfPrefixes(input string, prefixes ...string) bool {
-	// 遍历前缀数组
-	for _, prefix := range prefixes {
-		// 检查字符串是否以指定前缀开头
-		if strings.HasPrefix(input, prefix) {
-			// 如果是，则返回true
-			return true
-		}
-	}
-
-	// 如果没有匹配的前缀，则返回false
-// 结束当前函数的执行，并返回 false
-		}
-	}
-
-	// 如果以上条件都不满足，则返回 false
-	return false
+    // 遍历所有的前缀
+    for _, prefix := range prefixes {
+        // 如果字符串以某个前缀开头，则返回 true
+        if strings.HasPrefix(input, prefix) {
+            return true
+        }
+    }
+    // 如果没有任何前缀匹配，则返回 false
+    return false
 }
 
-// SplitCommaSeparatedString 根据逗号分隔的输入字符串返回一个字符串切片
+// SplitCommaSeparatedString 函数用于将逗号分隔的字符串分割成字符串切片
 func SplitCommaSeparatedString(input string) []string {
-	// 创建一个空的字符串切片
-	output := make([]string, 0)
-	// 遍历使用逗号分隔的输入字符串的每个部分
-	for _, inputItem := range strings.Split(input, ",") {
-		// 如果部分的长度大于 0，则将其添加到输出切片中
-		if len(inputItem) > 0 {
-			output = append(output, inputItem)
-		}
-	}
-	// 返回输出切片
-	return output
+    // 初始化一个空的字符串切片
+    output := make([]string, 0)
+    // 遍历逗号分隔的字符串
+    for _, inputItem := range strings.Split(input, ",") {
+        // 如果分割后的字符串长度大于 0，则添加到输出切片中
+        if len(inputItem) > 0 {
+            output = append(output, inputItem)
+        }
+    }
+    // 返回分割后的字符串切片
+    return output
 }
 ```

@@ -1,17 +1,23 @@
 # `grype\grype\pkg\golang_metadata.go`
 
 ```
-// 定义一个名为 GolangBinMetadata 的结构体，包含构建设置、Go 编译版本、架构、H1 摘要和主模块
+# 定义了一个名为 GolangBinMetadata 的结构体，用于存储 Golang 二进制文件的元数据
 type GolangBinMetadata struct {
-    BuildSettings     map[string]string `json:"goBuildSettings,omitempty"` // 构建设置，以键值对形式存储
-    GoCompiledVersion string            `json:"goCompiledVersion"`         // Go 编译版本
-    Architecture      string            `json:"architecture"`              // 架构
-    H1Digest          string            `json:"h1Digest,omitempty"`        // H1 摘要，可选
-    MainModule        string            `json:"mainModule,omitempty"`      // 主模块，可选
+    # 用于存储构建设置的键值对，以 JSON 格式输出时的字段名为 goBuildSettings，如果为空则忽略
+    BuildSettings     map[string]string `json:"goBuildSettings,omitempty"`
+    # 存储 Golang 编译版本的字符串，以 JSON 格式输出时的字段名为 goCompiledVersion
+    GoCompiledVersion string            `json:"goCompiledVersion"`
+    # 存储架构信息的字符串，以 JSON 格式输出时的字段名为 architecture
+    Architecture      string            `json:"architecture"`
+    # 存储 H1 摘要的字符串，以 JSON 格式输出时的字段名为 h1Digest，如果为空则忽略
+    H1Digest          string            `json:"h1Digest,omitempty"`
+    # 存储主模块信息的字符串，以 JSON 格式输出时的字段名为 mainModule，如果为空则忽略
+    MainModule        string            `json:"mainModule,omitempty"`
 }
 
-// 定义一个名为 GolangModMetadata 的结构体，包含 H1 摘要
+# 定义了一个名为 GolangModMetadata 的结构体，用于存储 Golang 模块文件的元数据
 type GolangModMetadata struct {
-    H1Digest string `json:"h1Digest,omitempty"` // H1 摘要，可选
+    # 存储 H1 摘要的字符串，以 JSON 格式输出时的字段名为 h1Digest，如果为空则忽略
+    H1Digest string `json:"h1Digest,omitempty"`
 }
 ```

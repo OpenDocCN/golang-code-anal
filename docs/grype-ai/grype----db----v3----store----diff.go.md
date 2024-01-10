@@ -1,347 +1,310 @@
 # `grype\grype\db\v3\store\diff.go`
 
 ```
-// 导入所需的包
 package store
 
 import (
-	"github.com/wagoodman/go-partybus" // 导入 go-partybus 包
-	"github.com/wagoodman/go-progress" // 导入 go-progress 包
+    "github.com/wagoodman/go-partybus"  // 导入第三方库 go-partybus
+    "github.com/wagoodman/go-progress"  // 导入第三方库 go-progress
 
-	v3 "github.com/anchore/grype/grype/db/v3" // 导入 v3 版本的 grype 数据库包
-	"github.com/anchore/grype/grype/event" // 导入 grype 事件包
-	"github.com/anchore/grype/grype/event/monitor" // 导入 grype 监控事件包
-	"github.com/anchore/grype/internal/bus" // 导入内部总线包
+    v3 "github.com/anchore/grype/grype/db/v3"  // 导入 anchore/grype/grype/db/v3 包，并重命名为 v3
+    "github.com/anchore/grype/grype/event"  // 导入 anchore/grype/grype/event 包
+    "github.com/anchore/grype/grype/event/monitor"  // 导入 anchore/grype/grype/event/monitor 包
+    "github.com/anchore/grype/internal/bus"  // 导入 anchore/grype/internal/bus 包
 )
 
-// 定义存储键的结构
 type storeKey struct {
-	id          string // 存储键的 ID
-	namespace   string // 存储键的命名空间
-	packageName string // 存储键的包名
+    id          string  // 定义 storeKey 结构体，包含 id 字段
+    namespace   string  // 定义 storeKey 结构体，包含 namespace 字段
+    packageName string  // 定义 storeKey 结构体，包含 packageName 字段
 }
 
-// 定义存储键到字符串切片的映射类型
-type PkgMap = map[storeKey][]string
-// 定义存储漏洞列表的结构体，包含一个映射类型的 items 字段和一个布尔类型的 seen 字段
+type PkgMap = map[storeKey][]string  // 定义 PkgMap 类型为 storeKey 到字符串切片的映射
+
 type storeVulnerabilityList struct {
-	items map[storeKey][]storeVulnerability
-	seen  bool
+    items map[storeKey][]storeVulnerability  // 定义 storeVulnerabilityList 结构体，包含 items 字段，类型为 storeKey 到 storeVulnerability 切片的映射
+    seen  bool  // 定义 storeVulnerabilityList 结构体，包含 seen 字段，类型为布尔值
 }
-
-// 定义存储漏洞的结构体，包含一个指向 v3.Vulnerability 类型的 item 字段和一个布尔类型的 seen 字段
 type storeVulnerability struct {
-	item *v3.Vulnerability
-	seen bool
+    item *v3.Vulnerability  // 定义 storeVulnerability 结构体，包含 item 字段，类型为指向 v3.Vulnerability 的指针
+    seen bool  // 定义 storeVulnerability 结构体，包含 seen 字段，类型为布尔值
 }
-
-// 定义存储元数据的结构体，包含一个指向 v3.VulnerabilityMetadata 类型的 item 字段和一个布尔类型的 seen 字段
 type storeMetadata struct {
-	item *v3.VulnerabilityMetadata
-	seen bool
+    item *v3.VulnerabilityMetadata  // 定义 storeMetadata 结构体，包含 item 字段，类型为指向 v3.VulnerabilityMetadata 的指针
+    seen bool  // 定义 storeMetadata 结构体，包含 seen 字段，类型为布尔值
 }
 
 // 创建用于跟踪数据库差异进度的手动进度条
 func trackDiff(total int64) (*progress.Manual, *progress.Manual, *progress.Stage) {
-	// 创建一个手动进度条，设置总数为 total
-	stageProgress := &progress.Manual{}
-	stageProgress.SetTotal(total)
-	// 创建一个手动进度条，用于记录发现的差异
-	differencesDiscovered := &progress.Manual{}
-	// 创建一个阶段进度条
-	stager := &progress.Stage{}
-	// 发布一个数据库差异事件，包含差异类型和监控数据
-	bus.Publish(partybus.Event{
-		Type: event.DatabaseDiffingStarted,
-		Value: monitor.DBDiff{
-			Stager:                stager,  // 设置差异监控的阶段
-			StageProgress:         progress.Progressable(stageProgress),  // 设置差异监控的阶段进度
-			DifferencesDiscovered: progress.Monitorable(differencesDiscovered),  // 设置差异监控的发现差异
-		},
-	})
-	// 返回阶段进度、发现的差异和差异监控器
-	return stageProgress, differencesDiscovered, stager
-}
+    stageProgress := &progress.Manual{}  // 创建 progress.Manual 类型的指针 stageProgress
+    stageProgress.SetTotal(total)  // 设置 stageProgress 的总数为 total
+    differencesDiscovered := &progress.Manual{}  // 创建 progress.Manual 类型的指针 differencesDiscovered
+    stager := &progress.Stage{}  // 创建 progress.Stage 类型的指针 stager
 
-// 创建一个从未打包的键到与之关联的所有软件包列表的映射
-func buildVulnerabilityPkgsMap(models *[]v3.Vulnerability) *map[storeKey][]string {
-	// 创建一个空的映射
-	storeMap := make(map[storeKey][]string)
-	// 遍历所有漏洞模型
-	for _, m := range *models {
-		model := m
-		// 获取漏洞的父键
-		k := getVulnerabilityParentKey(model)
-		// 如果映射中已存在该键，则将软件包名称添加到列表中
-		if storeVuln, exists := storeMap[k]; exists {
-			storeMap[k] = append(storeVuln, model.PackageName)
-		} else {
-// 创建一个空的字符串数组，并将model.PackageName添加到其中，然后将其存储在storeMap中的键k下
-storeMap[k] = []string{model.PackageName}
-
-// 返回storeMap的指针
-return &storeMap
-}
-
-// 使用包映射信息创建一个与给定键相关的差异，以填充受更新影响的相关包
-func createDiff(baseStore, targetStore *PkgMap, key storeKey, reason v3.DiffReason) *v3.Diff {
-	// 创建一个包映射
-	pkgMap := make(map[string]struct{})
-
-	// 将key.packageName设置为空字符串
-	key.packageName = ""
-	
-	// 如果baseStore不为空，则遍历baseStore中与key相关的包，并将其添加到pkgMap中
-	if baseStore != nil {
-		if basePkgs, exists := (*baseStore)[key]; exists {
-			for _, pkg := range basePkgs {
-				pkgMap[pkg] = struct{}{}
-			}
-		}
-	}
-	
-	// 如果targetStore不为空，则...
-# 如果目标包存在于目标存储中，则将目标包添加到包映射中
-if targetPkgs, exists := (*targetStore)[key]; exists {
-    for _, pkg := range targetPkgs {
-        pkgMap[pkg] = struct{}{}
-    }
-}
-
-# 创建一个空的包列表
-pkgs := []string{}
-
-# 遍历包映射，将包添加到包列表中
-for pkg := range pkgMap {
-    pkgs = append(pkgs, pkg)
-}
-
-# 返回一个包含差异信息的结构体
-return &v3.Diff{
-    Reason:    reason,
-    ID:        key.id,
-    Namespace: key.namespace,
-    Packages:  pkgs,
-}
-```
-
-```
-// 从漏洞中获取一个未打包的键
-// 根据漏洞获取其父级键值
-func getVulnerabilityParentKey(vuln v3.Vulnerability) storeKey {
-	return storeKey{vuln.ID, vuln.Namespace, ""}
-}
-
-// 从漏洞获取打包的键
-func getVulnerabilityKey(vuln v3.Vulnerability) storeKey {
-	return storeKey{vuln.ID, vuln.Namespace, vuln.PackageName}
-}
-
-// 定义漏洞集合结构
-type VulnerabilitySet struct {
-	data map[storeKey]*storeVulnerabilityList
-}
-
-// 创建一个新的漏洞集合
-func NewVulnerabilitySet(models *[]v3.Vulnerability) *VulnerabilitySet {
-	// 创建一个包含漏洞键值对的映射
-	m := make(map[storeKey]*storeVulnerabilityList, len(*models))
-	// 遍历漏洞模型列表
-	for _, mm := range *models {
-		model := mm
-		// 获取漏洞的父级键值
-		parentKey := getVulnerabilityParentKey(model)
-		// 获取漏洞的键值
-		vulnKey := getVulnerabilityKey(model)
-		// 检查父级键值是否存在于映射中
-		if storeVuln, exists := m[parentKey]; exists {
-# 如果存储漏洞的键存在于存储漏洞项中，则将模型追加到现有的漏洞项列表中
-if kk, exists := storeVuln.items[vulnKey]; exists {
-    storeVuln.items[vulnKey] = append(kk, storeVulnerability{
-        item: &model,
-        seen: false,
+    bus.Publish(partybus.Event{  // 发布事件
+        Type: event.DatabaseDiffingStarted,  // 设置事件类型为 DatabaseDiffingStarted
+        Value: monitor.DBDiff{  // 设置事件值为 monitor.DBDiff 结构体
+            Stager:                stager,  // 设置 Stager 字段为 stager
+            StageProgress:         progress.Progressable(stageProgress),  // 设置 StageProgress 字段为 stageProgress
+            DifferencesDiscovered: progress.Monitorable(differencesDiscovered),  // 设置 DifferencesDiscovered 字段为 differencesDiscovered
+        },
     })
-# 如果存储漏洞的键不存在于存储漏洞项中，则创建一个新的漏洞项列表并将模型添加到其中
-} else {
-    storeVuln.items[vulnKey] = []storeVulnerability{{&model, false}}
+    return stageProgress, differencesDiscovered, stager  // 返回 stageProgress、differencesDiscovered 和 stager
 }
 
-# 如果存储漏洞列表中不存在指定的父键，则创建一个新的存储漏洞列表，并将模型添加到其中
-else {
-    vuln := storeVulnerabilityList{
-        items: make(map[storeKey][]storeVulnerability),
-        seen: false,
+// 根据漏洞模型构建漏洞包映射
+func buildVulnerabilityPkgsMap(models *[]v3.Vulnerability) *map[storeKey][]string {
+    storeMap := make(map[storeKey][]string)  // 创建 storeKey 到字符串切片的映射 storeMap
+    for _, m := range *models {  // 遍历 models
+        model := m  // 将 m 赋值给 model
+        k := getVulnerabilityParentKey(model)  // 调用 getVulnerabilityParentKey 函数，获取漏洞父键
+        if storeVuln, exists := storeMap[k]; exists {  // 判断 storeMap 中是否存在 k
+            storeMap[k] = append(storeVuln, model.PackageName)  // 如果存在，则将 model.PackageName 追加到 storeVuln 中
+        } else {
+            storeMap[k] = []string{model.PackageName}  // 如果不存在，则将 model.PackageName 放入新的字符串切片中
+        }
     }
-    vuln.items[vulnKey] = []storeVulnerability{{&model, false}}
-    m[parentKey] = &vuln
+    return &storeMap  // 返回 storeMap 的指针
 }
 
-# 返回包含数据的漏洞集合
-return &VulnerabilitySet{
-    data: m,
-}
-// 检查给定的漏洞是否在漏洞集合中
-func (v *VulnerabilitySet) in(item v3.Vulnerability) bool {
-	// 检查漏洞是否存在于漏洞集合中
-	_, exists := v.data[getVulnerabilityParentKey(item)]
-	return exists
+// 使用包映射信息创建给定键的差异
+// 创建一个 Diff 对象，用于表示两个包映射之间的差异
+func createDiff(baseStore, targetStore *PkgMap, key storeKey, reason v3.DiffReason) *v3.Diff {
+    // 创建一个空的包映射
+    pkgMap := make(map[string]struct{})
+
+    // 将包名设置为空字符串
+    key.packageName = ""
+    // 如果 baseStore 不为空，则将其包含的包名添加到包映射中
+    if baseStore != nil {
+        if basePkgs, exists := (*baseStore)[key]; exists {
+            for _, pkg := range basePkgs {
+                pkgMap[pkg] = struct{}{}
+            }
+        }
+    }
+    // 如果 targetStore 不为空，则将其包含的包名添加到包映射中
+    if targetStore != nil {
+        if targetPkgs, exists := (*targetStore)[key]; exists {
+            for _, pkg := range targetPkgs {
+                pkgMap[pkg] = struct{}{}
+            }
+        }
+    }
+    // 将包映射中的包名转换为数组
+    pkgs := []string{}
+    for pkg := range pkgMap {
+        pkgs = append(pkgs, pkg)
+    }
+
+    // 返回一个包含差异信息的 Diff 对象
+    return &v3.Diff{
+        Reason:    reason,
+        ID:        key.id,
+        Namespace: key.namespace,
+        Packages:  pkgs,
+    }
 }
 
-// 检查给定的漏洞是否与漏洞集合中的某个漏洞匹配
-func (v *VulnerabilitySet) match(item v3.Vulnerability) bool {
-	// 检查漏洞的父级是否存在于漏洞集合中
-	if parent, exists := v.data[getVulnerabilityParentKey(item)]; exists {
-		// 将父级漏洞标记为已查看
-		parent.seen = true
-		// 获取漏洞的键
-		key := getVulnerabilityKey(item)
-		// 检查是否存在与给定漏洞匹配的子漏洞
-		if children, exists := parent.items[key]; exists {
-			// 遍历子漏洞列表
-			for idx, child := range children {
-				// 如果找到匹配的子漏洞，则将其标记为已查看并返回 true
-				if item.Equal(*child.item) {
-					children[idx].seen = true
-					return true
-				}
-			}
-		}
-	}
-}
-// 返回 false
-	return false
+// 从漏洞中获取未打包的键
+func getVulnerabilityParentKey(vuln v3.Vulnerability) storeKey {
+    return storeKey{vuln.ID, vuln.Namespace, ""}
 }
 
-// 获取未匹配的漏洞
-func (v *VulnerabilitySet) getUnmatched() ([]storeKey, []storeKey) {
-	// 未完全匹配的漏洞列表
-	notSeen := []storeKey{}
-	// 完全未匹配的漏洞列表
-	notEntirelySeen := []storeKey{}
-	// 遍历漏洞数据
-	for k, item := range v.data {
-		// 如果漏洞未被匹配，则添加到未完全匹配的列表中
-		if !item.seen {
-			notSeen = append(notSeen, k)
-			continue
-		}
-		// 遍历漏洞的组件
-	componentLoop:
-		for _, components := range item.items {
-			for _, component := range components {
-				// 如果组件未被匹配，则添加到未完全匹配的列表中
-				if !component.seen {
-					notEntirelySeen = append(notEntirelySeen, k)
-					break componentLoop
-				}
-			}
-		}
-	}
-	}
-	return notSeen, notEntirelySeen
+// 从漏洞中获取已打包的键
+func getVulnerabilityKey(vuln v3.Vulnerability) storeKey {
+    return storeKey{vuln.ID, vuln.Namespace, vuln.PackageName}
 }
 
-func diffVulnerabilities(baseModels, targetModels *[]v3.Vulnerability, basePkgsMap, targetPkgsMap *PkgMap, differentItems *progress.Manual) *map[string]*v3.Diff {
-	// 创建一个空的漏洞差异映射
-	diffs := make(map[string]*v3.Diff)
-	// 创建一个基础漏洞模型的集合
-	m := NewVulnerabilitySet(baseModels)
-
-	// 遍历目标漏洞模型
-	for _, tModel := range *targetModels {
-		// 复制目标漏洞模型
-		targetModel := tModel
-		// 获取漏洞模型的键
-		k := getVulnerabilityKey(targetModel)
-		// 如果基础漏洞模型集合中存在目标漏洞模型
-		if m.in(targetModel) {
-			// 在基础漏洞模型集合中查找匹配的漏洞模型
-			matched := m.match(targetModel)
-			// 如果没有找到匹配的漏洞模型
-			if !matched {
-				// 如果差异映射中已经存在相同键的差异
-				if _, exists := diffs[k.id+k.namespace]; exists {
-					// 继续下一次循环
-					continue
-				}
-				// 创建基础和目标包映射的差异，并添加到差异映射中
-				diffs[k.id+k.namespace] = createDiff(basePkgsMap, targetPkgsMap, k, v3.DiffChanged)
-				// 增加不同项的计数
-				differentItems.Increment()
-			}
-		} else {
-			// 如果 diffs 中已经存在相同的键值对，则跳过当前循环
-			if _, exists := diffs[k.id+k.namespace]; exists {
-				continue
-			}
-			// 创建一个新的差异对象，并将其添加到 diffs 中
-			diffs[k.id+k.namespace] = createDiff(nil, targetPkgsMap, k, v3.DiffAdded)
-			// 增加不同项的计数
-			differentItems.Increment()
-		}
-	}
-	// 获取未匹配和部分匹配的项
-	notSeen, partialSeen := m.getUnmatched()
-	// 遍历部分匹配的项
-	for _, k := range partialSeen {
-		// 如果 diffs 中已经存在相同的键值对，则跳过当前循环
-		if _, exists := diffs[k.id+k.namespace]; exists {
-			continue
-		}
-		// 创建一个新的差异对象，并将其添加到 diffs 中
-		diffs[k.id+k.namespace] = createDiff(basePkgsMap, targetPkgsMap, k, v3.DiffChanged)
-		// 增加不同项的计数
-		differentItems.Increment()
-	}
-	// 遍历未匹配的项
-	for _, k := range notSeen {
-		// 如果 diffs 中已经存在相同的键值对，则跳过当前循环
-		if _, exists := diffs[k.id+k.namespace]; exists {
-			continue
-		}
-# 创建一个名为diffs的字典，键为k.id+k.namespace，值为使用createDiff函数创建的差异对象
-diffs[k.id+k.namespace] = createDiff(basePkgsMap, nil, k, v3.DiffRemoved)
-# 增加不同项的计数
-differentItems.Increment()
-# 返回diffs字典的指针
-return &diffs
+// 定义 VulnerabilitySet 结构
+type VulnerabilitySet struct {
+    data map[storeKey]*storeVulnerabilityList
 }
 
-# 定义一个名为MetadataSet的结构体
+// 创建一个新的 VulnerabilitySet 对象
+func NewVulnerabilitySet(models *[]v3.Vulnerability) *VulnerabilitySet {
+    // 创建一个包含 storeKey 和 storeVulnerabilityList 的映射
+    m := make(map[storeKey]*storeVulnerabilityList, len(*models));
+    # 遍历模型列表
+    for _, mm := range *models {
+        # 将模型赋值给新变量
+        model := mm
+        # 获取漏洞的父键
+        parentKey := getVulnerabilityParentKey(model)
+        # 获取漏洞的键
+        vulnKey := getVulnerabilityKey(model)
+        # 如果父键存在于映射中
+        if storeVuln, exists := m[parentKey]; exists {
+            # 如果漏洞键存在于父键对应的项目中
+            if kk, exists := storeVuln.items[vulnKey]; exists {
+                # 将漏洞添加到项目中
+                storeVuln.items[vulnKey] = append(kk, storeVulnerability{
+                    item: &model,
+                    seen: false,
+                })
+            } else {
+                # 如果项目中不存在漏洞键，则创建一个新的项目列表
+                storeVuln.items[vulnKey] = []storeVulnerability{{&model, false}}
+            }
+        } else {
+            # 如果父键不存在于映射中，则创建一个新的漏洞列表
+            vuln := storeVulnerabilityList{
+                items: make(map[storeKey][]storeVulnerability),
+                seen:  false,
+            }
+            vuln.items[vulnKey] = []storeVulnerability{{&model, false}}
+            m[parentKey] = &vuln
+        }
+    }
+    # 返回漏洞集合
+    return &VulnerabilitySet{
+        data: m,
+    }
+# 检查给定的漏洞是否在漏洞集合中
+func (v *VulnerabilitySet) in(item v3.Vulnerability) bool:
+    # 检查漏洞是否存在于漏洞集合中，返回布尔值
+    _, exists := v.data[getVulnerabilityParentKey(item)]
+    return exists
+
+# 检查给定的漏洞是否匹配漏洞集合中的项
+func (v *VulnerabilitySet) match(item v3.Vulnerability) bool:
+    # 检查漏洞是否匹配漏洞集合中的项
+    if parent, exists := v.data[getVulnerabilityParentKey(item)]; exists:
+        # 如果父项存在，则将其标记为已见
+        parent.seen = true
+        # 获取漏洞的键
+        key := getVulnerabilityKey(item)
+        # 检查子项是否存在，如果存在则遍历并比较
+        if children, exists := parent.items[key]; exists:
+            for idx, child := range children:
+                # 如果漏洞匹配，则将其标记为已见并返回 true
+                if item.Equal(*child.item):
+                    children[idx].seen = true
+                    return true
+    # 如果漏洞不匹配，则返回 false
+    return false
+
+# 获取未匹配的漏洞
+func (v *VulnerabilitySet) getUnmatched() ([]storeKey, []storeKey):
+    # 初始化未见漏洞和部分未见漏洞的列表
+    notSeen := []storeKey{}
+    notEntirelySeen := []storeKey{}
+    # 遍历漏洞集合中的项
+    for k, item := range v.data:
+        # 如果父项未见，则将其添加到未见漏洞列表中
+        if !item.seen:
+            notSeen = append(notSeen, k)
+            continue
+        # 否则，遍历子项并检查是否部分未见
+        componentLoop:
+        for _, components := range item.items:
+            for _, component := range components:
+                if !component.seen:
+                    notEntirelySeen = append(notEntirelySeen, k)
+                    break componentLoop
+    # 返回未见漏洞和部分未见漏洞的列表
+    return notSeen, notEntirelySeen
+
+# 比较漏洞
+func diffVulnerabilities(baseModels, targetModels *[]v3.Vulnerability, basePkgsMap, targetPkgsMap *PkgMap, differentItems *progress.Manual) *map[string]*v3.Diff:
+    # 创建漏洞差异的映射
+    diffs := make(map[string]*v3.Diff)
+    # 使用基础模型创建漏洞集合
+    m := NewVulnerabilitySet(baseModels)
+    # 遍历目标模型列表
+    for _, tModel := range *targetModels {
+        # 复制目标模型
+        targetModel := tModel
+        # 获取漏洞键
+        k := getVulnerabilityKey(targetModel)
+        # 如果目标模型在匹配器中
+        if m.in(targetModel) {
+            # 进行匹配
+            matched := m.match(targetModel)
+            # 如果未匹配
+            if !matched {
+                # 如果差异中存在相同的键
+                if _, exists := diffs[k.id+k.namespace]; exists {
+                    # 继续下一次循环
+                    continue
+                }
+                # 创建变更差异并添加到差异列表中
+                diffs[k.id+k.namespace] = createDiff(basePkgsMap, targetPkgsMap, k, v3.DiffChanged)
+                # 增加不同项计数
+                differentItems.Increment()
+            }
+        } else {
+            # 如果差异中存在相同的键
+            if _, exists := diffs[k.id+k.namespace]; exists {
+                # 继续下一次循环
+                continue
+            }
+            # 创建新增差异并添加到差异列表中
+            diffs[k.id+k.namespace] = createDiff(nil, targetPkgsMap, k, v3.DiffAdded)
+            # 增加不同项计数
+            differentItems.Increment()
+        }
+    }
+    # 获取未匹配和部分匹配的键列表
+    notSeen, partialSeen := m.getUnmatched()
+    # 遍历部分匹配的键列表
+    for _, k := range partialSeen {
+        # 如果差异中存在相同的键
+        if _, exists := diffs[k.id+k.namespace]; exists {
+            # 继续下一次循环
+            continue
+        }
+        # 创建变更差异并添加到差异列表中
+        diffs[k.id+k.namespace] = createDiff(basePkgsMap, targetPkgsMap, k, v3.DiffChanged)
+        # 增加不同项计数
+        differentItems.Increment()
+    }
+    # 遍历未匹配的键列表
+    for _, k := range notSeen {
+        # 如果差异中存在相同的键
+        if _, exists := diffs[k.id+k.namespace]; exists {
+            # 继续下一次循环
+            continue
+        }
+        # 创建移除差异并添加到差异列表中
+        diffs[k.id+k.namespace] = createDiff(basePkgsMap, nil, k, v3.DiffRemoved)
+        # 增加不同项计数
+        differentItems.Increment()
+    }
+
+    # 返回差异列表的指针
+    return &diffs
+// 定义 MetadataSet 结构体，包含一个存储 storeMetadata 的 map
 type MetadataSet struct {
     data map[storeKey]*storeMetadata
 }
 
-# 创建一个新的MetadataSet对象
+// 创建并返回一个 MetadataSet 对象，根据给定的 VulnerabilityMetadata 模型列表
 func NewMetadataSet(models *[]v3.VulnerabilityMetadata) *MetadataSet {
-    # 创建一个名为m的map，键为storeKey类型，值为storeMetadata类型的指针
+    // 创建一个存储 storeMetadata 的 map，长度为模型列表的长度
     m := make(map[storeKey]*storeMetadata, len(*models))
-    # 遍历models切片中的每个元素
+    // 遍历模型列表，为每个模型创建 storeMetadata 对象，并存储到 map 中
     for _, mm := range *models {
-        # 将mm的值复制给model
         model := mm
-        # 将getMetadataKey(model)作为键，创建一个storeMetadata对象作为值，存入m中
         m[getMetadataKey(model)] = &storeMetadata{
             item: &model,
             seen: false,
         }
     }
-}
-// 返回一个包含给定数据的 MetadataSet 结构体指针
-return &MetadataSet{
-    data: m,
+    // 返回包含 map 的 MetadataSet 对象
+    return &MetadataSet{
+        data: m,
+    }
 }
 
-// 检查给定的 VulnerabilityMetadata 是否存在于 MetadataSet 中
+// 判断给定的 VulnerabilityMetadata 是否存在于 MetadataSet 中
 func (v *MetadataSet) in(item v3.VulnerabilityMetadata) bool {
-    // 使用 getMetadataKey 函数获取元数据的键，检查该键是否存在于 MetadataSet 中
     _, exists := v.data[getMetadataKey(item)]
     return exists
 }
 
-// 检查给定的 VulnerabilityMetadata 是否与 MetadataSet 中的元数据匹配
+// 判断给定的 VulnerabilityMetadata 是否匹配 MetadataSet 中的数据，并标记为已匹配
 func (v *MetadataSet) match(item v3.VulnerabilityMetadata) bool {
-    // 如果基础模型存在于 MetadataSet 中，则将其标记为已见，并检查其是否与给定的元数据相等
     if baseModel, exists := v.data[getMetadataKey(item)]; exists {
         baseModel.seen = true
         return baseModel.item.Equal(item)
@@ -349,58 +312,72 @@ func (v *MetadataSet) match(item v3.VulnerabilityMetadata) bool {
     return false
 }
 
-// 获取未匹配的元数据的存储键列表
+// 获取未匹配的数据的键列表
 func (v *MetadataSet) getUnmatched() []storeKey {
     notSeen := []storeKey{}
-	// 遍历数据集合中的每个键值对
-	for k, item := range v.data {
-		// 如果项目未被标记为已见，则将其键添加到未见列表中
-		if !item.seen {
-			notSeen = append(notSeen, k)
-		}
-	}
-	// 返回未见列表
-	return notSeen
-}
-
-// 比较漏洞元数据的差异并返回差异结果
-func diffVulnerabilityMetadata(baseModels, targetModels *[]v3.VulnerabilityMetadata, basePkgsMap, targetPkgsMap *PkgMap, differentItems *progress.Manual) *map[string]*v3.Diff {
-	// 创建一个空的差异结果映射
-	diffs := make(map[string]*v3.Diff)
-	// 创建一个基础模型的元数据集合
-	m := NewMetadataSet(baseModels)
-
-	// 遍历目标模型的每个元数据
-	for _, tModel := range *targetModels {
-		// 复制目标模型以便在闭包中使用
-		targetModel := tModel
-		// 获取目标模型的元数据键
-		k := getMetadataKey(targetModel)
-		// 如果基础模型集合中存在目标模型
-		if m.in(targetModel) {
-			// 如果目标模型与基础模型不匹配
-			if !m.match(targetModel) {
-				// 如果差异结果映射中已存在相同键的差异结果，则跳过当前循环
-				if _, exists := diffs[k.id+k.namespace]; exists {
-					continue
-				}
-# 遍历一个数据结构，根据条件创建不同类型的差异对象，并将其存储在diffs字典中
-for _, k := range m.getUnmatched() {
-    # 如果差异对象已存在，则跳过
-    if _, exists := diffs[k.id+k.namespace]; exists {
-        continue
+    // 遍历 MetadataSet 中的数据，将未匹配的键存储到列表中
+    for k, item := range v.data {
+        if !item.seen {
+            notSeen = append(notSeen, k)
+        }
     }
-    # 创建一个差异对象，表示被移除的内容，并存储在diffs字典中
-    diffs[k.id+k.namespace] = createDiff(basePkgsMap, nil, k, v3.DiffRemoved)
-    # 增加不同项的计数
-    differentItems.Increment()
+    return notSeen
 }
 
-# 返回存储差异对象的字典
-return &diffs
-# 定义一个函数，根据给定的漏洞元数据返回一个存储键
+// 比较两个 VulnerabilityMetadata 模型列表的差异，并返回差异结果的 map
+func diffVulnerabilityMetadata(baseModels, targetModels *[]v3.VulnerabilityMetadata, basePkgsMap, targetPkgsMap *PkgMap, differentItems *progress.Manual) *map[string]*v3.Diff {
+    // 创建一个存储 Diff 对象的 map
+    diffs := make(map[string]*v3.Diff)
+    // 创建一个 MetadataSet 对象，用于存储基准模型列表的数据
+    m := NewMetadataSet(baseModels)
+
+    // 遍历目标模型列表，比较与基准模型列表的差异
+    for _, tModel := range *targetModels {
+        targetModel := tModel
+        k := getMetadataKey(targetModel)
+        // 如果目标模型存在于基准模型列表中
+        if m.in(targetModel) {
+            // 如果目标模型与基准模型不匹配
+            if !m.match(targetModel) {
+                // 如果差异结果中已存在相同键的差异对象，则跳过
+                if _, exists := diffs[k.id+k.namespace]; exists {
+                    continue
+                }
+                // 创建差异对象，并存储到差异结果中
+                diffs[k.id+k.namespace] = createDiff(basePkgsMap, targetPkgsMap, k, v3.DiffChanged)
+                // 增加差异项计数
+                differentItems.Increment()
+            }
+        } else {
+            // 如果差异结果中已存在相同键的差异对象，则跳过
+            if _, exists := diffs[k.id+k.namespace]; exists {
+                continue
+            }
+            // 创建差异对象，并存储到差异结果中
+            diffs[k.id+k.namespace] = createDiff(nil, targetPkgsMap, k, v3.DiffAdded)
+            // 增加差异项计数
+            differentItems.Increment()
+        }
+    }
+}
+    # 遍历 m.getUnmatched() 返回的未匹配项列表
+    for _, k := range m.getUnmatched() {
+        # 检查 diffs 中是否已存在与当前未匹配项对应的差异项
+        if _, exists := diffs[k.id+k.namespace]; exists {
+            # 如果存在，则跳过当前未匹配项，继续下一项
+            continue
+        }
+        # 创建与当前未匹配项对应的差异项，并添加到 diffs 中
+        diffs[k.id+k.namespace] = createDiff(basePkgsMap, nil, k, v3.DiffRemoved)
+        # 不同项计数器加一
+        differentItems.Increment()
+    }
+
+    # 返回 diffs 的指针
+    return &diffs
+# 定义一个函数，用于获取漏洞元数据的键
 func getMetadataKey(metadata v3.VulnerabilityMetadata) storeKey {
-    # 返回一个存储键对象，包含漏洞ID、命名空间和空字符串
+    # 返回一个包含漏洞ID、命名空间和空字符串的存储键对象
     return storeKey{metadata.ID, metadata.Namespace, ""}
 }
 ```

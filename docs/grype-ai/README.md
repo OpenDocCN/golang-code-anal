@@ -1,5 +1,3 @@
-# Grype 源码解析
-
 <p align="center">
     <img alt="Grype logo" src="https://user-images.githubusercontent.com/5199289/136855393-d0a9eef9-ccf1-4e2b-9d7c-7aad16a567e5.png" width="234">
 </p>

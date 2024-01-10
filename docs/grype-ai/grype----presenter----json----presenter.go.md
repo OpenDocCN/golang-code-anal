@@ -1,67 +1,57 @@
 # `grype\grype\presenter\json\presenter.go`
 
 ```
-// 导入 json 包
 package json
 
-// 导入必要的包
 import (
-	"encoding/json"  // 导入 json 编码/解码包
-	"io"  // 导入输入/输出包
+    "encoding/json"  // 导入处理 JSON 数据的包
+    "io"  // 导入处理输入输出的包
 
-	"github.com/anchore/clio"  // 导入 anchore/clio 包
-	"github.com/anchore/grype/grype/match"  // 导入 anchore/grype/grype/match 包
-	"github.com/anchore/grype/grype/pkg"  // 导入 anchore/grype/grype/pkg 包
-	"github.com/anchore/grype/grype/presenter/models"  // 导入 anchore/grype/grype/presenter/models 包
-	"github.com/anchore/grype/grype/vulnerability"  // 导入 anchore/grype/grype/vulnerability 包
+    "github.com/anchore/clio"  // 导入 anchore/clio 包
+    "github.com/anchore/grype/grype/match"  // 导入 anchore/grype/grype/match 包
+    "github.com/anchore/grype/grype/pkg"  // 导入 anchore/grype/grype/pkg 包
+    "github.com/anchore/grype/grype/presenter/models"  // 导入 anchore/grype/grype/presenter/models 包
+    "github.com/anchore/grype/grype/vulnerability"  // 导入 anchore/grype/grype/vulnerability 包
 )
 
-// Presenter 是一个用于保存报告所需字段的通用结构体
+// Presenter is a generic struct for holding fields needed for reporting
 type Presenter struct {
-	id               clio.Identification  // 用于标识的字段
-	matches          match.Matches  // 匹配结果的字段
-	ignoredMatches   []match.IgnoredMatch  // 忽略的匹配结果的字段
-	packages         []pkg.Package  // 软件包信息的字段
-	context          pkg.Context  // 上下文信息的字段
-// metadataProvider vulnerability.MetadataProvider - 定义了一个名为metadataProvider的变量，类型为vulnerability.MetadataProvider
-// appConfig        interface{} - 定义了一个名为appConfig的变量，类型为interface{}
-// dbStatus         interface{} - 定义了一个名为dbStatus的变量，类型为interface{}
-
-// NewPresenter creates a new JSON presenter - NewPresenter函数用于创建一个新的JSON presenter
-
-// 创建一个新的Presenter对象，使用传入的PresenterConfig参数
-func NewPresenter(pb models.PresenterConfig) *Presenter {
-	// 返回一个指向Presenter对象的指针
-	return &Presenter{
-		// 使用传入的PresenterConfig参数初始化Presenter对象的各个字段
-		id:               pb.ID,
-		matches:          pb.Matches,
-		ignoredMatches:   pb.IgnoredMatches,
-		packages:         pb.Packages,
-		metadataProvider: pb.MetadataProvider,
-		context:          pb.Context,
-		appConfig:        pb.AppConfig,
-		dbStatus:         pb.DBStatus,
-	}
+    id               clio.Identification  // 用于标识的字段
+    matches          match.Matches  // 匹配结果的字段
+    ignoredMatches   []match.IgnoredMatch  // 忽略的匹配结果的字段
+    packages         []pkg.Package  // 包信息的字段
+    context          pkg.Context  // 上下文信息的字段
+    metadataProvider vulnerability.MetadataProvider  // 元数据提供者的字段
+    appConfig        interface{}  // 应用配置的字段
+    dbStatus         interface{}  // 数据库状态的字段
 }
 
-// Present creates a JSON-based reporting - Present函数用于创建基于JSON的报告
-// Present 方法用于将数据呈现到输出流中
+// NewPresenter creates a new JSON presenter
+func NewPresenter(pb models.PresenterConfig) *Presenter {
+    return &Presenter{
+        id:               pb.ID,  // 初始化标识字段
+        matches:          pb.Matches,  // 初始化匹配结果字段
+        ignoredMatches:   pb.IgnoredMatches,  // 初始化忽略的匹配结果字段
+        packages:         pb.Packages,  // 初始化包信息字段
+        metadataProvider: pb.MetadataProvider,  // 初始化元数据提供者字段
+        context:          pb.Context,  // 初始化上下文信息字段
+        appConfig:        pb.AppConfig,  // 初始化应用配置字段
+        dbStatus:         pb.DBStatus,  // 初始化数据库状态字段
+    }
+}
+
+// Present creates a JSON-based reporting
 func (pres *Presenter) Present(output io.Writer) error {
-    // 创建一个新的文档对象
     doc, err := models.NewDocument(pres.id, pres.packages, pres.context, pres.matches, pres.ignoredMatches, pres.metadataProvider,
-        pres.appConfig, pres.dbStatus)
+        pres.appConfig, pres.dbStatus)  // 创建新的文档
     if err != nil {
-        return err
+        return err  // 如果创建文档出错，返回错误
     }
 
-    // 创建一个 JSON 编码器
-    enc := json.NewEncoder(output)
-    // 防止在数据中转义 > 和 <
-    enc.SetEscapeHTML(false)
-    // 设置缩进格式
-    enc.SetIndent("", " ")
-    // 将文档对象编码并写入输出流
-    return enc.Encode(&doc)
+    enc := json.NewEncoder(output)  // 创建 JSON 编码器
+    // prevent > and < from being escaped in the payload
+    enc.SetEscapeHTML(false)  // 设置不转义 > 和 < 字符
+    enc.SetIndent("", " ")  // 设置缩进格式
+    return enc.Encode(&doc)  // 编码并输出文档
 }
 ```

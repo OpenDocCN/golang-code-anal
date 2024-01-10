@@ -4,202 +4,191 @@
 package table
 
 import (
-	"bytes"  // 导入 bytes 包，用于操作字节
-	"testing"  // 导入 testing 包，用于编写测试函数
+    "bytes" // 导入 bytes 包，用于操作字节
+    "testing" // 导入 testing 包，用于编写测试函数
 
-	"github.com/gkampitakis/go-snaps/snaps"  // 导入 go-snaps/snaps 包
-	"github.com/go-test/deep"  // 导入 go-test/deep 包，用于深度比较
-	"github.com/google/go-cmp/cmp"  // 导入 google/go-cmp/cmp 包，用于比较两个值
-	"github.com/stretchr/testify/assert"  // 导入 testify/assert 包，用于编写断言
-	"github.com/stretchr/testify/require"  // 导入 testify/require 包，用于编写测试函数中的必要条件
+    "github.com/gkampitakis/go-snaps/snaps" // 导入外部包
 
-	"github.com/anchore/grype/grype/match"  // 导入 anchore/grype/grype/match 包
-	"github.com/anchore/grype/grype/pkg"  // 导入 anchore/grype/grype/pkg 包
-	"github.com/anchore/grype/grype/presenter/internal"  // 导入 anchore/grype/grype/presenter/internal 包
-	"github.com/anchore/grype/grype/presenter/models"  // 导入 anchore/grype/grype/presenter/models 包
-	"github.com/anchore/grype/grype/vulnerability"  // 导入 anchore/grype/grype/vulnerability 包
-	syftPkg "github.com/anchore/syft/syft/pkg"  // 导入 anchore/syft/syft/pkg 包，并重命名为 syftPkg
+    "github.com/go-test/deep" // 导入外部包，用于深度比较
+    "github.com/google/go-cmp/cmp" // 导入外部包，用于比较两个值
+    "github.com/stretchr/testify/assert" // 导入外部包，用于编写断言
+    "github.com/stretchr/testify/require" // 导入外部包，用于编写测试函数
+
+    "github.com/anchore/grype/grype/match" // 导入外部包
+    "github.com/anchore/grype/grype/pkg" // 导入外部包
+    "github.com/anchore/grype/grype/presenter/internal" // 导入外部包
+    "github.com/anchore/grype/grype/presenter/models" // 导入外部包
+    "github.com/anchore/grype/grype/vulnerability" // 导入外部包
+    syftPkg "github.com/anchore/syft/syft/pkg" // 导入外部包，并重命名为 syftPkg
 )
-// 创建一个测试函数，用于测试创建行为
+
 func TestCreateRow(t *testing.T) {
-	// 创建一个名为pkg1的Package对象，包含ID、Name、Version和Type属性
-	pkg1 := pkg.Package{
-		ID:      "package-1-id",
-		Name:    "package-1",
-		Version: "1.0.1",
-		Type:    syftPkg.DebPkg,
-	}
-	// 创建一个名为match1的Match对象，包含Vulnerability、Package和Details属性
-	match1 := match.Match{
-		// 包含Vulnerability对象，包含ID和Namespace属性
-		Vulnerability: vulnerability.Vulnerability{
-			ID:        "CVE-1999-0001",
-			Namespace: "source-1",
-		},
-		// 包含Package对象，使用之前创建的pkg1对象
-		Package: pkg1,
-		// 包含Detail对象的数组，包含Type和Matcher属性
-		Details: []match.Detail{
-			{
-				Type:    match.ExactDirectMatch,
-				Matcher: match.DpkgMatcher,
-			},
-		},
-	}
-}
-# 定义一个结构体切片，每个结构体包含名称、匹配、严重性后缀、预期错误和预期行
-cases := []struct {
-    name           string         // 名称
-    match          match.Match    // 匹配对象
-    severitySuffix string         // 严重性后缀
-    expectedErr    error          // 预期错误
-    expectedRow    []string       // 预期行
-}{
-    {
-        name:           "create row for vulnerability",  // 漏洞的行
-        match:          match1,                            // 匹配对象
-        severitySuffix: "",                               // 严重性后缀为空
-        expectedErr:    nil,                               // 预期错误为空
-        expectedRow:    []string{match1.Package.Name, match1.Package.Version, "", string(match1.Package.Type), match1.Vulnerability.ID, "Low"},  // 预期行
-    },
-    {
-        name:           "create row for suppressed vulnerability",  // 被抑制的漏洞的行
-        match:          match1,                                       // 匹配对象
-        severitySuffix: appendSuppressed,                            // 严重性后缀为appendSuppressed
-        expectedErr:    nil,                                          // 预期错误为空
-        expectedRow:    []string{match1.Package.Name, match1.Package.Version, "", string(match1.Package.Type), match1.Vulnerability.ID, "Low (suppressed)"},  // 预期行
+    pkg1 := pkg.Package{ // 创建一个 pkg.Package 结构体实例
+        ID:      "package-1-id", // 设置 ID 字段值
+        Name:    "package-1", // 设置 Name 字段值
+        Version: "1.0.1", // 设置 Version 字段值
+        Type:    syftPkg.DebPkg, // 设置 Type 字段值为 syftPkg.DebPkg
     }
-}
-		},
-	}
+    match1 := match.Match{ // 创建一个 match.Match 结构体实例
+        Vulnerability: vulnerability.Vulnerability{ // 设置 Vulnerability 字段值为 vulnerability.Vulnerability 结构体实例
+            ID:        "CVE-1999-0001", // 设置 ID 字段值
+            Namespace: "source-1", // 设置 Namespace 字段值
+        },
+        Package: pkg1, // 设置 Package 字段值为 pkg1
+        Details: []match.Detail{ // 设置 Details 字段值为 match.Detail 结构体切片
+            {
+                Type:    match.ExactDirectMatch, // 设置 Type 字段值为 match.ExactDirectMatch
+                Matcher: match.DpkgMatcher, // 设置 Matcher 字段值为 match.DpkgMatcher
+            },
+        },
+    }
+    cases := []struct { // 创建一个匿名结构体切片
+        name           string // 定义 name 字段为字符串类型
+        match          match.Match // 定义 match 字段为 match.Match 类型
+        severitySuffix string // 定义 severitySuffix 字段为字符串类型
+        expectedErr    error // 定义 expectedErr 字段为 error 类型
+        expectedRow    []string // 定义 expectedRow 字段为字符串切片
+    }{
+        {
+            name:           "create row for vulnerability", // 设置 name 字段值
+            match:          match1, // 设置 match 字段值为 match1
+            severitySuffix: "", // 设置 severitySuffix 字段值为空字符串
+            expectedErr:    nil, // 设置 expectedErr 字段值为 nil
+            expectedRow:    []string{match1.Package.Name, match1.Package.Version, "", string(match1.Package.Type), match1.Vulnerability.ID, "Low"}, // 设置 expectedRow 字段值为字符串切片
+        },
+        {
+            name:           "create row for suppressed vulnerability", // 设置 name 字段值
+            match:          match1, // 设置 match 字段值为 match1
+            severitySuffix: appendSuppressed, // 设置 severitySuffix 字段值为 appendSuppressed
+            expectedErr:    nil, // 设置 expectedErr 字段值为 nil
+            expectedRow:    []string{match1.Package.Name, match1.Package.Version, "", string(match1.Package.Type), match1.Vulnerability.ID, "Low (suppressed)"}, // 设置 expectedRow 字段值为字符串切片
+        },
+    }
+    # 遍历测试用例数组
+    for _, testCase := range cases {
+        # 使用测试用例的名称创建子测试
+        t.Run(testCase.name, func(t *testing.T) {
+            # 调用 createRow 函数，传入测试用例的匹配条件、模拟的元数据对象和严重性后缀
+            row, err := createRow(testCase.match, models.NewMetadataMock(), testCase.severitySuffix)
 
-	for _, testCase := range cases {
-		t.Run(testCase.name, func(t *testing.T) {
-			// 对每个测试用例执行测试
-			row, err := createRow(testCase.match, models.NewMetadataMock(), testCase.severitySuffix)
-
-			// 断言测试结果是否符合预期
-			assert.Equal(t, testCase.expectedErr, err)
-			assert.Equal(t, testCase.expectedRow, row)
-		})
-	}
-}
-
+            # 断言：验证返回的错误是否符合预期
+            assert.Equal(t, testCase.expectedErr, err)
+            # 断言：验证返回的行数据是否符合预期
+            assert.Equal(t, testCase.expectedRow, row)
+        })
+    }
 func TestTablePresenter(t *testing.T) {
-	// 创建一个字节缓冲区
-	var buffer bytes.Buffer
-	// 生成分析所需的数据
-	_, matches, packages, _, metadataProvider, _, _ := internal.GenerateAnalysis(t, internal.ImageSource)
+    // 创建一个字节缓冲区
+    var buffer bytes.Buffer
+    // 调用GenerateAnalysis函数，获取返回的多个变量
+    _, matches, packages, _, metadataProvider, _, _ := internal.GenerateAnalysis(t, internal.ImageSource)
 
-	// 创建一个展示配置对象
-	pb := models.PresenterConfig{
-		Matches:          matches,
-		Packages:         packages,
-```
-在这段代码中，主要是对测试用例进行执行和展示配置的创建，其中包括了对测试结果的断言。
-		// 创建一个新的Presenter对象，传入metadataProvider和false作为参数
-		pres := NewPresenter(pb, false)
+    // 创建一个PresenterConfig结构体
+    pb := models.PresenterConfig{
+        Matches:          matches,
+        Packages:         packages,
+        MetadataProvider: metadataProvider,
+    }
 
-		// 运行测试，测试不使用颜色的情况
-		t.Run("no color", func(t *testing.T) {
-			// 设置pres的withColor属性为true
-			pres.withColor = true
+    // 根据PresenterConfig创建一个Presenter对象
+    pres := NewPresenter(pb, false)
 
-			// 调用Present方法，将结果存储到buffer中
-			err := pres.Present(&buffer)
-			require.NoError(t, err)
+    // 运行测试用例"no color"
+    t.Run("no color", func(t *testing.T) {
+        // 设置withColor字段为true
+        pres.withColor = true
 
-			// 获取buffer中的字符串，与快照进行比较
-			actual := buffer.String()
-			snaps.MatchSnapshot(t, actual)
-		})
+        // 调用Present方法，将结果写入buffer
+        err := pres.Present(&buffer)
+        require.NoError(t, err)
 
-		// 运行测试，测试使用颜色的情况
-		t.Run("with color", func(t *testing.T) {
-			// 设置pres的withColor属性为false
-			pres.withColor = false
+        // 将buffer内容转换为字符串
+        actual := buffer.String()
+        // 使用MatchSnapshot函数进行断言
+        snaps.MatchSnapshot(t, actual)
+    })
 
-			// 调用Present方法，将结果存储到buffer中
-			err := pres.Present(&buffer)
-			require.NoError(t, err)
-		// 将 buffer 中的内容转换为字符串
-		actual := buffer.String()
-		// 使用 snaps 包中的 MatchSnapshot 函数，比较 actual 和预期结果，输出测试结果
-		snaps.MatchSnapshot(t, actual)
-	})
+    // 运行测试用例"with color"
+    t.Run("with color", func(t *testing.T) {
+        // 设置withColor字段为false
+        pres.withColor = false
 
-	// TODO: add me back in when there is a JSON schema
-	// 当有 JSON 模式时，将我添加回来
-	// 使用 validateAgainstDbSchema 函数，验证 actual 是否符合数据库模式
-	// validateAgainstDbSchema(t, string(actual))
+        // 调用Present方法，将结果写入buffer
+        err := pres.Present(&buffer)
+        require.NoError(t, err)
+
+        // 将buffer内容转换为字符串
+        actual := buffer.String()
+        // 使用MatchSnapshot函数进行断言
+        snaps.MatchSnapshot(t, actual)
+    })
+
+    // TODO: add me back in when there is a JSON schema
+    // validateAgainstDbSchema(t, string(actual))
 }
 
 func TestEmptyTablePresenter(t *testing.T) {
-	// 预期没有输出
+    // 期望没有输出
 
-	// 创建一个字节缓冲区
-	var buffer bytes.Buffer
+    // 创建一个字节缓冲区
+    var buffer bytes.Buffer
 
-	// 创建一个空的 matches 对象
-	matches := match.NewMatches()
+    // 创建一个空的Matches对象
+    matches := match.NewMatches()
 
-	// 创建一个 PresenterConfig 对象
-	pb := models.PresenterConfig{
-		Matches:          matches,
-		Packages:         nil,
-		MetadataProvider: nil,
-	}
+    // 创建一个PresenterConfig结构体
+    pb := models.PresenterConfig{
+        Matches:          matches,
+        Packages:         nil,
+        MetadataProvider: nil,
+    }
 
-	// 创建一个新的Presenter对象，传入参数pb和false
-	pres := NewPresenter(pb, false)
+    // 根据PresenterConfig创建一个Presenter对象
+    pres := NewPresenter(pb, false)
 
-	// 运行Presenter对象的Present方法，传入参数&buffer
-	err := pres.Present(&buffer)
-	// 检查是否有错误发生
-	require.NoError(t, err)
+    // 运行Presenter的Present方法，将结果写入buffer
+    err := pres.Present(&buffer)
+    require.NoError(t, err)
 
-	// 将buffer转换为字符串
-	actual := buffer.String()
-	// 使用snaps.MatchSnapshot方法对actual进行快照测试
-	snaps.MatchSnapshot(t, actual)
+    // 将buffer内容转换为字符串
+    actual := buffer.String()
+    // 使用MatchSnapshot函数进行断言
+    snaps.MatchSnapshot(t, actual)
 }
 
-// 定义测试函数TestRemoveDuplicateRows
 func TestRemoveDuplicateRows(t *testing.T) {
-	// 创建一个包含多个子数组的二维数组data
-	data := [][]string{
-		{"1", "2", "3"},
-		{"a", "b", "c"},
-		{"1", "2", "3"},
-		{"a", "b", "c"},
-		{"1", "2", "3"},
-		{"4", "5", "6"},
-# 定义一个二维字符串数组，表示输入数据
-data := [][]string{
-	{"1", "2", "1"},
-}
+    // 创建一个二维字符串数组
+    data := [][]string{
+        {"1", "2", "3"},
+        {"a", "b", "c"},
+        {"1", "2", "3"},
+        {"a", "b", "c"},
+        {"1", "2", "3"},
+        {"4", "5", "6"},
+        {"1", "2", "1"},
+    }
 
-# 定义一个预期的二维字符串数组，表示去重后的数据
-expected := [][]string{
-	{"1", "2", "3"},
-	{"a", "b", "c"},
-	{"4", "5", "6"},
-	{"1", "2", "1"},
-}
+    // 创建一个期望的二维字符串数组
+    expected := [][]string{
+        {"1", "2", "3"},
+        {"a", "b", "c"},
+        {"4", "5", "6"},
+        {"1", "2", "1"},
+    }
 
-# 调用 removeDuplicateRows 函数，去除输入数据中的重复行
-actual := removeDuplicateRows(data)
-
-# 检查预期结果和实际结果是否相等，如果不相等则输出差异
-if diffs := deep.Equal(expected, actual); len(diffs) > 0 {
-	t.Errorf("found diffs!")
-	for _, d := range diffs {
-		t.Errorf("   diff: %+v", d)
-	}
+    // 调用removeDuplicateRows函数，传入data数组，返回去重后的数组
+    actual := removeDuplicateRows(data)
 }
-# 定义一个测试函数，用于测试排序行的功能
-func TestSortRows(t *testing.T) {
-    # 定义一个包含多个字符串数组的数据
+    # 使用深度比较函数 deep.Equal 比较 expected 和 actual，如果有差异则返回差异列表
+    if diffs := deep.Equal(expected, actual); len(diffs) > 0:
+        # 如果有差异，则输出错误信息
+        t.Errorf("found diffs!")
+        # 遍历差异列表，输出每个差异的详细信息
+        for _, d := range diffs:
+            t.Errorf("   diff: %+v", d)
+# 测试排序行的函数
+func TestSortRows(t *testing.T):
+    # 定义测试数据
     data := [][]string{
         {"a", "v0.1.0", "", "deb", "CVE-2019-9996", "Critical"},
         {"a", "v0.1.0", "", "deb", "CVE-2018-9996", "Critical"},
@@ -210,8 +199,7 @@ func TestSortRows(t *testing.T) {
         {"d", "v0.4.0", "", "node", "CVE-2012-9996", "Negligible"},
         {"c", "v0.6.0", "", "node", "CVE-2013-9996", "Critical"},
     }
-
-    # 定义一个期望的排序后的字符串数组数据
+    # 定义预期结果
     expected := [][]string{
         {"a", "v0.1.0", "", "deb", "CVE-2019-9996", "Critical"},
         {"a", "v0.1.0", "", "deb", "CVE-2018-9996", "Critical"},
@@ -220,76 +208,62 @@ func TestSortRows(t *testing.T) {
         {"b", "v0.2.0", "", "deb", "CVE-2010-9996", "Medium"},
         {"c", "v0.6.0", "", "node", "CVE-2013-9996", "Critical"},
         {"d", "v0.4.0", "", "node", "CVE-2011-9996", "Low"},
-// 定义一个包含多个字符串的二维数组
-data := [][]string{
-	{"a", "v0.1.0", "", "node", "CVE-2012-9999", "Critical"},
-	{"b", "v0.2.0", "", "node", "CVE-2012-9998", "High"},
-	{"c", "v0.3.0", "", "node", "CVE-2012-9997", "Medium"},
-	{"d", "v0.4.0", "", "node", "CVE-2012-9996", "Negligible"},
-}
+        {"d", "v0.4.0", "", "node", "CVE-2012-9996", "Negligible"},
+    }
+    # 调用排序函数
+    actual := sortRows(data)
+    # 检查实际结果与预期结果是否一致
+    if diff := cmp.Diff(expected, actual); diff != "":
+        t.Errorf("sortRows() mismatch (-want +got):\n%s", diff)
 
-// 调用sortRows函数对data进行排序，并将结果赋值给actual变量
-actual := sortRows(data)
+# 测试隐藏被忽略的匹配项的函数
+func TestHidesIgnoredMatches(t *testing.T):
+    # 定义变量
+    var buffer bytes.Buffer
+    matches, ignoredMatches, packages, _, metadataProvider, _, _ := internal.GenerateAnalysisWithIgnoredMatches(t, internal.ImageSource)
+    # 创建 PresenterConfig 对象
+    pb := models.PresenterConfig{
+        Matches:          matches,
+        IgnoredMatches:   ignoredMatches,
+        Packages:         packages,
+        MetadataProvider: metadataProvider,
+    }
+    # 创建 Presenter 对象
+    pres := NewPresenter(pb, false)
+    # 调用 Present 方法
+    err := pres.Present(&buffer)
+    require.NoError(t, err)
+    # 获取实际结果
+    actual := buffer.String()
+    # 使用 snaps 包进行快照测试
+    snaps.MatchSnapshot(t, actual)
 
-// 使用cmp.Diff函数比较期望值和实际值，如果不相等则输出错误信息
-if diff := cmp.Diff(expected, actual); diff != "" {
-	t.Errorf("sortRows() mismatch (-want +got):\n%s", diff)
-}
-
-// 定义TestHidesIgnoredMatches测试函数
-func TestHidesIgnoredMatches(t *testing.T) {
-	// 初始化变量并调用GenerateAnalysisWithIgnoredMatches函数
-	var buffer bytes.Buffer
-	matches, ignoredMatches, packages, _, metadataProvider, _, _ := internal.GenerateAnalysisWithIgnoredMatches(t, internal.ImageSource)
-
-	// 创建PresenterConfig结构体对象，并传入相关参数
-	pb := models.PresenterConfig{
-		Matches:          matches,
-		IgnoredMatches:   ignoredMatches,
-		Packages:         packages,
-		MetadataProvider: metadataProvider,
-	}
-// 创建一个新的Presenter对象，传入参数pb和false
-pres := NewPresenter(pb, false)
-
-// 使用Presenter对象展示内容到buffer中
-err := pres.Present(&buffer)
-require.NoError(t, err)
-
-// 将buffer中的内容转换为字符串
-actual := buffer.String()
-
-// 使用snaps.MatchSnapshot比较actual和预期结果，检查是否匹配
-snaps.MatchSnapshot(t, actual)
-}
-
-// 测试展示被忽略的匹配项
-func TestDisplaysIgnoredMatches(t *testing.T) {
-	// 创建一个bytes.Buffer对象
-	var buffer bytes.Buffer
-	
-	// 生成分析结果，获取匹配项、被忽略的匹配项、包信息、元数据提供者等
-	matches, ignoredMatches, packages, _, metadataProvider, _, _ := internal.GenerateAnalysisWithIgnoredMatches(t, internal.ImageSource)
-
-	// 创建一个PresenterConfig对象，传入匹配项、被忽略的匹配项、包信息、元数据提供者等参数
-	pb := models.PresenterConfig{
-		Matches:          matches,
-		IgnoredMatches:   ignoredMatches,
-		Packages:         packages,
-		MetadataProvider: metadataProvider,
-	}
-```
-
-# 创建一个新的Presenter对象，传入参数pb和true
-pres := NewPresenter(pb, true)
-
-# 调用Presenter对象的Present方法，将结果存储在buffer中
-err := pres.Present(&buffer)
-require.NoError(t, err)
-
-# 将buffer中的内容转换为字符串存储在actual中
-actual := buffer.String()
-
-# 使用snaps包中的MatchSnapshot方法，比较actual和预期结果，如果不一致则会报错
-snaps.MatchSnapshot(t, actual)
+# 测试显示被忽略的匹配项的函数
+func TestDisplaysIgnoredMatches(t *testing.T):
+    # 定义变量
+    var buffer bytes.Buffer
+    # 调用 internal.GenerateAnalysisWithIgnoredMatches 函数生成匹配结果、被忽略的匹配结果、包信息、元数据提供者等变量
+    matches, ignoredMatches, packages, _, metadataProvider, _, _ := internal.GenerateAnalysisWithIgnoredMatches(t, internal.ImageSource)
+    
+    # 创建 PresenterConfig 结构体对象 pb，包含匹配结果、被忽略的匹配结果、包信息、元数据提供者等字段
+    pb := models.PresenterConfig{
+        Matches:          matches,
+        IgnoredMatches:   ignoredMatches,
+        Packages:         packages,
+        MetadataProvider: metadataProvider,
+    }
+    
+    # 根据 PresenterConfig 对象 pb 创建新的 Presenter 对象 pres
+    pres := NewPresenter(pb, true)
+    
+    # 调用 Presenter 对象 pres 的 Present 方法，将结果写入 buffer
+    err := pres.Present(&buffer)
+    require.NoError(t, err)
+    
+    # 将 buffer 中的内容转换为字符串，存入 actual 变量
+    actual := buffer.String()
+    
+    # 使用 snaps.MatchSnapshot 方法对 actual 进行快照测试
+    snaps.MatchSnapshot(t, actual)
+# 闭合前面的函数定义
 ```

@@ -1,18 +1,18 @@
 # `grype\grype\pkg\qualifier\qualifier.go`
 
 ```
-// 声明一个名为qualifier的包
+# 定义了一个名为qualifier的包
 package qualifier
 
-// 导入所需的包
+# 导入了distro包中的Distro类型和pkg包中的Package类型
 import (
-	"github.com/anchore/grype/grype/distro"  // 导入distro包
-	"github.com/anchore/grype/grype/pkg"      // 导入pkg包
+    "github.com/anchore/grype/grype/distro"
+    "github.com/anchore/grype/grype/pkg"
 )
 
-// 声明一个接口类型Qualifier
+# 定义了一个名为Qualifier的接口
 type Qualifier interface {
-	// 定义接口方法Satisfied，用于判断给定的发行版和软件包是否满足某些条件
-	Satisfied(d *distro.Distro, p pkg.Package) (bool, error)
+    # 定义了一个名为Satisfied的方法，接收一个Distro类型和一个Package类型参数，返回一个布尔值和一个错误
+    Satisfied(d *distro.Distro, p pkg.Package) (bool, error)
 }
 ```

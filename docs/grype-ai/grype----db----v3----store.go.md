@@ -1,38 +1,29 @@
 # `grype\grype\db\v3\store.go`
 
 ```
-# 定义了一个接口类型 Store，该接口包含了 StoreReader 和 StoreWriter 两个子接口
+# 定义了一个名为 Store 的接口，包含了 StoreReader 和 StoreWriter 两个子接口
 type Store interface {
-    # Store 接口包含了 IDReader、DiffReader、VulnerabilityStoreReader 和 VulnerabilityMetadataStoreReader 四个子接口
-    StoreReader
-    # Store 接口包含了 IDWriter、VulnerabilityStoreWriter 和 VulnerabilityMetadataStoreWriter 三个子接口，以及 Close 方法
-    StoreWriter
+    StoreReader  # Store 接口包含了 StoreReader 接口
+    StoreWriter  # Store 接口包含了 StoreWriter 接口
 }
 
-# 定义了一个接口类型 StoreReader，该接口包含了 IDReader、DiffReader、VulnerabilityStoreReader 和 VulnerabilityMetadataStoreReader 四个子接口
+# 定义了一个名为 StoreReader 的接口，包含了 IDReader、DiffReader、VulnerabilityStoreReader 和 VulnerabilityMetadataStoreReader 四个子接口
 type StoreReader interface {
-    # IDReader 接口用于读取 ID
-    IDReader
-    # DiffReader 接口用于读取差异
-    DiffReader
-    # VulnerabilityStoreReader 接口用于读取漏洞存储
-    VulnerabilityStoreReader
-    # VulnerabilityMetadataStoreReader 接口用于读取漏洞元数据存储
-    VulnerabilityMetadataStoreReader
+    IDReader  # StoreReader 接口包含了 IDReader 接口
+    DiffReader  # StoreReader 接口包含了 DiffReader 接口
+    VulnerabilityStoreReader  # StoreReader 接口包含了 VulnerabilityStoreReader 接口
+    VulnerabilityMetadataStoreReader  # StoreReader 接口包含了 VulnerabilityMetadataStoreReader 接口
 }
 
-# 定义了一个接口类型 StoreWriter，该接口包含了 IDWriter、VulnerabilityStoreWriter、VulnerabilityMetadataStoreWriter 三个子接口，以及 Close 方法
+# 定义了一个名为 StoreWriter 的接口，包含了 IDWriter、VulnerabilityStoreWriter、VulnerabilityMetadataStoreWriter 和 Close 四个子接口
 type StoreWriter interface {
-    # IDWriter 接口用于写入 ID
-    IDWriter
-    # VulnerabilityStoreWriter 接口用于写入漏洞存储
-    VulnerabilityStoreWriter
-    # VulnerabilityMetadataStoreWriter 接口用于写入漏洞元数据存储
-    VulnerabilityMetadataStoreWriter
-    # Close 方法用于关闭存储
-    Close()
+    IDWriter  # StoreWriter 接口包含了 IDWriter 接口
+    VulnerabilityStoreWriter  # StoreWriter 接口包含了 VulnerabilityStoreWriter 接口
+    VulnerabilityMetadataStoreWriter  # StoreWriter 接口包含了 VulnerabilityMetadataStoreWriter 接口
+    Close()  # StoreWriter 接口包含了 Close 方法
 }
-# 定义一个接口类型 DiffReader，该接口包含一个方法 DiffStore，用于从存储读取数据并返回差异
+
+# 定义了一个名为 DiffReader 的接口，包含了 DiffStore 方法，该方法接收一个 StoreReader 类型的参数，返回一个 Diff 切片和一个错误
 type DiffReader interface {
     DiffStore(s StoreReader) (*[]Diff, error)
 }

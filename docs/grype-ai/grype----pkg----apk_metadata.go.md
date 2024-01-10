@@ -1,15 +1,15 @@
 # `grype\grype\pkg\apk_metadata.go`
 
 ```
-// 定义一个名为 ApkMetadata 的结构体，用于存储 APK 文件的元数据
+// 定义一个名为pkg的包
+
+// 定义一个结构体ApkMetadata，包含一个名为Files的ApkFileRecord切片，使用json标签指定序列化时的字段名为files
 type ApkMetadata struct {
-    // Files 字段是一个 ApkFileRecord 类型的切片，用于存储 APK 文件的记录
     Files []ApkFileRecord `json:"files"`
 }
 
-// ApkFileRecord 结构体表示 APK 数据库条目中的单个文件列表和元数据（可能有多个文件记录）
+// 定义一个结构体ApkFileRecord，表示APK数据库条目中的单个文件列表和元数据（可能有多个文件记录），包含一个名为Path的字符串字段，使用json标签指定序列化时的字段名为path
 type ApkFileRecord struct {
-    // Path 字段存储文件的路径
     Path string `json:"path"`
 }
 ```

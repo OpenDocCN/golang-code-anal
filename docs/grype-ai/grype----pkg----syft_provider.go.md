@@ -4,107 +4,87 @@
 package pkg
 
 import (
-	"github.com/anchore/grype/internal/log"  // 导入日志模块
-	"github.com/anchore/stereoscope/pkg/image"  // 导入图像模块
-	"github.com/anchore/syft/syft"  // 导入syft模块
-	"github.com/anchore/syft/syft/sbom"  // 导入sbom模块
-	"github.com/anchore/syft/syft/source"  // 导入source模块
+    "github.com/anchore/grype/internal/log"  // 导入日志模块
+    "github.com/anchore/stereoscope/pkg/image"  // 导入图像模块
+    "github.com/anchore/syft/syft"  // 导入syft模块
+    "github.com/anchore/syft/syft/sbom"  // 导入sbom模块
+    "github.com/anchore/syft/syft/source"  // 导入source模块
 )
 
 func syftProvider(userInput string, config ProviderConfig) ([]Package, Context, *sbom.SBOM, error) {
-	// 获取源信息
-	src, err := getSource(userInput, config)
-	// 如果获取源信息出错，返回空值和错误
-	if err != nil {
-		return nil, Context{}, nil, err
-	}
+    src, err := getSource(userInput, config)  // 获取源
+    if err != nil {
+        return nil, Context{}, nil, err
+    }
 
-	// 延迟执行，关闭源信息
-	defer func() {
-		if src != nil {
-			// 如果关闭源信息出错，记录日志
-			if err := src.Close(); err != nil {
-				log.Tracef("unable to close source: %+v", err)
-		}
-	}
-	// 匿名函数的闭包
+    defer func() {  // 延迟执行函数
+        if src != nil {
+            if err := src.Close(); err != nil {
+                log.Tracef("unable to close source: %+v", err)  // 记录无法关闭源的错误
+            }
+        }
+    }()
 
-	// 使用 syft.CatalogPackages 函数获取源代码的目录、关系和发行版信息
-	catalog, relationships, theDistro, err := syft.CatalogPackages(src, config.CatalogingOptions)
-	// 如果出现错误，返回空值和错误信息
-	if err != nil {
-		return nil, Context{}, nil, err
-	}
+    catalog, relationships, theDistro, err := syft.CatalogPackages(src, config.CatalogingOptions)  // 获取包目录、关系和发行版信息
+    if err != nil {
+        return nil, Context{}, nil, err
+    }
 
-	// 从目录中移除重叠的软件包
-	catalog = removePackagesByOverlap(catalog, relationships, theDistro)
+    catalog = removePackagesByOverlap(catalog, relationships, theDistro)  // 移除重叠的包
 
-	// 获取源代码的描述信息
-	srcDescription := src.Describe()
+    srcDescription := src.Describe()  // 获取源的描述信息
 
-	// 从目录中创建软件包集合
-	packages := FromCollection(catalog, config.SynthesisConfig)
-	// 创建上下文对象
-	context := Context{
-		Source: &srcDescription,
-		Distro: theDistro,
-	}
+    packages := FromCollection(catalog, config.SynthesisConfig)  // 从集合中获取包
+    context := Context{  // 上下文信息
+        Source: &srcDescription,
+        Distro: theDistro,
+    }
 
-	// 创建 SBOM 对象
-	sbom := &sbom.SBOM{
-		# 设置源描述
-		Source:        srcDescription,
-		# 设置关系
-		Relationships: relationships,
-		# 设置构件
-		Artifacts: sbom.Artifacts{
-			# 设置包
-			Packages: catalog,
-		},
-	}
+    sbom := &sbom.SBOM{  // 创建SBOM对象
+        Source:        srcDescription,
+        Relationships: relationships,
+        Artifacts: sbom.Artifacts{
+            Packages: catalog,
+        },
+    }
 
-	# 返回构件、上下文、软件构建物和空错误
-	return packages, context, sbom, nil
+    return packages, context, sbom, nil  // 返回包、上下文和SBOM对象
 }
 
-# 获取源
 func getSource(userInput string, config ProviderConfig) (source.Source, error) {
-	# 如果配置的目录选项搜索范围为空，则返回错误
-	if config.CatalogingOptions.Search.Scope == "" {
-		return nil, errDoesNotProvide
-	}
+    if config.CatalogingOptions.Search.Scope == "" {  // 如果搜索范围为空
+        return nil, errDoesNotProvide  // 返回错误
+    }
 
-	# 检测源
-	detection, err := source.Detect(userInput, source.DetectConfig{
-		# 设置默认镜像源
-		DefaultImageSource: config.DefaultImagePullSource,
-	})
-	if err != nil {
-		# 如果有错误，则返回错误
-		return nil, err
-	}
+    detection, err := source.Detect(userInput, source.DetectConfig{  // 检测源
+        DefaultImageSource: config.DefaultImagePullSource,
+    })
+    if err != nil {
+        return nil, err  // 返回错误
+    }
 
-	// 声明一个平台变量
-	var platform *image.Platform
-	// 如果配置中指定了平台，则创建一个新的平台对象
-	if config.Platform != "" {
-		platform, err = image.NewPlatform(config.Platform)
-		// 如果创建平台对象时出现错误，则返回空和错误
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	// 创建一个新的检测源对象，并传入配置参数
-	return detection.NewSource(source.DetectionSourceConfig{
-		Alias: source.Alias{
-			Name: config.Name,
-		},
-		RegistryOptions: config.RegistryOptions,
-		Platform:        platform, // 设置平台对象
-		Exclude: source.ExcludeConfig{
-			Paths: config.Exclusions, // 设置排除路径
-		},
-	})
-这是一个代码块的结束标记，表示前面的函数或者循环的结束。
+    var platform *image.Platform  // 平台对象
+    if config.Platform != "" {
+        platform, err = image.NewPlatform(config.Platform)  // 创建平台对象
+        if err != nil {
+            return nil, err  // 返回错误
+        }
+    }
+}
+    # 返回一个新的检测源，根据给定的检测源配置
+    return detection.NewSource(source.DetectionSourceConfig{
+        # 设置别名，使用配置中的名称
+        Alias: source.Alias{
+            Name: config.Name,
+        },
+        # 设置注册表选项，使用配置中的注册表选项
+        RegistryOptions: config.RegistryOptions,
+        # 设置平台，使用给定的平台
+        Platform:        platform,
+        # 设置排除配置，使用配置中的排除路径
+        Exclude: source.ExcludeConfig{
+            Paths: config.Exclusions,
+        },
+    })
+# 闭合函数定义的大括号，表示函数定义结束
 ```

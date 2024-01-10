@@ -2,54 +2,43 @@
 
 ```
 package ruby
-# 导入所需的包
 
 import (
-	"github.com/anchore/grype/grype/distro"
-	"github.com/anchore/grype/grype/match"
-	"github.com/anchore/grype/grype/pkg"
-	"github.com/anchore/grype/grype/search"
-	"github.com/anchore/grype/grype/vulnerability"
-	syftPkg "github.com/anchore/syft/syft/pkg"
+    "github.com/anchore/grype/grype/distro"  // 导入 distro 包
+    "github.com/anchore/grype/grype/match"   // 导入 match 包
+    "github.com/anchore/grype/grype/pkg"     // 导入 pkg 包
+    "github.com/anchore/grype/grype/search"  // 导入 search 包
+    "github.com/anchore/grype/grype/vulnerability"  // 导入 vulnerability 包
+    syftPkg "github.com/anchore/syft/syft/pkg"  // 导入 syftPkg 包并重命名为 syftPkg
 )
-# 导入所需的包
 
 type Matcher struct {
-	cfg MatcherConfig
+    cfg MatcherConfig  // 定义 Matcher 结构体，包含 cfg 字段
 }
-# 定义 Matcher 结构体
 
 type MatcherConfig struct {
-	UseCPEs bool
+    UseCPEs bool  // 定义 MatcherConfig 结构体，包含 UseCPEs 字段
 }
-# 定义 MatcherConfig 结构体
 
 func NewRubyMatcher(cfg MatcherConfig) *Matcher {
-# 定义 NewRubyMatcher 函数，接受 MatcherConfig 参数，返回 Matcher 指针
-# 返回一个Matcher对象，其中包含了配置信息
-return &Matcher{
-    cfg: cfg,
-}
-
-# 返回支持的软件包类型列表
-func (m *Matcher) PackageTypes() []syftPkg.Type {
-    return []syftPkg.Type{syftPkg.GemPkg}
-}
-
-# 返回Matcher的类型
-func (m *Matcher) Type() match.MatcherType {
-    return match.RubyGemMatcher
-}
-
-# 匹配漏洞，返回匹配结果和可能的错误
-func (m *Matcher) Match(store vulnerability.Provider, d *distro.Distro, p pkg.Package) ([]match.Match, error) {
-    criteria := search.CommonCriteria
-    # 如果配置使用CPEs，则添加ByCPE到匹配标准中
-    if m.cfg.UseCPEs {
-        criteria = append(criteria, search.ByCPE)
+    return &Matcher{
+        cfg: cfg,  // 返回一个新的 Matcher 对象，包含传入的配置
     }
-    # 根据匹配标准进行匹配，返回匹配结果和可能的错误
-    return search.ByCriteria(store, d, p, m.Type(), criteria...)
 }
-抱歉，我无法为您提供代码注释，因为您没有提供需要注释的代码。如果您有任何代码需要解释，请提供给我，我将竭诚为您服务。
+
+func (m *Matcher) PackageTypes() []syftPkg.Type {
+    return []syftPkg.Type{syftPkg.GemPkg}  // 返回 GemPkg 类型的包
+}
+
+func (m *Matcher) Type() match.MatcherType {
+    return match.RubyGemMatcher  // 返回 RubyGemMatcher 类型的匹配器
+}
+
+func (m *Matcher) Match(store vulnerability.Provider, d *distro.Distro, p pkg.Package) ([]match.Match, error) {
+    criteria := search.CommonCriteria  // 设置匹配的通用标准
+    if m.cfg.UseCPEs {
+        criteria = append(criteria, search.ByCPE)  // 如果配置中使用 CPEs，则添加按 CPE 匹配的标准
+    }
+    return search.ByCriteria(store, d, p, m.Type(), criteria...)  // 根据标准进行匹配
+}
 ```

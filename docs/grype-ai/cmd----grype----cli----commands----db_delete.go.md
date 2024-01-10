@@ -4,44 +4,38 @@
 package commands
 
 import (
-	"fmt"  // 导入 fmt 包，用于格式化输出
-	"github.com/spf13/cobra"  // 导入 cobra 包，用于创建命令行应用
+    "fmt" // 导入 fmt 包
 
-	"github.com/anchore/clio"  // 导入 anchore/clio 包
-	"github.com/anchore/grype/cmd/grype/cli/options"  // 导入 anchore/grype/cmd/grype/cli/options 包
-	"github.com/anchore/grype/grype/db"  // 导入 anchore/grype/grype/db 包
+    "github.com/spf13/cobra" // 导入 cobra 包
+
+    "github.com/anchore/clio" // 导入 clio 包
+    "github.com/anchore/grype/cmd/grype/cli/options" // 导入 options 包
+    "github.com/anchore/grype/grype/db" // 导入 db 包
 )
 
-// 创建一个命令，用于删除漏洞数据库
 func DBDelete(app clio.Application) *cobra.Command {
-	// 设置数据库选项的默认值
-	opts := dbOptionsDefault(app.ID())
+    opts := dbOptionsDefault(app.ID()) // 使用默认的数据库选项
 
-	// 设置命令行应用
-	return app.SetupCommand(&cobra.Command{
-		Use:   "delete",  // 命令名称
-		Short: "delete the vulnerability database",  // 命令简短描述
-		Args:  cobra.ExactArgs(0),  // 命令参数数量限制为 0 个
-		RunE: func(cmd *cobra.Command, args []string) error {  // 命令执行函数
-# 返回运行数据库删除操作的结果
-return runDBDelete(opts.DB)
-# 创建并返回一个命令，该命令执行数据库删除操作
-}, opts)
+    return app.SetupCommand(&cobra.Command{ // 设置命令
+        Use:   "delete", // 使用说明
+        Short: "delete the vulnerability database", // 简短说明
+        Args:  cobra.ExactArgs(0), // 参数个数
+        RunE: func(cmd *cobra.Command, args []string) error { // 运行命令
+            return runDBDelete(opts.DB) // 运行删除数据库操作
+        },
+    }, opts)
+}
 
-# 执行数据库删除操作
 func runDBDelete(opts options.Database) error {
-    # 根据选项创建数据库管理员
-    dbCurator, err := db.NewCurator(opts.ToCuratorConfig())
+    dbCurator, err := db.NewCurator(opts.ToCuratorConfig()) // 创建数据库管理员
     if err != nil {
-        return err
+        return err // 如果出错，返回错误
     }
 
-    # 调用数据库管理员的删除方法
-    if err := dbCurator.Delete(); err != nil {
-        return fmt.Errorf("unable to delete vulnerability database: %+v", err)
+    if err := dbCurator.Delete(); err != nil { // 删除数据库
+        return fmt.Errorf("unable to delete vulnerability database: %+v", err) // 返回删除数据库错误
     }
 
-    # 打印数据库删除成功的消息
-    return stderrPrintLnf("Vulnerability database deleted")
+    return stderrPrintLnf("Vulnerability database deleted") // 返回删除成功信息
 }
 ```

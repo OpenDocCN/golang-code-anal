@@ -4,149 +4,158 @@
 package file
 
 import (
-	"fmt"  // 导入 fmt 包，用于格式化输出
-	"io"  // 导入 io 包，用于实现 I/O 操作
-	"net/http"  // 导入 net/http 包，用于处理 HTTP 请求
+    "fmt"  // 导入 fmt 包，用于格式化输出
+    "io"  // 导入 io 包，用于实现 I/O 操作
+    "net/http"  // 导入 net/http 包，用于发送 HTTP 请求
 
-	"github.com/hashicorp/go-getter"  // 导入 go-getter 包，用于文件下载
-	"github.com/hashicorp/go-getter/helper/url"  // 导入 go-getter 的 URL 辅助包
-	"github.com/wagoodman/go-progress"  // 导入 go-progress 包，用于显示下载进度条
+    "github.com/hashicorp/go-getter"  // 导入 go-getter 包，用于获取远程资源
+    "github.com/hashicorp/go-getter/helper/url"  // 导入 url 包，用于处理 URL
+    "github.com/wagoodman/go-progress"  // 导入 go-progress 包，用于显示下载进度条
 
-	"github.com/anchore/grype/internal/stringutil"  // 导入 stringutil 包，用于字符串操作
+    "github.com/anchore/grype/internal/stringutil"  // 导入 stringutil 包，用于处理字符串
 )
 
 var (
-	archiveExtensions   = getterDecompressorNames()  // 定义变量 archiveExtensions，并初始化为 getterDecompressorNames() 的返回值
-	ErrNonArchiveSource = fmt.Errorf("non-archive sources are not supported for directory destinations")  // 定义变量 ErrNonArchiveSource，并初始化为一个错误信息
+    archiveExtensions   = getterDecompressorNames()  // 定义变量 archiveExtensions，并初始化为 getterDecompressorNames() 的返回值
+    ErrNonArchiveSource = fmt.Errorf("non-archive sources are not supported for directory destinations")  // 定义变量 ErrNonArchiveSource，并初始化为指定的错误信息
 )
 
-type Getter interface {  // 定义接口 Getter
-// GetFile函数用于下载指定URL的文件到指定路径。URL必须指向单个文件。
-GetFile(dst, src string, monitor ...*progress.Manual) error
+type Getter interface {
+    // GetFile downloads the give URL into the given path. The URL must reference a single file.
+    GetFile(dst, src string, monitor ...*progress.Manual) error  // 定义接口 Getter，包含 GetFile 方法，用于下载单个文件
 
-// GetToDir函数用于将位于src URL的资源下载到指定的dst目录中。
-// 目录必须已经存在，并且远程资源必须是一个存档文件（例如.tar.gz）。
-GetToDir(dst, src string, monitor ...*progress.Manual) error
+    // GetToDir downloads the resource found at the `src` URL into the given `dst` directory.
+    // The directory must already exist, and the remote resource MUST BE AN ARCHIVE (e.g. `.tar.gz`).
+    GetToDir(dst, src string, monitor ...*progress.Manual) error  // 定义接口 Getter，包含 GetToDir 方法，用于下载资源到指定目录
 }
 
 type HashiGoGetter struct {
-	httpGetter getter.HttpGetter
+    httpGetter getter.HttpGetter  // 定义结构体 HashiGoGetter，包含 httpGetter 字段
 }
 
-// NewGetter函数创建并返回一个新的Getter。提供一个http.Client是可选的。如果提供了一个，
-// 它将用于所有的HTTP(S)获取；否则，go-getter的默认获取器将被使用。
+// NewGetter creates and returns a new Getter. Providing an http.Client is optional. If one is provided,
+// it will be used for all HTTP(S) getting; otherwise, go-getter's default getters will be used.
 func NewGetter(httpClient *http.Client) *HashiGoGetter {
-	return &HashiGoGetter{
-		httpGetter: getter.HttpGetter{
-			Client: httpClient,
-		},
-	}
-```
-// 上面的代码是一个Go语言程序的一部分，包含了一些函数和结构体的定义。每个函数和结构体都有注释来解释其作用。
-// GetFile 方法用于从源地址获取文件到目标地址，可以传入监控器参数
+    return &HashiGoGetter{  // 创建并返回新的 HashiGoGetter 实例
+        httpGetter: getter.HttpGetter{  // 初始化 httpGetter 字段
+            Client: httpClient,  // 使用提供的 http.Client，或者使用 go-getter 的默认获取器
+        },
+    }
+}
+
 func (g HashiGoGetter) GetFile(dst, src string, monitors ...*progress.Manual) error {
-	// 如果传入的监控器参数数量大于1，返回错误
-	if len(monitors) > 1 {
-		return fmt.Errorf("multiple monitors provided, which is not allowed")
-	}
-	// 调用 getterClient 方法，使用 httpGetter 获取文件
-	return getterClient(dst, src, false, g.httpGetter, monitors).Get()
+    if len(monitors) > 1 {  // 如果提供了多个监视器，则返回错误
+        return fmt.Errorf("multiple monitors provided, which is not allowed")
+    }
+
+    return getterClient(dst, src, false, g.httpGetter, monitors).Get()  // 调用 getterClient 方法下载文件
 }
 
-// GetToDir 方法用于从源地址获取文件到目标目录，可以传入监控器参数
 func (g HashiGoGetter) GetToDir(dst, src string, monitors ...*progress.Manual) error {
-	// 验证 HTTP 源地址的有效性
-	if err := validateHTTPSource(src); err != nil {
-		return err
-	}
-	// 如果传入的监控器参数数量大于1，返回错误
-	if len(monitors) > 1 {
-		return fmt.Errorf("multiple monitors provided, which is not allowed")
-	}
-	// 调用 getterClient 方法，使用 httpGetter 获取文件到目标目录
-	return getterClient(dst, src, true, g.httpGetter, monitors).Get()
+    // though there are multiple getters, only the http/https getter requires extra validation
+    if err := validateHTTPSource(src); err != nil {  // 验证 HTTP 源的有效性
+        return err  // 如果验证失败，则返回错误
+    }
+    if len(monitors) > 1 {  // 如果提供了多个监视器，则返回错误
+        return fmt.Errorf("multiple monitors provided, which is not allowed")
+    }
 }
+    # 调用getterClient函数，传入目标地址(dst)、源地址(src)、是否使用HTTPS(true)、HTTP获取器(g.httpGetter)和监视器列表(monitors)，并获取数据
+    return getterClient(dst, src, true, g.httpGetter, monitors).Get()
 }
 
-// validateHTTPSource 校验 HTTP 源
+// 验证 HTTP 源是否有效，如果不是以 http:// 或 https:// 开头，则忽略
 func validateHTTPSource(src string) error {
-	// 忽略不是使用 http getter 对象的源
-	if !stringutil.HasAnyOfPrefixes(src, "http://", "https://") {
-		return nil
-	}
+    if !stringutil.HasAnyOfPrefixes(src, "http://", "https://") {
+        return nil
+    }
 
-	// 解析 URL
-	u, err := url.Parse(src)
-	if err != nil {
-		return fmt.Errorf("bad URL provided %q: %w", src, err)
-	}
-	// 只允许带有存档扩展名的源
-	if !stringutil.HasAnyOfSuffixes(u.Path, archiveExtensions...) {
-		return ErrNonArchiveSource
-	}
-	return nil
+    // 解析 URL，检查是否为有效的 URL
+    u, err := url.Parse(src)
+    if err != nil {
+        return fmt.Errorf("bad URL provided %q: %w", src, err)
+    }
+    // 只允许具有存档扩展名的源
+    if !stringutil.HasAnyOfSuffixes(u.Path, archiveExtensions...) {
+        return ErrNonArchiveSource
+    }
+    return nil
 }
 
-// getterClient 获取客户端
+// 创建并返回一个 getter 客户端
 func getterClient(dst, src string, dir bool, httpGetter getter.HttpGetter, monitors []*progress.Manual) *getter.Client {
-// 创建一个getter.Client对象，设置其属性值为src、dst、dir
-// 设置其Getters属性为一个map，包含http、https、file、git、gcs、hg、s3等键值对
-// 注意：这些是https://github.com/hashicorp/go-getter/blob/v1.5.9/get.go#L68-L74中默认的getter实现
-// 可能其他实现需要考虑自定义httpclient注入，但目前还未考虑
-// 设置其Options属性为monitors转换为GetterClientOptions的结果
-// 返回创建的client对象
+    client := &getter.Client{
+        Src: src,
+        Dst: dst,
+        Dir: dir,
+        Getters: map[string]getter.Getter{
+            "http":  &httpGetter,
+            "https": &httpGetter,
+            // 注意：这些是来自 https://github.com/hashicorp/go-getter/blob/v1.5.9/get.go#L68-L74 的默认 getter
+            // 可能需要考虑其他实现需要自定义 httpclient 注入，但目前还没有考虑到
+            "file": new(getter.FileGetter),
+            "git":  new(getter.GitGetter),
+            "gcs":  new(getter.GCSGetter),
+            "hg":   new(getter.HgGetter),
+            "s3":   new(getter.S3Getter),
+        },
+        Options: mapToGetterClientOptions(monitors),
+    }
+
+    return client
 }
 
+// 返回带有进度监控的 getter 客户端
 func withProgress(monitor *progress.Manual) func(client *getter.Client) error {
-	return getter.WithProgress(
-		&progressAdapter{monitor: monitor},  // 使用进度适配器创建带有进度监视器的客户端
-	)
+    return getter.WithProgress(
+        &progressAdapter{monitor: monitor},
+    )
 }
 
+// 将进度监控映射为 getter 客户端选项
 func mapToGetterClientOptions(monitors []*progress.Manual) []getter.ClientOption {
-	// TODO: This function is no longer needed once a generic `map` method is available.
-	// TODO: 一旦有通用的 `map` 方法可用，这个函数就不再需要了。
+    // TODO: 一旦有通用的 `map` 方法可用，此函数将不再需要
 
-	var result []getter.ClientOption
+    var result []getter.ClientOption
 
-	for _, monitor := range monitors {
-		result = append(result, withProgress(monitor))  // 将每个进度监视器转换为客户端选项并添加到结果中
-	}
+    for _, monitor := range monitors {
+        result = append(result, withProgress(monitor))
+    }
 
-	return result  // 返回结果数组
+    return result
 }
-# 定义一个结构体 readCloser，包含 progress.Reader 的属性
+
+// 定义一个带有进度监控的读取器
 type readCloser struct {
     progress.Reader
 }
-
-# 实现 readCloser 结构体的 Close 方法，返回值为 error 类型
+# 实现了readCloser接口的Close方法，返回nil表示关闭成功
 func (c *readCloser) Close() error { return nil }
 
-# 定义一个结构体 progressAdapter，包含 progress.Manual 的属性
+# 定义了progressAdapter结构体，包含一个progress.Manual类型的monitor字段
 type progressAdapter struct {
     monitor *progress.Manual
 }
 
-# 实现 progressAdapter 结构体的 TrackProgress 方法，参数为文件名、当前大小、总大小和读取流，返回值为读取流
+# 实现了TrackProgress方法，用于跟踪进度并返回一个io.ReadCloser接口
 func (a *progressAdapter) TrackProgress(_ string, currentSize, totalSize int64, stream io.ReadCloser) io.ReadCloser {
     # 设置当前进度
     a.monitor.Set(currentSize)
     # 设置总进度
     a.monitor.SetTotal(totalSize)
-    # 返回一个 readCloser 结构体，其中 Reader 属性为经过进度监控的流
+    # 返回一个readCloser类型的对象，其中包含了一个经过进度监控的stream
     return &readCloser{
         Reader: *progress.NewProxyReader(stream, a.monitor),
     }
 }
 
-# 定义一个函数 getterDecompressorNames，返回值为字符串数组
+# 定义了getterDecompressorNames函数，用于获取getter.Decompressors中的所有解压器名称
 func getterDecompressorNames() (names []string) {
-    # 遍历 getter.Decompressors 中的名称
+    # 遍历getter.Decompressors中的所有解压器名称，并添加到names切片中
     for name := range getter.Decompressors {
-# 将 name 添加到 names 切片中
-names = append(names, name)
-# 返回 names 切片
+        names = append(names, name)
+    }
+    # 返回解压器名称切片
+    return names
 }
-return names
 ```

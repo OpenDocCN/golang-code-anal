@@ -1,6 +1,6 @@
 # `grype\grype\db\v5\schema_version.go`
 
 ```
-# 定义一个常量，表示当前代码的模式版本号为5
+# 定义一个名为 SchemaVersion 的常量，其数值为 5
 const SchemaVersion = 5
 ```

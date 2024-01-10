@@ -4,47 +4,41 @@
 package stock
 
 import (
-	"github.com/anchore/grype/grype/distro"  // 导入操作系统信息相关的包
-	"github.com/anchore/grype/grype/match"   // 导入匹配相关的包
-	"github.com/anchore/grype/grype/pkg"     // 导入软件包相关的包
-	"github.com/anchore/grype/grype/search"  // 导入搜索相关的包
-	"github.com/anchore/grype/grype/vulnerability"  // 导入漏洞相关的包
-	syftPkg "github.com/anchore/syft/syft/pkg"  // 导入软件包相关的包，并重命名为syftPkg
+    "github.com/anchore/grype/grype/distro"  // 导入 distro 包
+    "github.com/anchore/grype/grype/match"   // 导入 match 包
+    "github.com/anchore/grype/grype/pkg"      // 导入 pkg 包
+    "github.com/anchore/grype/grype/search"   // 导入 search 包
+    "github.com/anchore/grype/grype/vulnerability"  // 导入 vulnerability 包
+    syftPkg "github.com/anchore/syft/syft/pkg"  // 导入 syftPkg 包并重命名为 syftPkg
 )
 
 type Matcher struct {
-	cfg MatcherConfig  // 定义Matcher结构体，包含cfg字段，类型为MatcherConfig
+    cfg MatcherConfig  // 定义 Matcher 结构体，包含 cfg 字段
 }
 
 type MatcherConfig struct {
-	UseCPEs bool  // 定义MatcherConfig结构体，包含UseCPEs字段，类型为bool
+    UseCPEs bool  // 定义 MatcherConfig 结构体，包含 UseCPEs 字段
 }
 
 func NewStockMatcher(cfg MatcherConfig) *Matcher {
-# 返回一个Matcher对象，其中包含了给定的cfg配置信息
-return &Matcher{
-    cfg: cfg,
-}
-
-# 返回一个空的PackageTypes数组
-func (m *Matcher) PackageTypes() []syftPkg.Type {
-    return nil
-}
-
-# 返回StockMatcher类型的MatcherType
-func (m *Matcher) Type() match.MatcherType {
-    return match.StockMatcher
-}
-
-# 匹配给定的store、d、p对象，返回匹配结果数组和可能的错误
-func (m *Matcher) Match(store vulnerability.Provider, d *distro.Distro, p pkg.Package) ([]match.Match, error) {
-    # 根据配置信息决定是否使用CPEs作为匹配标准
-    criteria := search.CommonCriteria
-    if m.cfg.UseCPEs {
-        criteria = append(criteria, search.ByCPE)
+    return &Matcher{
+        cfg: cfg,  // 返回一个新的 Matcher 对象，初始化 cfg 字段
     }
-    # 根据给定的标准进行匹配，返回匹配结果数组
-    return search.ByCriteria(store, d, p, m.Type(), criteria...)
 }
-抱歉，我无法为您提供代码注释，因为您没有提供需要注释的代码。如果您有任何代码需要解释，请提供给我，我将竭诚为您服务。
+
+func (m *Matcher) PackageTypes() []syftPkg.Type {
+    return nil  // 返回空的 syftPkg.Type 切片
+}
+
+func (m *Matcher) Type() match.MatcherType {
+    return match.StockMatcher  // 返回 match.StockMatcher
+}
+
+func (m *Matcher) Match(store vulnerability.Provider, d *distro.Distro, p pkg.Package) ([]match.Match, error) {
+    criteria := search.CommonCriteria  // 初始化 criteria 变量为 search.CommonCriteria
+    if m.cfg.UseCPEs {  // 如果配置中使用 CPEs
+        criteria = append(criteria, search.ByCPE)  // 将 search.ByCPE 添加到 criteria 中
+    }
+    return search.ByCriteria(store, d, p, m.Type(), criteria...)  // 返回根据条件搜索的结果
+}
 ```

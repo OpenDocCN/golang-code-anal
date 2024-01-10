@@ -1,89 +1,82 @@
 # `grype\grype\version\constraint_unit.go`
 
 ```
-// 导入所需的包
 package version
 
 import (
-	"fmt"
-	"regexp"
-	"strconv"
-	"strings"
+    "fmt"  // 导入 fmt 包，用于格式化输出
+    "regexp"  // 导入 regexp 包，用于正则表达式匹配
+    "strconv"  // 导入 strconv 包，用于字符串转换
+    "strings"  // 导入 strings 包，用于字符串操作
 
-	"github.com/anchore/grype/internal/stringutil"
+    "github.com/anchore/grype/internal/stringutil"  // 导入自定义包 stringutil
 )
 
-// 定义正则表达式，用于匹配约束条件中的操作符和版本号
-// operator group 只匹配范围操作符（GT, LT, GTE, LTE, E）
-// version group 匹配除空白和操作符（范围或布尔）之外的所有内容
-var constraintPartPattern = regexp.MustCompile(`\s*(?P<operator>[><=]*)\s*(?P<version>.+)`)
+// operator group only matches on range operators (GT, LT, GTE, LTE, E)
+// version group matches on everything except for whitespace and operators (range or boolean)
+var constraintPartPattern = regexp.MustCompile(`\s*(?P<operator>[><=]*)\s*(?P<version>.+)`)  // 定义正则表达式模式
 
-// 定义约束单元的结构
 type constraintUnit struct {
-	rangeOperator operator  // 约束条件的范围操作符
-	version       string    // 约束条件的版本号
+    rangeOperator operator  // 定义约束单元结构体，包含范围操作符和版本号
+    version       string  // 版本号
 }
-// 解析给定的短语，返回约束单元和错误信息
+
 func parseUnit(phrase string) (*constraintUnit, error) {
-    // 使用正则表达式匹配短语中的捕获组
-    match := stringutil.MatchCaptureGroups(constraintPartPattern, phrase)
-    // 获取版本号，并检查是否存在
-    version, exists := match["version"]
+    match := stringutil.MatchCaptureGroups(constraintPartPattern, phrase)  // 使用正则表达式匹配输入的短语
+    version, exists := match["version"]  // 获取匹配结果中的版本号
     if !exists {
-        return nil, nil
+        return nil, nil  // 如果版本号不存在，则返回空指针和空错误
     }
 
-    // 去除版本号两侧的空格
-    version = strings.Trim(version, " ")
+    version = strings.Trim(version, " ")  // 去除版本号中的空格
 
-    // 版本号可能带有引号，尝试去除引号（忽略错误）
-    unquoted, err := trimQuotes(version)
+    // version may have quotes, attempt to unquote it (ignore errors)
+    unquoted, err := trimQuotes(version)  // 尝试去除版本号中的引号
     if err == nil {
-        version = unquoted
+        version = unquoted  // 如果成功去除引号，则更新版本号
     }
 
-    // 解析约束操作符
-    op, err := parseOperator(match["operator"])
+    op, err := parseOperator(match["operator"])  // 解析约束操作符
     if err != nil {
-        return nil, fmt.Errorf("unable to parse constraint operator=%q: %+v", match["operator"], err)
+        return nil, fmt.Errorf("unable to parse constraint operator=%q: %+v", match["operator"], err)  // 如果解析失败，则返回错误
     }
-    // 返回约束单元和错误信息
     return &constraintUnit{
-// rangeOperator: op, version: version, }，nil
-// 返回一个包含 rangeOperator 和 version 字段的结构体，以及一个空的错误值
+        rangeOperator: op,  // 返回约束单元结构体
+        version:       version,
+    }, nil
+}
 
-// TrimQuotes 尝试移除双引号。
-// 如果移除双引号不成功，它将尝试移除单引号。
-// 如果两种操作都不成功，它将返回一个错误。
+// TrimQuotes will attempt to remove double quotes.
+// If removing double quotes is unsuccessful, it will attempt to remove single quotes.
+// If neither operation is successful, it will return an error.
 func trimQuotes(s string) (string, error) {
-    // 尝试移除引号
-    unquoted, err := strconv.Unquote(s)
+    unquoted, err := strconv.Unquote(s)  // 尝试去除双引号
     switch {
     case err == nil:
-        return unquoted, nil
+        return unquoted, nil  // 如果成功去除双引号，则返回去除引号后的字符串
     case strings.HasPrefix(s, "'") && strings.HasSuffix(s, "'"):
-        return strings.Trim(s, "'"), nil
+        return strings.Trim(s, "'"), nil  // 如果字符串以单引号开头并以单引号结尾，则去除单引号
     default:
-        return s, fmt.Errorf("string %s is not single or double quoted", s)
+        return s, fmt.Errorf("string %s is not single or double quoted", s)  // 如果无法去除引号，则返回错误
     }
 }
-// Satisfied 方法用于判断给定的比较结果是否满足约束条件
+
 func (c *constraintUnit) Satisfied(comparison int) bool {
-    // 根据范围操作符进行不同的比较判断
     switch c.rangeOperator {
     case EQ:
-        return comparison == 0
+        return comparison == 0  // 如果操作符为等于，则返回比较结果是否为0
     case GT:
-        return comparison > 0
+        return comparison > 0  // 如果操作符为大于，则返回比较结果是否大于0
     case GTE:
-        return comparison >= 0
+        return comparison >= 0  // 如果操作符为大于等于，则返回比较结果是否大于等于0
     case LT:
-        return comparison < 0
+        return comparison < 0  // 如果操作符为小于，则返回比较结果是否小于0
+    # 如果操作符是 LTE，则返回比较结果是否小于等于0
     case LTE:
         return comparison <= 0
+    # 如果操作符不是 LTE，则抛出错误，指明未知的操作符
     default:
-        // 如果操作符未知，则抛出错误
         panic(fmt.Errorf("unknown operator: %s", c.rangeOperator))
     }
-}
+# 闭合前面的函数定义
 ```

@@ -1,84 +1,71 @@
 # `grype\grype\matcher\golang\matcher.go`
 
 ```
-// 声明一个名为 golang 的包
 package golang
 
-// 导入所需的包
 import (
-	"strings" // 导入 strings 包
-	"github.com/anchore/grype/grype/distro" // 导入 distro 包
-	"github.com/anchore/grype/grype/match" // 导入 match 包
-	"github.com/anchore/grype/grype/pkg" // 导入 pkg 包
-	"github.com/anchore/grype/grype/search" // 导入 search 包
-	"github.com/anchore/grype/grype/vulnerability" // 导入 vulnerability 包
-	syftPkg "github.com/anchore/syft/syft/pkg" // 导入 syftPkg 包，并重命名为 syftPkg
+    "strings" // 导入 strings 包
+
+    "github.com/anchore/grype/grype/distro" // 导入 distro 包
+    "github.com/anchore/grype/grype/match" // 导入 match 包
+    "github.com/anchore/grype/grype/pkg" // 导入 pkg 包
+    "github.com/anchore/grype/grype/search" // 导入 search 包
+    "github.com/anchore/grype/grype/vulnerability" // 导入 vulnerability 包
+    syftPkg "github.com/anchore/syft/syft/pkg" // 导入 syftPkg 包
 )
 
-// 定义 Matcher 结构体
 type Matcher struct {
-	cfg MatcherConfig // 包含 MatcherConfig 类型的字段 cfg
+    cfg MatcherConfig // 定义 Matcher 结构体
 }
 
-// 定义 MatcherConfig 结构体
 type MatcherConfig struct {
-	UseCPEs               bool // 布尔类型字段 UseCPEs
-	AlwaysUseCPEForStdlib bool // 布尔类型字段 AlwaysUseCPEForStdlib
-}
+    UseCPEs               bool // 定义 UseCPEs 字段
+    AlwaysUseCPEForStdlib bool // 定义 AlwaysUseCPEForStdlib 字段
 }
 
-// 创建一个新的 Golang 匹配器，使用给定的配置
 func NewGolangMatcher(cfg MatcherConfig) *Matcher {
-	// 返回一个指向 Matcher 结构的指针，其中包含给定的配置
-	return &Matcher{
-		cfg: cfg,
-	}
+    return &Matcher{
+        cfg: cfg, // 返回 Matcher 结构体指针
+    }
 }
 
-// 返回匹配器支持的包类型列表
 func (m *Matcher) PackageTypes() []syftPkg.Type {
-	return []syftPkg.Type{syftPkg.GoModulePkg}
+    return []syftPkg.Type{syftPkg.GoModulePkg} // 返回 GoModulePkg 类型的切片
 }
 
-// 返回匹配器的类型
 func (m *Matcher) Type() match.MatcherType {
-	return match.GoModuleMatcher
+    return match.GoModuleMatcher // 返回 GoModuleMatcher 类型
 }
 
-// 匹配给定的软件包，返回匹配结果
 func (m *Matcher) Match(store vulnerability.Provider, d *distro.Distro, p pkg.Package) ([]match.Match, error) {
-	// 创建一个空的匹配结果列表
-	matches := make([]match.Match, 0)
+    matches := make([]match.Match, 0) // 创建空的 match.Match 类型切片
 
-	// 初始化主模块名称为空字符串
-	mainModule := ""
-// 如果 p.Metadata 是 pkg.GolangBinMetadata 类型，则将其转换为 m，并将 m.MainModule 赋值给 mainModule
-if m, ok := p.Metadata.(pkg.GolangBinMetadata); ok {
-    mainModule = m.MainModule
+    mainModule := "" // 初始化 mainModule 变量为空字符串
+    if m, ok := p.Metadata.(pkg.GolangBinMetadata); ok { // 判断 p.Metadata 是否为 pkg.GolangBinMetadata 类型
+        mainModule = m.MainModule // 将 m.MainModule 赋值给 mainModule
+    }
+
+    // Golang 目前没有一种标准的方式将 vcs 版本合并到编译后的二进制文件中：https://github.com/golang/go/issues/50603
+    // 当前主模块的版本信息不完整，导致多个 FP
+    // TODO: 在将来的 Go 版本中包含 vcs 信息时，删除此排除
+    isNotCorrected := strings.HasPrefix(p.Version, "v0.0.0-") || strings.HasPrefix(p.Version, "(devel)") // 判断 p.Version 是否以指定前缀开头
+    if p.Name == mainModule && isNotCorrected { // 判断 p.Name 是否等于 mainModule 并且 isNotCorrected 为真
+        return matches, nil // 返回空的 match.Match 类型切片和 nil
+    }
+
+    criteria := search.CommonCriteria // 初始化 criteria 为 CommonCriteria
+    if searchByCPE(p.Name, m.cfg) { // 调用 searchByCPE 函数判断是否使用 CPE
+        criteria = append(criteria, search.ByCPE) // 将 ByCPE 添加到 criteria 中
+    }
+
+    return search.ByCriteria(store, d, p, m.Type(), criteria...) // 调用 ByCriteria 函数进行搜索
 }
 
-// Golang 目前没有一种标准的方式将 vcs 版本信息编入编译后的二进制文件中：https://github.com/golang/go/issues/50603
-// 主模块的当前版本信息不完整，导致多个 FP（假阳性）
-// TODO: 在将来的 Go 版本中包含 vcs 信息时，删除这个排除
-isNotCorrected := strings.HasPrefix(p.Version, "v0.0.0-") || strings.HasPrefix(p.Version, "(devel)")
-if p.Name == mainModule && isNotCorrected {
-    return matches, nil
-}
+func searchByCPE(name string, cfg MatcherConfig) bool {
+    if cfg.UseCPEs { // 判断是否使用 CPE
+        return true // 返回 true
+    }
 
-// 设置搜索标准为通用标准
-criteria := search.CommonCriteria
-// 如果按照 CPE 搜索 p.Name，则将 search.ByCPE 添加到 criteria 中
-if searchByCPE(p.Name, m.cfg) {
-    criteria = append(criteria, search.ByCPE)
+    return cfg.AlwaysUseCPEForStdlib && (name == "stdlib") // 返回 AlwaysUseCPEForStdlib 是否为真并且 name 是否为 "stdlib"
 }
-
-// 根据给定的标准 criteria 进行搜索
-return search.ByCriteria(store, d, p, m.Type(), criteria...)
-# 根据给定的名称和匹配器配置来搜索CPE（通用平台漏洞披露）信息
-func searchByCPE(name string, cfg MatcherConfig) bool:
-    # 如果配置中使用CPE，则返回true
-    if cfg.UseCPEs:
-        return true
-    # 如果配置中始终使用CPE来搜索标准库，并且给定的名称是"stdlib"，则返回true
-    return cfg.AlwaysUseCPEForStdlib && (name == "stdlib")
 ```

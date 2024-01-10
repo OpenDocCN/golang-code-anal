@@ -1,162 +1,130 @@
 # `grype\cmd\grype\cli\cli.go`
 
 ```
-package cli  // 声明当前文件所属的包为 cli
+package cli
 
 import (
-	"os"  // 导入 os 包，提供对操作系统功能的访问
-	"runtime/debug"  // 导入 runtime/debug 包，提供对运行时调试信息的访问
+    "os" // 导入操作系统相关的包
+    "runtime/debug" // 导入运行时调试相关的包
 
-	"github.com/spf13/cobra"  // 导入第三方包 github.com/spf13/cobra，用于创建命令行应用程序
+    "github.com/spf13/cobra" // 导入命令行解析包
 
-	"github.com/anchore/clio"  // 导入 anchore/clio 包
-	"github.com/anchore/grype/cmd/grype/cli/commands"  // 导入 anchore/grype/cmd/grype/cli/commands 包
-	grypeHandler "github.com/anchore/grype/cmd/grype/cli/ui"  // 导入 anchore/grype/cmd/grype/cli/ui 包，并将其命名为 grypeHandler
-	"github.com/anchore/grype/cmd/grype/internal/ui"  // 导入 anchore/grype/cmd/grype/internal/ui 包
-	"github.com/anchore/grype/grype/vulnerability"  // 导入 anchore/grype/grype/vulnerability 包
-	"github.com/anchore/grype/internal/bus"  // 导入 anchore/grype/internal/bus 包
-	"github.com/anchore/grype/internal/log"  // 导入 anchore/grype/internal/log 包
-	"github.com/anchore/grype/internal/redact"  // 导入 anchore/grype/internal/redact 包
-	"github.com/anchore/stereoscope"  // 导入 anchore/stereoscope 包
-	syftHandler "github.com/anchore/syft/cmd/syft/cli/ui"  // 导入 anchore/syft/cmd/syft/cli/ui 包，并将其命名为 syftHandler
-	"github.com/anchore/syft/syft"  // 导入 anchore/syft/syft 包
+    "github.com/anchore/clio" // 导入 clio 包
+    "github.com/anchore/grype/cmd/grype/cli/commands" // 导入 grype 命令行命令包
+    grypeHandler "github.com/anchore/grype/cmd/grype/cli/ui" // 导入 grype 命令行 UI 包
+    "github.com/anchore/grype/cmd/grype/internal/ui" // 导入 grype 内部 UI 包
+    "github.com/anchore/grype/grype/vulnerability" // 导入 grype 漏洞包
+    "github.com/anchore/grype/internal/bus" // 导入 grype 内部消息总线包
+    "github.com/anchore/grype/internal/log" // 导入 grype 内部日志包
+    "github.com/anchore/grype/internal/redact" // 导入 grype 内部数据脱敏包
+    "github.com/anchore/stereoscope" // 导入 stereoscope 包
+    syftHandler "github.com/anchore/syft/cmd/syft/cli/ui" // 导入 syft 命令行 UI 包
+    "github.com/anchore/syft/syft" // 导入 syft 包
 )
-# 创建一个应用程序对象，根据给定的标识
+
 func Application(id clio.Identification) clio.Application {
-    # 调用 create 函数创建应用程序对象
-    app, _ := create(id)
-    # 返回应用程序对象
-    return app
+    app, _ := create(id) // 调用 create 函数创建应用
+    return app // 返回应用
 }
 
-# 创建一个命令对象，根据给定的标识
 func Command(id clio.Identification) *cobra.Command {
-    # 调用 create 函数创建应用程序对象和命令对象
-    _, cmd := create(id)
-    # 返回命令对象
-    return cmd
+    _, cmd := create(id) // 调用 create 函数创建命令
+    return cmd // 返回命令
 }
 
-# 创建应用程序对象和命令对象，根据给定的标识
 func create(id clio.Identification) (clio.Application, *cobra.Command) {
-    # 创建一个新的设置配置对象，根据给定的标识
+    // 创建一个新的 CLI 配置对象，并设置应用程序的 ID
     clioCfg := clio.NewSetupConfig(id).
-        # 添加持久的 -c <path> 选项，用于从配置文件中读取应用程序配置
+        // 添加持久的 -c <path> 标志，用于从中读取应用程序配置
         WithGlobalConfigFlag().
-        # 添加持久的 -v 和 -q 选项，与日志配置相关联
+        // 添加持久的 -v 和 -q 标志，与日志配置相关联
         WithGlobalLoggingFlags().
-        # 在根命令的 --help 选项中呈现完整的应用程序配置
+        // 在根命令上使用 --help，将完整的应用程序配置呈现在帮助文本中
         WithConfigInRootHelp().
-        # 根据日志配置和标准输入的状态（如果标准输入是 tty）选择一个 UI
+        // 设置 UI 构造函数
         WithUIConstructor(
+            // 根据日志配置和标准输入的状态（如果标准输入是 tty），选择一个 UI
             func(cfg clio.Config) ([]clio.UI, error) {
-                # 根据日志配置的静默状态选择一个 UI
                 noUI := ui.None(cfg.Log.Quiet)
-# 如果日志不允许使用标准输入或者日志是静默模式，则返回一个不包含用户界面的数组和空错误
-if !cfg.Log.AllowUI(os.Stdin) || cfg.Log.Quiet {
-    return []clio.UI{noUI}, nil
-}
+                if !cfg.Log.AllowUI(os.Stdin) || cfg.Log.Quiet {
+                    return []clio.UI{noUI}, nil
+                }
 
-# 返回一个包含用户界面的数组和一个空错误
-return []clio.UI{
-    # 创建一个新的用户界面，根据日志的静默模式和默认处理程序配置创建 grypeHandler 和 syftHandler
-    ui.New(cfg.Log.Quiet,
-        grypeHandler.New(grypeHandler.DefaultHandlerConfig()),
-        syftHandler.New(syftHandler.DefaultHandlerConfig()),
-    ),
-    noUI, # 返回一个不包含用户界面的对象
-}, nil
-},
-).
-WithInitializers(
-    func(state *clio.State) error {
-        # clio 正在设置并提供总线、红色存储和日志记录器给应用程序。一旦加载完成，我们可以将它们提升到内部包中以供全局使用。
-        stereoscope.SetBus(state.Bus) # 将总线设置到 stereoscope 包中
-        syft.SetBus(state.Bus) # 将总线设置到 syft 包中
-        bus.Set(state.Bus) # 将总线设置到 bus 包中
-# 设置redact库的状态
-redact.Set(state.RedactStore)
+                return []clio.UI{
+                    // 创建新的 UI 对象
+                    ui.New(cfg.Log.Quiet,
+                        // 创建 grypeHandler 对象
+                        grypeHandler.New(grypeHandler.DefaultHandlerConfig()),
+                        // 创建 syftHandler 对象
+                        syftHandler.New(syftHandler.DefaultHandlerConfig()),
+                    ),
+                    noUI,
+                }, nil
+            },
+        ).
+        // 设置初始化函数
+        WithInitializers(
+            func(state *clio.State) error {
+                // clio 正在设置并提供总线、redact 存储和日志记录器给应用程序。一旦加载完成，我们可以将它们提升到内部包中进行全局使用。
+                stereoscope.SetBus(state.Bus)
+                syft.SetBus(state.Bus)
+                bus.Set(state.Bus)
 
-# 设置日志库的状态
-log.Set(state.Logger)
-# 设置syft库的日志
-syft.SetLogger(state.Logger)
-# 设置stereoscope库的日志
-stereoscope.SetLogger(state.Logger)
+                redact.Set(state.RedactStore)
 
-# 返回空值
-return nil
-},
-).
-# 在运行后清理stereoscope库
-WithPostRuns(func(state *clio.State, err error) {
-    stereoscope.Cleanup()
-})
+                log.Set(state.Logger)
+                syft.SetLogger(state.Logger)
+                stereoscope.SetLogger(state.Logger)
 
-# 创建一个新的命令行应用程序
-app := clio.New(*clioCfg)
+                return nil
+            },
+        ).
+        // 设置后运行函数
+        WithPostRuns(func(state *clio.State, err error) {
+            // 清理 stereoscope
+            stereoscope.Cleanup()
+        })
 
-# 创建根命令
-rootCmd := commands.Root(app)
+    // 创建一个新的 CLI 应用程序对象
+    app := clio.New(*clioCfg)
 
-# 添加子命令
-rootCmd.AddCommand(
-# 创建一个应用程序和根命令
-func NewApp() (*cobra.Command, *cobra.Command) {
-	# 创建一个应用程序
-	app := &cobra.Command{
-		Use:   "syft",
-		Short: "Syft is a CLI tool for generating a Software Bill of Materials (SBOM) from container images and filesystems",
-		Long:  "Syft is a CLI tool for generating a Software Bill of Materials (SBOM) from container images and filesystems. It is designed to be as simple and straightforward as possible.",
-		Run: func(cmd *cobra.Command, args []string) {
-			cmd.Help()
-		},
-	}
+    // 创建根命令
+    rootCmd := commands.Root(app)
 
-	# 添加数据库命令
-	app.AddCommand(commands.DB(app))
-	# 添加完成命令
-	app.AddCommand(commands.Completion())
-	# 添加解释命令
-	app.AddCommand(commands.Explain(app))
-	# 添加版本命令
-	app.AddCommand(clio.VersionCommand(id, syftVersion, dbVersion))
-
-	# 返回应用程序和根命令
-	return app, rootCmd
-}
-
-# 获取 Syft 版本信息
+    // 添加子命令
+    # 将数据库命令、完成命令、解释命令和版本命令添加到根命令中
+    rootCmd.AddCommand(
+        commands.DB(app),  # 添加数据库命令
+        commands.Completion(),  # 添加完成命令
+        commands.Explain(app),  # 添加解释命令
+        clio.VersionCommand(id, syftVersion, dbVersion),  # 添加版本命令
+    )
+    # 返回应用程序和根命令
+    return app, rootCmd
+# 返回 Syft 版本信息
 func syftVersion() (string, any) {
-	# 读取构建信息
-	buildInfo, ok := debug.ReadBuildInfo()
-	if !ok {
-		# 如果无法找到构建信息，则打印错误信息并返回空字符串
-		log.Debug("unable to find the buildinfo section of the binary (syft version is unknown)")
-		return "", ""
-	}
+    # 读取构建信息
+    buildInfo, ok := debug.ReadBuildInfo()
+    # 如果读取失败，则输出错误信息并返回空字符串
+    if !ok {
+        log.Debug("unable to find the buildinfo section of the binary (syft version is unknown)")
+        return "", ""
+    }
 
-	# 遍历构建信息的依赖项
-	for _, d := range buildInfo.Deps {
-		# 如果依赖项的路径为 "github.com/anchore/syft"，则返回 Syft 版本信息
-		if d.Path == "github.com/anchore/syft" {
-			return "Syft Version", d.Version
-		}
-	}
-	# 如果未找到对应的依赖项，则返回空字符串
-}
-# 结束当前函数或代码块
-}
+    # 遍历构建信息中的依赖项，查找 Syft 版本信息
+    for _, d := range buildInfo.Deps {
+        if d.Path == "github.com/anchore/syft" {
+            return "Syft Version", d.Version
+        }
+    }
 
-# 记录调试信息，表示无法在二进制文件的构建信息部分找到'github.com/anchore/syft'
-log.Debug("unable to find 'github.com/anchore/syft' from the buildinfo section of the binary")
-# 返回空字符串
-return "", ""
+    # 如果未找到 Syft 版本信息，则输出错误信息并返回空字符串
+    log.Debug("unable to find 'github.com/anchore/syft' from the buildinfo section of the binary")
+    return "", ""
 }
 
-# 定义一个名为dbVersion的函数，返回一个字符串和一个未定义的变量
+# 返回数据库模式版本信息
 func dbVersion() (string, any) {
-# 返回一个描述支持的数据库模式的字符串和一个名为vulnerability的未定义变量的模式版本
-return "Supported DB Schema", vulnerability.SchemaVersion
+    return "Supported DB Schema", vulnerability.SchemaVersion
 }
 ```

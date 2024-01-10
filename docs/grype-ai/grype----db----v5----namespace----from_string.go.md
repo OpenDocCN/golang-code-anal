@@ -4,38 +4,40 @@
 package namespace
 
 import (
-	"errors"  // 导入错误处理包
-	"fmt"  // 导入格式化输出包
-	"strings"  // 导入字符串处理包
+    "errors" // 导入 errors 包，用于创建错误
+    "fmt" // 导入 fmt 包，用于格式化输出
+    "strings" // 导入 strings 包，用于处理字符串操作
 
-	"github.com/anchore/grype/grype/db/v5/namespace/cpe"  // 导入CPE命名空间包
-	"github.com/anchore/grype/grype/db/v5/namespace/distro"  // 导入发行版命名空间包
-	"github.com/anchore/grype/grype/db/v5/namespace/language"  // 导入语言命名空间包
+    "github.com/anchore/grype/grype/db/v5/namespace/cpe" // 导入 cpe 命名空间
+    "github.com/anchore/grype/grype/db/v5/namespace/distro" // 导入 distro 命名空间
+    "github.com/anchore/grype/grype/db/v5/namespace/language" // 导入 language 命名空间
 )
 
+// 根据字符串创建命名空间对象
 func FromString(namespaceStr string) (Namespace, error) {
-	if namespaceStr == "" {  // 如果命名空间字符串为空
-		return nil, errors.New("unable to create namespace from empty string")  // 返回错误信息
-	}
+    // 如果字符串为空，返回错误
+    if namespaceStr == "" {
+        return nil, errors.New("unable to create namespace from empty string")
+    }
 
-	components := strings.Split(namespaceStr, ":")  // 使用冒号分割命名空间字符串
+    // 使用冒号分割字符串，得到组件数组
+    components := strings.Split(namespaceStr, ":")
 
-	if len(components) < 1 {  // 如果分割后的组件数量小于1
-# 如果命名空间字符串的组件数量不正确，则返回空和错误信息
-return nil, fmt.Errorf("unable to create namespace from %s: incorrect number of components", namespaceStr)
+    // 如果组件数量小于 1，返回错误
+    if len(components) < 1 {
+        return nil, fmt.Errorf("unable to create namespace from %s: incorrect number of components", namespaceStr)
+    }
 
-# 根据命名空间字符串的第二个组件的类型，创建相应的命名空间对象
-switch components[1]:
-    # 如果是 cpe 类型，则调用 cpe.FromString 方法创建命名空间对象
+    // 根据组件类型创建对应的命名空间对象
+    switch components[1] {
     case cpe.ID:
         return cpe.FromString(namespaceStr)
-    # 如果是 distro 类型，则调用 distro.FromString 方法创建命名空间对象
     case distro.ID:
         return distro.FromString(namespaceStr)
-    # 如果是 language 类型，则调用 language.FromString 方法创建命名空间对象
     case language.ID:
         return language.FromString(namespaceStr)
-    # 如果是其他未知类型，则返回空和错误信息
     default:
         return nil, fmt.Errorf("unable to create namespace from %s: unknown type %s", namespaceStr, components[1])
+    }
+}
 ```

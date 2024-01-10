@@ -1,22 +1,20 @@
 # `grype\grype\db\status.go`
 
 ```
-package db
-// 导入 time 包
-
+# 导入时间包
 import "time"
 
-// 定义 Status 结构体
+# 定义 Status 结构体
 type Status struct {
-	// 内建时间类型，表示构建时间
-	Built         time.Time `json:"built"`
-	// 整型，表示数据库模式版本
-	SchemaVersion int       `json:"schemaVersion"`
-	// 字符串，表示数据库位置
-	Location      string    `json:"location"`
-	// 字符串，表示数据库校验和
-	Checksum      string    `json:"checksum"`
-	// 错误类型，表示数据库操作错误
-	Err           error     `json:"error"`
+    # 表示构建时间的字段
+    Built         time.Time `json:"built"`
+    # 表示数据库模式版本的字段
+    SchemaVersion int       `json:"schemaVersion"`
+    # 表示数据库位置的字段
+    Location      string    `json:"location"`
+    # 表示数据库校验和的字段
+    Checksum      string    `json:"checksum"`
+    # 表示错误信息的字段
+    Err           error     `json:"error"`
 }
 ```

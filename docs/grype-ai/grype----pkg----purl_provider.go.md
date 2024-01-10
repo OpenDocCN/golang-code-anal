@@ -1,163 +1,148 @@
 # `grype\grype\pkg\purl_provider.go`
 
 ```
-// 声明包名为 pkg
 package pkg
-
 // 导入所需的包
 import (
-	"bufio" // 读取输入输出的包
-	"fmt" // 格式化输出的包
-	"io" // 输入输出的包
-	"os" // 操作系统功能的包
-	"strings" // 字符串操作的包
+    "bufio" // 用于读取输入流
+    "fmt" // 用于格式化输出
+    "io" // 提供基本的 I/O 接口
+    "os" // 提供操作系统功能
+    "strings" // 提供字符串操作函数
 
-	"github.com/facebookincubator/nvdtools/wfn" // 导入 Facebook 开发的 wfn 包
-	"github.com/mitchellh/go-homedir" // 导入 mitchellh 开发的 go-homedir 包
+    "github.com/facebookincubator/nvdtools/wfn" // 导入 Facebook 的 nvdtools/wfn 包
+    "github.com/mitchellh/go-homedir" // 导入 mitchellh 的 go-homedir 包
 
-	"github.com/anchore/packageurl-go" // 导入 anchore 开发的 packageurl-go 包
-	"github.com/anchore/syft/syft/cpe" // 导入 anchore 开发的 cpe 包
-	"github.com/anchore/syft/syft/pkg" // 导入 anchore 开发的 pkg 包
+    "github.com/anchore/packageurl-go" // 导入 anchore 的 packageurl-go 包
+    "github.com/anchore/syft/syft/cpe" // 导入 anchore 的 syft/cpe 包
+    "github.com/anchore/syft/syft/pkg" // 导入 anchore 的 syft/pkg 包
 )
 
-// 声明常量
 const (
-	purlInputPrefix  = "purl:" // 定义 purl 输入的前缀
-	cpesQualifierKey = "cpes" // 定义 cpes 的限定符键
-// 定义一个自定义错误类型，用于表示 purl 文件为空的错误
+    purlInputPrefix  = "purl:" // 定义 purl 输入的前缀
+    cpesQualifierKey = "cpes" // 定义 cpes 的限定符键
+)
+
 type errEmptyPurlFile struct {
-	purlFilepath string
+    purlFilepath string // 定义空 purl 文件的错误类型
 }
 
-// 实现自定义错误类型的 Error 方法，返回错误信息
 func (e errEmptyPurlFile) Error() string {
-	return fmt.Sprintf("purl file is empty: %s", e.purlFilepath)
+    return fmt.Sprintf("purl file is empty: %s", e.purlFilepath) // 返回空 purl 文件的错误信息
 }
 
-// purlProvider 函数，根据用户输入获取 purl 包列表
 func purlProvider(userInput string) ([]Package, error) {
-	// 调用 getPurlPackages 函数获取 purl 包列表和错误信息
-	p, err := getPurlPackages(userInput)
-	return p, err
+    p, err := getPurlPackages(userInput) // 调用 getPurlPackages 函数获取 purl 包列表
+    return p, err // 返回 purl 包列表和可能的错误
 }
 
-// getPurlPackages 函数，根据用户输入获取 purl 包列表
 func getPurlPackages(userInput string) ([]Package, error) {
-	// 调用 getPurlReader 函数获取 purl 读取器和错误信息
-	reader, err := getPurlReader(userInput)
-	// 如果出现错误，返回空的包列表和错误信息
-	if err != nil {
-		return nil, err
-	}
-# 调用 decodePurlFile 函数并返回结果
-return decodePurlFile(reader)
+    reader, err := getPurlReader(userInput) // 获取 purl 输入的读取器
+    if err != nil {
+        return nil, err // 如果出现错误，返回空列表和错误
+    }
+
+    return decodePurlFile(reader) // 调用 decodePurlFile 函数解码 purl 文件
 }
 
-# 解码 Purl 文件内容并返回 Package 切片和错误信息
 func decodePurlFile(reader io.Reader) ([]Package, error) {
-    # 创建一个新的 Scanner 对象来扫描输入流
-    scanner := bufio.NewScanner(reader)
-    # 创建一个空的 Package 切片
-    packages := []Package{}
-
-    # 逐行扫描输入流
+    scanner := bufio.NewScanner(reader) // 创建一个读取器
+    packages := []Package{} // 创建一个空的包列表
+    # 遍历扫描器扫描的每一行数据
     for scanner.Scan() {
-        # 获取当前行的原始内容
+        # 获取原始行数据
         rawLine := scanner.Text()
-        # 将原始内容解析为 Package URL 对象
+        # 将原始行数据解析为 Package URL 对象
         purl, err := packageurl.FromString(rawLine)
         # 如果解析出错，则返回错误信息
         if err != nil {
             return nil, fmt.Errorf("unable to decode purl %s: %w", rawLine, err)
         }
 
-        # 创建一个空的 wfn.Attributes 切片
+        # 初始化 CPEs 数组和 epoch 变量
         cpes := []wfn.Attributes{}
-        # 设置 epoch 初始值为 "0"
         epoch := "0"
-        # 遍历 Package URL 对象的 qualifiers
+        # 遍历 Package URL 对象的限定符
         for _, qualifier := range purl.Qualifiers {
-            # 如果 qualifier 的 key 为 cpesQualifierKey
+            # 如果限定符的键为 cpesQualifierKey，则解析 CPEs 数据并添加到数组中
             if qualifier.Key == cpesQualifierKey {
-                # 将 qualifier 的 value 按逗号分隔并存储到 rawCpes 中
-# 遍历 rawCpes 数组中的每个元素
-for _, rawCpe := range rawCpes {
-    # 使用 rawCpe 创建一个新的 cpe 对象
-    c, err := cpe.New(rawCpe)
-    # 如果创建过程中出现错误，则返回错误信息
-    if err != nil {
-        return nil, fmt.Errorf("unable to decode cpe %s in purl %s: %w", rawCpe, rawLine, err)
+                rawCpes := strings.Split(qualifier.Value, ",")
+                for _, rawCpe := range rawCpes {
+                    c, err := cpe.New(rawCpe)
+                    if err != nil {
+                        return nil, fmt.Errorf("unable to decode cpe %s in purl %s: %w", rawCpe, rawLine, err)
+                    }
+                    cpes = append(cpes, c)
+                }
+            }
+            # 如果限定符的键为 "epoch"，则更新 epoch 变量的值
+            if qualifier.Key == "epoch" {
+                epoch = qualifier.Value
+            }
+        }
+
+        # 如果 Package URL 的类型为 TypeRPM，并且版本号不以 epoch 开头，则添加 epoch 前缀
+        if purl.Type == packageurl.TypeRPM && !strings.HasPrefix(purl.Version, fmt.Sprintf("%s:", epoch)) {
+            purl.Version = fmt.Sprintf("%s:%s", epoch, purl.Version)
+        }
+
+        # 将解析后的数据添加到 packages 数组中
+        packages = append(packages, Package{
+            ID:       ID(purl.String()),
+            CPEs:     cpes,
+            Name:     purl.Name,
+            Version:  purl.Version,
+            Type:     pkg.TypeByName(purl.Type),
+            Language: pkg.LanguageByName(purl.Type),
+            PURL:     purl.String(),
+        })
     }
-    # 将新创建的 cpe 对象添加到 cpes 数组中
-    cpes = append(cpes, c)
-}
 
-# 如果 qualifier 的 Key 为 "epoch"，则将其对应的 Value 赋值给 epoch
-if qualifier.Key == "epoch" {
-    epoch = qualifier.Value
-}
-
-# 如果 purl 的 Type 为 packageurl.TypeRPM，并且其 Version 不以 epoch 开头，则在其 Version 前加上 epoch
-if purl.Type == packageurl.TypeRPM && !strings.HasPrefix(purl.Version, fmt.Sprintf("%s:", epoch)) {
-    purl.Version = fmt.Sprintf("%s:%s", epoch, purl.Version)
-}
-
-# 将当前 purl 对象的信息添加到 packages 数组中
-packages = append(packages, Package{
-    ID:       ID(purl.String()),
-# 将CPEs、Name、Version、Type、Language和PURL添加到packages切片中
-packages = append(packages, Package{
-    CPEs:     cpes,
-    Name:     purl.Name,
-    Version:  purl.Version,
-    Type:     pkg.TypeByName(purl.Type),
-    Language: pkg.LanguageByName(purl.Type),
-    PURL:     purl.String(),
-})
-
-# 检查是否有错误发生，如果有则返回nil和错误信息
-if err := scanner.Err(); err != nil {
-    return nil, err
-}
-
-# 返回packages切片和nil，表示没有错误发生
-return packages, nil
-}
-
-# 根据用户输入获取PURL读取器
+    # 检查扫描器是否出错，如果有错误则返回错误信息
+    if err := scanner.Err(); err != nil {
+        return nil, err
+    }
+    # 返回解析后的 packages 数组和 nil 错误信息
+    return packages, nil
+# 获取 PURL 读取器，接受用户输入并返回读取器和错误信息
 func getPurlReader(userInput string) (r io.Reader, err error) {
-    # 如果用户输入没有明确指定PURL，则返回nil和错误信息
+    # 如果用户输入没有明确指定 PURL，则返回空和错误信息
     if !explicitlySpecifyingPurl(userInput) {
         return nil, errDoesNotProvide
     }
-// 去除用户输入中的指定前缀
-path := strings.TrimPrefix(userInput, purlInputPrefix)
 
-// 调用 openPurlFile 函数打开处理后的路径
-return openPurlFile(path)
+    # 去除用户输入中的 PURL 前缀，得到路径
+    path := strings.TrimPrefix(userInput, purlInputPrefix)
+
+    # 打开 PURL 文件并返回文件对象
+    return openPurlFile(path)
 }
 
-// 打开处理后的路径的文件
+# 打开 PURL 文件，返回文件对象和错误信息
 func openPurlFile(path string) (*os.File, error) {
-	// 将路径中的波浪号（~）扩展为用户主目录
-	expandedPath, err := homedir.Expand(path)
-	if err != nil {
-		return nil, fmt.Errorf("unable to open purls: %w", err)
-	}
+    # 展开路径中的波浪号（~），并处理可能出现的错误
+    expandedPath, err := homedir.Expand(path)
+    if err != nil {
+        return nil, fmt.Errorf("unable to open purls: %w", err)
+    }
 
-	// 打开扩展后的路径的文件
-	f, err := os.Open(expandedPath)
-	if err != nil {
-		return nil, fmt.Errorf("unable to open file %s: %w", expandedPath, err)
-	}
+    # 打开展开后的文件路径，并处理可能出现的错误
+    f, err := os.Open(expandedPath)
+    if err != nil {
+        return nil, fmt.Errorf("unable to open file %s: %w", expandedPath, err)
+    }
 
-	// 检查文件是否为空
-	if !fileHasContent(f) {
-		return nil, errEmptyPurlFile{path}
-	}
-# 返回 f 和 nil，表示成功执行并返回结果
-	return f, nil
-# 检查用户输入是否以指定的前缀开头，返回布尔值
-func explicitlySpecifyingPurl(userInput string) bool:
-	return strings.HasPrefix(userInput, purlInputPrefix)
+    # 检查文件是否为空，如果为空则返回错误信息
+    if !fileHasContent(f) {
+        return nil, errEmptyPurlFile{path}
+    }
+
+    # 返回文件对象和空错误信息
+    return f, nil
+}
+
+# 检查用户输入是否明确指定了 PURL
+func explicitlySpecifyingPurl(userInput string) bool {
+    return strings.HasPrefix(userInput, purlInputPrefix)
+}
 ```

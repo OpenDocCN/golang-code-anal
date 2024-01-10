@@ -1,29 +1,30 @@
 # `grype\grype\event\monitor\matching.go`
 
 ```
-// 导入 monitor 包
+# 定义一个名为 monitor 的包
 package monitor
 
-// 导入 go-progress 包中的进度条和监控器
+# 导入 go-progress 包，用于显示进度条
 import (
-	"github.com/wagoodman/go-progress"
+    "github.com/wagoodman/go-progress"
 
-	"github.com/anchore/grype/grype/vulnerability"
+    # 导入 vulnerability 包，用于处理漏洞信息
+    "github.com/anchore/grype/grype/vulnerability"
 )
 
-// 定义 Matching 结构体，用于存储匹配信息
+# 定义一个名为 Matching 的结构体，用于存储匹配信息
 type Matching struct {
-	// PackagesProcessed 用于跟踪已处理的软件包数量
-	PackagesProcessed progress.Progressable
-	// MatchesDiscovered 用于监控已发现的匹配数量
-	MatchesDiscovered progress.Monitorable
-	// Fixed 用于监控已修复的数量
-	Fixed progress.Monitorable
-	// Ignored 用于监控已忽略的数量
-	Ignored progress.Monitorable
-	// Dropped 用于监控已丢弃的数量
-	Dropped progress.Monitorable
-	// BySeverity 用于存储按严重程度分类的监控器
-	BySeverity map[vulnerability.Severity]progress.Monitorable
+    # 已处理的包的进度
+    PackagesProcessed progress.Progressable
+    # 已发现的匹配进度
+    MatchesDiscovered progress.Monitorable
+    # 已修复的进度
+    Fixed             progress.Monitorable
+    # 已忽略的进度
+    Ignored           progress.Monitorable
+    # 已丢弃的进度
+    Dropped           progress.Monitorable
+    # 按严重程度分类的进度
+    BySeverity        map[vulnerability.Severity]progress.Monitorable
 }
 ```

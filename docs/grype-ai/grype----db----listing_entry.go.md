@@ -4,118 +4,104 @@
 package db
 
 import (
-	"crypto/sha256 // 导入加密包
-	"encoding/json // 导入 JSON 编码包
-	"fmt // 导入格式化输出包
-	"net/url // 导入 URL 包
-	"path // 导入路径操作包
-	"path/filepath // 导入文件路径操作包
-	"time // 导入时间包
+    "crypto/sha256" // 导入用于计算 SHA256 哈希的包
+    "encoding/json" // 导入用于 JSON 编码和解码的包
+    "fmt" // 导入格式化输出包
+    "net/url" // 导入处理 URL 的包
+    "path" // 导入处理文件路径的包
+    "path/filepath" // 导入处理文件路径的包
+    "time" // 导入处理时间的包
 
-	"github.com/spf13/afero // 导入文件系统操作包
+    "github.com/spf13/afero" // 导入文件系统操作的包
 
-	"github.com/anchore/grype/internal/file // 导入文件包
+    "github.com/anchore/grype/internal/file" // 导入文件操作相关的包
 )
 
-// ListingEntry 表示关于数据库存档的基本元数据，例如存档中包含的内容（构建/版本）
-// 以及如何获取和验证存档（URL/校验和）。
+// ListingEntry represents basic metadata about a database archive such as what is in the archive (built/version)
+// as well as how to obtain and verify the archive (URL/checksum).
 type ListingEntry struct {
-	Built    time.Time // 存档构建时间，使用 RFC 3339 格式
-// Version 是一个整型变量，用于存储版本信息
-// URL 是一个指向url.URL类型的指针，用于存储URL信息
-// Checksum 是一个字符串，用于存储校验和信息
+    Built    time.Time // 数据库归档的构建时间，使用 RFC 3339 格式
+    Version  int // 数据库归档的版本号
+    URL      *url.URL // 数据库归档的 URL 地址
+    Checksum string // 数据库归档的校验和
+}
 
-// ListingEntryJSON 是一个辅助结构体，用于将ListingEntry转换为JSON（或从JSON解析）
-// Built 是一个字符串，用于存储构建信息
-// Version 是一个整型变量，用于存储版本信息
-// URL 是一个字符串，用于存储URL信息
-// Checksum 是一个字符串，用于存储校验和信息
+// ListingEntryJSON is a helper struct for converting a ListingEntry into JSON (or parsing from JSON)
+type ListingEntryJSON struct {
+    Built    string `json:"built"` // 数据库归档的构建时间，JSON 格式
+    Version  int    `json:"version"` // 数据库归档的版本号，JSON 格式
+    URL      string `json:"url"` // 数据库归档的 URL 地址，JSON 格式
+    Checksum string `json:"checksum"` // 数据库归档的校验和，JSON 格式
+}
 
-// NewListingEntryFromArchive 根据数据库平面文件的元数据创建一个新的ListingEntry。
-// fs 是一个afero.Fs类型的文件系统，用于操作文件
-// metadata 是一个Metadata类型的参数，用于存储元数据
-// dbArchivePath 是一个字符串，用于存储数据库归档路径
-// baseURL 是一个指向url.URL类型的指针，用于存储基本URL信息
-// 返回一个ListingEntry类型的对象和一个错误信息
+// NewListingEntryFromArchive creates a new ListingEntry based on the metadata from a database flat file.
 func NewListingEntryFromArchive(fs afero.Fs, metadata Metadata, dbArchivePath string, baseURL *url.URL) (ListingEntry, error) {
-    // 使用文件系统和数据库归档路径计算校验和
-    checksum, err := file.HashFile(fs, dbArchivePath, sha256.New())
-    // 如果计算校验和出错，则返回错误信息
+    checksum, err := file.HashFile(fs, dbArchivePath, sha256.New()) // 计算数据库归档文件的 SHA256 校验和
     if err != nil {
-        return ListingEntry{}, fmt.Errorf("unable to find db archive checksum: %w", err)
+        return ListingEntry{}, fmt.Errorf("unable to find db archive checksum: %w", err) // 如果计算校验和出错，则返回错误
     }
-// 获取数据库归档文件名
-dbArchiveName := filepath.Base(dbArchivePath)
-// 解析基本URL并拼接数据库归档文件名
-fileURL, _ := url.Parse(baseURL.String())
-fileURL.Path = path.Join(fileURL.Path, dbArchiveName)
 
-// 返回ListingEntry对象，包括构建时间、版本、URL和校验和
-return ListingEntry{
-    Built:    metadata.Built,
-    Version:  metadata.Version,
-    URL:      fileURL,
-    Checksum: "sha256:" + checksum,
-}, nil
+    dbArchiveName := filepath.Base(dbArchivePath) // 获取数据库归档文件的文件名
+    fileURL, _ := url.Parse(baseURL.String()) // 解析基础 URL
+    fileURL.Path = path.Join(fileURL.Path, dbArchiveName) // 拼接数据库归档文件的 URL 地址
+
+    return ListingEntry{
+        Built:    metadata.Built, // 使用元数据中的构建时间
+        Version:  metadata.Version, // 使用元数据中的版本号
+        URL:      fileURL, // 使用拼接好的 URL 地址
+        Checksum: "sha256:" + checksum, // 使用计算得到的 SHA256 校验和
+    }, nil
 }
 
-// 将ListingEntryJSON转换为ListingEntry
+// ToListingEntry converts a ListingEntryJSON to a ListingEntry.
 func (l ListingEntryJSON) ToListingEntry() (ListingEntry, error) {
-    // 将时间字符串转换为时间对象
-    build, err := time.Parse(time.RFC3339, l.Built)
+    build, err := time.Parse(time.RFC3339, l.Built) // 解析 JSON 中的构建时间
     if err != nil {
-        return ListingEntry{}, fmt.Errorf("cannot convert built time (%s): %+v", l.Built, err)
+        return ListingEntry{}, fmt.Errorf("cannot convert built time (%s): %+v", l.Built, err) // 如果解析出错，则返回错误
     }
 
-    // 解析URL字符串为URL对象
-    u, err := url.Parse(l.URL)
-// 如果发生错误，返回一个包含错误信息的错误对象
-if err != nil {
-    return ListingEntry{}, fmt.Errorf("cannot parse url (%s): %+v", l.URL, err)
+    u, err := url.Parse(l.URL) // 解析 JSON 中的 URL 地址
+    if err != nil {
+        return ListingEntry{}, fmt.Errorf("cannot parse url (%s): %+v", l.URL, err) // 如果解析出错，则返回错误
+    }
 }
-
-// 返回一个包含解析后的列表条目信息的对象
-return ListingEntry{
-    Built:    build.UTC(),
-    Version:  l.Version,
-    URL:      u,
-    Checksum: l.Checksum,
-}, nil
-}
-
-// 从 JSON 数据中解析出列表条目信息并赋值给当前对象
+    # 返回一个ListingEntry对象，包含构建时间、版本、URL和校验和
+    return ListingEntry{
+        Built:    build.UTC(),  # 设置构建时间为当前时间
+        Version:  l.Version,    # 设置版本为l的版本
+        URL:      u,            # 设置URL为u
+        Checksum: l.Checksum,   # 设置校验和为l的校验和
+    }, nil  # 返回nil作为错误信息
+# 反序列化 JSON 数据到 ListingEntry 结构体
 func (l *ListingEntry) UnmarshalJSON(data []byte) error {
-    // 解析 JSON 数据到 ListingEntryJSON 结构体
+    # 创建 ListingEntryJSON 变量
     var lej ListingEntryJSON
+    # 将 JSON 数据解析到 ListingEntryJSON 变量中
     if err := json.Unmarshal(data, &lej); err != nil {
         return err
     }
-    // 将 ListingEntryJSON 结构体转换为 ListingEntry 结构体
+    # 将 ListingEntryJSON 转换为 ListingEntry
     le, err := lej.ToListingEntry()
     if err != nil {
         return err
-# 结束 ListingEntry 结构体的定义
-	}
-	# 将指针 l 指向 le
-	*l = le
-	# 返回空值
-	return nil
+    }
+    # 将转换后的 ListingEntry 赋值给当前对象
+    *l = le
+    return nil
 }
 
-# 将 ListingEntry 结构体转换为 JSON 格式
+# 将 ListingEntry 对象序列化为 JSON 数据
 func (l *ListingEntry) MarshalJSON() ([]byte, error) {
-	# 使用 json 包将 ListingEntry 转换为 ListingEntryJSON 格式
-	return json.Marshal(&ListingEntryJSON{
-		Built:    l.Built.Format(time.RFC3339),
-		Version:  l.Version,
-		Checksum: l.Checksum,
-		URL:      l.URL.String(),
-	})
+    return json.Marshal(&ListingEntryJSON{
+        Built:    l.Built.Format(time.RFC3339),
+        Version:  l.Version,
+        Checksum: l.Checksum,
+        URL:      l.URL.String(),
+    })
 }
 
-# 将 ListingEntry 结构体转换为字符串格式
+# 返回 ListingEntry 对象的字符串表示
 func (l ListingEntry) String() string {
-	# 返回格式化后的字符串，包含 URL 信息
-	return fmt.Sprintf("Listing(url=%s)", l.URL)
+    return fmt.Sprintf("Listing(url=%s)", l.URL)
 }
 ```

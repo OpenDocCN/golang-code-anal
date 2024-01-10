@@ -2,38 +2,28 @@
 
 ```
 package ui
-# 导入 taskprogress 包
 
 import "github.com/anchore/bubbly/bubbles/taskprogress"
-# 导入 taskprogress 包中的模块
 
+// 创建一个新的任务进度条模型
 func (m Handler) newTaskProgress(title taskprogress.Title, opts ...taskprogress.Option) taskprogress.Model {
-# 定义一个新的任务进度模型，接受标题和选项作为参数
+    // 使用传入的参数创建一个新的任务进度条
+    tsk := taskprogress.New(m.Running, opts...)
 
-	tsk := taskprogress.New(m.Running, opts...)
-# 使用 taskprogress 包中的 New 函数创建一个任务进度模型，并传入运行状态和选项参数
+    // 设置任务成功时隐藏进度条和阶段信息
+    tsk.HideProgressOnSuccess = true
+    tsk.HideStageOnSuccess = true
+    // 设置任务进度条的窗口大小和标题宽度
+    tsk.WindowSize = m.WindowSize
+    tsk.TitleWidth = m.Config.TitleWidth
+    tsk.TitleOptions = title
 
-	tsk.HideProgressOnSuccess = true
-# 当任务成功时隐藏进度条
+    // 如果配置中有自定义的任务调整函数，则使用该函数对任务进行调整
+    if m.Config.AdjustDefaultTask != nil {
+        tsk = m.Config.AdjustDefaultTask(tsk)
+    }
 
-	tsk.HideStageOnSuccess = true
-# 当任务成功时隐藏阶段信息
-
-	tsk.WindowSize = m.WindowSize
-# 设置任务进度模型的窗口大小为当前窗口大小
-
-	tsk.TitleWidth = m.Config.TitleWidth
-# 设置任务进度模型的标题宽度为配置文件中的标题宽度
-
-	tsk.TitleOptions = title
-# 设置任务进度模型的标题选项为传入的标题选项
-
-	if m.Config.AdjustDefaultTask != nil {
-		tsk = m.Config.AdjustDefaultTask(tsk)
-	}
-# 如果配置文件中有自定义的默认任务调整函数，则调用该函数对任务进度模型进行调整
-
-	return tsk
-# 返回创建的任务进度模型
+    // 返回创建的任务进度条模型
+    return tsk
 }
 ```

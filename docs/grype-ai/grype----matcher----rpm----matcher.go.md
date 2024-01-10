@@ -4,129 +4,157 @@
 package rpm
 
 import (
-	"fmt"  // 导入 fmt 包，用于格式化输出
-	"strings"  // 导入 strings 包，用于处理字符串
+    "fmt"
+    "strings"
 
-	"github.com/anchore/grype/grype/distro"  // 导入 distro 包
-	"github.com/anchore/grype/grype/match"  // 导入 match 包
-	"github.com/anchore/grype/grype/pkg"  // 导入 pkg 包
-	"github.com/anchore/grype/grype/search"  // 导入 search 包
-	"github.com/anchore/grype/grype/vulnerability"  // 导入 vulnerability 包
-	syftPkg "github.com/anchore/syft/syft/pkg"  // 导入 syftPkg 包，并重命名为 syftPkg
-
+    "github.com/anchore/grype/grype/distro"
+    "github.com/anchore/grype/grype/match"
+    "github.com/anchore/grype/grype/pkg"
+    "github.com/anchore/grype/grype/search"
+    "github.com/anchore/grype/grype/vulnerability"
+    syftPkg "github.com/anchore/syft/syft/pkg"
 )
 
-type Matcher struct {  // 定义 Matcher 结构体
+type Matcher struct {
 }
 
-func (m *Matcher) PackageTypes() []syftPkg.Type {  // 定义 Matcher 结构体的 PackageTypes 方法
-	return []syftPkg.Type{syftPkg.RpmPkg}  // 返回 RPM 包类型
+func (m *Matcher) PackageTypes() []syftPkg.Type {
+    return []syftPkg.Type{syftPkg.RpmPkg}
 }
-// 返回匹配器的类型
+
 func (m *Matcher) Type() match.MatcherType {
-	return match.RpmMatcher
+    return match.RpmMatcher
 }
 
 //nolint:funlen
-// 匹配漏洞
 func (m *Matcher) Match(store vulnerability.Provider, d *distro.Distro, p pkg.Package) ([]match.Match, error) {
-	// 创建一个空的匹配结果数组
-	matches := make([]match.Match, 0)
+    matches := make([]match.Match, 0)
 
-	// 创建一个合成的包，用于匹配与“sourceRPM”字段中相同名称和版本的包
-	// 关于 RPM epoch 和比较... RedHat 明确指出，当未指定 RPM epoch 时，应假定为零（参见 https://github.com/rpm-software-management/rpm/issues/450）。这个来自 RedHat 的评论适用于选择不使用 epoch 并且完全没有更改其版本方案的项目--因此可以安全地假定 epoch（虽然未指定）为 0。然而，在可能存在非零 epoch 并且已从版本字符串中省略的情况下，就不安全了
-// 假设一个纪元为0...，因为这可能会导致误导性的比较结果。
+    // let's match with a synthetic package that doesn't exist. We will create a new
+    // package that matches the same name and version as what is contained in the
+    // "sourceRPM" field.
 
-// 例如，以perl-Errno软件包为例：
-//		名称：		perl-Errno
-//		版本：		0:1.28-419.el8_4.1
-//		sourceRPM：	perl-5.26.3-419.el8_4.1.src.rpm
+    // Regarding RPM epoch and comparisons... RedHat is explicit that when an RPM
+    // epoch is not specified that it should be assumed to be zero (see
+    // https://github.com/rpm-software-management/rpm/issues/450). This comment from
+    // RedHat is applicable for a project that has elected to not use epoch and has
+    // not changed their version scheme at all --therefore it is safe to assume that
+    // the epoch (though not specified) is 0. However, in cases where there may be a
+    // non-zero epoch and it has been omitted from the version string it is NOT safe
+    // to assume an epoch of 0... as this could lead to misleading comparison
+    // results.
 
-// 假设我们有一个以下信息的漏洞（注意这是针对源软件包“perl”，而不是目标软件包“perl-Errno”）：
-//		ID：					CVE-2020-10543
-//		软件包名称：		perl
-//		版本约束：		< 4:5.26.3-419.el8
+    // For example, take the perl-Errno package:
+    //        name:         perl-Errno
+    //        version:    0:1.28-419.el8_4.1
+    //        sourceRPM:    perl-5.26.3-419.el8_4.1.src.rpm
 
-// 请注意，漏洞信息完全了解版本及其血统（纪元+版本），然而，perl-Errno的源软件包信息不包括任何关于纪元的信息。根据RedHat的规则，我们应该假设纪元为0并进行比较：
+    // Say we have a vulnerability with the following information (note this is
+    // against the SOURCE package "perl", not the target package, "perl-Errno"):
+    //         ID:                    CVE-2020-10543
+    //        Package Name:        perl
+    //        Version constraint:    < 4:5.26.3-419.el8
+    // 版本约束： < 4:5.26.3-419.el8
 
-//		0:5.26.3-419.el8 < 4:5.26.3-419.el8 = true！... 因此我们是有漏洞的，因为纪元0 < 4。
-// 这是一个无效的比较！
+    // Note that the vulnerability information has complete knowledge about the
+    // version and it's lineage (epoch + version), however, the source package
+    // information for perl-Errno does not include any information about epoch. With
+    // the rule from RedHat we should assume a 0 epoch and make the comparison:
+    // 注意，漏洞信息完全了解版本及其血统（epoch + version），但是 perl-Errno 的源包信息不包含任何有关 epoch 的信息。根据 RedHat 的规则，我们应该假设为 0 epoch 并进行比较：
 
-// 这个问题在于，sourceRPMs往往不指定epoch，即使对于该软件包可能存在非零的epoch！这很重要。在这种情况下“更正确”的做法是去掉epoch：
+    //        0:5.26.3-419.el8 < 4:5.26.3-419.el8 = true! ... therefore we are vulnerable since epoch 0 < 4.
+    //                                                  ... this is an INVALID comparison!
+    // 0:5.26.3-419.el8 < 4:5.26.3-419.el8 = true！... 因此我们是脆弱的，因为 epoch 0 < 4。
+    //                                                  ... 这是一个无效的比较！
 
-// 5.26.3-419.el8 < 5.26.3-419.el8 = false！... 这些是相同的版本
+    // The problem with this is that sourceRPMs tend to not specify epoch even though
+    // there may be a non-zero epoch for that package! This is important. The "more
+    // correct" thing to do in this case is to drop the epoch:
+    // 这样做的问题在于，sourceRPMs 倾向于不指定 epoch，即使对于该软件包可能存在非零的 epoch！这很重要。在这种情况下，“更正确”的做法是删除 epoch：
 
-// 这种方法仍然存在问题：它基本上假设缺少epoch实际上是与另一个版本相同的epoch（在我们的例子中，一侧没有perl epoch意味着我们应该真的假设另一侧的epoch是4）。这仍然可能导致问题，因为epoch界定了潜在的不可比较的版本谱系。
+    //        5.26.3-419.el8 < 5.26.3-419.el8 = false!    ... these are the SAME VERSION
+    // 5.26.3-419.el8 < 5.26.3-419.el8 = false！... 这些是相同的版本
 
-// 通过调用matchUpstreamPackages方法匹配上游软件包
-sourceMatches, err := m.matchUpstreamPackages(store, d, p)
-if err != nil {
-    return nil, fmt.Errorf("failed to match by source indirection: %w", err)
-}
-// 将匹配结果追加到matches切片中
-matches = append(matches, sourceMatches...)
-// 让我们与给定的软件包进行直接匹配。
+    // There is still a problem with this approach: it essentially makes an
+    // assumption that a missing epoch really is the SAME epoch to the other version
+    // being compared (in our example, no perl epoch on one side means we should
+    // really assume an epoch of 4 on the other side). This could still lead to
+    // problems since an epoch delimits potentially non-comparable version lineages.
+    // 这种方法仍然存在问题：它基本上假设缺失的 epoch 确实是与另一个版本进行比较的相同 epoch（在我们的例子中，一侧没有 perl epoch 意味着我们应该真的假设另一侧的 epoch 为 4）。这仍然可能导致问题，因为 epoch 可能限制了潜在的不可比较的版本血统。
 
-// 关于 RPM epochs... 我们知道软件包和漏洞将具有明确定义的 epochs，因为两者都是从 RPMDB 直接或上游 RedHat 漏洞数据获取的。注意：这与我们在上面匹配源软件包时非常不同，因为在参考数据中可能会丢弃 epoch。这意味着任何缺失的 epoch 可以假定为零，因为它属于“项目选择在第一个版本方案中不使用 epoch”的情况，而不属于其他任何情况。
+    sourceMatches, err := m.matchUpstreamPackages(store, d, p)
+    if err != nil {
+        return nil, fmt.Errorf("failed to match by source indirection: %w", err)
+    }
+    matches = append(matches, sourceMatches...)
+    // 让我们与给定的软件包进行匹配（直接匹配）。
 
-// 准确匹配软件包的原因是我们应该明确关于 epoch（因为下游版本比较逻辑在上述情况下会在比较时去掉 epoch -- 基本上是针对源 RPM 的情况）。为了做到这一点，我们用显式的 0 填充软件包版本中缺失的 epoch 值。
+    // Regarding RPM epochs... we know that the package and vulnerability will have
+    // well specified epochs since both are sourced from either the RPMDB directly or
+    // the upstream RedHat vulnerability data. Note: this is very much UNLIKE our
+    // matching on a source package above where the epoch could be dropped in the
+    // context of a comparison.
+    // 关于 RPM epochs... 我们知道软件包和漏洞将具有明确定义的 epochs，因为两者都是直接从 RPMDB 或上游 RedHat 漏洞数据获取的。注意：这与我们上面对源包进行匹配的情况非常不同，在那里 epoch 可能在比较的上下文中被删除。
+    // 参考数据。这意味着任何缺失的时代都可以假定为零，
+    // 因为它属于“项目选择不对第一个版本方案进行时代”而不是其他情况。
 
-exactMatches, err := m.matchPackage(store, d, p)
-if err != nil {
-    return nil, fmt.Errorf("failed to match by exact package name: %w", err)
-}
-// 将 exactMatches 切片中的元素追加到 matches 切片中
-matches = append(matches, exactMatches...)
-// 返回 matches 切片和空指针
-return matches, nil
-}
+    // 准确匹配一个软件包时，我们应该明确指定时代（因为下游版本比较逻辑在上述提到的情况下会在比较时去掉时代 -- 基本上是针对源 RPM 情况）。为了做到这一点，我们用显式的 0 填充软件包版本中缺失的时代值。
 
-// 匹配上游软件包
+    // 进行准确匹配，如果出错则返回错误
+    exactMatches, err := m.matchPackage(store, d, p)
+    if err != nil {
+        return nil, fmt.Errorf("failed to match by exact package name: %w", err)
+    }
+
+    // 将准确匹配的结果追加到匹配列表中
+    matches = append(matches, exactMatches...)
+
+    // 返回匹配结果和空错误
+    return matches, nil
+// 匹配上游软件包，返回匹配结果和错误信息
 func (m *Matcher) matchUpstreamPackages(store vulnerability.ProviderByDistro, d *distro.Distro, p pkg.Package) ([]match.Match, error) {
-	// 创建一个空的 matches 切片
-	var matches []match.Match
+    var matches []match.Match
 
-	// 遍历 pkg.UpstreamPackages(p) 返回的切片中的元素
-	for _, indirectPackage := range pkg.UpstreamPackages(p) {
-		// 使用 search.ByPackageDistro 方法查找漏洞
-		indirectMatches, err := search.ByPackageDistro(store, d, indirectPackage, m.Type())
-		// 如果发生错误，返回空指针和错误信息
-		if err != nil {
-			return nil, fmt.Errorf("failed to find vulnerabilities for rpm upstream source package: %w", err)
-		}
-		// 将 indirectMatches 切片中的元素追加到 matches 切片中
-		matches = append(matches, indirectMatches...)
-	}
+    // 遍历上游软件包列表
+    for _, indirectPackage := range pkg.UpstreamPackages(p) {
+        // 根据上游软件包和发行版查找漏洞
+        indirectMatches, err := search.ByPackageDistro(store, d, indirectPackage, m.Type())
+        if err != nil {
+            return nil, fmt.Errorf("failed to find vulnerabilities for rpm upstream source package: %w", err)
+        }
+        // 将匹配结果添加到匹配列表中
+        matches = append(matches, indirectMatches...)
+    }
 
-	// 确保我们基于 SBOM 中的软件包进行匹配（而不是间接软件包）。
-	// 匹配详细信息已经包含了用于进行匹配的具体间接软件包信息。
-	// 将 matches 切片中的匹配转换为间接匹配，基于 SBOM 中的软件包
-	match.ConvertToIndirectMatches(matches, p)
-```
+    // 确保跟踪匹配结果是基于 SBOM 中的软件包而不是间接软件包
+    // 匹配详情已经包含了用于匹配的具体间接软件包信息
+    match.ConvertToIndirectMatches(matches, p)
 
-// matchPackage 方法用于匹配给定包的漏洞信息
-func (m *Matcher) matchPackage(store vulnerability.ProviderByDistro, d *distro.Distro, p pkg.Package) ([]match.Match, error) {
-	// 确保版本号始终包含一个epoch
-	originalPkg := p
-
-	p.Version = addZeroEpicIfApplicable(p.Version)
-
-	// 通过包和发行版信息搜索漏洞匹配
-	matches, err := search.ByPackageDistro(store, d, p, m.Type())
-	if err != nil {
-		return nil, fmt.Errorf("failed to find vulnerabilities by dpkg source indirection: %w", err)
-	}
-
-	// 确保跟踪匹配是基于SBOM中的包而不是修改后的包
-	for idx := range matches {
-		matches[idx].Package = originalPkg
-	}
+    return matches, nil
 }
-# 返回匹配结果和空值
-return matches, nil
 
-# 如果版本号中包含冒号，则直接返回版本号
-# 否则在版本号前加上"0:"，然后返回
+// 匹配软件包，返回匹配结果和错误信息
+func (m *Matcher) matchPackage(store vulnerability.ProviderByDistro, d *distro.Distro, p pkg.Package) ([]match.Match, error) {
+    // 确保版本号始终包含指定的 epoch
+    originalPkg := p
+
+    p.Version = addZeroEpicIfApplicable(p.Version)
+
+    // 根据软件包和发行版查找漏洞
+    matches, err := search.ByPackageDistro(store, d, p, m.Type())
+    if err != nil {
+        return nil, fmt.Errorf("failed to find vulnerabilities by dpkg source indirection: %w", err)
+    }
+
+    // 确保跟踪匹配结果是基于 SBOM 中的软件包而不是修改后的软件包
+    for idx := range matches {
+        matches[idx].Package = originalPkg
+    }
+
+    return matches, nil
+}
+
+// 如果适用，添加 epoch 为 0
 func addZeroEpicIfApplicable(version string) string {
     if strings.Contains(version, ":") {
         return version

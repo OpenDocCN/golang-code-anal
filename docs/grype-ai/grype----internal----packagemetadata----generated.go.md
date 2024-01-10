@@ -5,13 +5,15 @@
 // 不要编辑：由 grype/internal/packagemetadata/generate/main.go 生成
 
 package packagemetadata
-// 导入 grype 包中的 pkg 模块
+// 包 packagemetadata
+
 import "github.com/anchore/grype/grype/pkg"
+// 导入 grype/pkg 包
 
 // AllTypes returns a list of all pkg metadata types that grype supports (that are represented in the pkg.Package.Metadata field).
 // AllTypes 返回 grype 支持的所有 pkg 元数据类型的列表（这些类型在 pkg.Package.Metadata 字段中表示）。
 func AllTypes() []any {
-	// 返回一个包含所有支持的元数据类型的列表
-	return []any{pkg.ApkMetadata{}, pkg.GolangBinMetadata{}, pkg.GolangModMetadata{}, pkg.JavaMetadata{}, pkg.RpmMetadata{}}
+    // 返回所有支持的 pkg 元数据类型的列表
+    return []any{pkg.ApkMetadata{}, pkg.GolangBinMetadata{}, pkg.GolangModMetadata{}, pkg.JavaMetadata{}, pkg.RpmMetadata{}}
 }
 ```

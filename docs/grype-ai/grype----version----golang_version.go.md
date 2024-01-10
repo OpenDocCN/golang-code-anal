@@ -1,78 +1,62 @@
 # `grype\grype\version\golang_version.go`
 
 ```
-// 声明一个名为 version 的包
 package version
 
-// 导入所需的包
 import (
-	"fmt"
-	"strings"
+    "fmt"  // 导入 fmt 包，用于格式化输出
+    "strings"  // 导入 strings 包，用于字符串操作
 
-	hashiVer "github.com/anchore/go-version"
+    hashiVer "github.com/anchore/go-version"  // 导入第三方库 github.com/anchore/go-version，并重命名为 hashiVer
 )
 
-// 声明一个名为 golangVersion 的结构体类型，实现了 Comparator 接口
+var _ Comparator = (*golangVersion)(nil)  // 定义一个接口类型的变量，用于比较版本号
+
 type golangVersion struct {
-	raw    string          // 原始版本字符串
-	semVer *hashiVer.Version // 使用第三方库的版本对象
+    raw    string  // 定义原始版本号字符串
+    semVer *hashiVer.Version  // 定义语义化版本号对象
 }
 
-// 实现 Comparator 接口的 Compare 方法
 func (g golangVersion) Compare(version *Version) (int, error) {
-	// 检查传入的版本格式是否为 GolangFormat
-	if version.Format != GolangFormat {
-		// 如果不是，则返回错误
-		return -1, fmt.Errorf("cannot compare %v to golang version", version.Format)
-	}
-// 如果版本的golangVersion为nil，则返回错误
-if version.rich.golangVersion == nil {
-    return -1, fmt.Errorf("cannot compare version with nil golang version to golang version")
-}
-// 如果版本的golangVersion的raw值与给定的g的raw值相等，则返回0
-if version.rich.golangVersion.raw == g.raw {
-    return 0, nil
-}
-// 如果版本的golangVersion的raw值为"(devel)"，则返回错误
-if version.rich.golangVersion.raw == "(devel)" {
-    return -1, fmt.Errorf("cannot compare %s with %s", g.raw, version.rich.golangVersion.raw)
+    if version.Format != GolangFormat {  // 如果版本号格式不是 GolangFormat
+        return -1, fmt.Errorf("cannot compare %v to golang version", version.Format)  // 返回错误信息
+    }
+    if version.rich.golangVersion == nil {  // 如果版本号中的 golangVersion 为 nil
+        return -1, fmt.Errorf("cannot compare version with nil golang version to golang version")  // 返回错误信息
+    }
+    if version.rich.golangVersion.raw == g.raw {  // 如果版本号中的原始版本号与当前 golangVersion 的原始版本号相同
+        return 0, nil  // 返回相同
+    }
+    if version.rich.golangVersion.raw == "(devel)" {  // 如果版本号中的原始版本号为 "(devel)"
+        return -1, fmt.Errorf("cannot compare %s with %s", g.raw, version.rich.golangVersion.raw)  // 返回错误信息
+    }
+
+    return version.rich.golangVersion.compare(g), nil  // 调用 golangVersion 的 compare 方法进行比较
 }
 
-// 调用golangVersion的compare方法比较两个版本
-return version.rich.golangVersion.compare(g), nil
-}
-
-// 比较两个golangVersion对象的方法
 func (g golangVersion) compare(o golangVersion) int {
     switch {
-    // 如果g和o的semVer都不为nil，则调用semVer的Compare方法比较
-    case g.semVer != nil && o.semVer != nil:
-        return g.semVer.Compare(o.semVer)
-    // 如果g的semVer不为nil，而o的semVer为nil，则返回1
-    case g.semVer != nil && o.semVer == nil:
-        return 1
-    // 如果g的semVer为nil，而o的semVer不为nil，则返回-1
-    case g.semVer == nil && o.semVer != nil:
-		// 返回-1
-		return -1
-	// 默认情况下
-	default:
-		// 比较两个字符串的大小
-		return strings.Compare(g.raw, o.raw)
-	}
+    case g.semVer != nil && o.semVer != nil:  // 如果当前 golangVersion 和目标 golangVersion 的语义化版本号都不为 nil
+        return g.semVer.Compare(o.semVer)  // 调用语义化版本号对象的 Compare 方法进行比较
+    case g.semVer != nil && o.semVer == nil:  // 如果当前 golangVersion 的语义化版本号不为 nil，目标 golangVersion 的语义化版本号为 nil
+        return 1  // 返回 1
+    case g.semVer == nil && o.semVer != nil:  // 如果当前 golangVersion 的语义化版本号为 nil，目标 golangVersion 的语义化版本号不为 nil
+        return -1  // 返回 -1
+    default:  // 其他情况
+        return strings.Compare(g.raw, o.raw)  // 使用 strings 包中的 Compare 方法比较原始版本号字符串
+    }
 }
 
 func newGolangVersion(v string) (*golangVersion, error) {
-	// 如果版本号是类似于"go1.24.1"的格式，去掉前缀"go"，然后使用semver库自动处理
-	semver, err := hashiVer.NewSemver(strings.TrimPrefix(v, "go"))
-	// 如果出现错误，返回nil和错误
-	if err != nil {
-		return nil, err
-	}
-	// 返回一个新的golangVersion对象，包含原始版本号和semver对象
-	return &golangVersion{
-		raw:    v,
-		semVer: semver,
-	}, nil
+    // go stdlib is reported by syft as a go package with version like "go1.24.1"
+    // other versions have "v" as a prefix, which the semver lib handles automatically
+    semver, err := hashiVer.NewSemver(strings.TrimPrefix(v, "go"))  // 使用第三方库中的 NewSemver 方法创建语义化版本号对象
+    if err != nil {  // 如果有错误发生
+        return nil, err  // 返回 nil 和错误信息
+    }
+    return &golangVersion{
+        raw:    v,  // 设置原始版本号字符串
+        semVer: semver,  // 设置语义化版本号对象
+    }, nil  // 返回 golangVersion 对象和 nil
 }
 ```

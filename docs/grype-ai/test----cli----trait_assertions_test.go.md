@@ -1,90 +1,69 @@
 # `grype\test\cli\trait_assertions_test.go`
 
 ```
-// 声明一个名为 cli 的包
 package cli
 
-// 导入所需的包
 import (
-	"strings"
-	"testing"
+    "strings"  // 导入 strings 包，用于处理字符串
+    "testing"  // 导入 testing 包，用于编写测试函数
 
-	"github.com/acarl005/stripansi"
+    "github.com/acarl005/stripansi"  // 导入第三方库，用于去除 ANSI 转义字符
 )
 
-// 定义一个名为 traitAssertion 的函数类型，用于断言测试结果
-type traitAssertion func(tb testing.TB, stdout, stderr string, rc int)
+type traitAssertion func(tb testing.TB, stdout, stderr string, rc int)  // 定义一个函数类型 traitAssertion，用于测试断言
 
-// 定义一个函数，用于断言输出中是否包含特定数据
-func assertInOutput(data string) traitAssertion {
-	// 返回一个函数，该函数用于在测试结果中断言是否包含特定数据
-	return func(tb testing.TB, stdout, stderr string, _ int) {
-		// 标记该函数为测试辅助函数
-		tb.Helper()
+func assertInOutput(data string) traitAssertion {  // 定义一个函数，用于检查输出中是否包含指定数据
+    return func(tb testing.TB, stdout, stderr string, _ int) {  // 返回一个函数，用于实际执行检查
+        tb.Helper()  // 标记当前测试函数为辅助函数
 
-		// 检查标准输出和标准错误输出中是否包含特定数据，如果不包含则输出错误信息
-		if !strings.Contains(stripansi.Strip(stderr), data) && !strings.Contains(stripansi.Strip(stdout), data) {
-			tb.Errorf("data=%q was NOT found in any output, but should have been there", data)
-		}
-	}
-}
-# 定义一个函数，用于断言返回代码为失败的情况
-func assertFailingReturnCode(tb testing.TB, _, _ string, rc int) {
-    tb.Helper()
-    # 如果返回代码为0，则输出错误信息
-    if rc == 0 {
-        tb.Errorf("expected a failure but got rc=%d", rc)
+        if !strings.Contains(stripansi.Strip(stderr), data) && !strings.Contains(stripansi.Strip(stdout), data) {  // 检查标准输出和标准错误输出中是否包含指定数据
+            tb.Errorf("data=%q was NOT found in any output, but should have been there", data)  // 输出错误信息
+        }
     }
 }
 
-# 定义一个函数，用于断言返回代码为成功的情况
-func assertSucceedingReturnCode(tb testing.TB, _, _ string, rc int) {
-    tb.Helper()
-    # 如果返回代码不为0，则输出错误信息
-    if rc != 0 {
-        tb.Errorf("expected to succeed but got rc=%d", rc)
+func assertFailingReturnCode(tb testing.TB, _, _ string, rc int) {  // 定义一个函数，用于检查返回值是否为失败状态
+    tb.Helper()  // 标记当前测试函数为辅助函数
+    if rc == 0 {  // 检查返回值是否为 0
+        tb.Errorf("expected a failure but got rc=%d", rc)  // 输出错误信息
     }
 }
 
-# 定义一个函数，用于断言标准输出中是否包含指定行
-func assertRowInStdOut(row []string) traitAssertion {
-    return func(tb testing.TB, stdout, stderr string, _ int) {
-        tb.Helper()
-        # 遍历标准输出的每一行
-        for _, line := range strings.Split(stdout, "\n") {
-			lineMatched := false
-            // 初始化变量，用于标记是否匹配到某一行
-			for _, column := range row {
-                // 遍历行中的每一列
-				if !strings.Contains(line, column) {
-                    // 如果某一列不在当前行中
-					// it wasn't this line
-					lineMatched = false
-					break
-                    // 标记为未匹配，并跳出循环
-				}
-				lineMatched = true
-                // 如果所有列都在当前行中，则标记为匹配
-			}
-			if lineMatched {
-                // 如果匹配到了，则直接返回，不再执行后续代码
-				return
-			}
-            // 如果没有匹配到任何行，则输出错误信息
-		}
-		// none of the lines matched
-		tb.Errorf("expected stdout to contain %s, but it did not", strings.Join(row, " "))
-        // 输出错误信息，表示预期的内容没有在输出中找到
-	}
+func assertSucceedingReturnCode(tb testing.TB, _, _ string, rc int) {  // 定义一个函数，用于检查返回值是否为成功状态
+    tb.Helper()  // 标记当前测试函数为辅助函数
+    if rc != 0 {  // 检查返回值是否不为 0
+        tb.Errorf("expected to succeed but got rc=%d", rc)  // 输出错误信息
+    }
 }
 
-func assertNotInOutput(notWanted string) traitAssertion {
-    // 定义一个函数，用于判断某一字符串不应该出现在输出中
-	return func(tb testing.TB, stdout, stderr string, _ int) {
-        // 函数体内部的具体实现
-# 如果标准输出中包含不想要的内容
-if strings.Contains(stdout, notWanted):
-    # 输出错误信息，指出在标准输出中发现了不想要的内容
-    tb.Errorf("got unwanted %s in stdout %s", notWanted, stdout)
-# 结束当前测试函数
+func assertRowInStdOut(row []string) traitAssertion {  // 定义一个函数，用于检查标准输出中是否包含指定行
+    return func(tb testing.TB, stdout, stderr string, _ int) {  // 返回一个函数，用于实际执行检查
+        tb.Helper()  // 标记当前测试函数为辅助函数
+
+        for _, line := range strings.Split(stdout, "\n") {  // 遍历标准输出中的每一行
+            lineMatched := false  // 初始化行匹配状态为 false
+            for _, column := range row {  // 遍历指定行中的每一列
+                if !strings.Contains(line, column) {  // 检查当前行是否包含指定列
+                    // it wasn't this line
+                    lineMatched = false  // 如果不包含，则将行匹配状态设置为 false
+                    break  // 跳出当前循环
+                }
+                lineMatched = true  // 如果包含，则将行匹配状态设置为 true
+            }
+            if lineMatched {  // 如果行匹配状态为 true
+                return  // 结束函数执行
+            }
+        }
+        // none of the lines matched
+        tb.Errorf("expected stdout to contain %s, but it did not", strings.Join(row, " "))  // 输出错误信息
+    }
+}
+
+func assertNotInOutput(notWanted string) traitAssertion {  // 定义一个函数，用于检查输出中是否不包含指定数据
+    return func(tb testing.TB, stdout, stderr string, _ int) {  // 返回一个函数，用于实际执行检查
+        if strings.Contains(stdout, notWanted) {  // 检查标准输出中是否包含不希望出现的数据
+            tb.Errorf("got unwanted %s in stdout %s", notWanted, stdout)  // 输出错误信息
+        }
+    }
+}
 ```

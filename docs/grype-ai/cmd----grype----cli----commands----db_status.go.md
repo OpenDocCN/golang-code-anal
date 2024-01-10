@@ -4,52 +4,47 @@
 package commands
 
 import (
-	"fmt"  // 导入 fmt 包，用于格式化输出
-	"github.com/spf13/cobra"  // 导入 cobra 包，用于创建命令行应用
+    "fmt"  // 导入 fmt 包，用于格式化输出
 
-	"github.com/anchore/clio"  // 导入 anchore/clio 包
-	"github.com/anchore/grype/cmd/grype/cli/options"  // 导入 anchore/grype/cmd/grype/cli/options 包
-	"github.com/anchore/grype/grype/db"  // 导入 anchore/grype/grype/db 包
+    "github.com/spf13/cobra"  // 导入 cobra 包，用于创建命令行应用
+
+    "github.com/anchore/clio"  // 导入 clio 包，用于应用程序的交互
+    "github.com/anchore/grype/cmd/grype/cli/options"  // 导入 options 包，用于处理命令行参数
+    "github.com/anchore/grype/grype/db"  // 导入 db 包，用于处理数据库操作
 )
 
-// 创建 DBStatus 函数，接受一个 clio.Application 类型的参数，返回一个 *cobra.Command 类型的指针
 func DBStatus(app clio.Application) *cobra.Command {
-	// 使用默认的数据库选项创建 opts 变量
-	opts := dbOptionsDefault(app.ID())
+    opts := dbOptionsDefault(app.ID())  // 获取数据库选项的默认值
 
-	// 设置命令行应用的命令
-	return app.SetupCommand(&cobra.Command{
-		Use:   "status",  // 命令名称为 status
-		Short: "display database status",  // 命令的简短描述
-		Args:  cobra.ExactArgs(0),  // 命令接受的参数数量为 0
-		RunE: func(cmd *cobra.Command, args []string) error {  // 命令执行的函数
-# 调用 runDBStatus 函数并返回结果
-return runDBStatus(opts.DB)
-# 创建一个命令，其中包含一个运行数据库状态的函数
-}, opts)
-# 运行数据库状态的函数，接受数据库选项作为参数
+    return app.SetupCommand(&cobra.Command{  // 设置命令行应用
+        Use:   "status",  // 命令名称为 status
+        Short: "display database status",  // 命令的简短描述
+        Args:  cobra.ExactArgs(0),  // 命令需要的参数个数
+        RunE: func(cmd *cobra.Command, args []string) error {  // 运行命令时执行的函数
+            return runDBStatus(opts.DB)  // 执行数据库状态查询
+        },
+    }, opts)
+}
+
 func runDBStatus(opts options.Database) error {
-    # 创建一个数据库管理员对象，并返回错误信息
-    dbCurator, err := db.NewCurator(opts.ToCuratorConfig())
+    dbCurator, err := db.NewCurator(opts.ToCuratorConfig())  // 根据数据库选项创建数据库管理员对象
     if err != nil {
-        return err
+        return err  // 如果创建失败，返回错误
     }
-    # 获取数据库管理员对象的状态
-    status := dbCurator.Status()
-    # 将状态转换为字符串
-    statusStr := "valid"
+
+    status := dbCurator.Status()  // 获取数据库状态信息
+
+    statusStr := "valid"  // 默认状态为有效
     if status.Err != nil {
-        statusStr = "invalid"
+        statusStr = "invalid"  // 如果有错误，则状态为无效
     }
-    # 打印状态的位置和构建时间
-    fmt.Println("Location: ", status.Location)
-    fmt.Println("Built:    ", status.Built.String())
-# 打印 status 对象的 SchemaVersion 属性
-fmt.Println("Schema:   ", status.SchemaVersion)
-# 打印 status 对象的 Checksum 属性
-fmt.Println("Checksum: ", status.Checksum)
-# 打印 statusStr 变量的值
-fmt.Println("Status:   ", statusStr)
-# 返回 status 对象的 Err 属性
-return status.Err
+
+    fmt.Println("Location: ", status.Location)  // 输出数据库位置信息
+    fmt.Println("Built:    ", status.Built.String())  // 输出数据库构建时间
+    fmt.Println("Schema:   ", status.SchemaVersion)  // 输出数据库模式版本
+    fmt.Println("Checksum: ", status.Checksum)  // 输出数据库校验和
+    fmt.Println("Status:   ", statusStr)  // 输出数据库状态
+
+    return status.Err  // 返回数据库状态的错误信息
+}
 ```

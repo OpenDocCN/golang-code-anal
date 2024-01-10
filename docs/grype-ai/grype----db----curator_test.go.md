@@ -2,380 +2,350 @@
 
 ```
 package db
-// 导入 db 包
 
 import (
-	"bufio"
-	"fmt"
-	"io"
-	"net/http"
-	"net/url"
-	"os"
-	"os/exec"
-	"path"
-	"path/filepath"
-	"strconv"
-	"syscall"
-	"testing"
-	"time"
+    "bufio" // 用于缓冲读取
+    "fmt" // 用于格式化输出
+    "io" // 提供基本的 I/O 接口
+    "net/http" // 用于发送 HTTP 请求
+    "net/url" // 用于解析 URL
+    "os" // 提供操作系统功能
+    "os/exec" // 用于执行外部命令
+    "path" // 提供对斜杠分隔的路径的操作
+    "path/filepath" // 提供对文件路径的操作
+    "strconv" // 用于字符串和基本数据类型之间的转换
+    "syscall" // 提供了操作系统底层的接口
+    "testing" // 用于编写测试函数
+    "time" // 提供时间的功能
 
-	"github.com/gookit/color"
-	// 导入 color 包
-	"github.com/spf13/afero"
-	// 导入 afero 包
-	"github.com/stretchr/testify/assert"
-	// 导入 assert 包
-// 导入所需的包
-"github.com/stretchr/testify/require" // 用于测试时断言的包
-"github.com/wagoodman/go-progress" // 用于显示进度条的包
+    "github.com/gookit/color" // 用于在终端输出彩色文字
+    "github.com/spf13/afero" // 提供了一个抽象文件系统的接口
+    "github.com/stretchr/testify/assert" // 用于编写断言
+    "github.com/stretchr/testify/require" // 用于编写测试函数的前置条件
+    "github.com/wagoodman/go-progress" // 用于在终端显示进度条
 
-// 导入内部自定义的包
-"github.com/anchore/grype/internal/file" // 文件操作相关的包
-"github.com/anchore/grype/internal/stringutil" // 字符串操作相关的包
+    "github.com/anchore/grype/internal/file" // 导入自定义的文件操作包
+    "github.com/anchore/grype/internal/stringutil" // 导入自定义的字符串操作包
+)
 
-// 定义 testGetter 结构体
 type testGetter struct {
-	file  map[string]string // 文件映射
-	dir   map[string]string // 目录映射
-	calls stringutil.StringSet // 字符串集合
-	fs    afero.Fs // 文件系统接口
+    file  map[string]string // 用于存储文件内容的映射
+    dir   map[string]string // 用于存储目录内容的映射
+    calls stringutil.StringSet // 用于存储调用的 URL 集合
+    fs    afero.Fs // 文件系统接口
 }
 
-// 创建 testGetter 结构体的实例
 func newTestGetter(fs afero.Fs, f, d map[string]string) *testGetter {
-	return &testGetter{
-		file:  f, // 初始化文件映射
-		dir:   d, // 初始化目录映射
-		calls: stringutil.NewStringSet(), // 初始化字符串集合
-		fs:    fs, // 初始化文件系统接口
-// GetFile函数用于下载指定URL的文件到指定路径。URL必须指向单个文件。
+    return &testGetter{
+        file:  f, // 初始化文件内容映射
+        dir:   d, // 初始化目录内容映射
+        calls: stringutil.NewStringSet(), // 初始化调用的 URL 集合
+        fs:    fs, // 初始化文件系统接口
+    }
+}
+
+// GetFile downloads the give URL into the given path. The URL must reference a single file.
 func (g *testGetter) GetFile(dst, src string, _ ...*progress.Manual) error {
-    // 将下载的URL添加到调用列表中
-    g.calls.Add(src)
-    // 如果文件映射中不存在该URL，则返回错误
-    if _, ok := g.file[src]; !ok {
-        return fmt.Errorf("blerg, no file!")
+    g.calls.Add(src) // 将 URL 添加到调用集合中
+    if _, ok := g.file[src]; !ok { // 检查文件内容映射中是否存在该 URL
+        return fmt.Errorf("blerg, no file!") // 返回错误信息
     }
-    // 将文件内容写入指定路径
-    return afero.WriteFile(g.fs, dst, []byte(g.file[src]), 0755)
+    return afero.WriteFile(g.fs, dst, []byte(g.file[src]), 0755) // 将文件内容写入指定路径
 }
 
-// Get函数用于将给定URL下载到指定目录。目录必须已经存在。
+// Get downloads the given URL into the given directory. The directory must already exist.
 func (g *testGetter) GetToDir(dst, src string, _ ...*progress.Manual) error {
-    // 将下载的URL添加到调用列表中
-    g.calls.Add(src)
-    // 如果目录映射中不存在该URL，则返回错误
-    if _, ok := g.dir[src]; !ok {
-        return fmt.Errorf("blerg, no file!")
+    g.calls.Add(src) // 将 URL 添加到调用集合中
+    if _, ok := g.dir[src]; !ok { // 检查目录内容映射中是否存在该 URL
+        return fmt.Errorf("blerg, no file!") // 返回错误信息
     }
-    // 将目录内容写入指定目录
-    return afero.WriteFile(g.fs, dst, []byte(g.dir[src]), 0755)
+    return afero.WriteFile(g.fs, dst, []byte(g.dir[src]), 0755) // 将目录内容写入指定路径
 }
+
 func newTestCurator(tb testing.TB, fs afero.Fs, getter file.Getter, dbDir, metadataUrl string, validateDbHash bool) Curator {
-    // 创建一个新的 Curator 对象
     c, err := NewCurator(Config{
-        DBRootDir:           dbDir,
-        ListingURL:          metadataUrl,
-        ValidateByHashOnGet: validateDbHash,
+        DBRootDir:           dbDir, // 设置数据库根目录
+        ListingURL:          metadataUrl, // 设置元数据 URL
+        ValidateByHashOnGet: validateDbHash, // 设置是否在获取时验证哈希
     })
-    // 断言错误为空
-    require.NoError(tb, err)
 
-    // 设置 Curator 对象的 downloader 和 fs 属性
-    c.downloader = getter
-    c.fs = fs
+    require.NoError(tb, err) // 断言不出现错误
 
-    // 返回创建好的 Curator 对象
-    return c
+    c.downloader = getter // 设置下载器
+    c.fs = fs // 设置文件系统接口
+
+    return c // 返回 Curator 对象
 }
 
 func Test_defaultHTTPClient(t *testing.T) {
-    // 定义测试用例
     tests := []struct {
-        name    string
-        hasCert bool
-# 定义测试用例数组，每个测试用例包含名称和是否有自定义证书的信息
-tests := []struct {
-    name    string  // 测试用例名称
-    hasCert bool    // 是否有自定义证书
-}{
-    {
-        name:    "no custom cert should use default system root certs",  // 没有自定义证书应该使用默认的系统根证书
-        hasCert: false,  // 没有自定义证书
+        name    string // 测试名称
+        hasCert bool // 是否有证书
+    # 定义测试用例数组，包含每个测试用例的名称和是否有自定义证书
+    tests := []struct {
+        name:    "no custom cert should use default system root certs",
+        hasCert: false,
     },
     {
-        name:    "should use single custom cert",  // 应该使用单个自定义证书
-        hasCert: true,  // 有自定义证书
-    },
-}
+        name:    "should use single custom cert",
+        hasCert: true,
+    }
 
-# 遍历测试用例数组
-for _, test := range tests {
-    # 使用测试名称创建子测试
-    t.Run(test.name, func(t *testing.T) {
-        var certPath string
-        # 如果有自定义证书，则生成证书文件
-        if test.hasCert {
-            certPath = generateCertFixture(t)
-        }
+    # 遍历测试用例数组
+    for _, test := range tests {
+        # 使用测试名称创建子测试，执行测试函数
+        t.Run(test.name, func(t *testing.T) {
+            # 声明证书路径变量
+            var certPath string
+            # 如果测试用例需要自定义证书，则生成证书文件
+            if test.hasCert {
+                certPath = generateCertFixture(t)
+            }
 
-        # 使用默认的 HTTP 客户端和证书路径创建 HTTP 客户端
-        httpClient, err := defaultHTTPClient(afero.NewOsFs(), certPath)
-        require.NoError(t, err)  // 断言没有错误发生
-# 检查测试对象是否有证书
-if test.hasCert {
-    # 断言 HTTP 客户端的传输层安全配置不为空
-    require.NotNil(t, httpClient.Transport.(*http.Transport).TLSClientConfig)
-    # 断言 HTTP 客户端的传输层安全配置的根证书颁发机构数量为1
-    assert.Len(t, httpClient.Transport.(*http.Transport).TLSClientConfig.RootCAs.Subjects(), 1)
-} else {
-    # 断言 HTTP 客户端的传输层安全配置为空
-    assert.Nil(t, httpClient.Transport.(*http.Transport).TLSClientConfig)
-}
+            # 调用 defaultHTTPClient 函数创建 HTTP 客户端
+            httpClient, err := defaultHTTPClient(afero.NewOsFs(), certPath)
+            require.NoError(t, err)
 
-# 生成证书文件路径
+            # 如果测试用例需要自定义证书，则断言 TLSClientConfig 不为空，并且根证书数量为1
+            if test.hasCert {
+                require.NotNil(t, httpClient.Transport.(*http.Transport).TLSClientConfig)
+                assert.Len(t, httpClient.Transport.(*http.Transport).TLSClientConfig.RootCAs.Subjects(), 1)
+            } else {
+                # 如果测试用例不需要自定义证书，则断言 TLSClientConfig 为空
+                assert.Nil(t, httpClient.Transport.(*http.Transport).TLSClientConfig)
+            }
+
+        })
+    }
+// 生成证书测试数据
 func generateCertFixture(t *testing.T) string {
+    // 设置证书文件路径
     path := "test-fixtures/tls/server.crt"
-    # 检查路径是否存在
+    // 检查文件是否存在
     if _, err := os.Stat(path); !os.IsNotExist(err) {
-        # 如果路径存在，则返回路径
+        // 如果文件已经存在，则直接返回路径
         return path
     }
 
-    # 如果路径不存在，则记录日志并生成密钥/证书 fixture
+    // 打印生成密钥/证书测试数据的消息
     t.Logf(color.Bold.Sprint("Generating Key/Cert Fixture"))
-# 获取当前工作目录
-cwd, err := os.Getwd()
-if err != nil:
-    t.Errorf("unable to get cwd: %+v", err)
 
-# 创建一个执行命令的对象，执行 make server.crt 命令
-cmd := exec.Command("make", "server.crt")
-# 设置命令执行的目录
-cmd.Dir = filepath.Join(cwd, "test-fixtures/tls")
-
-# 获取命令执行的标准错误输出管道
-stderr, err := cmd.StderrPipe()
-if err != nil:
-    t.Fatalf("could not get stderr: %+v", err)
-# 获取命令执行的标准输出管道
-stdout, err := cmd.StdoutPipe()
-if err != nil:
-    t.Fatalf("could not get stdout: %+v", err)
-
-# 启动命令执行
-err = cmd.Start()
-if err != nil:
-		// 如果启动命令失败，输出错误信息
-		t.Fatalf("failed to start cmd: %+v", err)
-	}
-
-	// 定义一个函数，用于读取并展示命令的输出
-	show := func(label string, reader io.ReadCloser) {
-		// 创建一个新的扫描器，用于逐行读取输出内容
-		scanner := bufio.NewScanner(reader)
-		// 设置扫描器的分割函数为逐行扫描
-		scanner.Split(bufio.ScanLines)
-		// 逐行读取输出内容，并输出到日志中
-		for scanner.Scan() {
-			t.Logf("%s: %s", label, scanner.Text())
-		}
-	}
-	// 启动两个 goroutine 分别读取并展示标准输出和标准错误输出
-	go show("out", stdout)
-	go show("err", stderr)
-
-	// 等待命令执行结束，如果有错误则输出相关信息
-	if err := cmd.Wait(); err != nil {
-		// 如果是退出错误，则输出相应信息
-		if exiterr, ok := err.(*exec.ExitError); ok {
-			// 程序以非零退出码退出
-
-			// 这段代码适用于 Unix 和 Windows。尽管 syscall 包通常依赖于平台，WaitStatus 在 Unix 和 Windows 下都有定义，并且在这两种情况下都有
-// 如果 err 是 ExitError 类型，则获取其系统信息，并判断退出状态是否为 0，如果不是则输出错误信息
-if status, ok := exiterr.Sys().(syscall.WaitStatus); ok {
-    if status.ExitStatus() != 0 {
-        t.Fatalf("failed to generate fixture: rc=%d", status.ExitStatus())
+    // 获取当前工作目录
+    cwd, err := os.Getwd()
+    if err != nil {
+        t.Errorf("unable to get cwd: %+v", err)
     }
-} else {
-    // 如果 err 不是 ExitError 类型，则输出错误信息
-    t.Fatalf("unable to get generate fixture result: %+v", err)
-}
 
-// 循环遍历测试用例
-for _, test := range tests {
-    // 测试 CuratorDownload 方法
-    // 如果测试用例中的 err 为 true，则表示预期出现错误，否则表示预期成功
-    // 根据测试用例中的 entry 调用 CuratorDownload 方法，获取返回的路径
-    path, err := CuratorDownload(test.entry)
-    if test.err {
-        // 如果预期出现错误，但实际没有出现错误，则输出错误信息
-        if err == nil {
-            t.Fatalf("expected error but got nil")
-        }
-    } else {
-        // 如果预期成功，但实际出现错误，则输出错误信息
-        if err != nil {
-            t.Fatalf("unexpected error: %+v", err)
+    // 执行命令生成证书
+    cmd := exec.Command("make", "server.crt")
+    cmd.Dir = filepath.Join(cwd, "test-fixtures/tls")
+
+    // 获取命令的标准错误输出
+    stderr, err := cmd.StderrPipe()
+    if err != nil {
+        t.Fatalf("could not get stderr: %+v", err)
+    }
+    // 获取命令的标准输出
+    stdout, err := cmd.StdoutPipe()
+    if err != nil {
+        t.Fatalf("could not get stdout: %+v", err)
+    }
+
+    // 启动命令
+    err = cmd.Start()
+    if err != nil {
+        t.Fatalf("failed to start cmd: %+v", err)
+    }
+
+    // 定义函数用于显示输出
+    show := func(label string, reader io.ReadCloser) {
+        scanner := bufio.NewScanner(reader)
+        scanner.Split(bufio.ScanLines)
+        for scanner.Scan() {
+            t.Logf("%s: %s", label, scanner.Text())
         }
     }
-    // 检查返回的路径是否符合预期
-    if path != test.expectedURL {
-        t.Fatalf("unexpected URL: expected=%s, got=%s", test.expectedURL, path)
-    }
-}
-// 创建一个测试用例切片，每个测试用例包含名称、条目、期望的URL
-{
-    name: "download populates returned tempdir", // 测试用例名称
-    entry: &ListingEntry{ // 列表条目
-        Built:    time.Date(2020, 06, 13, 17, 13, 13, 0, time.UTC), // 构建时间
-        URL:      mustUrl(url.Parse("http://a-url/payload.tar.gz")), // URL
-        Checksum: "sha256:deadbeefcafe", // 校验和
-    },
-    expectedURL: "http://a-url/payload.tar.gz?checksum=sha256%3Adeadbeefcafe", // 期望的URL
-},
+    // 启动 goroutine 显示标准输出和标准错误输出
+    go show("out", stdout)
+    go show("err", stderr)
 
-// 遍历测试用例切片
-for _, test := range tests {
-    // 使用测试名称创建子测试
-    t.Run(test.name, func(t *testing.T) {
-        metadataUrl := "http://metadata.io" // 元数据URL
-        contents := "CONTENTS!!!" // 内容
-        files := map[string]string{} // 文件映射
-        dirs := map[string]string{ // 目录映射
-            test.expectedURL: contents, // 使用测试的期望URL作为键，内容作为值
+    // 等待命令执行完成
+    if err := cmd.Wait(); err != nil {
+        if exiterr, ok := err.(*exec.ExitError); ok {
+            // 程序以非零退出码退出
+            if status, ok := exiterr.Sys().(syscall.WaitStatus); ok {
+                if status.ExitStatus() != 0 {
+                    t.Fatalf("failed to generate fixture: rc=%d", status.ExitStatus())
+                }
+            }
+        } else {
+            t.Fatalf("unable to get generate fixture result: %+v", err)
         }
-        fs := afero.NewMemMapFs() // 创建内存映射文件系统
-// 创建一个新的测试数据获取器，用于获取文件系统中的文件和目录
-getter := newTestGetter(fs, files, dirs)
-// 创建一个新的测试策展人，用于测试数据库的下载和读取
-cur := newTestCurator(t, fs, getter, "/tmp/dbdir", metadataUrl, false)
-
-// 下载指定的条目，并使用手动进度跟踪
-path, err := cur.download(test.entry, &progress.Manual{})
-if err != nil {
-    t.Fatalf("could not download entry: %+v", err)
+    }
+    // 返回证书文件路径
+    return path
 }
 
-// 检查是否获取器调用包含了预期的 URL
-if !getter.calls.Contains(test.expectedURL) {
-    t.Fatalf("never made the appropriate fetch call: %+v", getter.calls)
-}
-
-// 打开下载的文件
-f, err := fs.Open(path)
-if err != nil {
-    t.Fatalf("no db file: %+v", err)
-}
-
-// 读取文件内容
-actual, err := afero.ReadAll(f)
-if err != nil {
-    t.Fatalf("bad db file read: %+v", err)
-}
-# 定义测试函数 TestCuratorValidate，用于测试 CuratorValidate 函数
-func TestCuratorValidate(t *testing.T) {
-    # 定义测试用例
+func TestCuratorDownload(t *testing.T) {
+    // 定义测试用例的结构体数组，包括名称、条目、预期URL和错误标志
     tests := []struct {
-        name              string
-        fixture           string
-        constraint        int
-        cfgValidateDbHash bool
-        err               bool
+        name        string
+        entry       *ListingEntry
+        expectedURL string
+        err         bool
+    }{
+        // 第一个测试用例
+        {
+            name: "download populates returned tempdir",
+            entry: &ListingEntry{
+                Built:    time.Date(2020, 06, 13, 17, 13, 13, 0, time.UTC),
+                URL:      mustUrl(url.Parse("http://a-url/payload.tar.gz")),
+                Checksum: "sha256:deadbeefcafe",
+            },
+            expectedURL: "http://a-url/payload.tar.gz?checksum=sha256%3Adeadbeefcafe",
+        },
+    }
+
+    // 遍历测试用例数组
+    for _, test := range tests {
+        // 使用测试名称创建子测试
+        t.Run(test.name, func(t *testing.T) {
+            // 定义元数据URL和内容
+            metadataUrl := "http://metadata.io"
+            contents := "CONTENTS!!!"
+            // 初始化文件和目录映射
+            files := map[string]string{}
+            dirs := map[string]string{
+                test.expectedURL: contents,
+            }
+            // 创建内存映射文件系统
+            fs := afero.NewMemMapFs()
+            // 创建测试获取器
+            getter := newTestGetter(fs, files, dirs)
+            // 创建测试策展人
+            cur := newTestCurator(t, fs, getter, "/tmp/dbdir", metadataUrl, false)
+
+            // 下载条目并返回路径和错误
+            path, err := cur.download(test.entry, &progress.Manual{})
+            if err != nil {
+                t.Fatalf("could not download entry: %+v", err)
+            }
+
+            // 检查是否进行了适当的获取调用
+            if !getter.calls.Contains(test.expectedURL) {
+                t.Fatalf("never made the appropriate fetch call: %+v", getter.calls)
+            }
+
+            // 打开文件并检查错误
+            f, err := fs.Open(path)
+            if err != nil {
+                t.Fatalf("no db file: %+v", err)
+            }
+
+            // 读取文件内容并检查错误
+            actual, err := afero.ReadAll(f)
+            if err != nil {
+                t.Fatalf("bad db file read: %+v", err)
+            }
+
+            // 检查实际内容是否与预期内容相符
+            if string(actual) != contents {
+                t.Fatalf("bad contents: %+v", string(actual))
+            }
+        })
+    }
+func TestCuratorValidate(t *testing.T) {
+    // 定义测试用例数组，包含多个结构体，每个结构体表示一个测试用例
+    tests := []struct {
+        name              string      // 测试用例名称
+        fixture           string      // 测试用例的fixture路径
+        constraint        int         // 约束条件
+        cfgValidateDbHash bool        // 是否验证数据库哈希
+        err               bool        // 是否期望出现错误
     }{
         {
-            name:              "good checksum & good constraint",
-            fixture:           "test-fixtures/curator-validate/good-checksum",
-            # 其他测试用例的定义
-		{
-			# 配置是否验证数据库哈希值
-			cfgValidateDbHash: true,
-			# 约束条件
-			constraint:        1,
-			# 错误标识
-			err:               false,
-		},
-		{
-			# 测试名称
-			name:              "good checksum & bad constraint",
-			# 测试数据路径
-			fixture:           "test-fixtures/curator-validate/good-checksum",
-			# 配置是否验证数据库哈希值
-			cfgValidateDbHash: true,
-			# 约束条件
-			constraint:        2,
-			# 预期结果为错误
-			err:               true,
-		},
-		{
-			# 测试名称
-			name:              "bad checksum & good constraint",
-			# 测试数据路径
-			fixture:           "test-fixtures/curator-validate/bad-checksum",
-			# 配置是否验证数据库哈希值
-			cfgValidateDbHash: true,
-			# 约束条件
-			constraint:        1,
-			# 预期结果为错误
-			err:               true,
-		},
-		{
-			# 测试名称
-			name:              "bad checksum & bad constraint",
-# 定义测试用例数组，每个元素包含不同的测试参数
-tests := []struct {
-    name:              string,  # 测试用例名称
-    fixture:           string,  # 测试用例使用的文件路径
-    cfgValidateDbHash: bool,    # 是否验证数据库哈希值的配置
-    constraint:        int,     # 约束条件
-    err:               bool,    # 期望是否出现错误
-}
-
-# 遍历测试用例数组，依次执行每个测试用例
-for _, test := range tests {
-    # 使用测试用例的名称创建子测试
-    t.Run(test.name, func(t *testing.T) {
-        # 定义 metadataUrl 变量并赋值
-        metadataUrl := "http://metadata.io"
-        
-        # 创建一个新的操作系统文件系统
-        fs := afero.NewOsFs()
-        
-        # 创建一个新的测试 getter 对象
-        getter := newTestGetter(fs, nil, nil)
+            name:              "good checksum & good constraint",  // 测试用例1：好的校验和和好的约束条件
+            fixture:           "test-fixtures/curator-validate/good-checksum",  // 测试用例1的fixture路径
+            cfgValidateDbHash: true,  // 测试用例1是否验证数据库哈希
+            constraint:        1,     // 测试用例1的约束条件
+            err:               false, // 测试用例1是否期望出现错误
+        },
+        {
+            name:              "good checksum & bad constraint",  // 测试用例2：好的校验和和坏的约束条件
+            fixture:           "test-fixtures/curator-validate/good-checksum",  // 测试用例2的fixture路径
+            cfgValidateDbHash: true,  // 测试用例2是否验证数据库哈希
+            constraint:        2,     // 测试用例2的约束条件
+            err:               true,  // 测试用例2是否期望出现错误
+        },
+        {
+            name:              "bad checksum & good constraint",  // 测试用例3：坏的校验和和好的约束条件
+            fixture:           "test-fixtures/curator-validate/bad-checksum",  // 测试用例3的fixture路径
+            cfgValidateDbHash: true,  // 测试用例3是否验证数据库哈希
+            constraint:        1,     // 测试用例3的约束条件
+            err:               true,  // 测试用例3是否期望出现错误
+        },
+        {
+            name:              "bad checksum & bad constraint",  // 测试用例4：坏的校验和和坏的约束条件
+            fixture:           "test-fixtures/curator-validate/bad-checksum",  // 测试用例4的fixture路径
+            cfgValidateDbHash: true,  // 测试用例4是否验证数据库哈希
+            constraint:        2,     // 测试用例4的约束条件
+            err:               true,  // 测试用例4是否期望出现错误
+        },
+        {
+            name:              "bad checksum ignored on config exception",  // 测试用例5：在配置异常时忽略坏的校验和
+            fixture:           "test-fixtures/curator-validate/bad-checksum",  // 测试用例5的fixture路径
+            cfgValidateDbHash: false,  // 测试用例5是否验证数据库哈希
+            constraint:        1,     // 测试用例5的约束条件
+            err:               false, // 测试用例5是否期望出现错误
+        },
     }
 }
-// 创建一个新的测试 Curator 对象，传入测试参数和配置信息
-cur := newTestCurator(t, fs, getter, "/tmp/dbdir", metadataUrl, test.cfgValidateDbHash)
+    # 遍历测试用例列表
+    for _, test := range tests {
+        # 使用测试名称创建子测试
+        t.Run(test.name, func(t *testing.T) {
+            # 设置元数据URL
+            metadataUrl := "http://metadata.io"
 
-// 设置 Curator 对象的目标模式为测试约束
-cur.targetSchema = test.constraint
+            # 创建一个新的操作系统文件系统
+            fs := afero.NewOsFs()
+            # 创建一个新的测试获取器
+            getter := newTestGetter(fs, nil, nil)
+            # 创建一个新的测试策展者
+            cur := newTestCurator(t, fs, getter, "/tmp/dbdir", metadataUrl, test.cfgValidateDbHash)
 
-// 验证数据完整性，返回元数据和错误信息
-md, err := cur.validateIntegrity(test.fixture)
+            # 设置当前目标模式为测试约束
+            cur.targetSchema = test.constraint
 
-// 如果没有错误但是预期有错误，则输出错误信息
-if err == nil && test.err {
-    t.Errorf("expected an error but got none")
-} else if err != nil && !test.err {
-    // 如果有错误但是预期没有错误，则输出错误信息和元数据
-    assert.NotZero(t, md)
-    t.Errorf("expected no error, got: %+v", err)
-}
+            # 验证完整性并返回元数据和错误
+            md, err := cur.validateIntegrity(test.fixture)
 
-// 测试 CuratorDBPathHasSchemaVersion 函数
-func TestCuratorDBPathHasSchemaVersion(t *testing.T) {
-    // 创建一个新的测试 Curator 对象，传入测试参数和配置信息
+            # 如果没有错误但测试用例期望有错误，则输出错误信息
+            if err == nil && test.err {
+                t.Errorf("expected an error but got none")
+            # 如果有错误但测试用例期望没有错误，则输出错误信息
+            } else if err != nil && !test.err {
+                # 断言元数据不为空
+                assert.NotZero(t, md)
+                t.Errorf("expected no error, got: %+v", err)
+            }
+        })
+    }
+# 测试数据库路径是否包含指定的模式版本
+func TestCuratorDBPathHasSchemaVersion(t *testing.T):
+    # 创建内存映射文件系统
     fs := afero.NewMemMapFs()
+    # 设置数据库根路径
     dbRootPath := "/tmp/dbdir"
+    # 创建测试的 Curator 对象
     cur := newTestCurator(t, fs, nil, dbRootPath, "http://metadata.io", false)
-# 使用断言来验证目标目录是否与预期目录相匹配
-assert.Equal(t, path.Join(dbRootPath, strconv.Itoa(cur.targetSchema)), cur.dbDir, "unexpected dir")
-# 使用断言来验证目标路径是否包含预期路径
-assert.Contains(t, cur.dbPath, path.Join(dbRootPath, strconv.Itoa(cur.targetSchema)), "unexpected path")
-}
 
-# 测试验证数据过期性的函数
+    # 断言数据库目录是否符合预期
+    assert.Equal(t, path.Join(dbRootPath, strconv.Itoa(cur.targetSchema)), cur.dbDir, "unexpected dir")
+    # 断言数据库路径是否包含指定模式版本
+    assert.Contains(t, cur.dbPath, path.Join(dbRootPath, strconv.Itoa(cur.targetSchema)), "unexpected path")
+
+# 验证数据是否过期
 func TestCurator_validateStaleness(t *testing.T):
     # 定义结构体字段
     type fields struct:
@@ -385,7 +355,7 @@ func TestCurator_validateStaleness(t *testing.T):
 
     # 获取当前时间
     now := time.Now().UTC()
-    # 测试用例
+    # 定义测试用例
     tests := []struct:
         name    string
         cur     *Curator
@@ -393,52 +363,54 @@ func TestCurator_validateStaleness(t *testing.T):
         wantErr assert.ErrorAssertionFunc
     :
         {
-# 创建一个名为 "no-validation" 的测试用例，设置 md 字段为当前时间
-{
-    name: "no-validation",
-    fields: fields{
-        md: Metadata{Built: now},
-    },
-    wantErr: assert.NoError,
-},
-# 创建一个名为 "up-to-date" 的测试用例，设置 maxAllowedDBAge 字段为2小时，validateAge 字段为True，md 字段为当前时间
-{
-    name: "up-to-date",
-    fields: fields{
-        maxAllowedDBAge: 2 * time.Hour,
-        validateAge:     true,
-        md:              Metadata{Built: now},
-    },
-    wantErr: assert.NoError,
-},
-# 创建一个名为 "stale-data" 的测试用例，设置 maxAllowedDBAge 字段为1小时，validateAge 字段为True
-// 创建一个包含元数据的结构体，其中包含了构建时间
-md: Metadata{Built: now.UTC().Add(-4 * time.Hour)},
-// 定义一个函数，用于检查是否返回的错误包含特定的信息
-wantErr: func(t assert.TestingT, err error, i ...interface{}) bool {
-    return assert.ErrorContains(t, err, "the vulnerability database was built")
-},
-// 定义一个测试用例，用于测试过期数据且不进行验证的情况
-name: "stale-data-no-validation",
-fields: fields{
-    // 设置最大允许的数据库年龄为1小时
-    maxAllowedDBAge: time.Hour,
-    // 设置不进行验证
-    validateAge:     false,
-    // 设置元数据的构建时间为4小时前
-    md:              Metadata{Built: now.Add(-4 * time.Hour)},
-},
-// 定义一个函数，用于检查是否返回的错误为无错误
-wantErr: assert.NoError,
-// 遍历测试用例
-for _, tt := range tests {
-    // 运行测试用例
-    t.Run(tt.name, func(t *testing.T) {
-        // 创建一个Curator对象，并设置验证年龄
-        c := &Curator{
-            validateAge:        tt.fields.validateAge,
-# 设置maxAllowedBuiltAge字段为tt.fields.maxAllowedDBAge的值
-maxAllowedBuiltAge: tt.fields.maxAllowedDBAge,
-# 调用validateStaleness方法，传入tt.fields.md作为参数，验证是否符合预期
-tt.wantErr(t, c.validateStaleness(tt.fields.md), fmt.Sprintf("validateStaleness(%v)", tt.fields.md))
+            name: "no-validation",
+            fields: fields{
+                md: Metadata{Built: now},
+            },
+            wantErr: assert.NoError,
+        },
+        {
+            name: "up-to-date",
+            fields: fields{
+                maxAllowedDBAge: 2 * time.Hour,
+                validateAge:     true,
+                md:              Metadata{Built: now},
+            },
+            wantErr: assert.NoError,
+        },
+        {
+            name: "stale-data",
+            fields: fields{
+                maxAllowedDBAge: time.Hour,
+                validateAge:     true,
+                md:              Metadata{Built: now.UTC().Add(-4 * time.Hour)},
+            },
+            wantErr: func(t assert.TestingT, err error, i ...interface{}) bool:
+                return assert.ErrorContains(t, err, "the vulnerability database was built")
+            ,
+        },
+        {
+            name: "stale-data-no-validation",
+            fields: fields{
+                maxAllowedDBAge: time.Hour,
+                validateAge:     false,
+                md:              Metadata{Built: now.Add(-4 * time.Hour)},
+            },
+            wantErr: assert.NoError,
+        },
+    }
+    # 遍历测试用例切片，每个测试用例包含名称和测试函数
+    for _, tt := range tests:
+        # 使用测试名称创建子测试，运行测试函数
+        t.Run(tt.name, func(t *testing.T) {
+            # 创建 Curator 对象，设置属性值为测试用例中的字段值
+            c := &Curator{
+                validateAge:        tt.fields.validateAge,
+                maxAllowedBuiltAge: tt.fields.maxAllowedDBAge,
+            }
+            # 调用测试用例中的 wantErr 函数，验证结果是否符合预期
+            tt.wantErr(t, c.validateStaleness(tt.fields.md), fmt.Sprintf("validateStaleness(%v)", tt.fields.md))
+        })
+    }
+# 闭合前面的函数定义
 ```

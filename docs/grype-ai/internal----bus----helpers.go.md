@@ -1,33 +1,45 @@
 # `grype\internal\bus\helpers.go`
 
 ```
+// 导入 bus 包
 package bus
 
+// 导入 go-partybus 包
 import (
-	"github.com/wagoodman/go-partybus" // 导入第三方库 go-partybus
+    "github.com/wagoodman/go-partybus"
 
-	"github.com/anchore/clio" // 导入 anchore 公司的 clio 库
-	"github.com/anchore/grype/grype/event" // 导入 anchore 公司的 grype 事件库
-	"github.com/anchore/grype/internal/redact" // 导入 anchore 公司的 grype 内部 redact 库
+    // 导入 anchore 的 clio 包
+    "github.com/anchore/clio"
+    // 导入 anchore 的 grype 包下的 event 包
+    "github.com/anchore/grype/grype/event"
+    // 导入 anchore 的 grype 包下的 internal/redact 包
+    "github.com/anchore/grype/internal/redact"
 )
 
+// 定义 Exit 函数
 func Exit() {
-	Publish(clio.ExitEvent(false)) // 调用 Publish 函数，发布 clio 库的 ExitEvent 事件，参数为 false
+    // 发布一个 clio.ExitEvent 事件，参数为 false
+    Publish(clio.ExitEvent(false))
 }
 
+// 定义 ExitWithInterrupt 函数
 func ExitWithInterrupt() {
-	Publish(clio.ExitEvent(true)) // 调用 Publish 函数，发布 clio 库的 ExitEvent 事件，参数为 true
+    // 发布一个 clio.ExitEvent 事件，参数为 true
+    Publish(clio.ExitEvent(true))
 }
 
+// 定义 Report 函数
 func Report(report string) {
-	Publish(partybus.Event{ // 调用 Publish 函数，发布 partybus 库的 Event 事件，参数为 report 字符串
-# 定义一个事件类型为CLIReport的事件，值为对report进行redact.Apply()处理后的结果
-Type:  event.CLIReport,
-Value: redact.Apply(report),
-})
+    // 发布一个 partybus.Event 事件，类型为 event.CLIReport，值为经过 redact.Apply 处理的 report
+    Publish(partybus.Event{
+        Type:  event.CLIReport,
+        Value: redact.Apply(report),
+    })
+}
 
-# 定义一个通知函数，发布一个事件类型为CLINotification的事件，值为message
+// 定义 Notify 函数
 func Notify(message string) {
+    // 发布一个 partybus.Event 事件，类型为 event.CLINotification，值为 message
     Publish(partybus.Event{
         Type:  event.CLINotification,
         Value: message,

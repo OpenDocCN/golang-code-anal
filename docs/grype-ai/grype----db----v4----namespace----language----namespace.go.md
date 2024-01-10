@@ -1,104 +1,82 @@
 # `grype\grype\db\v4\namespace\language\namespace.go`
 
 ```
-// 导入语言包
 package language
 
-// 导入所需的包
 import (
-	"errors" // 引入错误处理
-	"fmt" // 引入格式化输出
-	"strings" // 引入字符串处理
-	"github.com/anchore/grype/grype/db/v4/pkg/resolver" // 引入解析器包
-	syftPkg "github.com/anchore/syft/syft/pkg" // 引入syftPkg包并重命名为syftPkg
+    "errors"  // 导入 errors 包，用于创建错误
+    "fmt"     // 导入 fmt 包，用于格式化输出
+    "strings" // 导入 strings 包，用于处理字符串
+
+    "github.com/anchore/grype/grype/db/v4/pkg/resolver" // 导入 resolver 包
+    syftPkg "github.com/anchore/syft/syft/pkg"           // 导入 syftPkg 别名包
 )
 
-// 定义常量ID为"language"
-const ID = "language"
+const ID = "language" // 定义常量 ID 为 "language"
 
-// 定义Namespace结构体
-type Namespace struct {
-	provider    string // 供应商
-	language    syftPkg.Language // 语言
-	packageType syftPkg.Type // 包类型
-	resolver    resolver.Resolver // 解析器
-}
-// NewNamespace creates a new Namespace object with the given provider, language, package type, and resolver
-func NewNamespace(provider string, language syftPkg.Language, packageType syftPkg.Type) *Namespace {
-	// Get the resolver for the given language
-	r, _ := resolver.FromLanguage(language)
-
-	// Return a new Namespace object with the provided attributes
-	return &Namespace{
-		provider:    provider,
-		language:    language,
-		packageType: packageType,
-		resolver:    r,
-	}
+type Namespace struct { // 定义 Namespace 结构体
+    provider    string           // provider 字段，类型为字符串
+    language    syftPkg.Language // language 字段，类型为 syftPkg.Language
+    packageType syftPkg.Type     // packageType 字段，类型为 syftPkg.Type
+    resolver    resolver.Resolver // resolver 字段，类型为 resolver.Resolver
 }
 
-// FromString creates a Namespace object from the given namespace string
-func FromString(namespaceStr string) (*Namespace, error) {
-	// Check if the namespace string is empty
-	if namespaceStr == "" {
-		return nil, errors.New("unable to create language namespace from empty string")
-	}
+func NewNamespace(provider string, language syftPkg.Language, packageType syftPkg.Type) *Namespace { // 定义 NewNamespace 函数
+    r, _ := resolver.FromLanguage(language) // 调用 resolver.FromLanguage 函数
 
-	// Split the namespace string into components based on the ":" delimiter
-	components := strings.Split(namespaceStr, ":")
-
-	// Check if the number of components is not equal to 3 or 4, and return an error if so
-	if len(components) != 3 && len(components) != 4 {
-		return nil, fmt.Errorf("unable to create language namespace from %s: incorrect number of components", namespaceStr)
-	}
-	}
-
-	// 检查组件中的第二个元素是否为ID，如果不是则返回错误
-	if components[1] != ID {
-		return nil, fmt.Errorf("unable to create language namespace from %s: type %s is incorrect", namespaceStr, components[1])
-	}
-
-	// 初始化包类型为空字符串
-	packageType := ""
-
-	// 如果组件的长度为4，则将第四个元素赋给包类型
-	if len(components) == 4 {
-		packageType = components[3]
-	}
-
-	// 返回一个新的命名空间对象，其中包含组件的第一个元素作为命名空间名称，第三个元素作为语言类型，第四个元素作为包类型
-	return NewNamespace(components[0], syftPkg.Language(components[2]), syftPkg.Type(packageType)), nil
+    return &Namespace{ // 返回 Namespace 结构体指针
+        provider:    provider, // 设置 provider 字段
+        language:    language, // 设置 language 字段
+        packageType: packageType, // 设置 packageType 字段
+        resolver:    r, // 设置 resolver 字段
+    }
 }
 
-// 返回命名空间的提供者
-func (n *Namespace) Provider() string {
-	return n.provider
+func FromString(namespaceStr string) (*Namespace, error) { // 定义 FromString 函数
+    if namespaceStr == "" { // 如果 namespaceStr 为空
+        return nil, errors.New("unable to create language namespace from empty string") // 返回错误
+    }
+
+    components := strings.Split(namespaceStr, ":") // 使用冒号分割 namespaceStr 字符串
+
+    if len(components) != 3 && len(components) != 4 { // 如果分割后的数组长度不为 3 或 4
+        return nil, fmt.Errorf("unable to create language namespace from %s: incorrect number of components", namespaceStr) // 返回错误
+    }
+
+    if components[1] != ID { // 如果 components[1] 不等于 ID
+        return nil, fmt.Errorf("unable to create language namespace from %s: type %s is incorrect", namespaceStr, components[1]) // 返回错误
+    }
+
+    packageType := "" // 初始化 packageType 为空字符串
+
+    if len(components) == 4 { // 如果分割后的数组长度为 4
+        packageType = components[3] // 设置 packageType 为 components[3]
+    }
+
+    return NewNamespace(components[0], syftPkg.Language(components[2]), syftPkg.Type(packageType)), nil // 返回 NewNamespace 函数的结果
 }
 
-// 返回命名空间的语言类型
-func (n *Namespace) Language() syftPkg.Language {
-# 返回命名空间的语言
-func (n *Namespace) Language() string {
-	return n.language
+func (n *Namespace) Provider() string { // 定义 Provider 方法
+    return n.provider // 返回 provider 字段
 }
 
-# 返回命名空间的包类型
-func (n *Namespace) PackageType() syftPkg.Type {
-	return n.packageType
+func (n *Namespace) Language() syftPkg.Language { // 定义 Language 方法
+    return n.language // 返回 language 字段
 }
 
-# 返回命名空间的解析器
-func (n *Namespace) Resolver() resolver.Resolver {
-	return n.resolver
+func (n *Namespace) PackageType() syftPkg.Type { // 定义 PackageType 方法
+    return n.packageType // 返回 packageType 字段
 }
 
-# 返回命名空间的字符串表示形式
-func (n Namespace) String() string {
-    # 如果包类型不为空，则返回包含包类型的字符串
-	if n.packageType != "" {
-		return fmt.Sprintf("%s:%s:%s:%s", n.provider, ID, n.language, n.packageType)
-	}
-    # 否则返回不包含包类型的字符串
-	return fmt.Sprintf("%s:%s:%s", n.provider, ID, n.language)
+func (n *Namespace) Resolver() resolver.Resolver { // 定义 Resolver 方法
+    return n.resolver // 返回 resolver 字段
+}
+
+func (n Namespace) String() string { // 定义 String 方法
+    if n.packageType != "" { // 如果 packageType 不为空
+        return fmt.Sprintf("%s:%s:%s:%s", n.provider, ID, n.language, n.packageType) // 返回格式化后的字符串
+    }
+
+    return fmt.Sprintf("%s:%s:%s", n.provider, ID, n.language) // 返回格式化后的字符串
 }
 ```

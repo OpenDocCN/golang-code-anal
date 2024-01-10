@@ -1,18 +1,16 @@
 # `grype\grype\store\store.go`
 
 ```
-// 导入所需的包
-package store
-
+# 导入 store 包所需的依赖包
 import (
-	"github.com/anchore/grype/grype/match"  // 导入匹配相关的包
-	"github.com/anchore/grype/grype/vulnerability"  // 导入漏洞相关的包
+    "github.com/anchore/grype/grype/match"  # 导入 match 包
+    "github.com/anchore/grype/grype/vulnerability"  # 导入 vulnerability 包
 )
 
-// 定义 Store 结构体，包含漏洞提供者、元数据提供者和排除提供者
+# 定义 Store 结构体，包含 vulnerability.Provider、vulnerability.MetadataProvider 和 match.ExclusionProvider 接口
 type Store struct {
-	vulnerability.Provider  // 漏洞提供者
-	vulnerability.MetadataProvider  // 元数据提供者
-	match.ExclusionProvider  // 排除提供者
+    vulnerability.Provider  # Store 结构体实现了 vulnerability.Provider 接口
+    vulnerability.MetadataProvider  # Store 结构体实现了 vulnerability.MetadataProvider 接口
+    match.ExclusionProvider  # Store 结构体实现了 match.ExclusionProvider 接口
 }
 ```

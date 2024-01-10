@@ -2,57 +2,45 @@
 
 ```
 package ui
-# 声明了一个名为 ui 的包
 
 import (
-	"os"
-	# 导入了 os 包，用于操作系统功能
+    "os"  // 导入操作系统相关的包
 
-	"github.com/wagoodman/go-partybus"
-	# 导入了 wagoodman/go-partybus 包
+    "github.com/wagoodman/go-partybus"  // 导入第三方库
 
-	"github.com/anchore/clio"
-	# 导入了 anchore/clio 包，用于命令行输入输出
-
-	"github.com/anchore/grype/grype/event"
-	# 导入了 anchore/grype/grype/event 包，用于事件处理
+    "github.com/anchore/clio"  // 导入 anchore/clio 包
+    "github.com/anchore/grype/grype/event"  // 导入 anchore/grype/grype/event 包
 )
 
-var _ clio.UI = (*NoUI)(nil)
-# 声明了一个变量，用于实现 clio.UI 接口
+var _ clio.UI = (*NoUI)(nil)  // 定义一个变量，用于实现 clio.UI 接口
 
 type NoUI struct {
-	finalizeEvents []partybus.Event
-	subscription   partybus.Unsubscribable
-	quiet          bool
+    finalizeEvents []partybus.Event  // 定义一个存储 partybus.Event 的切片
+    subscription   partybus.Unsubscribable  // 定义一个 partybus.Unsubscribable 类型的变量
+    quiet          bool  // 定义一个布尔类型的变量
 }
-# 声明了一个名为 NoUI 的结构体，包含了 finalizeEvents、subscription 和 quiet 三个字段
 
 func None(quiet bool) *NoUI {
-# 声明了一个名为 None 的函数，接受一个 bool 类型的参数 quiet，并返回一个 NoUI 结构体指针
-# 创建一个 NoUI 结构体的实例，并设置 quiet 属性
-return &NoUI{
-    quiet: quiet,
-}
-
-# 设置 NoUI 实例的订阅对象
-func (n *NoUI) Setup(subscription partybus.Unsubscribable) error {
-    n.subscription = subscription
-    return nil
-}
-
-# 处理事件的方法，根据事件类型进行不同的处理
-func (n *NoUI) Handle(e partybus.Event) error {
-    switch e.Type {
-    case event.CLIReport, event.CLINotification:
-        # 将事件添加到 finalizeEvents 列表中，以便在 UI 终止时显示到屏幕上（或执行其他事件）
-        n.finalizeEvents = append(n.finalizeEvents, e)
+    return &NoUI{
+        quiet: quiet,  // 返回一个 NoUI 类型的指针，初始化 quiet 字段
     }
-    return nil
 }
 
-# 清理方法，根据参数进行不同的清理操作
+func (n *NoUI) Setup(subscription partybus.Unsubscribable) error {
+    n.subscription = subscription  // 设置 subscription 字段为传入的参数
+    return nil  // 返回空值
+}
+
+func (n *NoUI) Handle(e partybus.Event) error {
+    switch e.Type {  // 根据事件类型进行判断
+    case event.CLIReport, event.CLINotification:  // 如果事件类型是 CLIReport 或 CLINotification
+        // keep these for when the UI is terminated to show to the screen (or perform other events)
+        n.finalizeEvents = append(n.finalizeEvents, e)  // 将事件添加到 finalizeEvents 切片中
+    }
+    return nil  // 返回空值
+}
+
 func (n NoUI) Teardown(_ bool) error {
-# 返回一个新的PostUIEventWriter对象，该对象将事件写入标准输出和标准错误流
-return newPostUIEventWriter(os.Stdout, os.Stderr).write(n.quiet, n.finalizeEvents...)
+    return newPostUIEventWriter(os.Stdout, os.Stderr).write(n.quiet, n.finalizeEvents...)  // 调用 newPostUIEventWriter 方法，并传入参数进行写入操作
+}
 ```

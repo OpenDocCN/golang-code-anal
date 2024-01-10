@@ -1,64 +1,74 @@
 # `grype\grype\version\kb_contraint.go`
 
 ```
-// 定义一个名为 version 的包
+package version
 
-// 引入 fmt 包，用于格式化输入输出
+import (
+    "fmt"
+)
 
-// 定义 kbConstraint 结构体，包含 raw 字符串和 constraintExpression 表达式
+type kbConstraint struct {
+    raw        string
+    expression constraintExpression
+}
 
-// 定义 newKBConstraint 函数，接受一个 raw 字符串作为参数，返回一个 kbConstraint 结构体和一个错误
+func newKBConstraint(raw string) (kbConstraint, error) {
+    if raw == "" {
+        // 如果约束条件为空，则始终满足
+        return kbConstraint{}, nil
+    }
 
-// 如果 raw 字符串为空，则返回一个空的 kbConstraint 结构体和一个空的错误
+    // 解析约束表达式
+    constraints, err := newConstraintExpression(raw, newKBComparator)
+    if err != nil {
+        return kbConstraint{}, fmt.Errorf("unable to parse kb constraint phrase: %w", err)
+    }
 
-// 调用 newConstraintExpression 函数，将 raw 字符串转换为 constraintExpression 表达式，并使用 newKBComparator 函数进行比较
-
-// 如果转换过程中出现错误，则返回一个空的 kbConstraint 结构体和一个包含错误信息的错误
-	}
-
-	return kbConstraint{
-		raw:        raw,  // 返回一个kbConstraint对象，其中包含原始数据
-		expression: constraints,  // 返回一个kbConstraint对象，其中包含约束条件
-	}, nil  // 返回nil，表示没有错误发生
+    return kbConstraint{
+        raw:        raw,
+        expression: constraints,
+    }, nil
 }
 
 func newKBComparator(unit constraintUnit) (Comparator, error) {
-	// XXX unit.version is probably not needed because newKBVersion doesn't do anything
-	ver := newKBVersion(unit.version)  // 创建一个新的KB版本对象
-	return &ver, nil  // 返回新创建的KB版本对象和nil，表示没有错误发生
+    // XXX unit.version is probably not needed because newKBVersion doesn't do anything
+    // 创建新的 KB 版本对象
+    ver := newKBVersion(unit.version)
+    return &ver, nil
 }
 
 func (c kbConstraint) supported(format Format) bool {
-	return format == KBFormat  // 判断给定的格式是否为KB格式，返回布尔值
+    // 判断是否支持指定格式
+    return format == KBFormat
 }
 
 func (c kbConstraint) Satisfied(version *Version) (bool, error) {
-	if c.raw == "" {  // 如果原始数据为空
-// 如果约束为空，则永远不满足，返回错误信息
-return false, &NonFatalConstraintError{
-    constraint: c,
-    version:    version,
-    message:    "Unexpected data in DB: Empty raw version constraint.",
-}
+    if c.raw == "" {
+        // 如果约束条件为空，则永远不满足，返回错误信息
+        return false, &NonFatalConstraintError{
+            constraint: c,
+            version:    version,
+            message:    "Unexpected data in DB: Empty raw version constraint.",
+        }
+    }
 
-// 如果版本为空，则满足约束，返回nil
-if version == nil {
-    return true, nil
-}
+    if version == nil {
+        return true, nil
+    }
 
-// 如果版本格式不受支持，则返回错误信息
-if !c.supported(version.Format) {
-    return false, fmt.Errorf("(kb) unsupported format: %s", version.Format)
-}
+    if !c.supported(version.Format) {
+        // 如果不支持指定格式，返回错误信息
+        return false, fmt.Errorf("(kb) unsupported format: %s", version.Format)
+    }
 
-// 返回约束表达式是否满足版本的结果
-return c.expression.satisfied(version)
+    // 判断约束条件是否满足
+    return c.expression.satisfied(version)
 }
 
 func (c kbConstraint) String() string {
-# 如果原始数据为空，则返回带引号的原始数据和单位
-if c.raw == "":
-    return fmt.Sprintf("%q (kb)", c.raw)
-# 否则返回原始数据和单位
-return fmt.Sprintf("%s (kb)", c.raw)
+    if c.raw == "" {
+        return fmt.Sprintf("%q (kb)", c.raw)
+    }
+    return fmt.Sprintf("%s (kb)", c.raw)
+}
 ```

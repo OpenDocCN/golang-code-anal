@@ -1,190 +1,159 @@
 # `grype\grype\matcher\msrc\matcher_test.go`
 
 ```
-// 声明包名为msrc，表示该文件属于msrc包
 package msrc
 
-// 导入所需的包
 import (
-	"fmt" // 导入fmt包，用于格式化输出
-	"testing" // 导入testing包，用于编写测试函数
+    "fmt"  // 导入 fmt 包，用于格式化输出
+    "testing"  // 导入 testing 包，用于编写测试函数
 
-	"github.com/google/uuid" // 导入google/uuid包，用于生成UUID
-	"github.com/stretchr/testify/assert" // 导入testify/assert包，用于编写断言
-	"github.com/stretchr/testify/require" // 导入testify/require包，用于编写测试所需的条件
+    "github.com/google/uuid"  // 导入 google/uuid 包，用于生成 UUID
+    "github.com/stretchr/testify/assert"  // 导入 testify/assert 包，用于编写断言
+    "github.com/stretchr/testify/require"  // 导入 testify/require 包，用于编写测试所需的条件
 
-	"github.com/anchore/grype/grype/db" // 导入anchore/grype/grype/db包，用于与数据库交互
-	grypeDB "github.com/anchore/grype/grype/db/v5" // 导入anchore/grype/grype/db/v5包，用于与数据库交互
-	"github.com/anchore/grype/grype/distro" // 导入anchore/grype/grype/distro包，用于处理发行版信息
-	"github.com/anchore/grype/grype/pkg" // 导入anchore/grype/grype/pkg包，用于处理软件包信息
-	syftPkg "github.com/anchore/syft/syft/pkg" // 导入anchore/syft/syft/pkg包，用于处理软件包信息
+    "github.com/anchore/grype/grype/db"  // 导入 anchore/grype/grype/db 包，用于与漏洞数据库交互
+    grypeDB "github.com/anchore/grype/grype/db/v5"  // 导入 anchore/grype/grype/db/v5 包，用于与漏洞数据库交互
+    "github.com/anchore/grype/grype/distro"  // 导入 anchore/grype/grype/distro 包，用于处理发行版信息
+    "github.com/anchore/grype/grype/pkg"  // 导入 anchore/grype/grype/pkg 包，用于处理软件包信息
+    syftPkg "github.com/anchore/syft/syft/pkg"  // 导入 anchore/syft/syft/pkg 包，用于处理软件包信息
 )
 
-// 定义mockStore结构体，用于模拟存储
 type mockStore struct {
-	backend map[string]map[string][]grypeDB.Vulnerability // 定义backend字段，用于存储漏洞信息
+    backend map[string]map[string][]grypeDB.Vulnerability  // 定义一个模拟的漏洞存储结构
 }
-// 获取指定漏洞的详细信息
+
 func (s *mockStore) GetVulnerability(namespace, id string) ([]grypeDB.Vulnerability, error) {
-	//TODO implement me
-	// 抛出错误，提示需要实现该方法
-	panic("implement me")
+    //TODO implement me  // 获取指定命名空间和 ID 的漏洞信息
+    panic("implement me")  // 抛出异常，提示需要实现该方法
 }
 
-// 根据命名空间和名称搜索漏洞
 func (s *mockStore) SearchForVulnerabilities(namespace, name string) ([]grypeDB.Vulnerability, error) {
-	// 获取指定命名空间的漏洞映射
-	namespaceMap := s.backend[namespace]
-	// 如果命名空间映射为空，则返回空值
-	if namespaceMap == nil {
-		return nil, nil
-	}
-	// 返回命名空间和名称对应的漏洞列表
-	return namespaceMap[name], nil
+    namespaceMap := s.backend[namespace]  // 获取指定命名空间的漏洞映射
+    if namespaceMap == nil {
+        return nil, nil  // 如果映射为空，返回空值
+    }
+    return namespaceMap[name], nil  // 返回指定命名空间和名称的漏洞信息
 }
 
-// 获取所有漏洞信息
 func (s *mockStore) GetAllVulnerabilities() (*[]grypeDB.Vulnerability, error) {
-	// 返回空值
-	return nil, nil
+    return nil, nil  // 返回空值
 }
 
-// 获取所有漏洞的命名空间
 func (s *mockStore) GetVulnerabilityNamespaces() ([]string, error) {
-	// 创建一个空的字符串数组，用于存储漏洞命名空间
-	keys := make([]string, 0, len(s.backend))
-// 遍历 s.backend 中的键，并将其添加到 keys 切片中
-for k := range s.backend {
-	keys = append(keys, k)
+    keys := make([]string, 0, len(s.backend))  // 创建一个字符串切片，用于存储漏洞存储的键
+    for k := range s.backend {
+        keys = append(keys, k)  // 将漏洞存储的键添加到切片中
+    }
+
+    return keys, nil  // 返回漏洞存储的键
 }
 
-// 返回 keys 切片和空错误
-return keys, nil
-}
-
-// 测试 Matches 函数
 func TestMatches(t *testing.T) {
-	// 创建一个新的 distro 对象
-	d, err := distro.New(distro.Windows, "10816", "Windows Server 2016")
-	assert.NoError(t, err)
+    d, err := distro.New(distro.Windows, "10816", "Windows Server 2016")  // 创建一个 Windows 发行版对象
+    assert.NoError(t, err)  // 断言是否没有错误发生
+}
+    // 创建一个名为 mockStore 的结构体实例
+    store := mockStore{
+        backend: map[string]map[string][]grypeDB.Vulnerability{
 
-	// 创建一个 mockStore 对象，包含一个 backend 字段，该字段是一个 map，键为字符串，值为 map[string][]grypeDB.Vulnerability
-	store := mockStore{
-		backend: map[string]map[string][]grypeDB.Vulnerability{
+            // TODO: it would be ideal to test against something that constructs the namespace based on grype-db
+            // and not break the adaption of grype-db
+            // 使用 fmt.Sprintf 构建 Windows 版本的命名空间，并创建对应的漏洞映射
+            fmt.Sprintf("msrc:distro:windows:%s", d.RawVersion): {
+                // 使用 Windows 版本作为键，存储对应的漏洞列表
+                d.RawVersion: []grypeDB.Vulnerability{
+                    {
+                        ID:                "CVE-2016-3333",
+                        VersionConstraint: "3200970 || 878787 || base",
+                        VersionFormat:     "kb",
+                    },
+                    {
+                        // 不匹配，版本约束不适用
+                        ID:                "CVE-2020-made-up",
+                        VersionConstraint: "778786 || 878787 || base",
+                        VersionFormat:     "kb",
+                    },
+                },
+                // 不匹配产品 ID
+                "something-else": []grypeDB.Vulnerability{
+                    {
+                        ID:                "CVE-2020-also-made-up",
+                        VersionConstraint: "3200970 || 878787 || base",
+                        VersionFormat:     "kb",
+                    },
+                },
+            },
+        },
+    }
 
-			// TODO: 最好测试一些基于 grype-db 构建命名空间的东西，并且不破坏对 grype-db 的适配
-			fmt.Sprintf("msrc:distro:windows:%s", d.RawVersion): {
-				d.RawVersion: []grypeDB.Vulnerability{
-					{
-						ID:                "CVE-2016-3333",
-// 版本约束为 "3200970 || 878787 || base"
-// 版本格式为 "kb"
-{
-    ID: "CVE-2020-real",
-    VersionConstraint: "3200970 || 878787 || base",
-    VersionFormat: "kb",
-},
-// 不匹配，版本约束不适用
-{
-    ID: "CVE-2020-made-up",
-    VersionConstraint: "778786 || 878787 || base",
-    VersionFormat: "kb",
-},
-// 不匹配产品ID
-"something-else": []grypeDB.Vulnerability{
-    {
-        ID: "CVE-2020-also-made-up",
-        VersionConstraint: "3200970 || 878787 || base",
-        VersionFormat: "kb",
+    // 使用 mockStore 创建一个新的漏洞提供者
+    provider, err := db.NewVulnerabilityProvider(&store)
+    require.NoError(t, err)
+
+    // 定义测试用例
+    tests := []struct {
+        name            string
+        pkg             pkg.Package
+        expectedVulnIDs []string
+    # 定义一个包含测试用例的切片，每个测试用例包含名称、包信息、期望的漏洞ID列表
+    tests := []struct {
+        name: "direct KB match",
+        pkg: pkg.Package{
+            ID:      pkg.ID(uuid.NewString()),
+            Name:    d.RawVersion,
+            Version: "3200970",
+            Type:    syftPkg.KbPkg,
+        },
+        expectedVulnIDs: []string{
+            "CVE-2016-3333",
+        },
     },
-},
-	}
+    {
+        name: "multiple direct KB match",
+        pkg: pkg.Package{
+            ID:      pkg.ID(uuid.NewString()),
+            Name:    d.RawVersion,
+            Version: "878787",
+            Type:    syftPkg.KbPkg,
+        },
+        expectedVulnIDs: []string{
+            "CVE-2016-3333",
+            "CVE-2020-made-up",
+        },
+    },
+    {
+        name: "no KBs found",
+        pkg: pkg.Package{
+            ID:   pkg.ID(uuid.NewString()),
+            Name: d.RawVersion,
+            // this is the assumed version if no KBs are found
+            Version: "base",
+            Type:    syftPkg.KbPkg,
+        },
+        expectedVulnIDs: []string{
+            "CVE-2016-3333",
+            "CVE-2020-made-up",
+        },
+    }
 
-	// 创建一个新的漏洞提供者对象，使用存储对象作为参数
-	provider, err := db.NewVulnerabilityProvider(&store)
-	// 确保没有错误发生
-	require.NoError(t, err)
-
-	// 定义测试用例
-	tests := []struct {
-		name            string
-		pkg             pkg.Package
-		expectedVulnIDs []string
-	}{
-		// 第一个测试用例
-		{
-			name: "direct KB match",
-			// 定义一个包对象
-			pkg: pkg.Package{
-				ID:      pkg.ID(uuid.NewString()),
-				Name:    d.RawVersion,
-				Version: "3200970",
-				Type:    syftPkg.KbPkg,
-			},
-			// 期望的漏洞ID列表
-			expectedVulnIDs: []string{
-				"CVE-2016-3333",
-		},
-		},
-		{
-			# 定义测试用例名称
-			name: "multiple direct KB match",
-			# 定义包的信息
-			pkg: pkg.Package{
-				# 生成唯一的包ID
-				ID:      pkg.ID(uuid.NewString()),
-				# 设置包的名称
-				Name:    d.RawVersion,
-				# 设置包的版本
-				Version: "878787",
-				# 设置包的类型为知识库包
-				Type:    syftPkg.KbPkg,
-			},
-			# 期望的漏洞ID列表
-			expectedVulnIDs: []string{
-				"CVE-2016-3333",
-				"CVE-2020-made-up",
-			},
-		},
-		{
-			# 定义测试用例名称
-			name: "no KBs found",
-			# 定义包的信息
-			pkg: pkg.Package{
-				# 生成唯一的包ID
-				ID:   pkg.ID(uuid.NewString()),
-				# 设置包的名称
-				Name: d.RawVersion,
-				// 如果没有找到 KBs，则假定这是版本
-				Version: "base",
-				// 设置类型为 KB 包
-				Type:    syftPkg.KbPkg,
-			},
-			// 期望的漏洞 ID 列表
-			expectedVulnIDs: []string{
-				"CVE-2016-3333",
-				"CVE-2020-made-up",
-			},
-		},
-	}
-
-	// 遍历测试用例
-	for _, test := range tests {
-		// 对每个测试用例运行测试
-		t.Run(test.name, func(t *testing.T) {
-			// 创建匹配器对象
-			m := Matcher{}
-			// 进行匹配，获取匹配结果和可能的错误
-			matches, err := m.Match(provider, d, test.pkg)
-			// 断言是否没有错误发生
-			assert.NoError(t, err)
-			// 创建实际漏洞 ID 列表
-			var actualVulnIDs []string
-			// 遍历匹配结果，获取漏洞 ID 并添加到实际漏洞 ID 列表中
-			for _, a := range matches {
-				actualVulnIDs = append(actualVulnIDs, a.Vulnerability.ID)
-			}
-# 使用 assert.ElementsMatch 方法来比较两个切片（slice）是否包含相同的元素，顺序可以不同
-# t 是测试的对象，test.expectedVulnIDs 是预期的漏洞 ID，actualVulnIDs 是实际的漏洞 ID
-# 如果两个切片包含的元素相同，则测试通过，否则测试失败
+    # 遍历测试用例切片，对每个测试用例执行测试
+    for _, test := range tests {
+        t.Run(test.name, func(t *testing.T) {
+            # 创建匹配器对象
+            m := Matcher{}
+            # 执行匹配，获取匹配结果和可能的错误
+            matches, err := m.Match(provider, d, test.pkg)
+            # 断言没有错误发生
+            assert.NoError(t, err)
+            # 创建一个空的实际漏洞ID列表
+            var actualVulnIDs []string
+            # 遍历匹配结果，将漏洞ID添加到实际漏洞ID列表中
+            for _, a := range matches {
+                actualVulnIDs = append(actualVulnIDs, a.Vulnerability.ID)
+            }
+            # 断言期望的漏洞ID列表和实际漏洞ID列表相匹配
+            assert.ElementsMatch(t, test.expectedVulnIDs, actualVulnIDs)
+        })
+    }
+# 闭合前面的函数定义
 ```

@@ -1,9 +1,6 @@
 # `grype\grype\db\v3\schema_version.go`
 
 ```
-# 定义一个常量，表示当前代码的版本号为3
-package v3
-
-# 定义一个常量，表示当前代码的版本号为3
+# 定义一个名为 SchemaVersion 的常量，其数值为 3
 const SchemaVersion = 3
 ```

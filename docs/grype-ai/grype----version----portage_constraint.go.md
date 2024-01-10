@@ -1,83 +1,77 @@
 # `grype\grype\version\portage_constraint.go`
 
 ```
-// 定义一个名为 version 的包
 package version
 
-// 引入 fmt 包
 import (
-	"fmt"
+    "fmt"
 )
 
-// 定义 portageConstraint 结构体
 type portageConstraint struct {
-	raw        string
-	expression constraintExpression
+    raw        string
+    expression constraintExpression
 }
 
-// 定义一个新的 portageConstraint 对象
 func newPortageConstraint(raw string) (portageConstraint, error) {
-	// 如果 raw 为空，则返回一个空的 portageConstraint 对象
-	if raw == "" {
-		return portageConstraint{}, nil
-	}
+    if raw == "" {
+        // 如果约束条件为空，则始终满足
+        return portageConstraint{}, nil
+    }
 
-	// 解析 raw 字符串，创建 constraintExpression 对象
-	constraints, err := newConstraintExpression(raw, newPortageComparator)
-	// 如果解析出错，则返回错误信息
-	if err != nil {
-		return portageConstraint{}, fmt.Errorf("unable to parse portage constraint phrase: %w", err)
-	}
+    // 根据原始字符串创建约束表达式
+    constraints, err := newConstraintExpression(raw, newPortageComparator)
+    if err != nil {
+        return portageConstraint{}, fmt.Errorf("unable to parse portage constraint phrase: %w", err)
+    }
 
-	return portageConstraint{  // 返回一个portageConstraint对象
-		raw:        raw,  // 设置portageConstraint对象的raw属性为raw
-		expression: constraints,  // 设置portageConstraint对象的expression属性为constraints
-	}, nil  // 返回portageConstraint对象和nil
+    // 返回新的 Portage 约束对象
+    return portageConstraint{
+        raw:        raw,
+        expression: constraints,
+    }, nil
 }
 
 func newPortageComparator(unit constraintUnit) (Comparator, error) {
-	ver := newPortageVersion(unit.version)  // 创建一个新的portageVersion对象
-	return &ver, nil  // 返回portageVersion对象的指针和nil
+    // 创建新的 Portage 版本比较器
+    ver := newPortageVersion(unit.version)
+    return &ver, nil
 }
 
 func (c portageConstraint) supported(format Format) bool {
-	return format == PortageFormat  // 检查传入的format是否为PortageFormat，返回布尔值
+    // 检查约束是否支持指定的格式
+    return format == PortageFormat
 }
 
 func (c portageConstraint) Satisfied(version *Version) (bool, error) {
-	if c.raw == "" && version != nil {
-		// an empty constraint is always satisfied  // 如果raw属性为空并且version不为空，则返回true
-		// 如果条件为真，则返回 true 和空值
-		return true, nil
-	} else if version == nil {
-		// 如果版本为空，则检查是否有非空约束，如果有则返回 false 和空值
-		if c.raw != "" {
-			return false, nil
-		}
-		// 否则返回 true 和空值
-		return true, nil
-	}
+    if c.raw == "" && version != nil {
+        // 如果约束条件为空且版本不为空，则始终满足
+        return true, nil
+    } else if version == nil {
+        if c.raw != "" {
+            // 如果约束条件不为空且没有给定版本，则始终失败
+            return false, nil
+        }
+        return true, nil
+    }
 
-	// 如果版本格式不受支持，则返回 false 和格式不受支持的错误信息
-	if !c.supported(version.Format) {
-		return false, fmt.Errorf("(portage) unsupported format: %s", version.Format)
-	}
+    if !c.supported(version.Format) {
+        // 如果约束不支持指定的格式，则失败
+        return false, fmt.Errorf("(portage) unsupported format: %s", version.Format)
+    }
 
-	// 如果版本的 portVer 为空，则返回 false 和缺少版本信息的错误信息
-	if version.rich.portVer == nil {
-		return false, fmt.Errorf("no rich portage version given: %+v", version)
-	}
+    if version.rich.portVer == nil {
+        // 如果版本没有给定 Portage 版本，则失败
+        return false, fmt.Errorf("no rich portage version given: %+v", version)
+    }
 
-	// 返回表达式是否满足给定版本的结果
-	return c.expression.satisfied(version)
+    // 检查约束表达式是否满足给定的版本
+    return c.expression.satisfied(version)
 }
-# 定义一个名为 portageConstraint 的方法，返回一个字符串
+
 func (c portageConstraint) String() string {
-    # 如果 raw 属性为空，则返回 "none (portage)"
     if c.raw == "" {
         return "none (portage)"
     }
-    # 否则，返回格式化后的字符串，包含 raw 属性的值和 " (portage)"
     return fmt.Sprintf("%s (portage)", c.raw)
 }
 ```

@@ -1,29 +1,31 @@
 # `grype\grype\db\v2\id.go`
 
 ```
-// package v2 表示这个文件属于 v2 包
-// import (
-//	"time"
-// ) 导入 time 包，用于处理时间相关的操作
+// 定义一个包名为v2的包
 
-// ID 表示数据库及其包含数据的标识信息
+import (
+    "time"
+)
+
+// ID代表了一个数据库及其包含数据的标识信息
 type ID struct {
-	// BuildTimestamp 是用于定义数据库年龄的时间戳，最好包括数据的年龄，而不仅仅是数据库文件创建的时间
-	BuildTimestamp time.Time
-	SchemaVersion  int
+    // BuildTimestamp是用于定义数据库年龄的时间戳，理想情况下包括数据的年龄，而不仅仅是数据库文件创建的时间
+    BuildTimestamp time.Time
+    SchemaVersion  int
 }
 
-// IDReader 接口定义了获取 ID 的方法
+// IDReader接口定义了获取ID的方法
 type IDReader interface {
-	GetID() (*ID, error)
+    GetID() (*ID, error)
 }
 
-// IDWriter 接口定义了设置 ID 的方法
+// IDWriter接口定义了设置ID的方法
 type IDWriter interface {
-	SetID(ID) error
-# 定义一个名为NewID的函数，接受一个时间参数age，返回一个ID类型的对象
+    SetID(ID) error
+}
+
+// NewID函数用于创建一个新的ID对象，参数为数据库的年龄
 func NewID(age time.Time) ID {
-    # 创建一个ID对象，其中BuildTimestamp属性为参数age的UTC时间，SchemaVersion属性为预定义的SchemaVersion常量
     return ID{
         BuildTimestamp: age.UTC(),
         SchemaVersion:  SchemaVersion,

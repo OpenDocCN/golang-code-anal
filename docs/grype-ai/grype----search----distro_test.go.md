@@ -4,204 +4,183 @@
 package search
 
 import (
-	"strings"  // 导入字符串操作的包
-	"testing"  // 导入测试相关的包
+    "strings" // 导入字符串操作包
+    "testing" // 导入测试包
 
-	"github.com/google/uuid"  // 导入用于生成 UUID 的包
-	"github.com/stretchr/testify/assert"  // 导入用于断言的包
+    "github.com/google/uuid" // 导入 UUID 生成包
+    "github.com/stretchr/testify/assert" // 导入断言包
 
-	"github.com/anchore/grype/grype/distro"  // 导入用于操作发行版信息的包
-	"github.com/anchore/grype/grype/match"  // 导入用于匹配的包
-	"github.com/anchore/grype/grype/pkg"  // 导入用于操作软件包的包
-	"github.com/anchore/grype/grype/version"  // 导入用于版本信息的包
-	"github.com/anchore/grype/grype/vulnerability"  // 导入用于漏洞信息的包
-	syftPkg "github.com/anchore/syft/syft/pkg"  // 导入用于软件包信息的包
+    "github.com/anchore/grype/grype/distro" // 导入发行版信息包
+    "github.com/anchore/grype/grype/match" // 导入匹配包
+    "github.com/anchore/grype/grype/pkg" // 导入包信息包
+    "github.com/anchore/grype/grype/version" // 导入版本信息包
+    "github.com/anchore/grype/grype/vulnerability" // 导入漏洞信息包
+    syftPkg "github.com/anchore/syft/syft/pkg" // 导入 Syft 包
 )
 
 type mockDistroProvider struct {
-	data map[string]map[string][]vulnerability.Vulnerability  // 定义一个模拟发行版信息的结构体
-}
-// 创建一个新的模拟发行版提供程序，初始化数据为空的映射
-func newMockProviderByDistro() *mockDistroProvider {
-    pr := mockDistroProvider{
-        data: make(map[string]map[string][]vulnerability.Vulnerability),
-    }
-    // 调用 stub 方法填充数据
-    pr.stub()
-    // 返回模拟发行版提供程序的指针
-    return &pr
+    data map[string]map[string][]vulnerability.Vulnerability // 定义模拟发行版提供者结构
 }
 
-// 在模拟发行版提供程序中填充数据
+func newMockProviderByDistro() *mockDistroProvider {
+    pr := mockDistroProvider{ // 创建模拟发行版提供者对象
+        data: make(map[string]map[string][]vulnerability.Vulnerability), // 初始化数据结构
+    }
+    pr.stub() // 调用模拟数据填充方法
+    return &pr // 返回模拟发行版提供者对象的指针
+}
+
 func (pr *mockDistroProvider) stub() {
-    // 为"debian:8"创建一个映射，包含漏洞数据
-    pr.data["debian:8"] = map[string][]vulnerability.Vulnerability{
-        // 直接漏洞数据
-        "neutron": {
+    pr.data["debian:8"] = map[string][]vulnerability.Vulnerability{ // 填充 Debian 8 的漏洞数据
+        // direct...
+        "neutron": { // 填充 neutron 包的漏洞数据
             {
-                // 设置漏洞的约束条件、ID和命名空间
-                Constraint: version.MustGetConstraint("< 2014.1.5-6", version.DebFormat),
-                ID:         "CVE-2014-fake-1",
-                Namespace:  "debian:8",
+                Constraint: version.MustGetConstraint("< 2014.1.5-6", version.DebFormat), // 设置版本约束
+                ID:         "CVE-2014-fake-1", // 设置漏洞 ID
+                Namespace:  "debian:8", // 设置命名空间
             },
         },
     }
-}
-	pr.data["sles:12.5"] = map[string][]vulnerability.Vulnerability{
-		// 将漏洞信息映射到特定的操作系统版本和软件包
-		"sles_test_package": {
-			{
-				// 设置漏洞的约束条件，ID和命名空间
-				Constraint: version.MustGetConstraint("< 2014.1.5-6", version.RpmFormat),
-				ID:         "CVE-2014-fake-4",
-				Namespace:  "sles:12.5",
-			},
-		},
-	}
+    pr.data["sles:12.5"] = map[string][]vulnerability.Vulnerability{ // 填充 SLES 12.5 的漏洞数据
+        // direct...
+        "sles_test_package": { // 填充 sles_test_package 包的漏洞数据
+            {
+                Constraint: version.MustGetConstraint("< 2014.1.5-6", version.RpmFormat), // 设置版本约束
+                ID:         "CVE-2014-fake-4", // 设置漏洞 ID
+                Namespace:  "sles:12.5", // 设置命名空间
+            },
+        },
+    }
 }
 
 func (pr *mockDistroProvider) GetByDistro(d *distro.Distro, p pkg.Package) ([]vulnerability.Vulnerability, error) {
-	// 根据操作系统版本和软件包获取漏洞信息
-	return pr.data[strings.ToLower(d.Type.String())+":"+d.FullVersion()][p.Name], nil
+    return pr.data[strings.ToLower(d.Type.String())+":"+d.FullVersion()][p.Name], nil // 根据发行版和包名获取漏洞数据
 }
 
 func TestFindMatchesByPackageDistro(t *testing.T) {
-	// 设置软件包信息
-	p := pkg.Package{
-		ID:      pkg.ID(uuid.NewString()),
-		Name:    "neutron",
-```
-
-		Version: "2014.1.3-6",  // 设置版本号为 "2014.1.3-6"
-		Type:    syftPkg.DebPkg,  // 设置类型为 Debian 包
-		Upstreams: []pkg.UpstreamPackage{  // 设置上游包列表
-			{
-				Name: "neutron-devel",  // 设置上游包的名称为 "neutron-devel"
-			},
-		},
-	}
-
-	d, err := distro.New(distro.Debian, "8", "")  // 创建一个 Debian 发行版对象，版本号为 "8"
-	if err != nil {
-		t.Fatal("could not create distro: ", err)  // 如果创建发行版对象出错，则输出错误信息
-	}
-
-	expected := []match.Match{  // 创建一个匹配列表
-		{
-
-			Vulnerability: vulnerability.Vulnerability{  // 设置漏洞对象
-				ID: "CVE-2014-fake-1",  // 设置漏洞 ID 为 "CVE-2014-fake-1"
-			},
-// 创建一个名为 p 的包对象
-Package: p,
-// 创建一个空的匹配详情列表
-Details: []match.Detail{
-    // 创建一个匹配详情对象
-    {
-        // 设置匹配类型为精确直接匹配
-        Type:       match.ExactDirectMatch,
-        // 设置匹配的置信度为1
-        Confidence: 1,
-        // 设置搜索条件为指定的操作系统和软件包信息
-        SearchedBy: map[string]interface{}{
-            "distro": map[string]string{
-                "type":    "debian",
-                "version": "8",
-            },
-            "package": map[string]string{
-                "name":    "neutron",
-                "version": "2014.1.3-6",
-            },
-            "namespace": "debian:8",
-        },
-        // 设置找到的匹配信息，包括版本约束和漏洞ID
-        Found: map[string]interface{}{
-            "versionConstraint": "< 2014.1.5-6 (deb)",
-            "vulnerabilityID":   "CVE-2014-fake-1",
-        },
-    },
-// 创建一个新的匹配器为Python语言
-Matcher: match.PythonMatcher,
-// 创建一个新的包对象
-p := pkg.Package{
-    // 生成一个新的唯一ID
-    ID:      pkg.ID(uuid.NewString()),
-    // 设置包的名称
-    Name:    "sles_test_package",
-    // 设置包的版本
-    Version: "2014.1.3-6",
-    // 设置包的类型为RPM包
-    Type:    syftPkg.RpmPkg,
-    // 设置包的上游来源
-    Upstreams: []pkg.UpstreamPackage{
-        {
-            // ...
-        },
-    },
-}
-
-// 创建一个新的模拟供应商对象
-store := newMockProviderByDistro()
-// 通过包和发行版查找匹配项
-actual, err := ByPackageDistro(store, d, p, match.PythonMatcher)
-// 断言错误为空
-assert.NoError(t, err)
-// 使用漏洞的ID来断言匹配项
-assertMatchesUsingIDsForVulnerabilities(t, expected, actual)
-// 创建一个名为 "sles_test_package" 的包
-p := &pkg.Package{
-    Name: "sles_test_package",
-}
-
-// 创建一个 SLES 12.5 版本的发行版
-d, err := distro.New(distro.SLES, "12.5", "")
-if err != nil {
-    t.Fatal("could not create distro: ", err)
-}
-
-// 创建一个预期的匹配结果列表
-expected := []match.Match{
-    {
-        // 设置漏洞ID为 "CVE-2014-fake-4"
-        Vulnerability: vulnerability.Vulnerability{
-            ID: "CVE-2014-fake-4",
-        },
-        // 设置匹配的包为 p
-        Package: p,
-        // 设置匹配的细节为 ExactDirectMatch
-        Details: []match.Detail{
+    p := pkg.Package{ // 创建包对象
+        ID:      pkg.ID(uuid.NewString()), // 设置包 ID
+        Name:    "neutron", // 设置包名
+        Version: "2014.1.3-6", // 设置版本号
+        Type:    syftPkg.DebPkg, // 设置包类型
+        Upstreams: []pkg.UpstreamPackage{ // 设置上游包信息
             {
-                Type: match.ExactDirectMatch,
-# 设置置信度为1
-Confidence: 1,
-# 根据操作系统和软件包信息进行搜索
-SearchedBy: map[string]interface{}{
-    "distro": map[string]string{
-        "type":    "sles",      # 操作系统类型为SLES
-        "version": "12.5",      # 操作系统版本为12.5
-    },
-    "package": map[string]string{
-        "name":    "sles_test_package",   # 软件包名称为sles_test_package
-        "version": "2014.1.3-6",         # 软件包版本为2014.1.3-6
-    },
-    "namespace": "sles:12.5",            # 命名空间为sles:12.5
-},
-# 找到的漏洞信息
-Found: map[string]interface{}{
-    "versionConstraint": "< 2014.1.5-6 (rpm)",   # 版本约束为小于2014.1.5-6 (rpm)
-    "vulnerabilityID":   "CVE-2014-fake-4",      # 漏洞ID为CVE-2014-fake-4
-},
-# 使用Python匹配器进行匹配
-Matcher: match.PythonMatcher,                    # 使用Python匹配器
-	}
+                Name: "neutron-devel", // 设置上游包名
+            },
+        },
+    }
+    // 创建一个指定版本的 Debian 发行版对象
+    d, err := distro.New(distro.Debian, "8", "")
+    // 如果创建失败，输出错误信息并终止测试
+    if err != nil {
+        t.Fatal("could not create distro: ", err)
+    }
 
-	// 创建一个模拟的软件包供应商
-	store := newMockProviderByDistro()
-	// 使用指定的发行版、软件包和匹配器获取实际的结果
-	actual, err := ByPackageDistro(store, d, p, match.PythonMatcher)
-	// 断言错误为空
-	assert.NoError(t, err)
-	// 使用漏洞的ID来匹配预期结果和实际结果
-	assertMatchesUsingIDsForVulnerabilities(t, expected, actual)
+    // 创建一个期望的匹配结果列表
+    expected := []match.Match{
+        {
+            // 定义一个漏洞对象
+            Vulnerability: vulnerability.Vulnerability{
+                ID: "CVE-2014-fake-1",
+            },
+            // 设置相关的软件包信息
+            Package: p,
+            // 设置匹配的详细信息
+            Details: []match.Detail{
+                {
+                    // 设置匹配类型、置信度、搜索条件和匹配器
+                    Type:       match.ExactDirectMatch,
+                    Confidence: 1,
+                    SearchedBy: map[string]interface{}{
+                        "distro": map[string]string{
+                            "type":    "debian",
+                            "version": "8",
+                        },
+                        "package": map[string]string{
+                            "name":    "neutron",
+                            "version": "2014.1.3-6",
+                        },
+                        "namespace": "debian:8",
+                    },
+                    // 设置匹配结果的版本约束和漏洞ID
+                    Found: map[string]interface{}{
+                        "versionConstraint": "< 2014.1.5-6 (deb)",
+                        "vulnerabilityID":   "CVE-2014-fake-1",
+                    },
+                    // 设置匹配器类型
+                    Matcher: match.PythonMatcher,
+                },
+            },
+        },
+    }
+
+    // 创建一个模拟的软件包提供者对象
+    store := newMockProviderByDistro()
+    // 根据软件包、发行版和匹配器类型获取实际的匹配结果
+    actual, err := ByPackageDistro(store, d, p, match.PythonMatcher)
+    // 断言获取匹配结果的过程没有错误
+    assert.NoError(t, err)
+    // 断言实际匹配结果与期望匹配结果一致
+    assertMatchesUsingIDsForVulnerabilities(t, expected, actual)
+func TestFindMatchesByPackageDistroSles(t *testing.T) {
+    // 创建一个测试用的包对象
+    p := pkg.Package{
+        ID:      pkg.ID(uuid.NewString()), // 生成一个新的唯一标识符作为包的ID
+        Name:    "sles_test_package", // 设置包的名称
+        Version: "2014.1.3-6", // 设置包的版本号
+        Type:    syftPkg.RpmPkg, // 设置包的类型为 RPM
+        Upstreams: []pkg.UpstreamPackage{
+            {
+                Name: "sles_test_package", // 设置上游包的名称
+            },
+        },
+    }
+
+    // 创建 SLES 发行版对象
+    d, err := distro.New(distro.SLES, "12.5", "")
+    if err != nil {
+        t.Fatal("could not create distro: ", err) // 如果创建发行版对象失败，则输出错误信息并终止测试
+    }
+
+    // 期望的匹配结果
+    expected := []match.Match{
+        {
+            // 匹配的漏洞信息
+            Vulnerability: vulnerability.Vulnerability{
+                ID: "CVE-2014-fake-4", // 设置漏洞的ID
+            },
+            Package: p, // 设置匹配的包对象
+            Details: []match.Detail{
+                {
+                    Type:       match.ExactDirectMatch, // 设置匹配类型为精确直接匹配
+                    Confidence: 1, // 设置匹配的置信度
+                    SearchedBy: map[string]interface{}{
+                        "distro": map[string]string{
+                            "type":    "sles", // 设置搜索的发行版类型
+                            "version": "12.5", // 设置搜索的发行版版本号
+                        },
+                        "package": map[string]string{
+                            "name":    "sles_test_package", // 设置搜索的包名称
+                            "version": "2014.1.3-6", // 设置搜索的包版本号
+                        },
+                        "namespace": "sles:12.5", // 设置搜索的命名空间
+                    },
+                    Found: map[string]interface{}{
+                        "versionConstraint": "< 2014.1.5-6 (rpm)", // 设置找到的版本约束
+                        "vulnerabilityID":   "CVE-2014-fake-4", // 设置找到的漏洞ID
+                    },
+                    Matcher: match.PythonMatcher, // 设置匹配器类型为 Python 匹配器
+                },
+            },
+        },
+    }
+
+    // 创建一个模拟的提供者对象
+    store := newMockProviderByDistro()
+    // 调用函数进行包和发行版的匹配
+    actual, err := ByPackageDistro(store, d, p, match.PythonMatcher)
+    assert.NoError(t, err) // 断言函数调用没有错误
+    // 使用漏洞ID断言期望的匹配结果和实际的匹配结果
+    assertMatchesUsingIDsForVulnerabilities(t, expected, actual)
 }
 ```

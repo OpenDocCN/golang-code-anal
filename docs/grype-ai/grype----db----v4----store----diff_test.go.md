@@ -4,308 +4,275 @@
 package store
 
 import (
-	"sort"
-	"testing"
+    "sort"
+    "testing"
 
-	"github.com/stretchr/testify/assert"
+    "github.com/stretchr/testify/assert"
 
-	v4 "github.com/anchore/grype/grype/db/v4"
+    v4 "github.com/anchore/grype/grype/db/v4"
 )
 
 func Test_GetAllVulnerabilities(t *testing.T) {
-	//GIVEN
-	// 创建临时文件夹用于存储数据库文件
-	dbTempFile := t.TempDir()
-	// 创建一个新的存储对象
-	s, err := New(dbTempFile, true)
-	// 如果创建存储对象时出现错误，输出错误信息并终止测试
-	if err != nil {
-		t.Fatalf("could not create store: %+v", err)
-	}
+    // 定义临时数据库文件路径
+    dbTempFile := t.TempDir()
+    // 创建新的存储对象
+    s, err := New(dbTempFile, true)
+    // 如果创建存储对象时出错，则打印错误信息并终止测试
+    if err != nil {
+        t.Fatalf("could not create store: %+v", err)
+    }
 
-	//WHEN
-// 调用 s 的 GetAllVulnerabilities 方法，获取漏洞信息列表
-result, err := s.GetAllVulnerabilities()
+    // 获取所有漏洞信息
+    result, err := s.GetAllVulnerabilities()
 
-// 然后，断言 result 不为空，err 为空（即没有错误发生）
-assert.NotNil(t, result)
-assert.NoError(t, err)
+    // 断言结果不为空
+    assert.NotNil(t, result)
+    // 断言错误为空
+    assert.NoError(t, err)
 }
 
 func Test_GetAllVulnerabilityMetadata(t *testing.T) {
-	// 给定测试环境
-	dbTempFile := t.TempDir()
-	// 创建一个新的存储对象 s，并检查是否有错误发生
-	s, err := New(dbTempFile, true)
-	if err != nil {
-		t.Fatalf("could not create store: %+v", err)
-	}
+    // 定义临时数据库文件路径
+    dbTempFile := t.TempDir()
+    // 创建新的存储对象
+    s, err := New(dbTempFile, true)
+    // 如果创建存储对象时出错，则打印错误信息并终止测试
+    if err != nil {
+        t.Fatalf("could not create store: %+v", err)
+    }
 
-	// 当
-	// 调用 s 的 GetAllVulnerabilityMetadata 方法，获取漏洞元数据信息
-	result, err := s.GetAllVulnerabilityMetadata()
+    // 获取所有漏洞元数据
+    result, err := s.GetAllVulnerabilityMetadata()
 
-	// 然后，断言 result 不为空
-	assert.NotNil(t, result)
-// 确保没有错误发生
-assert.NoError(t, err)
+    // 断言结果不为空
+    assert.NotNil(t, result)
+    // 断言错误为空
+    assert.NoError(t, err)
+}
 
-// 测试漏洞差异
 func Test_Diff_Vulnerabilities(t *testing.T) {
-	// 初始化测试环境
-	dbTempFile := t.TempDir()
+    // 定义两个临时数据库文件路径
+    dbTempFile := t.TempDir()
 
-	// 创建新的存储实例s1
-	s1, err := New(dbTempFile, true)
-	if err != nil {
-		t.Fatalf("could not create store: %+v", err)
-	}
-
-	// 重新设置临时文件目录
-	dbTempFile = t.TempDir()
-
-	// 创建新的存储实例s2
-	s2, err := New(dbTempFile, true)
-	if err != nil {
-		t.Fatalf("could not create store: %+v", err)
-	}
-
-	// 基础漏洞列表
-	baseVulns := []v4.Vulnerability{
-		{
-			Namespace:         "github:language:python",
-# 定义漏洞ID为"CVE-123-4567"的软件包信息
-{
-    # 命名空间为"pypi"，软件包名称为"requests"
-    Namespace: "pypi:requests",
-    # 版本约束为"< 2.0 >= 1.29"
-    VersionConstraint: "< 2.0 >= 1.29",
-    # CPEs为空列表
-    CPEs: []string{"cpe:2.3:pypi:requests:*:*:*:*:*:*"},
-},
-# 定义漏洞ID为"CVE-123-4567"的软件包信息
-{
-    # 命名空间为"github:language:python"，软件包名称为"requests"
-    Namespace: "github:language:python",
-    # 版本约束为"< 3.0 >= 2.17"
-    VersionConstraint: "< 3.0 >= 2.17",
-    # CPEs为空列表
-    CPEs: []string{"cpe:2.3:pypi:requests:*:*:*:*:*:*"},
-},
-# 定义漏洞ID为"CVE-123-7654"的软件包信息
-{
-    # 命名空间为"npm"，软件包名称为"axios"
-    Namespace: "npm",
-    # 版本约束为"< 3.0 >= 2.17"
-    VersionConstraint: "< 3.0 >= 2.17",
-    # CPEs为空列表
-    CPEs: []string{"cpe:2.3:npm:axios:*:*:*:*:*:*"},
-    # 定义修复信息
-    Fix: v4.Fix{
-        # 修复状态为未知状态
-        State: v4.UnknownFixState,
+    // 创建两个新的存储对象
+    s1, err := New(dbTempFile, true)
+    // 如果创建存储对象时出错，则打印错误信息并终止测试
+    if err != nil {
+        t.Fatalf("could not create store: %+v", err)
+    }
+    // 更新临时数据库文件路径
+    dbTempFile = t.TempDir()
+    // 创建第二个新的存储对象
+    s2, err := New(dbTempFile, true)
+    // 如果创建存储对象时出错，则打印错误信息并终止测试
+    if err != nil {
+        t.Fatalf("could not create store: %+v", err)
     }
 }
-		},
-	},
-}
-targetVulns := []v4.Vulnerability{
-	// 创建一个包含漏洞信息的列表
-	{
-		// 指定漏洞所属的命名空间
-		Namespace:         "github:language:python",
-		// 指定漏洞的ID
-		ID:                "CVE-123-4567",
-		// 指定受影响的包名
-		PackageName:       "pypi:requests",
-		// 指定受影响的版本约束
-		VersionConstraint: "< 2.0 >= 1.29",
-		// 指定受影响的CPE（通用漏洞和暴露）
-		CPEs:              []string{"cpe:2.3:pypi:requests:*:*:*:*:*:*"},
-	},
-	{
-		// 指定漏洞所属的命名空间
-		Namespace:         "github:language:go",
-		// 指定漏洞的ID
-		ID:                "GHSA-....-....",
-		// 指定受影响的包名
-		PackageName:       "hashicorp:nomad",
-		// 指定受影响的版本约束
-		VersionConstraint: "< 3.0 >= 2.17",
-		// 指定受影响的CPE（通用漏洞和暴露）
-		CPEs:              []string{"cpe:2.3:golang:hashicorp:nomad:*:*:*:*:*"},
-	},
-	{
-		// 指定漏洞所属的命名空间
-		Namespace:         "npm",
-# 定义一个漏洞对象，包括漏洞ID、包名称、版本约束、CPEs和修复信息
-ID:                "CVE-123-7654",
-PackageName:       "npm:axios",
-VersionConstraint: "< 3.0 >= 2.17",
-CPEs:              []string{"cpe:2.3:npm:axios:*:*:*:*:*:*"},
-Fix: v4.Fix{
-    State: v4.WontFixState,  # 设置修复状态为不修复
-},
-# 定义期望的漏洞差异对象列表
-expectedDiffs := []v4.Diff{
-    # 第一个漏洞差异对象，包括原因、ID、命名空间和受影响的包
-    {
-        Reason:    v4.DiffChanged,
-        ID:        "CVE-123-4567",
-        Namespace: "github:language:python",
-        Packages:  []string{"pypi:requests"},
-    },
-    # 第二个漏洞差异对象，包括原因、ID和命名空间
-    {
-        Reason:    v4.DiffChanged,
-        ID:        "CVE-123-7654",
-        Namespace: "npm",
-    },
-}
-// 创建一个包含漏洞信息的切片，每个漏洞包含原因、ID、命名空间和包信息
-baseVulns := []Vulnerability{
-	{
-		Reason:    v4.DiffAdded,
-		ID:        "GHSA-....-....",
-		Namespace: "npm:axios",
-		Packages:  []string{"npm:axios"},
-	},
-	{
-		Reason:    v4.DiffAdded,
-		ID:        "GHSA-....-....",
-		Namespace: "github:language:go",
-		Packages:  []string{"hashicorp:nomad"},
-	},
-}
+    # 创建一个包含漏洞信息的列表
+    baseVulns := []v4.Vulnerability{
+        # 第一个漏洞信息
+        {
+            Namespace:         "github:language:python",
+            ID:                "CVE-123-4567",
+            PackageName:       "pypi:requests",
+            VersionConstraint: "< 2.0 >= 1.29",
+            CPEs:              []string{"cpe:2.3:pypi:requests:*:*:*:*:*:*"},
+        },
+        # 第二个漏洞信息
+        {
+            Namespace:         "github:language:python",
+            ID:                "CVE-123-4567",
+            PackageName:       "pypi:requests",
+            VersionConstraint: "< 3.0 >= 2.17",
+            CPEs:              []string{"cpe:2.3:pypi:requests:*:*:*:*:*:*"},
+        },
+        # 第三个漏洞信息
+        {
+            Namespace:         "npm",
+            ID:                "CVE-123-7654",
+            PackageName:       "npm:axios",
+            VersionConstraint: "< 3.0 >= 2.17",
+            CPEs:              []string{"cpe:2.3:npm:axios:*:*:*:*:*:*"},
+            # 包含修复状态的信息
+            Fix: v4.Fix{
+                State: v4.UnknownFixState,
+            },
+        },
+    }
+    # 创建另一个包含漏洞信息的列表
+    targetVulns := []v4.Vulnerability{
+        # 第一个漏洞信息
+        {
+            Namespace:         "github:language:python",
+            ID:                "CVE-123-4567",
+            PackageName:       "pypi:requests",
+            VersionConstraint: "< 2.0 >= 1.29",
+            CPEs:              []string{"cpe:2.3:pypi:requests:*:*:*:*:*:*"},
+        },
+        # 第二个漏洞信息
+        {
+            Namespace:         "github:language:go",
+            ID:                "GHSA-....-....",
+            PackageName:       "hashicorp:nomad",
+            VersionConstraint: "< 3.0 >= 2.17",
+            CPEs:              []string{"cpe:2.3:golang:hashicorp:nomad:*:*:*:*:*"},
+        },
+        # 第三个漏洞信息
+        {
+            Namespace:         "npm",
+            ID:                "CVE-123-7654",
+            PackageName:       "npm:axios",
+            VersionConstraint: "< 3.0 >= 2.17",
+            CPEs:              []string{"cpe:2.3:npm:axios:*:*:*:*:*:*"},
+            # 包含修复状态的信息
+            Fix: v4.Fix{
+                State: v4.WontFixState,
+            },
+        },
+    }
+    // 定义一个期望的漏洞差异列表，包含了不同的漏洞情况
+    expectedDiffs := []v4.Diff{
+        {
+            Reason:    v4.DiffChanged,  // 漏洞差异的原因为改变
+            ID:        "CVE-123-4567",  // 漏洞的ID
+            Namespace: "github:language:python",  // 漏洞所属的命名空间
+            Packages:  []string{"pypi:requests"},  // 受影响的软件包列表
+        },
+        {
+            Reason:    v4.DiffChanged,
+            ID:        "CVE-123-7654",
+            Namespace: "npm",
+            Packages:  []string{"npm:axios"},
+        },
+        {
+            Reason:    v4.DiffAdded,
+            ID:        "GHSA-....-....",
+            Namespace: "github:language:go",
+            Packages:  []string{"hashicorp:nomad"},
+        },
+    }
 
-// 将漏洞信息添加到 s1 中
-for _, vuln := range baseVulns {
-	s1.AddVulnerability(vuln)
-}
+    // 遍历基础漏洞列表，将每个漏洞添加到s1中
+    for _, vuln := range baseVulns {
+        s1.AddVulnerability(vuln)
+    }
+    // 遍历目标漏洞列表，将每个漏洞添加到s2中
+    for _, vuln := range targetVulns {
+        s2.AddVulnerability(vuln)
+    }
 
-// 将漏洞信息添加到 s2 中
-for _, vuln := range targetVulns {
-	s2.AddVulnerability(vuln)
-}
+    // 当
+    // 对s1和s2进行漏洞差异比较，返回结果和可能的错误
+    result, err := s1.DiffStore(s2)
+    // 对结果列表按照ID进行排序
+    sort.SliceStable(*result, func(i, j int) bool {
+        return (*result)[i].ID < (*result)[j].ID
+    })
 
-// 对 s1 和 s2 进行漏洞比对
-result, err := s1.DiffStore(s2)
-
-// 对结果进行排序
-sort.SliceStable(*result, func(i, j int) bool {
-		return (*result)[i].ID < (*result)[j].ID
-	})
-    // 比较result中第i个和第j个元素的ID大小，用于排序
-
-	//THEN
-	assert.NoError(t, err)
-	assert.Equal(t, expectedDiffs, *result)
-}
-// 对测试结果进行断言，验证是否出现错误以及预期的差异是否与结果一致
-
+    // 然后
+    // 断言结果中没有错误
+    assert.NoError(t, err)
+    // 断言结果与期望的漏洞差异列表相等
+    assert.Equal(t, expectedDiffs, *result)
 func Test_Diff_Metadata(t *testing.T) {
-	//GIVEN
-	dbTempFile := t.TempDir()
-    // 创建临时目录用于存储数据库文件
+    // 定义测试函数，用于测试元数据差异
+    // GIVEN
+    dbTempFile := t.TempDir()
+    // 创建临时目录用于数据库文件
 
-	s1, err := New(dbTempFile, true)
-	if err != nil {
-		t.Fatalf("could not create store: %+v", err)
-	}
-    // 创建一个新的数据库存储实例s1，并检查是否出现错误
+    s1, err := New(dbTempFile, true)
+    // 创建新的存储实例s1
+    if err != nil {
+        t.Fatalf("could not create store: %+v", err)
+    }
+    // 如果创建存储实例出错，则输出错误信息
 
-	dbTempFile = t.TempDir()
-    // 更新临时目录路径
+    dbTempFile = t.TempDir()
+    // 重新创建临时目录用于数据库文件
 
-	s2, err := New(dbTempFile, true)
-	if err != nil {
-```
-// 创建另一个新的数据库存储实例s2，并检查是否出现错误
-		// 如果创建存储失败，则输出错误信息
-		t.Fatalf("could not create store: %+v", err)
-	}
+    s2, err := New(dbTempFile, true)
+    // 创建新的存储实例s2
+    if err != nil {
+        t.Fatalf("could not create store: %+v", err)
+    }
+    // 如果创建存储实例出错，则输出错误信息
 
-	// 创建基本漏洞信息列表
-	baseVulns := []v4.VulnerabilityMetadata{
-		// 添加第一个漏洞的元数据
-		{
-			Namespace:  "github:language:python",
-			ID:         "CVE-123-4567",
-			DataSource: "nvd",
-		},
-		// 添加第二个漏洞的元数据
-		{
-			Namespace:  "github:language:python",
-			ID:         "CVE-123-4567",
-			DataSource: "nvd",
-		},
-		// 添加第三个漏洞的元数据
-		{
-			Namespace:  "npm",
-			ID:         "CVE-123-7654",
-			DataSource: "nvd",
-		},
-	}
-	// 创建一个包含漏洞元数据的切片
-	targetVulns := []v4.VulnerabilityMetadata{
-		// 添加第一个漏洞元数据
-		{
-			Namespace:  "github:language:go",  // 指定漏洞所属的命名空间
-			ID:         "GHSA-....-....",       // 指定漏洞的唯一标识符
-			DataSource: "nvd",                  // 指定漏洞数据的来源
-		},
-		// 添加第二个漏洞元数据
-		{
-			Namespace:  "npm",                  // 指定漏洞所属的命名空间
-			ID:         "CVE-123-7654",         // 指定漏洞的唯一标识符
-			DataSource: "vulndb",               // 指定漏洞数据的来源
-		},
-	}
-	// 创建一个包含差异数据的切片
-	expectedDiffs := []v4.Diff{
-		// 添加第一个差异数据
-		{
-			Reason:    v4.DiffRemoved,           // 指定差异的原因
-			ID:        "CVE-123-4567",           // 指定差异的唯一标识符
-			Namespace: "github:language:python", // 指定差异所属的命名空间
-			Packages:  []string{},               // 指定受影响的软件包
-		},
-		// 添加第二个差异数据
-# 添加一个变更的漏洞信息，包括原因、ID、命名空间和包
-{
-    Reason:    v4.DiffChanged,
-    ID:        "CVE-123-7654",
-    Namespace: "npm",
-    Packages:  []string{},
-},
-# 添加一个新增的漏洞信息，包括原因、ID、命名空间和包
-{
-    Reason:    v4.DiffAdded,
-    ID:        "GHSA-....-....",
-    Namespace: "github:language:go",
-    Packages:  []string{},
-}
+    baseVulns := []v4.VulnerabilityMetadata{
+        // 定义基准漏洞元数据列表
+        {
+            Namespace:  "github:language:python",
+            ID:         "CVE-123-4567",
+            DataSource: "nvd",
+        },
+        {
+            Namespace:  "github:language:python",
+            ID:         "CVE-123-4567",
+            DataSource: "nvd",
+        },
+        {
+            Namespace:  "npm",
+            ID:         "CVE-123-7654",
+            DataSource: "nvd",
+        },
+    }
+    targetVulns := []v4.VulnerabilityMetadata{
+        // 定义目标漏洞元数据列表
+        {
+            Namespace:  "github:language:go",
+            ID:         "GHSA-....-....",
+            DataSource: "nvd",
+        },
+        {
+            Namespace:  "npm",
+            ID:         "CVE-123-7654",
+            DataSource: "vulndb",
+        },
+    }
+    expectedDiffs := []v4.Diff{
+        // 定义期望的差异列表
+        {
+            Reason:    v4.DiffRemoved,
+            ID:        "CVE-123-4567",
+            Namespace: "github:language:python",
+            Packages:  []string{},
+        },
+        {
+            Reason:    v4.DiffChanged,
+            ID:        "CVE-123-7654",
+            Namespace: "npm",
+            Packages:  []string{},
+        },
+        {
+            Reason:    v4.DiffAdded,
+            ID:        "GHSA-....-....",
+            Namespace: "github:language:go",
+            Packages:  []string{},
+        },
+    }
 
-# 遍历基础漏洞列表，为每个漏洞添加元数据
-for _, vuln := range baseVulns {
-    s1.AddVulnerabilityMetadata(vuln)
-}
+    for _, vuln := range baseVulns {
+        s1.AddVulnerabilityMetadata(vuln)
+    }
+    // 将基准漏洞元数据添加到存储实例s1中
+    for _, vuln := range targetVulns {
+        s2.AddVulnerabilityMetadata(vuln)
+    }
+    // 将目标漏洞元数据添加到存储实例s2中
 
-# 遍历目标漏洞列表，为每个漏洞添加元数据
-for _, vuln := range targetVulns {
-    s2.AddVulnerabilityMetadata(vuln)
-}
-	// 调用 s1 的 DiffStore 方法，传入 s2 作为参数，返回结果和错误
-	result, err := s1.DiffStore(s2)
+    // WHEN
+    result, err := s1.DiffStore(s2)
+    // 调用DiffStore方法，比较两个存储实例的差异
 
-	// 对 result 进行稳定排序，按照 ID 的大小进行比较
-	sort.SliceStable(*result, func(i, j int) bool {
-		return (*result)[i].ID < (*result)[j].ID
-	})
-
-	// 断言，验证错误是否为 nil
-	assert.NoError(t, err)
-	// 断言，验证 result 是否等于预期的 expectedDiffs
-	assert.Equal(t, expectedDiffs, *result)
-}
+    // THEN
+    # 使用稳定排序算法对result进行排序，排序规则是按照ID的大小进行比较
+    sort.SliceStable(*result, func(i, j int) bool {
+        return (*result)[i].ID < (*result)[j].ID
+    })
+    
+    # 断言，验证err是否为NoError，如果不是则测试失败
+    assert.NoError(t, err)
+    # 断言，验证result是否等于expectedDiffs，如果不是则测试失败
+    assert.Equal(t, expectedDiffs, *result)
+# 闭合前面的函数定义
 ```
