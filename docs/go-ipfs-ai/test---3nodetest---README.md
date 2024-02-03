@@ -8,7 +8,7 @@ this is an ipfs integration test
 
 * ipfs image named "zaqwsx_ipfs-test-img"
 
-```
+```go
 make setup
 fig build 
 fig up

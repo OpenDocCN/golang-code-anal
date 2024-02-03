@@ -1,6 +1,6 @@
 # `kubo\test\dependencies\go-timeout\main.go`
 
-```
+```go
 package main
 
 import (

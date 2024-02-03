@@ -22,7 +22,7 @@ Trojan-Go支持使用Shadowsocks AEAD对Trojan-Go进行加密。其本质是在T
 
 要开启AEAD加密，只需添加一个```shadowsocks```选项：
 
-```json
+```go
 ...
 "shadowsocks": {
     "enabled": true,

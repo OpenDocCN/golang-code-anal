@@ -1,6 +1,6 @@
 # `v2ray-core\app\dns\dnscommon_test.go`
 
-```
+```go
 // +build !confonly
 
 package dns

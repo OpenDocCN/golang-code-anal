@@ -1,6 +1,6 @@
 # `kubo\plugin\loader\load_nocgo.go`
 
-```
+```go
 //go:build !cgo && !noplugin && (linux || darwin || freebsd)
 // +build !cgo
 // +build !noplugin

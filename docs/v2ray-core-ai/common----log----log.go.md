@@ -1,6 +1,6 @@
 # `v2ray-core\common\log\log.go`
 
-```
+```go
 // 定义日志包，导入路径为 "v2ray.com/core/common/log"
 package log // import "v2ray.com/core/common/log"
 

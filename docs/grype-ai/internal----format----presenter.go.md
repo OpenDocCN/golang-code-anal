@@ -1,6 +1,6 @@
 # `grype\internal\format\presenter.go`
 
-```
+```go
 package format
 
 import (

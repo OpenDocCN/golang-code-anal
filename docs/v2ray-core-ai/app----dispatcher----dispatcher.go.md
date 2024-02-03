@@ -1,6 +1,6 @@
 # `v2ray-core\app\dispatcher\dispatcher.go`
 
-```
+```go
 // +build !confonly
 // 设置构建标记，表示该文件不仅仅是用于配置
 package dispatcher

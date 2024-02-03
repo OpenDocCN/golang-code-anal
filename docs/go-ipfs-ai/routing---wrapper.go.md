@@ -1,6 +1,6 @@
 # `kubo\routing\wrapper.go`
 
-```
+```go
 package routing
 
 import (

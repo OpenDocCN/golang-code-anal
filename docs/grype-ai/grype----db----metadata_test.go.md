@@ -1,6 +1,6 @@
 # `grype\grype\db\metadata_test.go`
 
-```
+```go
 package db
 
 import (

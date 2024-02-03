@@ -1,6 +1,6 @@
 # `grype\grype\version\pep440_version.go`
 
-```
+```go
 package version
 
 import (

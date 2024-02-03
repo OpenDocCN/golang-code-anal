@@ -1,6 +1,6 @@
 # `kubo\plugin\datastore.go`
 
-```
+```go
 // 导入名为 "plugin" 的包
 package plugin
 

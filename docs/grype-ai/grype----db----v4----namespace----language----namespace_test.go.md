@@ -1,6 +1,6 @@
 # `grype\grype\db\v4\namespace\language\namespace_test.go`
 
-```
+```go
 package language
 
 import (

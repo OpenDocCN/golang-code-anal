@@ -1,6 +1,6 @@
 # `kubo\fuse\ipns\ipns_unix.go`
 
-```
+```go
 // 根据构建标记，确定是否构建此文件系统
 // 构建标记表示不是 nofuse、openbsd、netbsd、plan9
 // package fuse/ipns 实现了一个与 ipfs 的命名系统 ipns 接口的 fuse 文件系统

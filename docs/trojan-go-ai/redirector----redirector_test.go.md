@@ -1,6 +1,6 @@
 # `trojan-go\redirector\redirector_test.go`
 
-```
+```go
 package redirector
 
 import (

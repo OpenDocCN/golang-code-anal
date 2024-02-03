@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\kcp\segment_test.go`
 
-```
+```go
 package kcp_test
 
 import (

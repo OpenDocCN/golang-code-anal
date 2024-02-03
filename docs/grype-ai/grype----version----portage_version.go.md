@@ -1,6 +1,6 @@
 # `grype\grype\version\portage_version.go`
 
-```
+```go
 package version
 
 import (

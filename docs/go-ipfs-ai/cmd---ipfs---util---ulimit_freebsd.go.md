@@ -1,6 +1,6 @@
 # `kubo\cmd\ipfs\util\ulimit_freebsd.go`
 
-```
+```go
 // 如果编译目标是 FreeBSD，则构建此包
 // +build freebsd
 

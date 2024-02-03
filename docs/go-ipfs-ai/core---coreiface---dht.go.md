@@ -1,6 +1,6 @@
 # `kubo\core\coreiface\dht.go`
 
-```
+```go
 package iface
 
 import (

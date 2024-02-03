@@ -1,6 +1,6 @@
 # `kubo\core\corerepo\stat.go`
 
-```
+```go
 package corerepo
 
 import (

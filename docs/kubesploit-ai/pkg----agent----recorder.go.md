@@ -1,6 +1,6 @@
 # `kubesploit\pkg\agent\recorder.go`
 
-```
+```go
 package agent
 
 import (

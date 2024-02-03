@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\udp\config.go`
 
-```
+```go
 # 导入 UDP 包
 package udp
 

@@ -1,6 +1,6 @@
 # `grype\internal\constants.go`
 
-```
+```go
 // 定义一个内部包，用于存放内部使用的代码
 package internal
 

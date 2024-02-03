@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\socks\server.go`
 
-```
+```go
 // +build !confonly
 
 package socks

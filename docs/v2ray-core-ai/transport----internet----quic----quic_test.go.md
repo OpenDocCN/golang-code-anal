@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\quic\quic_test.go`
 
-```
+```go
 package quic_test
 
 import (

@@ -1,6 +1,6 @@
 # `grype\grype\pkg\purl_provider.go`
 
-```
+```go
 package pkg
 // 导入所需的包
 import (

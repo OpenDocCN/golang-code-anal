@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\shadowsocks\config.go`
 
-```
+```go
 package shadowsocks
 
 import (

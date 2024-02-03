@@ -1,6 +1,6 @@
 # `trojan-go\log\golog\golog.go`
 
-```
+```go
 // 引入必要的包
 package golog
 

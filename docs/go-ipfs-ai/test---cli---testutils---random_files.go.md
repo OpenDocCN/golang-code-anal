@@ -1,6 +1,6 @@
 # `kubo\test\cli\testutils\random_files.go`
 
-```
+```go
 package testutils
 
 import (

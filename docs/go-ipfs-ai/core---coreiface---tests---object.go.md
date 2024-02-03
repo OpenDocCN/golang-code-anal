@@ -1,6 +1,6 @@
 # `kubo\core\coreiface\tests\object.go`
 
-```
+```go
 package tests
 
 import (

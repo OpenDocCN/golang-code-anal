@@ -1,6 +1,6 @@
 # `v2ray-core\main\main_test.go`
 
-```
+```go
 // +build coveragemain
 // 声明编译约束，指定只有在 coveragemain 标签被包含时才会编译这个文件
 

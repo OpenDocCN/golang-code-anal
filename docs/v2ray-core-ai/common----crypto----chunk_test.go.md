@@ -1,6 +1,6 @@
 # `v2ray-core\common\crypto\chunk_test.go`
 
-```
+```go
 package crypto_test
 
 import (

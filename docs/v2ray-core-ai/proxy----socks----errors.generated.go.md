@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\socks\errors.generated.go`
 
-```
+```go
 # 定义一个名为socks的包
 package socks
 

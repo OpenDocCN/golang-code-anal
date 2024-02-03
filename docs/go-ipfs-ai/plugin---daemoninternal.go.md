@@ -1,6 +1,6 @@
 # `kubo\plugin\daemoninternal.go`
 
-```
+```go
 # 导入名为 "core" 的包，该包位于 "github.com/ipfs/kubo" 下
 import "github.com/ipfs/kubo/core"
 

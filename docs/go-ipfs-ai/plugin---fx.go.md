@@ -1,6 +1,6 @@
 # `kubo\plugin\fx.go`
 
-```
+```go
 // 导入 plugin 包
 package plugin
 

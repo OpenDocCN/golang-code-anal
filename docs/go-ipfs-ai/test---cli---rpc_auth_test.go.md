@@ -1,6 +1,6 @@
 # `kubo\test\cli\rpc_auth_test.go`
 
-```
+```go
 package cli
 
 import (

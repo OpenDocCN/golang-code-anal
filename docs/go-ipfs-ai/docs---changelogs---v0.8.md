@@ -20,7 +20,7 @@ This remote pinning service comes with a redesign of how we're thinking about pi
 
 
 Examples include:
-```
+```go
 ipfs pin remote service add myservice https://myservice.tld:1234/api/path myaccess key
 
 ipfs pin remote add /ipfs/bafymydata --service=myservice --name=myfile

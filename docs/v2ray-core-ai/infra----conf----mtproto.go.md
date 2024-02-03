@@ -1,6 +1,6 @@
 # `v2ray-core\infra\conf\mtproto.go`
 
-```
+```go
 package conf
 
 import (

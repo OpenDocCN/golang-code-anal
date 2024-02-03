@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\socks\config.go`
 
-```
+```go
 // +build !confonly
 
 // 导入 protocol 包

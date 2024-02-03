@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\udp\hub_linux.go`
 
-```
+```go
 // +build linux
 // 声明该文件只在 Linux 系统下编译
 

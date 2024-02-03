@@ -1,6 +1,6 @@
 # `trojan-go\component\other.go`
 
-```
+```go
 // 标记当前文件适用于 other 或 full 构建标记
 // +build other full
 

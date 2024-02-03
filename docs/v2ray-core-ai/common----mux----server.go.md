@@ -1,6 +1,6 @@
 # `v2ray-core\common\mux\server.go`
 
-```
+```go
 package mux
 
 import (

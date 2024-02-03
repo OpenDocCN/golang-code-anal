@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\udp\hub_other.go`
 
-```
+```go
 // +build !linux,!freebsd
 // 设置条件编译，指定在非 Linux 和 FreeBSD 系统下编译该包
 

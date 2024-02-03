@@ -1,6 +1,6 @@
 # `v2ray-core\common\errors\errorgen\main.go`
 
-```
+```go
 package main
 
 import (

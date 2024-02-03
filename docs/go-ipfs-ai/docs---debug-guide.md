@@ -41,7 +41,7 @@ If you feel intrepid, you can dump this information and investigate it yourself:
 The first thing to look for is hung goroutines -- any goroutine that's been stuck
 for over a minute will note that in the trace. It looks something like:
 
-```
+```go
 goroutine 2306090 [semacquire, 458 minutes]:
 sync.runtime_Semacquire(0xc8222fd3e4)
   /home/whyrusleeping/go/src/runtime/sema.go:47 +0x26

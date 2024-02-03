@@ -1,6 +1,6 @@
 # `kubo\core\node\identity.go`
 
-```
+```go
 package node
 
 import (

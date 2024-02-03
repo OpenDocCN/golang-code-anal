@@ -1,6 +1,6 @@
 # `v2ray-core\infra\control\tlsping.go`
 
-```
+```go
 package control
 
 import (

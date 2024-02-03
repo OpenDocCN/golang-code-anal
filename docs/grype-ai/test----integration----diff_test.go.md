@@ -1,6 +1,6 @@
 # `grype\test\integration\diff_test.go`
 
-```
+```go
 package integration
 
 import (

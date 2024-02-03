@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\headers\utp\utp.go`
 
-```
+```go
 package utp
 
 import (

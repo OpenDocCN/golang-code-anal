@@ -1,6 +1,6 @@
 # `v2ray-core\app\stats\errors.generated.go`
 
-```
+```go
 # 定义一个名为 stats 的包
 package stats
 

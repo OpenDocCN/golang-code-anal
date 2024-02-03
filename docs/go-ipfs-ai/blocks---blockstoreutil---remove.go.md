@@ -1,6 +1,6 @@
 # `kubo\blocks\blockstoreutil\remove.go`
 
-```
+```go
 // Package blockstoreutil provides utility functions for Blockstores.
 package blockstoreutil
 

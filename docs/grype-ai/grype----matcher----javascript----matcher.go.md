@@ -1,6 +1,6 @@
 # `grype\grype\matcher\javascript\matcher.go`
 
-```
+```go
 package javascript
 
 import (

@@ -1,6 +1,6 @@
 # `kubo\fuse\ipns\common.go`
 
-```
+```go
 package ipns
 
 import (

@@ -35,7 +35,7 @@ Now, content routing can be handled by clients implementing the [Reframe protoco
 
 Example configuration usage using the [Filecoin Network Indexer](https://docs.cid.contact/filecoin-network-indexer/overview):
 
-```
+```go
 ipfs config Routing.Routers.CidContact --json '{
   "Type": "reframe",
   "Parameters": {

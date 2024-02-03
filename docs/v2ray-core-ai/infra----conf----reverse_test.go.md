@@ -1,6 +1,6 @@
 # `v2ray-core\infra\conf\reverse_test.go`
 
-```
+```go
 package conf_test
 
 import (

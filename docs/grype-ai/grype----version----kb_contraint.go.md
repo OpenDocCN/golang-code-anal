@@ -1,6 +1,6 @@
 # `grype\grype\version\kb_contraint.go`
 
-```
+```go
 package version
 
 import (

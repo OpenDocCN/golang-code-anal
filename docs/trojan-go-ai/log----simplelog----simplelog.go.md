@@ -1,6 +1,6 @@
 # `trojan-go\log\simplelog\simplelog.go`
 
-```
+```go
 package simplelog
 
 import (

@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\domainsocket\errgen.go`
 
-```
+```go
 // 声明当前文件所属的包为 domainsocket
 package domainsocket
 

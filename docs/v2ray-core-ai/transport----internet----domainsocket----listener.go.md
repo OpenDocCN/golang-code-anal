@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\domainsocket\listener.go`
 
-```
+```go
 // 根据构建标签，排除 Windows、WASM 和 confonly 环境
 // 定义 domainsocket 包
 package domainsocket

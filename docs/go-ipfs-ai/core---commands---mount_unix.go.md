@@ -1,6 +1,6 @@
 # `kubo\core\commands\mount_unix.go`
 
-```
+```go
 // 如果不是在 Windows 平台并且不是在 nofuse 模式下构建，则包含该文件
 // +build !windows,!nofuse
 

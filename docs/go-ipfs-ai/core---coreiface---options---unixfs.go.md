@@ -1,6 +1,6 @@
 # `kubo\core\coreiface\options\unixfs.go`
 
-```
+```go
 package options
 
 import (

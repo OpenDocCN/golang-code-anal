@@ -1,6 +1,6 @@
 # `grype\internal\file\copy.go`
 
-```
+```go
 package file
 
 import (

@@ -1,6 +1,6 @@
 # `v2ray-core\features\routing\dispatcher.go`
 
-```
+```go
 package routing
 
 import (

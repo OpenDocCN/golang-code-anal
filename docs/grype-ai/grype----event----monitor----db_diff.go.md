@@ -1,6 +1,6 @@
 # `grype\grype\event\monitor\db_diff.go`
 
-```
+```go
 # 导入名为 "github.com/wagoodman/go-progress" 的包
 import "github.com/wagoodman/go-progress"
 

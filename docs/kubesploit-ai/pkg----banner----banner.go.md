@@ -1,6 +1,6 @@
 # `kubesploit\pkg\banner\banner.go`
 
-```
+```go
 // 声明包名为 banner
 package banner
 

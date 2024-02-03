@@ -1,6 +1,6 @@
 # `kubo\core\commands\keyencode\keyencode.go`
 
-```
+```go
 package keyencode
 
 import (

@@ -1,6 +1,6 @@
 # `kubo\commands\reqlog.go`
 
-```
+```go
 package commands
 
 import (

@@ -1,6 +1,6 @@
 # `kubo\core\commands\pin\pin.go`
 
-```
+```go
 package pin
 
 import (

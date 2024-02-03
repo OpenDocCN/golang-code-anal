@@ -1,6 +1,6 @@
 # `grype\grype\db\listing.go`
 
-```
+```go
 package db
 
 import (

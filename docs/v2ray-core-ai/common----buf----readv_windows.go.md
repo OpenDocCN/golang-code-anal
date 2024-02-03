@@ -1,6 +1,6 @@
 # `v2ray-core\common\buf\readv_windows.go`
 
-```
+```go
 package buf
 
 import (

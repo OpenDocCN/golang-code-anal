@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\vmess\validator_test.go`
 
-```
+```go
 package vmess_test
 
 import (

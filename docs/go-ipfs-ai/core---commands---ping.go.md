@@ -1,6 +1,6 @@
 # `kubo\core\commands\ping.go`
 
-```
+```go
 package commands
 
 import (

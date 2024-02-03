@@ -1,6 +1,6 @@
 # `grype\grype\db\internal\sqlite\nullable_types_test.go`
 
-```
+```go
 // 导入 sqlite 包
 package sqlite
 

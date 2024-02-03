@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\vmess\aead\authid.go`
 
-```
+```go
 package aead
 
 import (

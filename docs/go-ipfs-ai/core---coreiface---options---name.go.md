@@ -1,6 +1,6 @@
 # `kubo\core\coreiface\options\name.go`
 
-```
+```go
 package options
 
 import (

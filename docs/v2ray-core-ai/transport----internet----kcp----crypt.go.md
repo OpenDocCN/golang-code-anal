@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\kcp\crypt.go`
 
-```
+```go
 // +build !confonly  // 标记此文件不仅仅是配置文件
 
 package kcp  // 声明包名为 kcp

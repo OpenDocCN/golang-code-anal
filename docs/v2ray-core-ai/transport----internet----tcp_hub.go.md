@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\tcp_hub.go`
 
-```
+```go
 package internet
 
 import (

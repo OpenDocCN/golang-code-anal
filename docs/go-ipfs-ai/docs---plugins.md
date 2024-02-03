@@ -90,7 +90,7 @@ plugins can be:
 
 Example:
 
-```js
+```go
 {
   // ...
   "Plugins": {
@@ -142,14 +142,14 @@ To build plugins included in
 [plugin/plugins](https://github.com/ipfs/kubo/tree/master/plugin/plugins),
 run:
 
-```bash
+```go
 kubo$ make build_plugins
 kubo$ ls plugin/plugins/*.so
 ```
 
 To install, copy desired plugins to `$IPFS_PATH/plugins`. For example:
 
-```bash
+```go
 kubo$ mkdir -p ~/.ipfs/plugins/
 kubo$ cp plugin/plugins/git.so ~/.ipfs/plugins/
 kubo$ chmod +x ~/.ipfs/plugins/git.so # ensure plugin is executable
@@ -162,7 +162,7 @@ Finally, restart daemon if it is running.
 To build out-of-tree plugins, use the plugin's Makefile if provided. Otherwise,
 you can manually build the plugin by running:
 
-```bash
+```go
 myplugin$ go build -buildmode=plugin -o myplugin.so myplugin.go
 ```
 
@@ -183,14 +183,14 @@ To preload a Kubo plugin:
 
 1. Add the plugin to the preload list: `plugin/loader/preload_list`
 2. Build ipfs
-```bash
+```go
 kubo$ make build
 ```
 
 You can also preload an in-tree but disabled-by-default plugin by adding it to
 the IPFS_PLUGINS variable. For example, to enable plugins foo, bar, and baz:
 
-```bash
+```go
 kubo$ make build IPFS_PLUGINS="foo bar baz"
 ```
 

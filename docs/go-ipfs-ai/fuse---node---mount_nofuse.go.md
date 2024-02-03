@@ -1,6 +1,6 @@
 # `kubo\fuse\node\mount_nofuse.go`
 
-```
+```go
 // 如果不是在 Windows 平台并且不使用 nofuse 标志构建，则执行下面的代码
 // 构建条件：不是在 Windows 平台并且不使用 nofuse 标志
 package node

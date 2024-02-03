@@ -1,6 +1,6 @@
 # `grype\grype\db\internal\gormadapter\open.go`
 
-```
+```go
 package gormadapter
 
 import (

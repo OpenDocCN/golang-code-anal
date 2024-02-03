@@ -1,6 +1,6 @@
 # `grype\grype\search\distro.go`
 
-```
+```go
 package search
 
 import (

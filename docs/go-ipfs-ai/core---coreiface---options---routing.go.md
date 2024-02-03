@@ -1,6 +1,6 @@
 # `kubo\core\coreiface\options\routing.go`
 
-```
+```go
 package options
 
 // 定义 RoutingPutSettings 结构体，用于存储 RoutingPutOption 的设置

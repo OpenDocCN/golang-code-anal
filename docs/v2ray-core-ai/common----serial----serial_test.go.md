@@ -1,6 +1,6 @@
 # `v2ray-core\common\serial\serial_test.go`
 
-```
+```go
 package serial_test
 
 import (

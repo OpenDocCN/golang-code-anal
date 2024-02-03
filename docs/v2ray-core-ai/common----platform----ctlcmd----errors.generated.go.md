@@ -1,6 +1,6 @@
 # `v2ray-core\common\platform\ctlcmd\errors.generated.go`
 
-```
+```go
 # 定义了一个名为 ctlcmd 的包
 package ctlcmd
 

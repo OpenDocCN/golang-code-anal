@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\sockopt_freebsd.go`
 
-```
+```go
 package internet
 
 import (

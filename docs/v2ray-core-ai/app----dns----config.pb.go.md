@@ -1,6 +1,6 @@
 # `v2ray-core\app\dns\config.pb.go`
 
-```
+```go
 // 由 protoc-gen-go 生成的代码。请勿编辑。
 // 版本信息:
 //     protoc-gen-go v1.25.0

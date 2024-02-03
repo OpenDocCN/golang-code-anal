@@ -1,6 +1,6 @@
 # `v2ray-core\app\policy\config.go`
 
-```
+```go
 // 导入必要的包
 package policy
 

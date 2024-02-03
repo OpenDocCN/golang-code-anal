@@ -1,6 +1,6 @@
 # `kubo\fuse\node\mount_windows.go`
 
-```
+```go
 // 导入 node 包和 core 包
 package node
 

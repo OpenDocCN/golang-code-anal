@@ -1,6 +1,6 @@
 # `kubo\core\corehttp\gateway_test.go`
 
-```
+```go
 package corehttp
 
 import (

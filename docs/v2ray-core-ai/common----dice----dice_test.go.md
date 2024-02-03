@@ -1,6 +1,6 @@
 # `v2ray-core\common\dice\dice_test.go`
 
-```
+```go
 // 定义 dice_test 包
 package dice_test
 

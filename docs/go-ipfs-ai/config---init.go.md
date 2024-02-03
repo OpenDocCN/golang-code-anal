@@ -1,6 +1,6 @@
 # `kubo\config\init.go`
 
-```
+```go
 package config
 
 import (

@@ -1,6 +1,6 @@
 # `kubo\fuse\mount\fuse.go`
 
-```
+```go
 // 根据构建标签，判断是否满足条件，如果不满足则不包含在构建中
 // +build !nofuse,!windows,!openbsd,!netbsd,!plan9
 

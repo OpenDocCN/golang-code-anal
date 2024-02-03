@@ -1,6 +1,6 @@
 # `v2ray-core\common\platform\platform_test.go`
 
-```
+```go
 package platform_test
 
 import (

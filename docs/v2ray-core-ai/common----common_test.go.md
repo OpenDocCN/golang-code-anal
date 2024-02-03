@@ -1,6 +1,6 @@
 # `v2ray-core\common\common_test.go`
 
-```
+```go
 package common_test
 
 import (

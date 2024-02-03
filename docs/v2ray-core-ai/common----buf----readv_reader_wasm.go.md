@@ -1,6 +1,6 @@
 # `v2ray-core\common\buf\readv_reader_wasm.go`
 
-```
+```go
 // +build wasm
 // 声明这个文件只在 WebAssembly 架构下编译
 

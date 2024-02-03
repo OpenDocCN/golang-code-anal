@@ -1,6 +1,6 @@
 # `kubo\test\api-startup\main.go`
 
-```
+```go
 package main
 
 import (

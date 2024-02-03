@@ -1,6 +1,6 @@
 # `kubo\p2p\stream.go`
 
-```
+```go
 package p2p
 
 import (

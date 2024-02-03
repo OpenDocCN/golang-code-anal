@@ -1,6 +1,6 @@
 # `trojan-go\option\option.go`
 
-```
+```go
 package option
 
 import "github.com/p4gefau1t/trojan-go/common"

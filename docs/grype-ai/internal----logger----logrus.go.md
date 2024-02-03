@@ -1,6 +1,6 @@
 # `grype\internal\logger\logrus.go`
 
-```
+```go
 package logger
 
 import (

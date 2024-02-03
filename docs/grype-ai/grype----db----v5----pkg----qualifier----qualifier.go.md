@@ -1,6 +1,6 @@
 # `grype\grype\db\v5\pkg\qualifier\qualifier.go`
 
-```
+```go
 # 定义一个名为 qualifier 的包
 package qualifier
 

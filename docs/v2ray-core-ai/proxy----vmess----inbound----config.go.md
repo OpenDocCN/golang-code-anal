@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\vmess\inbound\config.go`
 
-```
+```go
 // +build !confonly
 // 设置构建标签，指定该代码块不仅仅是配置文件
 

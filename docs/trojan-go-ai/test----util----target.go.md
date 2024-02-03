@@ -1,6 +1,6 @@
 # `trojan-go\test\util\target.go`
 
-```
+```go
 package util
 
 import (

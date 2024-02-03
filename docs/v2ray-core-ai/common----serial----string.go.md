@@ -1,6 +1,6 @@
 # `v2ray-core\common\serial\string.go`
 
-```
+```go
 // 定义一个名为 serial 的包
 package serial
 

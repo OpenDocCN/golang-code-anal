@@ -1,6 +1,6 @@
 # `grype\grype\presenter\cyclonedx\presenter_test.go`
 
-```
+```go
 package cyclonedx
 
 import (

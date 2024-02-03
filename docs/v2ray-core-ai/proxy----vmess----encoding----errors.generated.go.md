@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\vmess\encoding\errors.generated.go`
 
-```
+```go
 # 定义一个名为 encoding 的包
 package encoding
 

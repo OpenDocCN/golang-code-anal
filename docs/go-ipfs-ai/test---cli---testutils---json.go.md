@@ -1,6 +1,6 @@
 # `kubo\test\cli\testutils\json.go`
 
-```
+```go
 # 定义 testutils 包
 package testutils
 

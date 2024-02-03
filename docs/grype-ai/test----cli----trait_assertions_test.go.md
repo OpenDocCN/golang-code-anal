@@ -1,6 +1,6 @@
 # `grype\test\cli\trait_assertions_test.go`
 
-```
+```go
 package cli
 
 import (

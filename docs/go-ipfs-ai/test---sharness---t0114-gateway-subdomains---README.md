@@ -11,7 +11,7 @@
 
 Generated with:
 
-```sh
+```go
 # using ipfs version 0.21.0-dev (03a98280e3e642774776cd3d0435ab53e5dfa867)
 
 # CIDv0to1 is necessary because raw-leaves are enabled by default during

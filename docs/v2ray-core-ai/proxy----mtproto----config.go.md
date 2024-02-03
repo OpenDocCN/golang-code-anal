@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\mtproto\config.go`
 
-```
+```go
 // 在 mtproto 包中导入 protocol 包
 import (
     "v2ray.com/core/common/protocol"

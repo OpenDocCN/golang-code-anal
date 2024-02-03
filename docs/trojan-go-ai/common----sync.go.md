@@ -1,6 +1,6 @@
 # `trojan-go\common\sync.go`
 
-```
+```go
 // Notifier 是一个用于通知变化的实用工具。变化生产者可以多次通知变化，而消费者可以异步获取通知。
 type Notifier struct {
     c chan struct{}  // 用于通知变化的通道

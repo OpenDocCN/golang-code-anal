@@ -1,6 +1,6 @@
 # `v2ray-core\common\net\address_test.go`
 
-```
+```go
 package net_test
 
 import (

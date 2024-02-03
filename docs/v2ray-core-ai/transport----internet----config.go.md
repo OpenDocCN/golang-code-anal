@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\config.go`
 
-```
+```go
 package internet
 
 import (

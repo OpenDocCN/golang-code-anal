@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\quic\hub.go`
 
-```
+```go
 // +build !confonly
 
 package quic

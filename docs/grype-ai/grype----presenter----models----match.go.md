@@ -1,6 +1,6 @@
 # `grype\grype\presenter\models\match.go`
 
-```
+```go
 package models
 
 import (

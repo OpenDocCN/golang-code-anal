@@ -1,6 +1,6 @@
 # `kubo\repo\fsrepo\migrations\retryfetcher.go`
 
-```
+```go
 package migrations
 
 import (

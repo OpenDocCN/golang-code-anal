@@ -1,6 +1,6 @@
 # `kubo\fuse\ipns\link_unix.go`
 
-```
+```go
 //go:build !nofuse && !openbsd && !netbsd && !plan9
 // +build !nofuse,!openbsd,!netbsd,!plan9
 // 如果编译标记不包括 nofuse、openbsd、netbsd 和 plan9，则编译此文件

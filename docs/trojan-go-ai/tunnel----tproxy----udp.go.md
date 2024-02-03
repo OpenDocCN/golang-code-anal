@@ -1,6 +1,6 @@
 # `trojan-go\tunnel\tproxy\udp.go`
 
-```
+```go
 // 根据操作系统构建条件编译标记，指定只在 Linux 系统下编译
 // 导入 tproxy 包
 package tproxy

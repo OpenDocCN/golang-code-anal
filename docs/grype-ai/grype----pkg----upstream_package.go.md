@@ -1,6 +1,6 @@
 # `grype\grype\pkg\upstream_package.go`
 
-```
+```go
 package pkg
 
 import (

@@ -1,6 +1,6 @@
 # `grype\grype\version\semantic_version.go`
 
-```
+```go
 package version
 
 import (

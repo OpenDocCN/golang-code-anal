@@ -1,6 +1,6 @@
 # `trojan-go\log\log.go`
 
-```
+```go
 package log
 
 import (

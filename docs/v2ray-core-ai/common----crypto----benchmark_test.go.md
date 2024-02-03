@@ -1,6 +1,6 @@
 # `v2ray-core\common\crypto\benchmark_test.go`
 
-```
+```go
 package crypto_test
 
 import (

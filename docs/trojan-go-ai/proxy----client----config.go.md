@@ -1,6 +1,6 @@
 # `trojan-go\proxy\client\config.go`
 
-```
+```go
 package client
 
 import "github.com/p4gefau1t/trojan-go/config"

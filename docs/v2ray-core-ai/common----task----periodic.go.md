@@ -1,6 +1,6 @@
 # `v2ray-core\common\task\periodic.go`
 
-```
+```go
 package task
 
 import (

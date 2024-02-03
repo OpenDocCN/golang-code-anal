@@ -1,6 +1,6 @@
 # `kubo\config\bootstrap_peers_test.go`
 
-```
+```go
 package config
 
 import (

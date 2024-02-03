@@ -1,6 +1,6 @@
 # `grype\grype\match\matcher_type.go`
 
-```
+```go
 package match
 
 // 定义匹配器类型常量

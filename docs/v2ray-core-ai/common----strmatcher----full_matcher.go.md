@@ -1,6 +1,6 @@
 # `v2ray-core\common\strmatcher\full_matcher.go`
 
-```
+```go
 package strmatcher
 
 // 定义 FullMatcherGroup 结构体

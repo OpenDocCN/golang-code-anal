@@ -1,6 +1,6 @@
 # `grype\grype\matcher\apk\matcher_test.go`
 
-```
+```go
 package apk
 
 import (

@@ -1,6 +1,6 @@
 # `v2ray-core\app\router\config.go`
 
-```
+```go
 // +build !confonly
 
 package router

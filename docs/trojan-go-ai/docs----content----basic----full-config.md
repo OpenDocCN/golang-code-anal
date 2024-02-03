@@ -6,25 +6,25 @@ weight: 30
 
 下面是一个完整的配置文件，其中的必填选项有
 
-- ```run_type```
+- ```run_type```go
 
-- ```local_addr```
+- ```local_addr```go
 
-- ```local_port```
+- ```local_port```go
 
-- ```remote_addr```
+- ```remote_addr```go
 
-- ```remote_port```
+- ```remote_port```go
 
 对于服务器```server```，```key```和```cert```为必填。
 
-对于客户端```client```，反向代理隧道```forward```，以及透明代理```nat```，```password```必填
+对于客户端```client```，反向代理隧道```forward```，以及透明代理```nat```，```password```go
 
 其余未填的选项，用下面给出的值进行填充。
 
 *Trojan-Go支持对人类更友好的YAML语法，配置文件的基本结构与JSON相同，效果等价。但是为了遵守YAML的命名习惯，你需要把下划线("_")转换为横杠("-")，如```remote_addr```在YAML文件中为```remote-addr```*
 
-```json
+```go
 {
   "run_type": *required*,
   "local_addr": *required*,
@@ -155,7 +155,7 @@ weight: 30
 
 ```udp_timeout``` UDP会话超时时间。
 
-### ```ssl```选项
+### ```ssl```go
 
 ```verify```表示客户端(client/nat/forward)是否校验服务端提供的证书合法性，默认开启。出于安全性考虑，这个选项不应该在实际场景中选择false，否则可能遭受中间人攻击。如果使用自签名或者自签发的证书，开启```verify```会导致校验失败。这种情况下，应当保持```verify```开启，然后在```cert```中填写服务端的证书，即可正常连接。
 
@@ -190,7 +190,7 @@ weight: 30
 
 ```key_log```TLS密钥日志的文件路径。如果填写则开启密钥日志。**记录密钥将破坏TLS的安全性，此项不应该用于除调试以外的其他任何用途。**
 
-### ```mux```多路复用选项
+### ```mux```go
 
 多路复用是trojan-go的特性。如果服务器和客户端都是trojan-go，可以开启mux多路复用以减少高并发情景下的延迟（只需要客户端开启此选项即可，服务端自动适配）。
 
@@ -202,7 +202,7 @@ weight: 30
 
 ```idle_timeout```空闲超时时间。指TLS隧道在空闲多长时间之后关闭，单位为秒。如果数值为负值或0，则一旦TLS隧道空闲，则立即关闭。
 
-### ```router```路由选项
+### ```router```go
 
 路由功能是trojan-go的特性。trojan-go的路由策略有三种。
 
@@ -236,7 +236,7 @@ weight: 30
 
 ```geoip```和```geosite```字段指geoip和geosite数据库文件路径，默认使用程序所在目录的geoip.dat和geosite.dat。也可以通过指定环境变量TROJAN_GO_LOCATION_ASSET指定工作目录。
 
-### ```websocket```选项
+### ```websocket```go
 
 Websocket传输是trojan-go的特性。在**正常的直接连接代理节点**的情况下，开启这个选项不会改善你的链路速度（甚至有可能下降），也不会提升你的连接安全性。你只应该在需要利用CDN进行中转，或利用nginx等服务器根据路径分发的情况下，使用websocket。
 
@@ -276,7 +276,7 @@ Websocket传输是trojan-go的特性。在**正常的直接连接代理节点**�
 
 ```password```用于生成主密钥的密码。如果启用AEAD加密，必须确保客户端和服务端一致。
 
-### ```transport_plugin```传输层插件选项
+### ```transport_plugin```go
 
 ```enabled```是否启用传输层插件替代TLS传输。一旦启用传输层插件支持，trojan-go将会把**未经TLS加密的trojan协议流量明文传输给插件**，以允许用户对流量进行自定义的混淆和加密。
 
@@ -296,7 +296,7 @@ Websocket传输是trojan-go的特性。在**正常的直接连接代理节点**�
 
 ```option```传输层插件配置（SIP003)。例如```"obfs=http;obfs-host=www.baidu.com"```。
 
-### ```tcp```选项
+### ```tcp```go
 
 ```no_delay```TCP封包是否直接发出而不等待缓冲区填满。
 
@@ -304,7 +304,7 @@ Websocket传输是trojan-go的特性。在**正常的直接连接代理节点**�
 
 ```prefer_ipv4```是否优先使用IPv4地址。
 
-### ```mysql```数据库选项
+### ```mysql```go
 
 trojan-go兼容trojan的基于mysql的用户管理方式，但更推荐的方式是使用API。
 
@@ -316,7 +316,7 @@ trojan-go兼容trojan的基于mysql的用户管理方式，但更推荐的方式
 
 users表结构和trojan版本定义一致，下面是一个创建users表的例子。注意这里的password指的是密码经过SHA224散列之后的值（字符串），流量download, upload, quota的单位是字节。你可以通过修改数据库users表中的用户记录的方式，添加和删除用户，或者指定用户的流量配额。trojan-go会根据所有的用户流量配额，自动更新当前有效的用户列表。如果download+upload>quota，trojan-go服务器将拒绝该用户的连接。
 
-```mysql
+```go
 CREATE TABLE users (
     id INT UNSIGNED NOT NULL AUTO_INCREMENT,
     username VARCHAR(64) NOT NULL,
@@ -329,7 +329,7 @@ CREATE TABLE users (
 );
 ```
 
-### ```forward_proxy```前置代理选项
+### ```forward_proxy```go
 
 前置代理选项允许使用其他代理承载trojan-go的流量
 
@@ -341,7 +341,7 @@ CREATE TABLE users (
 
 ```username``` ```password```代理的用户和密码，如果留空则不使用认证。
 
-### ```api```选项
+### ```api```go
 
 trojan-go基于gRPC提供了API，以支持服务端和客户端的管理和统计。可以实现客户端的流量和速度统计，服务端各用户的流量和速度统计，用户的动态增删和限速等。
 

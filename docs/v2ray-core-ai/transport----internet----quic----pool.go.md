@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\quic\pool.go`
 
-```
+```go
 // +build !confonly
 // 定义了一个名为quic的包，且不仅仅是用于配置
 

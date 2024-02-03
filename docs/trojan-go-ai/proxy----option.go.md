@@ -1,6 +1,6 @@
 # `trojan-go\proxy\option.go`
 
-```
+```go
 package proxy
 
 import (

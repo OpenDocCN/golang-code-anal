@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\headers\http\config.go`
 
-```
+```go
 package http
 
 import (

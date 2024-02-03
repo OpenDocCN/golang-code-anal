@@ -1,6 +1,6 @@
 # `v2ray-core\infra\conf\transport_authenticators.go`
 
-```
+```go
 package conf
 
 import (

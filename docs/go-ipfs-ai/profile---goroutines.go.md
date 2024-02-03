@@ -1,6 +1,6 @@
 # `kubo\profile\goroutines.go`
 
-```
+```go
 // 定义一个名为 profile 的包
 package profile
 

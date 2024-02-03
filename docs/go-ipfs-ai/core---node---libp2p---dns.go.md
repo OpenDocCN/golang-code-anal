@@ -1,6 +1,6 @@
 # `kubo\core\node\libp2p\dns.go`
 
-```
+```go
 # 导入 libp2p 包
 package libp2p
 

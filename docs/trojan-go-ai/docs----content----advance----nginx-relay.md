@@ -19,7 +19,7 @@ Trojan 是一种通过 TLS 封装后进行加密数据传输的工具，利用�
 四台主机所绑定的域名分别为 (a/b/c/d).example.com。如图所示。  
 相互连接一共4条路径。分别为 a-c、a-d、b-c、b-d 。
 
-```text
+```go
                         +-----------------+           +--------------------+
                         |                 +---------->+                    |
                         |   VPS RELAY A   |           |   VPS ENDPOINT C   |
@@ -43,7 +43,7 @@ Trojan 是一种通过 TLS 封装后进行加密数据传输的工具，利用�
 
 首先我们需要将每条路径分别分配一个域名，并使其解析到分别的入口主机上。  
 
-```text
+```go
 a-c.example.com CNAME a.example.com  
 a-d.example.com CNAME a.example.com  
 b-c.example.com CNAME b.example.com  
@@ -54,7 +54,7 @@ b-d.example.com CNAME b.example.com
 由于解析记录和主机 IP 不符，HTTP 验证无法通过。这里建议使用 DNS 验证方式签发证书。  
 具体 DNS 验证插件需要根据您的域名 DNS 解析托管商选择，这里使用了 AWS Route 53。  
 
-```shell
+```go
 certbot certonly --dns-route53 -d a-c.example.com -d b-c.example.com // 主机 C 上
 certbot certonly --dns-route53 -d a-d.example.com -d b-d.example.com // 主机 D 上
 ```
@@ -67,7 +67,7 @@ certbot certonly --dns-route53 -d a-d.example.com -d b-d.example.com // 主机 D
 
 这里给出主机 A 上的对应配置，主机 B 同理。
 
-```nginx
+```go
 stream {
   map $ssl_preread_server_name $name {
     a-c.example.com   c.example.com;  # 将 a-c 路径流量转发至主机 C
@@ -92,7 +92,7 @@ stream {
 在之前的配置中我们使用了一个证书签发了所有目标路径的域名，所以这里我们可以使用一个 Trojan 服务端处理所有目标路径的请求。  
 Trojan 的配置和通常配置方法无异，这里还是提供一份例子。无关的配置已省略。
 
-```json
+```go
 {
     "run_type": "server",
     "local_addr": "0.0.0.0",

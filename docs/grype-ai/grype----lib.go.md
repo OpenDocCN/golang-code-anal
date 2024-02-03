@@ -1,6 +1,6 @@
 # `grype\grype\lib.go`
 
-```
+```go
 # 导入 grype 包
 package grype
 

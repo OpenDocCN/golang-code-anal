@@ -1,6 +1,6 @@
 # `grype\grype\version\helper_test.go`
 
-```
+```go
 package version
 
 import (

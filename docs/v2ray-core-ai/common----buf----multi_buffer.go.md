@@ -1,6 +1,6 @@
 # `v2ray-core\common\buf\multi_buffer.go`
 
-```
+```go
 // buf 包用于处理缓冲区相关操作
 package buf
 

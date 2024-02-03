@@ -1,6 +1,6 @@
 # `kubesploit\pkg\modules\shellcode\shellcode.go`
 
-```
+```go
 /*
 Kubesploit is a post-exploitation command and control framework built on top of Merlin by Russel Van Tuyl.
 This file is part of Kubesploit.

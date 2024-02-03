@@ -1,6 +1,6 @@
 # `kubo\cmd\ipfs\kubo\dnsresolve_test.go`
 
-```
+```go
 package kubo
 
 import (

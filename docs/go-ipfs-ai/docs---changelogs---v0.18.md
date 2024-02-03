@@ -38,7 +38,7 @@ first time a message is seen, you can set `Pubsub.SeenMessagesStrategy` to
 TL;DR: limit autoscaling improved, most users should start with default settings.
 If you have old configuration, switch to implicit defaults:
 
-```
+```go
 ipfs config --json -- Swarm.ResourceMgr '{}'
 ipfs config --json -- Swarm.ConnMgr '{}'
 ```
@@ -172,7 +172,7 @@ The Gateway supports conversion between DAG-CBOR and DAG-JSON for efficient
 end-to-end data structure management: author in CBOR or JSON, store as binary
 CBOR and retrieve as JSON via HTTP:
 
-```console
+```go
 $ echo '{"test": "json"}' | ipfs dag put # implicit --input-codec dag-json --store-codec dag-cbor
 bafyreico7mjtqtqhvawro3yud5uqn6sc33nzqb7b5j2d7pdmzer5nab4t4
 
@@ -195,7 +195,7 @@ to different blocks is represented by `{ "/": "cid" }`.
 The Gateway supports traversing these links, enabling access to data
 referenced by structures other than regular UnixFS directories:
 
-```console
+```go
 $ echo '{"test.jpg": {"/": "bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi"}}' | ipfs dag put
 bafyreihspwy3zlkzgphmec5d3xb5g5njrqwotd46lyubnelbzktnmsxkq4 # dag-cbor document linking to unixfs file
 
@@ -213,7 +213,7 @@ $ curl "http://127.0.0.1:8080/ipfs/bafyreihspwy3zlkzgphmec5d3xb5g5njrqwotd46lyub
 Finally, Gateway now supports the same [logical format projection](https://ipld.io/specs/codecs/dag-pb/spec/#logical-format) from
 DAG-PB to DAG-JSON as the `ipfs dag get` command, enabling the retrieval of directory listings as JSON instead of HTML:
 
-```console
+```go
 $ export DIR_CID=bafybeigccimv3zqm5g4jt363faybagywkvqbrismoquogimy7kvz2sj7sq
 $ curl -H "Accept: application/vnd.ipld.dag-json" "http://127.0.0.1:8080/ipfs/$DIR_CID" | jq
 $ curl "http://127.0.0.1:8080/ipfs/$DIR_CID?format=dag-json" | jq

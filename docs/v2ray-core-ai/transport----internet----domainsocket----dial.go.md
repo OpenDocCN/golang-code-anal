@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\domainsocket\dial.go`
 
-```
+```go
 // +build !windows
 // +build !wasm
 // +build !confonly

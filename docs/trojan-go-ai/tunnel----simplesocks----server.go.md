@@ -1,6 +1,6 @@
 # `trojan-go\tunnel\simplesocks\server.go`
 
-```
+```go
 package simplesocks
 
 import (

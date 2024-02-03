@@ -1,6 +1,6 @@
 # `v2ray-core\main\distro\all\all.go`
 
-```
+```go
 // 导入所有包
 package all
 

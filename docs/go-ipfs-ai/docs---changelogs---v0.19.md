@@ -110,7 +110,7 @@ Tooling is limited at the moment, but we are working on [go-libipfs](https://git
 
 ##### Example: fetch IPNS record over HTTP and inspect it with `ipfs name inspect --verify`
 
-```console
+```go
 $ FILE_CID=$(echo "Hello IPFS" | ipfs add --cid-version 1 -q)
 $ IPNS_KEY=$(ipfs key gen test)
 $ ipfs name publish /ipfs/$FILE_CID --key=test --ttl=30m

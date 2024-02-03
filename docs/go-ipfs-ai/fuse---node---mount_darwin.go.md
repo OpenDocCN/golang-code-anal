@@ -1,6 +1,6 @@
 # `kubo\fuse\node\mount_darwin.go`
 
-```
+```go
 // 如果不是 nofuse 构建标签，则编译此包
 // +build !nofuse
 

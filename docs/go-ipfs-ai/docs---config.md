@@ -384,7 +384,7 @@ Supported Transports:
 Note that quic (Draft-29) used to be supported with the format `/ipN/.../udp/.../quic`, but has since been [removed](https://github.com/libp2p/go-libp2p/releases/tag/v0.30.0).
 
 Default:
-```json
+```go
 [
   "/ip4/0.0.0.0/tcp/4001",
   "/ip6/::/tcp/4001",
@@ -431,7 +431,7 @@ Contains information used by the API gateway.
 Map of HTTP headers to set on responses from the API HTTP server.
 
 Example:
-```json
+```go
 {
 	"Foo": ["bar"]
 }
@@ -464,7 +464,7 @@ Type: `object[string -> object]` (user name -> authorization object, see bellow)
 For example, to limit RPC access to Alice (access `id` and MFS `files` commands with HTTP Basic Auth)
 and Bob (full access with Bearer token):
 
-```json
+```go
 {
   "API": {
     "Authorizations": {
@@ -497,7 +497,7 @@ Field format is `type:value`, and the following types are supported:
 
 One can use the config value for authentication via the command line:
 
-```
+```go
 ipfs id --api-auth basic:user:pass
 ```
 
@@ -656,7 +656,7 @@ For more information on possible values for this configuration option, see
 [docs/datastores.md](datastores.md)
 
 Default:
-```
+```go
 {
   "mounts": [
 	{
@@ -814,7 +814,7 @@ Examples:
 An array of paths that should be exposed on the hostname.
 
 Example:
-```json
+```go
 {
   "Gateway": {
     "PublicGateways": {
@@ -840,7 +840,7 @@ between content roots.
 - `true` - enables [subdomain gateway](https://docs.ipfs.tech/how-to/address-ipfs-on-web/#subdomain-gateway) at `http://*.{hostname}/`
     - **Requires whitelist:** make sure respective `Paths` are set.
       For example, `Paths: ["/ipfs", "/ipns"]` are required for `http://{cid}.ipfs.{hostname}` and `http://{foo}.ipns.{hostname}` to work:
-        ```json
+        ```go
         "Gateway": {
             "PublicGateways": {
                 "dweb.link": {
@@ -855,7 +855,7 @@ between content roots.
 
 - `false` - enables [path gateway](https://docs.ipfs.tech/how-to/address-ipfs-on-web/#path-gateway) at `http://{hostname}/*`
   - Example:
-    ```json
+    ```go
     "Gateway": {
         "PublicGateways": {
             "ipfs.io": {
@@ -886,7 +886,7 @@ An optional flag to explicitly configure whether subdomain gateway's redirects
 (enabled by `UseSubdomains: true`) should always inline a DNSLink name (FQDN)
 into a single DNS label:
 
-```
+```go
 //example.com/ipns/example.net → HTTP 301 → //example-net.ipns.example.com
 ```
 
@@ -914,7 +914,7 @@ Type: `flag`
 
 Default entries for `localhost` hostname and loopback IPs are always present.
 If additional config is provided for those hostnames, it will be merged on top of implicit values:
-```json
+```go
 {
   "Gateway": {
     "PublicGateways": {
@@ -932,7 +932,7 @@ It is also possible to remove a default by setting it to `null`.
 For example, to disable subdomain gateway on `localhost`
 and make that hostname act the same as `127.0.0.1`:
 
-```console
+```go
 $ ipfs config --json Gateway.PublicGateways '{"localhost": null }'
 ```
 
@@ -941,7 +941,7 @@ $ ipfs config --json Gateway.PublicGateways '{"localhost": null }'
 Below is a list of the most common public gateway setups.
 
 * Public [subdomain gateway](https://docs.ipfs.tech/how-to/address-ipfs-on-web/#subdomain-gateway) at `http://{cid}.ipfs.dweb.link` (each content root gets its own Origin)
-   ```console
+   ```go
    $ ipfs config --json Gateway.PublicGateways '{
        "dweb.link": {
          "UseSubdomains": true,
@@ -965,7 +965,7 @@ Below is a list of the most common public gateway setups.
 
 
 * Public [path gateway](https://docs.ipfs.tech/how-to/address-ipfs-on-web/#path-gateway) at `http://ipfs.io/ipfs/{cid}` (no Origin separation)
-   ```console
+   ```go
    $ ipfs config --json Gateway.PublicGateways '{
        "ipfs.io": {
          "UseSubdomains": false,
@@ -975,7 +975,7 @@ Below is a list of the most common public gateway setups.
    ```
 
 * Public [DNSLink](https://dnslink.io/) gateway resolving every hostname passed in `Host` header.
-  ```console
+  ```go
   $ ipfs config --json Gateway.NoDNSLink false
   ```
   * Note that `NoDNSLink: false` is the default (it works out of the box unless set to `true` manually)
@@ -986,7 +986,7 @@ Below is a list of the most common public gateway setups.
   Then, enable DNSLink gateway only for the specific hostname (for which data
   is already present on the node), without exposing any content-addressing `Paths`:
 
-   ```console
+   ```go
    $ ipfs config --json Gateway.NoFetch true
    $ ipfs config --json Gateway.NoDNSLink true
    $ ipfs config --json Gateway.PublicGateways '{
@@ -1209,7 +1209,7 @@ https://ipfs.github.io/pinning-services-api-spec/
 Contains information relevant to utilizing the remote pinning service
 
 Example:
-```json
+```go
 {
   "Pinning": {
     "RemoteServices": {
@@ -1415,7 +1415,7 @@ Peering can be asymmetric or symmetric:
 
 The set of peers with which to peer.
 
-```json
+```go
 {
   "Peering": {
     "Peers": [
@@ -1645,7 +1645,7 @@ Type: `object[string->object]`
 
 Complete example using 2 Routers, Amino DHT (LAN/WAN) and parallel.
 
-```
+```go
 $ ipfs config Routing.Type --json '"custom"'
 
 $ ipfs config Routing.Routers.WanDHT --json '{
@@ -1962,7 +1962,7 @@ The connection manager considers a connection idle if:
 
 **Example:**
 
-```json
+```go
 {
   "Swarm": {
     "ConnMgr": {
@@ -2270,7 +2270,7 @@ This allows for overriding the default DNS resolver provided by the operating sy
 and using different resolvers per domain or TLD (including ones from alternative, non-ICANN naming systems).
 
 Example:
-```json
+```go
 {
   "DNS": {
     "Resolvers": {
@@ -2287,7 +2287,7 @@ Be mindful that:
 - Currently only `https://` URLs for [DNS over HTTPS (DoH)](https://en.wikipedia.org/wiki/DNS_over_HTTPS) endpoints are supported as values.
 - The default catch-all resolver is the cleartext one provided by your operating system. It can be overridden by adding a DoH entry for the DNS root indicated by  `.` as illustrated above.
 - Out-of-the-box support for selected decentralized TLDs relies on a [centralized service which is provided on best-effort basis](https://www.cloudflare.com/distributed-web-gateway-terms/). The implicit DoH resolvers are:
-  ```json
+  ```go
   {
     "eth.": "https://resolver.cloudflare-eth.com/dns-query",
     "crypto.": "https://resolver.cloudflare-eth.com/dns-query"

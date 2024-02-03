@@ -1,6 +1,6 @@
 # `kubo\cmd\ipfs\util\signal_wasm.go`
 
-```
+```go
 # 导入必要的包
 package util
 

@@ -1,6 +1,6 @@
 # `kubo\core\coreiface\tests\routing.go`
 
-```
+```go
 package tests
 
 import (

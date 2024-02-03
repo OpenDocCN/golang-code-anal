@@ -1,6 +1,6 @@
 # `grype\grype\version\rpm_version.go`
 
-```
+```go
 package version
 
 import (

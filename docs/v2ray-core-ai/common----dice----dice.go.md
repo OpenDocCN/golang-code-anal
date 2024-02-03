@@ -1,6 +1,6 @@
 # `v2ray-core\common\dice\dice.go`
 
-```
+```go
 // Package dice contains common functions to generate random number.
 // It also initialize math/rand with the time in seconds at launch time.
 package dice // import "v2ray.com/core/common/dice"

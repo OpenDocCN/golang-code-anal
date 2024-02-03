@@ -1,6 +1,6 @@
 # `v2ray-core\common\crypto\errors.generated.go`
 
-```
+```go
 # 导入 crypto 包和 errors 包
 package crypto
 

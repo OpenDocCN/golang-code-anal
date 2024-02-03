@@ -1,6 +1,6 @@
 # `grype\grype\deprecated.go`
 
-```
+```go
 package grype
 
 import (

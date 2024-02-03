@@ -1,6 +1,6 @@
 # `kubo\config\remotepin.go`
 
-```
+```go
 package config
 
 // 远程服务路径

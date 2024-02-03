@@ -31,7 +31,7 @@ If an entire new denylist file is added, `ipfs daemon` also needs to be restarte
 
 CLI and Gateway users will receive errors in response to request impacted by a blocklist:
 
-```
+```go
 Error: /ipfs/QmQvjk82hPkSaZsyJ8vNER5cmzKW7HyGX5XVusK7EAenCN is blocked and cannot be provided
 ```
 
@@ -46,7 +46,7 @@ caused the request to be blocked.
 Clear-text rules are simple: just put content paths to block, one per line.
 Paths with unicode and whitespace need to be percend-encoded:
 
-```
+```go
 /ipfs/QmbWqxBEKC3P8tqsKc98xmWNzrzDtRLMiMPL8wBuTGsMnR
 /ipfs/bafybeihfg3d7rdltd43u3tfvncx7n5loqofbsobojcadtmokrljfthuc7y/927%20-%20Standards/927%20-%20Standards.png
 ```
@@ -69,7 +69,7 @@ All block events are logged as warnings on a separate level named `nopfs-blocks`
 
 To only log requests for blocked content set `GOLOG_LOG_LEVEL="nopfs-blocks=warn"`:
 
-```
+```go
 WARN (...) QmRFniDxwxoG2n4AcnGhRdjqDjCM5YeUcBE75K8WXmioH3: blocked (test.deny:9)
 ```
 

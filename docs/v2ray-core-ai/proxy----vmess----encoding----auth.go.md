@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\vmess\encoding\auth.go`
 
-```
+```go
 package encoding
 
 import (

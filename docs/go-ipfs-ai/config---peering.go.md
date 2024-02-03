@@ -1,6 +1,6 @@
 # `kubo\config\peering.go`
 
-```
+```go
 // 导入 "github.com/libp2p/go-libp2p/core/peer" 包，用于获取 peer.AddrInfo 结构体
 import "github.com/libp2p/go-libp2p/core/peer"
 

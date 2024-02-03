@@ -1,6 +1,6 @@
 # `grype\cmd\grype\cli\ui\util_test.go`
 
-```
+```go
 package ui
 
 import (

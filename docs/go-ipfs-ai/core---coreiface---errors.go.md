@@ -1,6 +1,6 @@
 # `kubo\core\coreiface\errors.go`
 
-```
+```go
 # 定义错误变量包
 package iface
 

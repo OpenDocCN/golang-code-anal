@@ -1,6 +1,6 @@
 # `kubesploit\docs\_build\html\_static\underscore-1.3.1.js`
 
-```
+```go
 // Underscore.js 1.3.1
 // 作者：Jeremy Ashkenas, DocumentCloud Inc.
 // Underscore 在 MIT 许可下可以自由分发

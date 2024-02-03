@@ -1,6 +1,6 @@
 # `kubo\version.go`
 
-```
+```go
 // 导入必要的包
 package ipfs
 

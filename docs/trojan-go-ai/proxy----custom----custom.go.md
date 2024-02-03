@@ -1,6 +1,6 @@
 # `trojan-go\proxy\custom\custom.go`
 
-```
+```go
 package custom
 
 import (

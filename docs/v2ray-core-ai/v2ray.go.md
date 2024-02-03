@@ -1,6 +1,6 @@
 # `v2ray-core\v2ray.go`
 
-```
+```go
 // +build !confonly
 
 package core

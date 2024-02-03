@@ -1,6 +1,6 @@
 # `v2ray-core\common\buf\readv_unix.go`
 
-```
+```go
 // +build illumos
 // 声明当前文件只在 illumos 平台下编译
 

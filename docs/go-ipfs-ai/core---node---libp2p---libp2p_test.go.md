@@ -1,6 +1,6 @@
 # `kubo\core\node\libp2p\libp2p_test.go`
 
-```
+```go
 package libp2p
 
 import (

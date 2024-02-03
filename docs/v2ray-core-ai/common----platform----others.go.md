@@ -1,6 +1,6 @@
 # `v2ray-core\common\platform\others.go`
 
-```
+```go
 // +build !windows
 // 定义了一个构建标签，表示该文件不适用于 Windows 平台
 

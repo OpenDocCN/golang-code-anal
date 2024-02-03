@@ -1,6 +1,6 @@
 # `v2ray-core\app\dispatcher\stats_test.go`
 
-```
+```go
 package dispatcher_test
 
 import (

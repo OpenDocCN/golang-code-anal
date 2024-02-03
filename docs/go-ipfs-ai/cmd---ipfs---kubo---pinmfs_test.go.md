@@ -1,6 +1,6 @@
 # `kubo\cmd\ipfs\kubo\pinmfs_test.go`
 
-```
+```go
 package kubo
 
 import (

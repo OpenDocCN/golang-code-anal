@@ -1,6 +1,6 @@
 # `trojan-go\component\client.go`
 
-```
+```go
 // 标记该文件适用于 client、full 或 mini 构建标记
 // +build client full mini
 

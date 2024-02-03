@@ -1,6 +1,6 @@
 # `v2ray-core\common\protocol\tls\cert\cert_test.go`
 
-```
+```go
 package cert
 
 import (

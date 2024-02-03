@@ -11,7 +11,7 @@ go-ipfs can be started by your operating system's native init system.
 
 For `systemd`, the best approach is to run the daemon in a user session. Here is a sample service file:
 
-```systemd
+```go
 [Unit]
 Description=IPFS daemon
 
@@ -34,7 +34,7 @@ To run this in your user session, save it as `~/.config/systemd/user/ipfs.servic
 
 *Note:* If you want this `--user` service to run at system boot, you must [`enable-linger`](http://www.freedesktop.org/software/systemd/man/loginctl.html) on the account that runs the service:
 
-```
+```go
 # loginctl enable-linger [user]
 ```
 Read more about `--user` services here: [wiki.archlinux.org:Systemd ](https://wiki.archlinux.org/index.php/Systemd/User#Automatic_start-up_of_systemd_user_instances)
@@ -48,10 +48,10 @@ Read more about `--user` services here: [wiki.archlinux.org:Systemd ](https://wi
 
 - And below is a very basic sample upstart job. **Note the username jbenet**.
 
-```
+```go
 cat /etc/init/ipfs.conf
 ```
-```
+```go
 description "ipfs: interplanetary filesystem"
 
 start on (local-filesystems and net-device-up IFACE!=lo)
@@ -67,19 +67,19 @@ exec ipfs daemon
 
 Another version is available here:
 
-```sh
+```go
 ipfs cat /ipfs/QmbYCwVeA23vz6mzAiVQhJNa2JSiRH4ebef1v2e5EkDEZS/ipfs.conf >/etc/init/ipfs.conf
 ```
 
 For both, edit to replace occurrences of `jbenet` with whatever user you want it to run as:
 
-```sh
+```go
 sed -i s/jbenet/<chosen-username>/ /etc/init/ipfs.conf
 ```
 
 Once you run `ipfs init` to create your IPFS settings, you can control the daemon using the `init.d` commands:
 
-```sh
+```go
 sudo service ipfs start
 sudo service ipfs stop
 sudo service ipfs restart
@@ -92,7 +92,7 @@ Similar to `systemd`, on macOS you can run `go-ipfs` via a user LaunchAgent.
 
 - Create `~/Library/LaunchAgents/io.ipfs.go-ipfs.plist`:
 
-```xml
+```go
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">

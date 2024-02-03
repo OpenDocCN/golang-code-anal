@@ -1,6 +1,6 @@
 # `grype\grype\db\v4\namespace\cpe\namespace_test.go`
 
-```
+```go
 package cpe
 
 import (

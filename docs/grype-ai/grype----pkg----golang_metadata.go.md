@@ -1,6 +1,6 @@
 # `grype\grype\pkg\golang_metadata.go`
 
-```
+```go
 # 定义了一个名为 GolangBinMetadata 的结构体，用于存储 Golang 二进制文件的元数据
 type GolangBinMetadata struct {
     # 用于存储构建设置的键值对，以 JSON 格式输出时的字段名为 goBuildSettings，如果为空则忽略

@@ -1,6 +1,6 @@
 # `grype\grype\db\test-fixtures\tls\listing.py`
 
-```
+```go
 # 导入 urllib.request 模块，用于发送 HTTP 请求
 import urllib.request
 # 导入 json 模块，用于处理 JSON 数据

@@ -1,6 +1,6 @@
 # `grype\cmd\grype\cli\ui\handle_database_diff_started.go`
 
-```
+```go
 package ui
 
 import (

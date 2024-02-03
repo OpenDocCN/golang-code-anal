@@ -1,6 +1,6 @@
 # `kubo\plugin\plugins\levelds\levelds.go`
 
-```
+```go
 package levelds
 
 import (

@@ -1,6 +1,6 @@
 # `grype\grype\version\portage_constraint.go`
 
-```
+```go
 package version
 
 import (

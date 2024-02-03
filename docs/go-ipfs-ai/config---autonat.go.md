@@ -1,6 +1,6 @@
 # `kubo\config\autonat.go`
 
-```
+```go
 package config
 
 import (

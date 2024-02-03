@@ -1,6 +1,6 @@
 # `trojan-go\tunnel\transport\server.go`
 
-```
+```go
 package transport
 
 import (

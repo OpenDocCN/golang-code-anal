@@ -1,6 +1,6 @@
 # `grype\cmd\grype\cli\options\match.go`
 
-```
+```go
 // matchConfig 包含用户通过应用程序配置可用的所有与匹配相关的配置选项。
 type matchConfig struct {
     Java       matcherConfig `yaml:"java" json:"java" mapstructure:"java"`                   // java匹配器的设置

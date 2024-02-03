@@ -1,6 +1,6 @@
 # `kubesploit\pkg\logging\logging.go`
 
-```
+```go
 // Kubesploit 是建立在 Russel Van Tuyl 的 Merlin 之上的后渗透命令和控制框架。
 // 本文件是 Kubesploit 的一部分。
 // 版权所有 2021 CyberArk Software Ltd. 保留所有权利。

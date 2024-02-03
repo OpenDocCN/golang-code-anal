@@ -1,6 +1,6 @@
 # `kubo\core\node\libp2p\fd\sys_windows.go`
 
-```
+```go
 // 根据构建标记判断是否在 Windows 平台下编译
 // 包名为 fd
 // 导入 math 包

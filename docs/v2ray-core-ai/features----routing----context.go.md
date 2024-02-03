@@ -1,6 +1,6 @@
 # `v2ray-core\features\routing\context.go`
 
-```
+```go
 package routing
 
 import (

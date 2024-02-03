@@ -1,6 +1,6 @@
 # `grype\grype\matcher\dotnet\matcher.go`
 
-```
+```go
 package dotnet
 
 import (

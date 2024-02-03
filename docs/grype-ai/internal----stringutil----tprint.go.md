@@ -1,6 +1,6 @@
 # `grype\internal\stringutil\tprint.go`
 
-```
+```go
 // 声明 stringutil 包
 package stringutil
 

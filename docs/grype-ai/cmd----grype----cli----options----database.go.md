@@ -1,6 +1,6 @@
 # `grype\cmd\grype\cli\options\database.go`
 
-```
+```go
 package options
 
 import (

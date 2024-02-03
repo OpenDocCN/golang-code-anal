@@ -1,6 +1,6 @@
 # `kubo\core\core_test.go`
 
-```
+```go
 package core
 
 import (

@@ -1,6 +1,6 @@
 # `v2ray-core\main\errors.generated.go`
 
-```
+```go
 # 定义一个名为 main 的包
 package main
 

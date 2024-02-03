@@ -1,6 +1,6 @@
 # `v2ray-core\app\proxyman\inbound\dynamic.go`
 
-```
+```go
 package inbound
 
 import (

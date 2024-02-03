@@ -1,6 +1,6 @@
 # `kubo\plugin\plugins\dagjose\dagjose.go`
 
-```
+```go
 package dagjose
 
 import (

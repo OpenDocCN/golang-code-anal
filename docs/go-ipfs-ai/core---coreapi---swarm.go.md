@@ -1,6 +1,6 @@
 # `kubo\core\coreapi\swarm.go`
 
-```
+```go
 package coreapi
 
 import (

@@ -1,6 +1,6 @@
 # `trojan-go\statistic\mysql\mysql.go`
 
-```
+```go
 package mysql
 
 import (

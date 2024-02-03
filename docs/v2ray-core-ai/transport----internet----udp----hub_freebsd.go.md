@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\udp\hub_freebsd.go`
 
-```
+```go
 // +build freebsd
 
 // 声明当前文件属于 freebsd 构建标签

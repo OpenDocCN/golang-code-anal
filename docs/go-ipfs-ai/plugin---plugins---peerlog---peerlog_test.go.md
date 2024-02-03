@@ -1,6 +1,6 @@
 # `kubo\plugin\plugins\peerlog\peerlog_test.go`
 
-```
+```go
 package peerlog
 
 import "testing"

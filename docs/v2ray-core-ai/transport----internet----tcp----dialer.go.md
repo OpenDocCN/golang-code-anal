@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\tcp\dialer.go`
 
-```
+```go
 // +build !confonly
 
 package tcp

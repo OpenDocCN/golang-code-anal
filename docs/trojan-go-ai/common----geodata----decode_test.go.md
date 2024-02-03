@@ -1,6 +1,6 @@
 # `trojan-go\common\geodata\decode_test.go`
 
-```
+```go
 package geodata_test
 
 import (

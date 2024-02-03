@@ -1,6 +1,6 @@
 # `v2ray-core\main\json\config_json.go`
 
-```
+```go
 package json
 
 // 生成错误代码

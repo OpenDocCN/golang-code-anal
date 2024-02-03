@@ -1,6 +1,6 @@
 # `grype\grype\db\v4\pkg\resolver\stock\resolver_test.go`
 
-```
+```go
 package stock
 
 import (

@@ -1,6 +1,6 @@
 # `v2ray-core\common\platform\ctlcmd\attr_windows.go`
 
-```
+```go
 // +build windows
 // 声明该文件只在 Windows 平台下编译
 

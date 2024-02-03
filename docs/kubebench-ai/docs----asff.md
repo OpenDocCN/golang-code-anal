@@ -21,7 +21,7 @@ You can configure kube-bench with the `--asff` to send findings to AWS Security 
   
 Here is an example IAM Policy that you can attach to your EKS node group's IAM Role: 
 
-```json
+```go
 {
     "Version": "2012-10-17",
     "Statement": [

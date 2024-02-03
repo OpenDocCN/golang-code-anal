@@ -1,6 +1,6 @@
 # `kubo\test\cli\testutils\floats.go`
 
-```
+```go
 # 定义一个名为FloatTruncate的函数，用于截断浮点数的小数部分
 package testutils
 

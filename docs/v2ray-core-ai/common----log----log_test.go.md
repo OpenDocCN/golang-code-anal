@@ -1,6 +1,6 @@
 # `v2ray-core\common\log\log_test.go`
 
-```
+```go
 package log_test
 
 import (

@@ -1,6 +1,6 @@
 # `kubo\cmd\ipfs\util\ui_windows.go`
 
-```
+```go
 package util
 
 import "golang.org/x/sys/windows"

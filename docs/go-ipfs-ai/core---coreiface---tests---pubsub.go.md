@@ -1,6 +1,6 @@
 # `kubo\core\coreiface\tests\pubsub.go`
 
-```
+```go
 package tests
 
 import (

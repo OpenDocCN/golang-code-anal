@@ -1,6 +1,6 @@
 # `kubo\core\commands\object\object.go`
 
-```
+```go
 // 导入所需的包
 package objectcmd
 

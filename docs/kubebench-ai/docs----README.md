@@ -11,7 +11,7 @@ specific Kubernetes node type, master or node and version.
 `controls` is the fundamental input to `kube-bench`. The following is an example 
 of a basic `controls`:
 
-```yml
+```go
 ---
 controls:
 id: 1
@@ -67,7 +67,7 @@ that run on the node type specified in the `controls`.
 For example, one subgroup checks parameters passed to the API server binary, while 
 another subgroup checks parameters passed to the controller-manager binary.
 
-```yml
+```go
 groups:
 - id: 1.1
   text: API Server
@@ -83,7 +83,7 @@ in the previous paragraphs. The most important part of the subgroup is the
 
 This is an example of a subgroup and checks in the subgroup.
 
-```yml
+```go
 id: 1.1
 text: API Server
 checks:
@@ -114,7 +114,7 @@ identified problems.
 In `kube-bench`, `check` objects embody these recommendations.  This an example
 `check` object:
 
-```yml
+```go
 id: 1.1.1
 text: "Ensure that the --anonymous-auth argument is set to false (Not Scored)"
 audit: "ps -ef | grep kube-apiserver | grep -v grep"
@@ -157,13 +157,13 @@ There are three ways to extract keywords from the output of the `audit` command,
 command is usually a `ps` command and a `grep` for the binary whose flag we are
 checking:
 
-```sh
+```go
 ps -ef | grep somebinary | grep -v grep
 ``` 
 
 Here is an example usage of the `flag` option:
 
-```yml
+```go
 # ...
 audit: "ps -ef | grep kube-apiserver | grep -v grep"
 tests:
@@ -176,7 +176,7 @@ tests:
 The associated `audit` command is usually `cat /path/to/config-yaml-or-json`.
 For example:
 
-```yml
+```go
 # ...
 text: "Ensure that the --anonymous-auth argument is set to false (Not Scored)"
 audit: "cat /path/to/some/config"
@@ -194,7 +194,7 @@ Similarly, if you don't want the environment checking command to be generated or
 
 The example below will check if the flag `--auto-tls` is equal to false *OR* `ETCD_AUTO_TLS` is equal to false
 
-```yml
+```go
   test_items:
   - flag: "--auto-tls"
     env: "ETCD_AUTO_TLS"
@@ -206,7 +206,7 @@ The example below will check if the flag `--auto-tls` is equal to false *OR* `ET
 `test_item` compares the output of the audit command and keywords using the
 `set` and `compare` fields.
 
-```yml
+```go
   test_items:
   - flag: "--anonymous-auth"
     compare:
@@ -260,7 +260,7 @@ entry `cfg/ocp-3.10/config.yaml`.
 
 Below is the structure of `cfg/config.yaml`:
 
-```
+```go
 nodetype
   |-- components
     |-- component1
@@ -294,7 +294,7 @@ Every node type has a subsection that specifies the main configuration items.
    the selected API server binary with the variable `$apiserverbin` in an `audit`
    command.
    
-   ```yml
+   ```go
    id: 1.1.1
     text: "Ensure that the --anonymous-auth argument is set to false (Scored)"
     audit: "ps -ef | grep $apiserverbin | grep -v grep"
@@ -311,7 +311,7 @@ Every node type has a subsection that specifies the main configuration items.
   selected API server config file with the variable `$apiserverconf` in an `audit`
   command.
   
-  ```yml
+  ```go
   id: 1.4.1
     text: "Ensure that the API server pod specification file permissions are
     set to 644 or more restrictive (Scored)"
@@ -327,7 +327,7 @@ Every node type has a subsection that specifies the main configuration items.
   kubelet unitfile is referenced with `$kubeletsvc` in the `remediation` of the 
   `check`.
   
-  ```yml
+  ```go
   id: 2.1.1
     # ...
     remediation: |
@@ -349,7 +349,7 @@ Every node type has a subsection that specifies the main configuration items.
     selected kubelet kubeconfig is referenced with `$kubeletkubeconfig` in the
     `audit` command.
     
-    ```yml
+    ```go
     id: 2.2.1
       text: "Ensure that the kubelet.conf file permissions are set to 644 or
       more restrictive (Scored)"

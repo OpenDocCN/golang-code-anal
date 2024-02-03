@@ -1,6 +1,6 @@
 # `kubo\core\commands\object\patch.go`
 
-```
+```go
 package objectcmd
 
 import (

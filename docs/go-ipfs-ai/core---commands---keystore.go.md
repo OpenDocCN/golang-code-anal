@@ -1,6 +1,6 @@
 # `kubo\core\commands\keystore.go`
 
-```
+```go
 package commands
 
 import (

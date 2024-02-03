@@ -1,6 +1,6 @@
 # `v2ray-core\app\reverse\portal.go`
 
-```
+```go
 // +build !confonly
 
 package reverse

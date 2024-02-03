@@ -1,6 +1,6 @@
 # `kubebench-aquasecurity\cmd\run_test.go`
 
-```
+```go
 package cmd
 
 import (

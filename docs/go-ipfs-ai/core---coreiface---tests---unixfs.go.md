@@ -1,6 +1,6 @@
 # `kubo\core\coreiface\tests\unixfs.go`
 
-```
+```go
 package tests
 
 import (

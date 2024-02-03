@@ -1,6 +1,6 @@
 # `grype\grype\db\v3\id.go`
 
-```
+```go
 // 定义包名为 v3
 package v3
 

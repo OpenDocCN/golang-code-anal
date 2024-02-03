@@ -1,6 +1,6 @@
 # `kubo\core\commands\diag.go`
 
-```
+```go
 # 导入 commands 包和 cmds 包
 import (
     cmds "github.com/ipfs/go-ipfs-cmds"

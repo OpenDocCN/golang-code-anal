@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\xtls\errors.generated.go`
 
-```
+```go
 # 导入名为 "errors" 的包
 package xtls
 

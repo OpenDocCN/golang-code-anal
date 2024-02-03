@@ -1,6 +1,6 @@
 # `kubo\plugin\plugins\nopfs\nopfs.go`
 
-```
+```go
 package nopfs
 
 import (

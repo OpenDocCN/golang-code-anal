@@ -1,6 +1,6 @@
 # `grype\grype\match\sort.go`
 
-```
+```go
 package match
 
 import "sort"

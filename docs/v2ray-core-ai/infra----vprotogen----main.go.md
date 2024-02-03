@@ -1,6 +1,6 @@
 # `v2ray-core\infra\vprotogen\main.go`
 
-```
+```go
 package main
 
 import (

@@ -1,6 +1,6 @@
 # `grype\grype\pkg\provider_config.go`
 
-```
+```go
 package pkg
 
 import (

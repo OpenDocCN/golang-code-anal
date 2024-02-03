@@ -1,6 +1,6 @@
 # `kubo\core\coreiface\util.go`
 
-```
+```go
 # 定义一个名为iface的包
 
 # 导入context和io包

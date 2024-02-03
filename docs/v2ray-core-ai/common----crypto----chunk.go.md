@@ -1,6 +1,6 @@
 # `v2ray-core\common\crypto\chunk.go`
 
-```
+```go
 package crypto
 
 import (

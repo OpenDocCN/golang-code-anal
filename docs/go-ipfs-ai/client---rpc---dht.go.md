@@ -1,6 +1,6 @@
 # `kubo\client\rpc\dht.go`
 
-```
+```go
 package rpc
 
 import (

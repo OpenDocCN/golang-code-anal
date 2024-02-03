@@ -1,6 +1,6 @@
 # `grype\grype\grypeerr\errors.go`
 
-```
+```go
 # 定义一个名为 grypeerr 的包
 package grypeerr
 

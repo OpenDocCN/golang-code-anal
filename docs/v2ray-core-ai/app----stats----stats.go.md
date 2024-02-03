@@ -1,6 +1,6 @@
 # `v2ray-core\app\stats\stats.go`
 
-```
+```go
 // +build !confonly
 
 package stats

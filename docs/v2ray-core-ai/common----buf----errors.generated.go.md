@@ -1,6 +1,6 @@
 # `v2ray-core\common\buf\errors.generated.go`
 
-```
+```go
 # 定义一个名为 buf 的包
 package buf
 

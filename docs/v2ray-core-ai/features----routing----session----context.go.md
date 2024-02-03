@@ -1,6 +1,6 @@
 # `v2ray-core\features\routing\session\context.go`
 
-```
+```go
 package session
 
 import (

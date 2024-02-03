@@ -1,6 +1,6 @@
 # `kubo\fuse\node\mount_test.go`
 
-```
+```go
 // 根据构建标记来确定是否在特定操作系统上构建代码
 // 如果不是在 openbsd、nofuse、netbsd、plan9 上构建，则执行下面的代码
 // +build !openbsd,!nofuse,!netbsd,!plan9

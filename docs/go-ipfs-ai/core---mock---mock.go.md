@@ -1,6 +1,6 @@
 # `kubo\core\mock\mock.go`
 
-```
+```go
 package coremock
 
 import (

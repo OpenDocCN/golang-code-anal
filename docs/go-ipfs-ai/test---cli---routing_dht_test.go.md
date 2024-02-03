@@ -1,6 +1,6 @@
 # `kubo\test\cli\routing_dht_test.go`
 
-```
+```go
 package cli
 
 import (

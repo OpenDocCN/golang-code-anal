@@ -1,6 +1,6 @@
 # `kubo\core\corehttp\metrics.go`
 
-```
+```go
 // 导入所需的包
 package corehttp
 

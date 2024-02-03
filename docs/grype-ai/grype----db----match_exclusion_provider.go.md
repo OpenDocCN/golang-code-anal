@@ -1,6 +1,6 @@
 # `grype\grype\db\match_exclusion_provider.go`
 
-```
+```go
 package db
 
 import (

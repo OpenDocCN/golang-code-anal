@@ -1,6 +1,6 @@
 # `grype\grype\db\test-fixtures\tls\serve.py`
 
-```
+```go
 # 导入 HTTPServer 和 SimpleHTTPRequestHandler 类
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 # 导入 ssl 模块

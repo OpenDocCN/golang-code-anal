@@ -1,6 +1,6 @@
 # `v2ray-core\common\protocol\id.go`
 
-```
+```go
 package protocol
 
 import (

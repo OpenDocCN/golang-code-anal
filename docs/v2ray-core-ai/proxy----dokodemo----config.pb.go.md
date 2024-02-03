@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\dokodemo\config.pb.go`
 
-```
+```go
 // 由 protoc-gen-go 生成的代码。请勿编辑。
 // 版本：
 //     protoc-gen-go v1.25.0

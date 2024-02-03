@@ -1,6 +1,6 @@
 # `grype\internal\stringutil\stringset.go`
 
-```
+```go
 # 定义一个名为 stringutil 的包
 
 # 定义一个名为 StringSet 的类型，它是一个映射，将字符串映射到空结构体

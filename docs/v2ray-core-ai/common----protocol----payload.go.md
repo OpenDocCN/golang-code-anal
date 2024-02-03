@@ -1,6 +1,6 @@
 # `v2ray-core\common\protocol\payload.go`
 
-```
+```go
 # 定义 TransferType 类型，表示传输类型，使用 byte 类型
 type TransferType byte
 

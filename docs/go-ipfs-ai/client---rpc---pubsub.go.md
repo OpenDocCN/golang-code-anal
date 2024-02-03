@@ -1,6 +1,6 @@
 # `kubo\client\rpc\pubsub.go`
 
-```
+```go
 package rpc
 
 import (

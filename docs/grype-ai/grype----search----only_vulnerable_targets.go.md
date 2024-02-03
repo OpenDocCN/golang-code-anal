@@ -1,6 +1,6 @@
 # `grype\grype\search\only_vulnerable_targets.go`
 
-```
+```go
 package search
 
 import (

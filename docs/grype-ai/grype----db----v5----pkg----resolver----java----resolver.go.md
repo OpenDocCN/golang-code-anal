@@ -1,6 +1,6 @@
 # `grype\grype\db\v5\pkg\resolver\java\resolver.go`
 
-```
+```go
 package java
 
 import (

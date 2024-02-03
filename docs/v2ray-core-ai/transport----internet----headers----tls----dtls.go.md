@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\headers\tls\dtls.go`
 
-```
+```go
 package tls
 
 import (

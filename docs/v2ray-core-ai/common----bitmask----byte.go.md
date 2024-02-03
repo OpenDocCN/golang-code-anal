@@ -1,6 +1,6 @@
 # `v2ray-core\common\bitmask\byte.go`
 
-```
+```go
 // 定义 Byte 类型，表示一个字节的位掩码
 type Byte byte
 

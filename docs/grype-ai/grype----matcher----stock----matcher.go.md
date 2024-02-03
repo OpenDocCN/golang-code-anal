@@ -1,6 +1,6 @@
 # `grype\grype\matcher\stock\matcher.go`
 
-```
+```go
 package stock
 
 import (

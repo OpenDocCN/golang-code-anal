@@ -88,7 +88,7 @@ Despite all the generalization spoken about above, the IPFS API is actually very
 simple. You can inspect all the requests made with `nc` and the `--api` option
 (as of [this PR](https://github.com/ipfs/kubo/pull/1598), or `0.3.8`):
 
-```
+```go
 > nc -l 5002 &
 > ipfs --api /ip4/127.0.0.1/tcp/5002 swarm addrs local --enc=json
 POST /api/v0/version?enc=json&stream-channels=true HTTP/1.1
@@ -105,7 +105,7 @@ The only hard part is getting the file streaming right. It is (now) fairly easy
 to stream files to kubo using multipart. Basically, we end up with HTTP
 requests like this:
 
-```
+```go
 > nc -l 5002 &
 > ipfs --api /ip4/127.0.0.1/tcp/5002 add -r ~/demo/basic/test
 POST /api/v0/add?encoding=json&progress=true&r=true&stream-channels=true HTTP/1.1

@@ -1,6 +1,6 @@
 # `grype\cmd\grype\internal\ui\post_ui_event_writer_test.go`
 
-```
+```go
 package ui
 
 import (

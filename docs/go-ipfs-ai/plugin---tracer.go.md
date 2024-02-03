@@ -1,6 +1,6 @@
 # `kubo\plugin\tracer.go`
 
-```
+```go
 // 导入 plugin 包和 opentracing-go 包
 package plugin
 

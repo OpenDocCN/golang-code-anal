@@ -1,6 +1,6 @@
 # `v2ray-core\common\errors\errors_test.go`
 
-```
+```go
 package errors_test
 
 import (

@@ -1,6 +1,6 @@
 # `grype\test\integration\compare_sbom_input_vs_lib_test.go`
 
-```
+```go
 package integration
 
 import (

@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\dokodemo\dokodemo.go`
 
-```
+```go
 // +build !confonly
 
 package dokodemo

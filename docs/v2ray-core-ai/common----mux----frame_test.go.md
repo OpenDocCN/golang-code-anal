@@ -1,6 +1,6 @@
 # `v2ray-core\common\mux\frame_test.go`
 
-```
+```go
 package mux_test
 
 import (

@@ -1,6 +1,6 @@
 # `kubo\plugin\plugins\flatfs\flatfs.go`
 
-```
+```go
 package flatfs
 
 import (

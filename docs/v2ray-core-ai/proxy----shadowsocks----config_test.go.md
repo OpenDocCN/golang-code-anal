@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\shadowsocks\config_test.go`
 
-```
+```go
 package shadowsocks_test
 
 import (

@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\blackhole\errors.generated.go`
 
-```
+```go
 package blackhole
 
 import "v2ray.com/core/common/errors"

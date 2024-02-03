@@ -67,7 +67,7 @@ from that location to the target.
 ### Options
 The `options` property is a list that of an object type that requires 4 parts. An example option object looks like:
 
-```text
+```go
 "options": [
     {"name": "host", "value": "google.com", "required": true, "flag": "", "description": "The host to ping"},
     {"name": "count", "value": "3", "required": false, "flag": "-c", "description": "Stop after sending count ECHO_REQUEST packets."},
@@ -93,7 +93,7 @@ An example option object looks like:
 
 An example of setting the `count` option is:
 
-```text
+```go
 Merlin[module][TEST]» set count 5 
 [+]count set to 5
 Merlin[module][TEST]»
@@ -143,7 +143,7 @@ the option's [name](#Name). This will be parsed and replaced with both the `valu
 list entry. The option's [flag](#Flag) and [value](#Value) can be accessed individually. An example `command` section 
 looks like:
 
-```text
+```go
 "options": [
     {"name": "host", "value": "google.com", "required": true, "flag": "", "description": "The host to ping"},
     {"name": "count", "value": "3", "required": false, "flag": "-c", "description": "Stop after sending count ECHO_REQUEST packets."},
@@ -161,7 +161,7 @@ This would get parsed as `/bin/ping -c 3 google.com`
 If an option's value is not set, it will be ignored. An example of accessing only an option's flag while ignoring 
 everything else is:
 
-```text
+```go
 "options": [
     {"name": "host", "value": "", "required": false, "flag": "", "description": "The host to ping"},
     {"name": "count", "value": "", "required": false, "flag": "-c", "description": "Stop after sending count ECHO_REQUEST packets."},

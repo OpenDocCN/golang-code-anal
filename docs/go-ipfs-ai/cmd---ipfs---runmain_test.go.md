@@ -1,6 +1,6 @@
 # `kubo\cmd\ipfs\runmain_test.go`
 
-```
+```go
 //go:build testrunmain
 // +build testrunmain
 // 标记此文件只在 testrunmain 构建标记下构建

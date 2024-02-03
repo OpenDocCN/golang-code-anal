@@ -1,6 +1,6 @@
 # `grype\grype\version\maven_constraint_test.go`
 
-```
+```go
 // 导入所需的包
 package version
 

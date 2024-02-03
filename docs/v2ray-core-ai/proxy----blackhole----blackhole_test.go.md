@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\blackhole\blackhole_test.go`
 
-```
+```go
 package blackhole_test
 
 import (

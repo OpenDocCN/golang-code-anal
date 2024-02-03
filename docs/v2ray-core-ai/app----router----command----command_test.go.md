@@ -1,6 +1,6 @@
 # `v2ray-core\app\router\command\command_test.go`
 
-```
+```go
 package command_test
 
 import (

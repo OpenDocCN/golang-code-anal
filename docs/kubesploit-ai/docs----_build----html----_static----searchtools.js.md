@@ -1,6 +1,6 @@
 # `kubesploit\docs\_build\html\_static\searchtools.js`
 
-```
+```go
 /*
  * searchtools.js
  * ~~~~~~~~~~~~~~~~

@@ -1,6 +1,6 @@
 # `kubesploit\docs\_build\html\_static\documentation_options.js`
 
-```
+```go
 # 定义文档配置选项对象
 var DOCUMENTATION_OPTIONS = {
     # 获取文档根 URL

@@ -1,6 +1,6 @@
 # `grype\grype\internal\packagemetadata\discover_type_names.go`
 
-```
+```go
 package packagemetadata
 
 import (

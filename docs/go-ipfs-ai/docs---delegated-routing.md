@@ -85,7 +85,7 @@ The value will contain:
 
 #### Configuration file example:
 
-```json
+```go
 "Routing": {
   "Type": "custom",
   "Routers": {
@@ -203,7 +203,7 @@ The value will contain:
 
 Added YAML for clarity:
 
-```yaml
+```go
 ---
 Type: custom
 Routers:
@@ -289,7 +289,7 @@ type Routing interface {
 
     Bootstrap(context.Context) error
 }
-```
+```go
 
 All methods involved:
 
@@ -306,7 +306,7 @@ type Routing interface {
 
     Bootstrap(context.Context) error
 }
-```
+```go
 We can configure which methods will be used per routing implementation. Methods names used in the configuration file will be:
 
 - `Provide`: `"provide"`
@@ -401,7 +401,7 @@ As test fixtures we can add different use cases here and see how the configurati
     }
   }
 }
-```
+```go
 YAML representation for clarity:
 
 ```yaml

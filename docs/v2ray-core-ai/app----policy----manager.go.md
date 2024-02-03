@@ -1,6 +1,6 @@
 # `v2ray-core\app\policy\manager.go`
 
-```
+```go
 // 定义 policy 包，引入必要的依赖包
 package policy
 

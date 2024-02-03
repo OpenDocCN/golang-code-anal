@@ -1,6 +1,6 @@
 # `kubo\config\gateway.go`
 
-```
+```go
 package config
 
 const (

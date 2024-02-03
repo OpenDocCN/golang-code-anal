@@ -1,6 +1,6 @@
 # `grype\grype\db\v5\store\diff_test.go`
 
-```
+```go
 package store
 
 import (

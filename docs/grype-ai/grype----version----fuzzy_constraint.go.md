@@ -1,6 +1,6 @@
 # `grype\grype\version\fuzzy_constraint.go`
 
-```
+```go
 package version
 
 import (

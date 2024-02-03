@@ -1,6 +1,6 @@
 # `kubo\core\node\libp2p\fd\sys_not_unix.go`
 
-```
+```go
 // 根据构建标记判断当前操作系统是否为 Linux、Darwin 或 Windows
 // 如果不是以上三种操作系统，则执行以下代码
 package fd

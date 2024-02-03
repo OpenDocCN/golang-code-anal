@@ -1,6 +1,6 @@
 # `trojan-go\tunnel\metadata.go`
 
-```
+```go
 package tunnel
 
 import (

@@ -1,6 +1,6 @@
 # `grype\test\cli\registry_auth_test.go`
 
-```
+```go
 package cli
 
 import (

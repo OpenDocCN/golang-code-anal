@@ -1,6 +1,6 @@
 # `kubo\cmd\ipfs\util\ui.go`
 
-```
+```go
 // 如果不是在 Windows 系统下编译，则构建该代码块
 // 定义 util 包
 package util

@@ -1,6 +1,6 @@
 # `kubebench-aquasecurity\cmd\version.go`
 
-```
+```go
 // 导入必要的包
 package cmd
 

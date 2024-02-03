@@ -1,6 +1,6 @@
 # `kubo\plugin\loader\load_unix.go`
 
-```
+```go
 // 根据条件编译指令，当满足 cgo 且不满足 noplugin 且满足 (linux || darwin || freebsd) 时，进行编译
 // 定义包名为 loader 的包
 package loader

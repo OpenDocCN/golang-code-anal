@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\http\errors.generated.go`
 
-```
+```go
 # 定义一个名为http的包
 package http
 

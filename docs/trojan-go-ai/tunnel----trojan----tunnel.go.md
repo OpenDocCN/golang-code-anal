@@ -1,6 +1,6 @@
 # `trojan-go\tunnel\trojan\tunnel.go`
 
-```
+```go
 package trojan
 
 import (

@@ -1,6 +1,6 @@
 # `kubo\test\cli\harness\nodes.go`
 
-```
+```go
 package harness
 
 import (

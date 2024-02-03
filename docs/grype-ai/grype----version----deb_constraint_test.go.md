@@ -1,6 +1,6 @@
 # `grype\grype\version\deb_constraint_test.go`
 
-```
+```go
 // 声明 version 包
 package version
 

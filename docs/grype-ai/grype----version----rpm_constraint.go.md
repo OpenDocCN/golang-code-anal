@@ -1,6 +1,6 @@
 # `grype\grype\version\rpm_constraint.go`
 
-```
+```go
 package version
 
 import (

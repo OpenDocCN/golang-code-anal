@@ -1,6 +1,6 @@
 # `kubo\core\coreiface\object.go`
 
-```
+```go
 package iface
 
 import (

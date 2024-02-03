@@ -1,6 +1,6 @@
 # `kubo\cmd\ipfs\kubo\daemon_other.go`
 
-```
+```go
 // 如果不是在 Linux 系统上构建，则编译这部分代码
 // 定义包名为 kubo
 package kubo

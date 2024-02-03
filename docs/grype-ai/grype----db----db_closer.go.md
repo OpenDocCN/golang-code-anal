@@ -1,6 +1,6 @@
 # `grype\grype\db\db_closer.go`
 
-```
+```go
 # 导入名为 v5 的包，该包位于 github.com/anchore/grype/grype/db/v5
 import v5 "github.com/anchore/grype/grype/db/v5"
 

@@ -1,6 +1,6 @@
 # `v2ray-core\common\protocol\server_spec_test.go`
 
-```
+```go
 package protocol_test
 
 import (

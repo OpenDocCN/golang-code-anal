@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\shadowsocks\client.go`
 
-```
+```go
 // +build !confonly
 
 package shadowsocks

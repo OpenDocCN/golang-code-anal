@@ -1,6 +1,6 @@
 # `v2ray-core\common\peer\latency.go`
 
-```
+```go
 // 定义一个名为 peer 的包
 package peer
 

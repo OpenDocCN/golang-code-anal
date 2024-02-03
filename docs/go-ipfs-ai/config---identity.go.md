@@ -1,6 +1,6 @@
 # `kubo\config\identity.go`
 
-```
+```go
 package config
 
 import (

@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\freedom\freedom.go`
 
-```
+```go
 // +build !confonly
 
 package freedom

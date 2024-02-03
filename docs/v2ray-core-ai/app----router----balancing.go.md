@@ -1,6 +1,6 @@
 # `v2ray-core\app\router\balancing.go`
 
-```
+```go
 // +build !confonly
 
 package router

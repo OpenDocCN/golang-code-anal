@@ -1,6 +1,6 @@
 # `kubo\gc\gc.go`
 
-```
+```go
 // Package gc provides garbage collection for go-ipfs.
 package gc
 

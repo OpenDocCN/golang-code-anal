@@ -1,6 +1,6 @@
 # `v2ray-core\common\crypto\aes.go`
 
-```
+```go
 package crypto
 
 import (

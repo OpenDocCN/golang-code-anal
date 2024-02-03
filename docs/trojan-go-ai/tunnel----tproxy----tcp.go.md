@@ -1,6 +1,6 @@
 # `trojan-go\tunnel\tproxy\tcp.go`
 
-```
+```go
 //go:build linux
 // +build linux
 

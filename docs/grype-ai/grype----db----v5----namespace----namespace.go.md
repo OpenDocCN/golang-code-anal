@@ -1,6 +1,6 @@
 # `grype\grype\db\v5\namespace\namespace.go`
 
-```
+```go
 # 定义一个名为 namespace 的包
 package namespace
 

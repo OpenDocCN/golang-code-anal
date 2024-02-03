@@ -1,6 +1,6 @@
 # `v2ray-core\common\crypto\internal\chacha.go`
 
-```
+```go
 package internal
 
 // 使用go:generate指令来运行chacha_core_gen.go文件

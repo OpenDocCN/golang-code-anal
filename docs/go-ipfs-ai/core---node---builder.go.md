@@ -1,6 +1,6 @@
 # `kubo\core\node\builder.go`
 
-```
+```go
 package node
 
 import (

@@ -1,6 +1,6 @@
 # `kubo\cmd\ipfs\kubo\init.go`
 
-```
+```go
 package kubo
 
 import (

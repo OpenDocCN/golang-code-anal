@@ -1,6 +1,6 @@
 # `kubo\docs\examples\kubo-as-a-library\main.go`
 
-```
+```go
 package main
 
 import (

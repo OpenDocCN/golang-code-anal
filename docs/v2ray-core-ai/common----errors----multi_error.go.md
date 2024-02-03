@@ -1,6 +1,6 @@
 # `v2ray-core\common\errors\multi_error.go`
 
-```
+```go
 package errors
 
 import (

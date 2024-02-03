@@ -1,6 +1,6 @@
 # `v2ray-core\app\router\condition_geoip_test.go`
 
-```
+```go
 package router_test
 
 import (

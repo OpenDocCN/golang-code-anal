@@ -1,6 +1,6 @@
 # `kubesploit\pkg\agent\exec.go`
 
-```
+```go
 // +build !windows
 // 如果不是在 Windows 系统下编译，则包含该文件
 

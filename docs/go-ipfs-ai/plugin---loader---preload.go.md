@@ -1,6 +1,6 @@
 # `kubo\plugin\loader\preload.go`
 
-```
+```go
 package loader
 
 import (

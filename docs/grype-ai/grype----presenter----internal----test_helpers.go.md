@@ -1,6 +1,6 @@
 # `grype\grype\presenter\internal\test_helpers.go`
 
-```
+```go
 package internal
 
 import (

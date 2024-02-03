@@ -1,6 +1,6 @@
 # `v2ray-core\transport\link.go`
 
-```
+```go
 // 导入名为 "buf" 的包，该包位于 "v2ray.com/core/common" 下
 import "v2ray.com/core/common/buf"
 

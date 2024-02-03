@@ -1,6 +1,6 @@
 # `grype\internal\stringutil\parse.go`
 
-```
+```go
 // 导入 regexp 包
 import "regexp"
 

@@ -1,6 +1,6 @@
 # `trojan-go\api\service\server.go`
 
-```
+```go
 package service
 
 import (

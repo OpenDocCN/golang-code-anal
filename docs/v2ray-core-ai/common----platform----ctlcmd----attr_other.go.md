@@ -1,6 +1,6 @@
 # `v2ray-core\common\platform\ctlcmd\attr_other.go`
 
-```
+```go
 // +build !windows
 // 定义构建约束，表示该文件不适用于 Windows 系统
 

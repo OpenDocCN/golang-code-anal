@@ -1,6 +1,6 @@
 # `grype\internal\file\hasher_test.go`
 
-```
+```go
 # 导入所需的包
 package file
 

@@ -1,6 +1,6 @@
 # `kubo\test\cli\harness\peering.go`
 
-```
+```go
 package harness
 
 import (

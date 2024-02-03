@@ -1,6 +1,6 @@
 # `kubo\cmd\ipfs\kubo\daemon.go`
 
-```
+```go
 package kubo
 
 import (

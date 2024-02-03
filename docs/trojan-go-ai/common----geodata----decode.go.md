@@ -1,6 +1,6 @@
 # `trojan-go\common\geodata\decode.go`
 
-```
+```go
 // Package geodata includes utilities to decode and parse the geoip & geosite dat files.
 //
 // It relies on the proto structure of GeoIP, GeoIPList, GeoSite and GeoSiteList in

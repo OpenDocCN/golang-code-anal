@@ -1,6 +1,6 @@
 # `grype\grype\matcher\java\matcher.go`
 
-```
+```go
 package java
 # 导入所需的包
 

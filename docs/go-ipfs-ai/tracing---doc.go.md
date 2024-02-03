@@ -1,6 +1,6 @@
 # `kubo\tracing\doc.go`
 
-```
+```go
 // Package tracing contains the tracing logic for go-ipfs, including configuring the tracer and
 // helping keep consistent naming conventions across the stack.
 //

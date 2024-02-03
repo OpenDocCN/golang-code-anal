@@ -1,6 +1,6 @@
 # `kubo\core\commands\bootstrap.go`
 
-```
+```go
 package commands
 
 import (

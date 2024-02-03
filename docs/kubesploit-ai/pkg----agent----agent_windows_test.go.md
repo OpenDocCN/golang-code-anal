@@ -1,6 +1,6 @@
 # `kubesploit\pkg\agent\agent_windows_test.go`
 
-```
+```go
 // +build windows
 
 package agent

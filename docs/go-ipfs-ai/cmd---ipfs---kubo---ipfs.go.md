@@ -1,6 +1,6 @@
 # `kubo\cmd\ipfs\kubo\ipfs.go`
 
-```
+```go
 // 导入 kubo 包
 package kubo
 

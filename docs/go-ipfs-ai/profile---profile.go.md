@@ -1,6 +1,6 @@
 # `kubo\profile\profile.go`
 
-```
+```go
 package profile
 
 import (

@@ -1,6 +1,6 @@
 # `v2ray-core\testing\scenarios\dokodemo_test.go`
 
-```
+```go
 package scenarios
 
 import (

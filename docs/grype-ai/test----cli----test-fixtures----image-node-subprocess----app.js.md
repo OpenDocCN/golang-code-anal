@@ -1,6 +1,6 @@
 # `grype\test\cli\test-fixtures\image-node-subprocess\app.js`
 
-```
+```go
 # 调用子进程执行 grype 命令，传入参数 "-vv" 和 "registry:busybox:latest"
 require("child_process").spawn("grype", [
     "-vv",

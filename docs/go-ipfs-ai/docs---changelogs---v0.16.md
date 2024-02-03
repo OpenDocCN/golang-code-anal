@@ -31,7 +31,7 @@ Now, we allow to configure several routers working together, so you can have sev
 
 Example configuration usage using the [Filecoin Network Indexer](https://docs.cid.contact/filecoin-network-indexer/overview) and the DHT, making first a query to the indexer, and timing out after 3 seconds.
 
-```console
+```go
 $ ipfs config Routing.Type --json '"custom"'
 
 $ ipfs config Routing.Routers.CidContact --json '{
@@ -111,7 +111,7 @@ Thoses steps are temporary and wont be needed once we make it enabled by default
 1. Enable the WebTransport transport:
    `ipfs config Swarm.Transports.Network.WebTransport --json true`
 1. Add a listener address for WebTransport to your `Addresses.Swarm` key, for example:
-   ```json
+   ```go
    [
      "/ip4/0.0.0.0/tcp/4001",
      "/ip4/0.0.0.0/udp/4001/quic",
@@ -159,7 +159,7 @@ a low level pin.
 Before (Kubo <0.16.0):
 
 
-```console
+```go
 $ ipfs add cat.jpg
 QmCID
 $ ipfs files cp /ipfs/QmCID /mfs-cats/cat.jpg
@@ -168,13 +168,13 @@ $ ipfs pin rm QmCID # removing low level pin, since MFS is protecting from gc
 
 Kubo 0.16.0 collapses the above steps into one:
 
-```console
+```go
 $ ipfs add --pin=false cat.jpg --to-files /mfs-cats/
 ```
 
 A recursive add to MFS works too (below line will create `/lots-of-cats/` directory in MFS):
 
-```console
+```go
 $ ipfs add -r ./lots-of-cats/ --to-files /
 ```
 

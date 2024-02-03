@@ -1,6 +1,6 @@
 # `kubo\test\cli\gateway_test.go`
 
-```
+```go
 package cli
 
 import (

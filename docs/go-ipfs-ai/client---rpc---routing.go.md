@@ -1,6 +1,6 @@
 # `kubo\client\rpc\routing.go`
 
-```
+```go
 package rpc
 
 import (

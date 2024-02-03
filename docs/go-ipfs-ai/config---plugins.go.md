@@ -1,6 +1,6 @@
 # `kubo\config\plugins.go`
 
-```
+```go
 # 定义一个名为 Plugins 的结构体类型
 type Plugins struct {
     # 插件名称到插件对象的映射

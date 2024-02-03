@@ -1,6 +1,6 @@
 # `v2ray-core\main\confloader\errors.generated.go`
 
-```
+```go
 # 定义一个名为confloader的包
 package confloader
 

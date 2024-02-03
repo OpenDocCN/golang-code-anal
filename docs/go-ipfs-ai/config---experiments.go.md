@@ -1,6 +1,6 @@
 # `kubo\config\experiments.go`
 
-```
+```go
 package config
 
 // Experiments 结构体定义了一系列实验性功能的开关

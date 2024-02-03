@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\dokodemo\config.go`
 
-```
+```go
 // 导入 dokodemo 包和 net 包
 package dokodemo
 

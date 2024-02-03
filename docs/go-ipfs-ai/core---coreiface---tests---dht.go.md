@@ -1,6 +1,6 @@
 # `kubo\core\coreiface\tests\dht.go`
 
-```
+```go
 // 导入所需的包
 package tests
 

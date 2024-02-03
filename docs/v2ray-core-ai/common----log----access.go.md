@@ -1,6 +1,6 @@
 # `v2ray-core\common\log\access.go`
 
-```
+```go
 package log
 
 import (

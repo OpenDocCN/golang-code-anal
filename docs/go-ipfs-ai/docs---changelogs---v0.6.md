@@ -33,7 +33,7 @@ If you hit this performance issue on Linux, you should tune the `net.core.rmem_d
 
 If necessary, you can disable the QUIC transport by running:
 
-```bash
+```go
 > ipfs config --json Swarm.Transports.Network.QUIC false
 ```
 
@@ -63,7 +63,7 @@ While base32 (the current default encoding used in subdomains) is simpler than b
 
 This release adds support for base36 but won't use it by default. If you'd like to re-encode an Ed25519 IPNS key into base36, you can use the `ipfs cid format` command:
 
-```sh
+```go
 $ ipfs cid format -v 1 --codec libp2p-key -b base36 bafzaajaiaejca4syrpdu6gdx4wsdnokxkprgzxf4wrstuc34gxw5k5jrag2so5gk k51qzi5uqu5dj16qyiq0tajolkojyl9qdkr254920wxv7ghtuwcz593tp69z9m
 ```
 

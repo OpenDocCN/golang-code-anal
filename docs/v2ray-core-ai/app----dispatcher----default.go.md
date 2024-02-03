@@ -1,6 +1,6 @@
 # `v2ray-core\app\dispatcher\default.go`
 
-```
+```go
 // +build !confonly
 // 定义了构建标签，表示不仅仅是配置文件
 

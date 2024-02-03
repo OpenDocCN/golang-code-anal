@@ -1,6 +1,6 @@
 # `kubo\fuse\node\mount_notsupp.go`
 
-```
+```go
 // 根据条件构建标签，表示在非 nofuse 并且在 openbsd 或者非 nofuse 并且在 netbsd 或者非 nofuse 并且在 plan9 的情况下编译
 // +build !nofuse,openbsd !nofuse,netbsd !nofuse,plan9
 

@@ -1,6 +1,6 @@
 # `v2ray-core\common\protocol\http\sniff.go`
 
-```
+```go
 package http
 
 import (

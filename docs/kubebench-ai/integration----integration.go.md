@@ -1,6 +1,6 @@
 # `kubebench-aquasecurity\integration\integration.go`
 
-```
+```go
 package integration
 
 import (

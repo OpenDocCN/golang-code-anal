@@ -90,13 +90,13 @@ The value of `--version` takes precedence over the value of `KUBE_BENCH_VERSION`
 
 For example, run kube-bench against a master with version auto-detection:
 
-```
+```go
 kube-bench master
 ```
 
 Or run kube-bench against a worker node using the tests for Kubernetes version 1.13:
 
-```
+```go
 kube-bench node --version 1.13
 ```
 
@@ -104,17 +104,17 @@ kube-bench node --version 1.13
 
 Alternatively, you can specify `--benchmark` to run a specific CIS Benchmark version:
 
-```
+```go
 kube-bench node --benchmark cis-1.5
 ```
 
 If you want to target specific CIS Benchmark `target` (i.e master, node, etcd, etc...)
 you can use the `run --targets` subcommand.
-```
+```go
 kube-bench --benchmark cis-1.5 run --targets master,node
 ```
 or
-```
+```go
 kube-bench --benchmark cis-1.5 run --targets master,node,etcd,policies
 ```
 
@@ -137,19 +137,19 @@ with same name as the CIS Benchmark versions under `cfg/`, for example `cfg/cis-
 
 You can avoid installing kube-bench on the host by running it inside a container using the host PID namespace and mounting the `/etc` and `/var` directories where the configuration and other files are located on the host so that kube-bench can check their existence and permissions.
 
-```
+```go
 docker run --pid=host -v /etc:/etc:ro -v /var:/var:ro -t aquasec/kube-bench:latest [master|node] --version 1.13
 ```
 
 > Note: the tests require either the kubelet or kubectl binary in the path in order to auto-detect the Kubernetes version. You can pass `-v $(which kubectl):/usr/local/mount-from-host/bin/kubectl` to resolve this. You will also need to pass in kubeconfig credentials. For example:
 
-```
+```go
 docker run --pid=host -v /etc:/etc:ro -v /var:/var:ro -v $(which kubectl):/usr/local/mount-from-host/bin/kubectl -v ~/.kube:/.kube -e KUBECONFIG=/.kube/config -t aquasec/kube-bench:latest [master|node]
 ```
 
 You can use your own configs by mounting them over the default ones in `/opt/kube-bench/cfg/`
 
-```
+```go
 docker run --pid=host -v /etc:/etc:ro -v /var:/var:ro -t -v path/to/my-config.yaml:/opt/kube-bench/cfg/config.yam -v $(which kubectl):/usr/local/mount-from-host/bin/kubectl -v ~/.kube:/.kube -e KUBECONFIG=/.kube/config aquasec/kube-bench:latest [master|node]
 ```
 
@@ -162,7 +162,7 @@ The detection is done by verifying that mandatory components for master, as defi
 
 The supplied `job.yaml` file can be applied to run the tests as a job. For example:
 
-```bash
+```go
 $ kubectl apply -f job.yaml
 job.batch/kube-bench created
 
@@ -201,7 +201,7 @@ or ssh to one agent node
 could open nsg 22 port and assign a public ip for one agent node (only for testing purpose)
 
 1. Run CIS benchmark to view results:
-```
+```go
 docker run --rm -v `pwd`:/host aquasec/kube-bench:latest install
 ./kube-bench node
 ```
@@ -214,11 +214,11 @@ There is a `job-eks.yaml` file for running the kube-bench node checks on an EKS 
 1. To create an EKS Cluster refer to [Getting Started with Amazon EKS](https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html) in the *Amazon EKS User Guide*
   - Information on configuring `eksctl`, `kubectl` and the AWS CLI is within
 2. Create an [Amazon Elastic Container Registry (ECR)](https://docs.aws.amazon.com/AmazonECR/latest/userguide/what-is-ecr.html) repository to host the kube-bench container image
-```
+```go
 aws ecr create-repository --repository-name k8s/kube-bench --image-tag-mutability MUTABLE
 ```
 3. Download, build and push the kube-bench container image to your ECR repo
-```
+```go
 git clone https://github.com/aquasecurity/kube-bench.git
 cd kube-bench
 aws ecr get-login-password --region <AWS_REGION> | docker login --username <AWS_USERNAME> --password-stdin <AWS_ACCT_NUMBER>.dkr.ecr.<AWS_REGION>.amazonaws.com
@@ -261,7 +261,7 @@ kube-bench includes benchmarks for GKE. To run this you will need to specify `--
 
 To run the benchmark as a job in your GKE cluster apply the included `job-gke.yaml`.
 
-```
+```go
 kubectl apply -f job-gke.yaml
 ```
 
@@ -269,7 +269,7 @@ kubectl apply -f job-gke.yaml
 
 This command copies the kube-bench binary and configuration files to your host from the Docker container:
 **binaries compiled for linux-x86-64 only (so they won't run on macOS or Windows)**
-```
+```go
 docker run --rm -v `pwd`:/host aquasec/kube-bench:latest install
 ```
 
@@ -285,7 +285,7 @@ Install kube-bench binary for your platform using the commands below. Note that 
 
 Ubuntu/Debian:
 
-```
+```go
 curl -L https://github.com/aquasecurity/kube-bench/releases/download/v0.3.1/kube-bench_0.3.1_linux_amd64.deb -o kube-bench_0.3.1_linux_amd64.deb
 
 sudo apt install ./kube-bench_0.3.1_linux_amd64.deb -f
@@ -293,7 +293,7 @@ sudo apt install ./kube-bench_0.3.1_linux_amd64.deb -f
 
 RHEL:
 
-```
+```go
 curl -L https://github.com/aquasecurity/kube-bench/releases/download/v0.3.1/kube-bench_0.3.1_linux_amd64.rpm -o kube-bench_0.3.1_linux_amd64.rpm
 
 sudo yum install kube-bench_0.3.1_linux_amd64.rpm -y
@@ -301,19 +301,19 @@ sudo yum install kube-bench_0.3.1_linux_amd64.rpm -y
 
 Alternatively, you can manually download and extract the kube-bench binary:
 
-```
+```go
 curl -L https://github.com/aquasecurity/kube-bench/releases/download/v0.3.1/kube-bench_0.3.1_linux_amd64.tar.gz -o kube-bench_0.3.1_linux_amd64.tar.gz
 
 tar -xvf kube-bench_0.3.1_linux_amd64.tar.gz
 ```
 
 You can then run kube-bench directly:
-```
+```go
 kube-bench [master|node]
 ```
 
 If you manually downloaded the kube-bench binary (using curl command above), you have to specify the location of configuration directory and file. For example:
-```
+```go
 ./kube-bench --config-dir `pwd`/cfg --config `pwd`/cfg/config.yaml [master|node]
 ```
 
@@ -323,7 +323,7 @@ See previous section on [Running kube-bench](#running-kube-bench) for further de
 
 If Go is installed on the target machines, you can simply clone this repository and run as follows (assuming your [`GOPATH` is set](https://github.com/golang/go/wiki/GOPATH)):
 
-```shell
+```go
 go get github.com/aquasecurity/kube-bench
 cd $GOPATH/src/github.com/aquasecurity/kube-bench
 go build -o kube-bench .
@@ -371,7 +371,7 @@ The tests (or "controls") are represented as YAML documents (installed by defaul
 
 If you decide that a recommendation is not appropriate for your environment, you can choose to omit it by editing the test YAML file to give it the check type `skip` as in this example:
 
-```yaml
+```go
   checks:
   - id: 2.1.1
     text: "Ensure that the --allow-privileged argument is set to false (Scored)"

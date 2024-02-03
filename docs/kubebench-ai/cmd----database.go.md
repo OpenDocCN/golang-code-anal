@@ -1,6 +1,6 @@
 # `kubebench-aquasecurity\cmd\database.go`
 
-```
+```go
 package cmd
 
 import (

@@ -1,6 +1,6 @@
 # `v2ray-core\common\net\connection.go`
 
-```
+```go
 // +build !confonly
 
 package net

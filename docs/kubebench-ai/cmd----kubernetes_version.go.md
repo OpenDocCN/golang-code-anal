@@ -1,6 +1,6 @@
 # `kubebench-aquasecurity\cmd\kubernetes_version.go`
 
-```
+```go
 package cmd
 
 import (

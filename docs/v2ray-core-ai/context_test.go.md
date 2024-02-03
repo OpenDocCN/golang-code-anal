@@ -1,6 +1,6 @@
 # `v2ray-core\context_test.go`
 
-```
+```go
 # 定义包名为 core_test
 package core_test
 

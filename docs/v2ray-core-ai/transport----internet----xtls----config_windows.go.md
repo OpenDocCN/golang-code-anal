@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\xtls\config_windows.go`
 
-```
+```go
 // 根据构建标签，该代码块仅在 Windows 系统下编译
 // 根据构建标签，该代码块不仅仅用于配置
 

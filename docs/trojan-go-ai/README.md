@@ -51,31 +51,31 @@ Trojan-Go 服务端兼容所有原 Trojan 客户端，如 Igniter、ShadowRocket
 
     - 服务端
 
-        ```shell
+        ```go
         sudo ./trojan-go -server -remote 127.0.0.1:80 -local 0.0.0.0:443 -key ./your_key.key -cert ./your_cert.crt -password your_password
         ```
 
     - 客户端
 
-        ```shell
+        ```go
         ./trojan-go -client -remote example.com:443 -local 127.0.0.1:1080 -password your_password
         ```
 
 2. 使用配置文件启动客户端 / 服务端 / 透明代理 / 中继（一般模式）
 
-    ```shell
+    ```go
     ./trojan-go -config config.json
     ```
 
 3. 使用 URL 启动客户端（格式参见文档）
 
-    ```shell
+    ```go
     ./trojan-go -url 'trojan-go://password@cloudflare.com/?type=ws&path=%2Fpath&host=your-site.com'
     ```
 
 4. 使用 Docker 部署
 
-    ```shell
+    ```go
     docker run \
         --name trojan-go \
         -d \
@@ -86,7 +86,7 @@ Trojan-Go 服务端兼容所有原 Trojan 客户端，如 Igniter、ShadowRocket
 
    或者
 
-    ```shell
+    ```go
     docker run \
         --name trojan-go \
         -d \
@@ -106,7 +106,7 @@ Trojan-Go 服务端兼容所有原 Trojan 客户端，如 Igniter、ShadowRocket
 
 例如，交叉编译一个可在 mips 处理器、Linux 操作系统上运行的、只有客户端功能的 Trojan-Go，只需执行下面的命令，得到的可执行文件可以直接在目标平台运行：
 
-```shell
+```go
 CGO_ENABLED=0 GOOS=linux GOARCH=mips go build -tags "client" -trimpath -ldflags "-s -w -buildid="
 ```
 
@@ -118,7 +118,7 @@ CGO_ENABLED=0 GOOS=linux GOARCH=mips go build -tags "client" -trimpath -ldflags 
 
 服务端配置文件 `server.json`：
 
-```json
+```go
 {
   "run_type": "server",
   "local_addr": "0.0.0.0",
@@ -136,7 +136,7 @@ CGO_ENABLED=0 GOOS=linux GOARCH=mips go build -tags "client" -trimpath -ldflags 
 
 客户端配置文件 `client.json`：
 
-```json
+```go
 {
   "run_type": "client",
   "local_addr": "127.0.0.1",
@@ -151,7 +151,7 @@ CGO_ENABLED=0 GOOS=linux GOARCH=mips go build -tags "client" -trimpath -ldflags 
 
 客户端配置文件 `client.yaml`：
 
-```yaml
+```go
 run-type: client
 local-addr: 127.0.0.1
 local-port: 1080
@@ -167,7 +167,7 @@ Trojan-Go 支持使用 TLS + Websocket 承载 Trojan 协议，使得利用 CDN �
 
 服务端和客户端配置文件中同时添加 `websocket` 选项即可启用 Websocket 支持，例如
 
-```json
+```go
 "websocket": {
     "enabled": true,
     "path": "/your-websocket-path",
@@ -189,7 +189,7 @@ Trojan-Go 支持使用 TLS + Websocket 承载 Trojan 协议，使得利用 CDN �
 
 你可以通过设置客户端的 `mux` 选项 `enabled` 字段启用它：
 
-```json
+```go
 "mux": {
     "enabled": true
 }
@@ -209,7 +209,7 @@ Trojan-Go 客户端内建一个简单实用的路由模块，以方便实现国�
 
 要激活路由模块，请在配置文件中添加 `router` 选项，并设置 `enabled` 字段为 `true`：
 
-```json
+```go
 "router": {
     "enabled": true,
     "bypass": [
@@ -233,7 +233,7 @@ Trojan-Go 客户端内建一个简单实用的路由模块，以方便实现国�
 
 Trojan-Go 支持基于 Shadowsocks AEAD 对 Trojan 协议流量进行二次加密，以保证 Websocket 传输流量无法被不可信的 CDN 识别和审查：
 
-```json
+```go
 "shadowsocks": {
     "enabled": true,
     "password": "my-password"
@@ -250,7 +250,7 @@ Trojan-Go 支持可插拔的传输层插件，并支持 Shadowsocks [SIP003](htt
 
 服务端配置：
 
-```json
+```go
 "transport_plugin": {
     "enabled": true,
     "type": "shadowsocks",
@@ -261,7 +261,7 @@ Trojan-Go 支持可插拔的传输层插件，并支持 Shadowsocks [SIP003](htt
 
 客户端配置：
 
-```json
+```go
 "transport_plugin": {
     "enabled": true,
     "type": "shadowsocks",
@@ -278,7 +278,7 @@ Trojan-Go 支持可插拔的传输层插件，并支持 Shadowsocks [SIP003](htt
 
 使用 `make` 进行编译：
 
-```shell
+```go
 git clone https://github.com/p4gefau1t/trojan-go.git
 cd trojan-go
 make
@@ -287,7 +287,7 @@ make install #安装systemd服务等，可选
 
 或者使用 Go 自行编译：
 
-```shell
+```go
 go build -tags "full"
 ```
 
@@ -295,19 +295,19 @@ Go 支持通过设置环境变量进行交叉编译，例如：
 
 编译适用于 64 位 Windows 操作系统的可执行文件：
 
-```shell
+```go
 CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags "full"
 ```
 
 编译适用于 Apple Silicon 的可执行文件：
 
-```shell
+```go
 CGO_ENABLED=0 GOOS=macos GOARCH=arm64 go build -tags "full"
 ```
 
 编译适用于 64 位 Linux 操作系统的可执行文件：
 
-```shell
+```go
 CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags "full"
 ```
 

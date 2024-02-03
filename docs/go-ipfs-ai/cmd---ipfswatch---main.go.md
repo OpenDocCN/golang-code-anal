@@ -1,6 +1,6 @@
 # `kubo\cmd\ipfswatch\main.go`
 
-```
+```go
 //go:build !plan9
 // +build !plan9
 

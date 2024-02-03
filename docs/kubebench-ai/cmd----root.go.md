@@ -1,6 +1,6 @@
 # `kubebench-aquasecurity\cmd\root.go`
 
-```
+```go
 // 版权声明和许可证信息
 // 2017年版权归Aqua Security Software Ltd.所有
 // 根据Apache许可证2.0版授权

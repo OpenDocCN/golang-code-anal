@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\xtls\config_test.go`
 
-```
+```go
 package xtls_test
 
 import (

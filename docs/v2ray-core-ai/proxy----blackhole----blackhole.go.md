@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\blackhole\blackhole.go`
 
-```
+```go
 // +build !confonly
 // 标记该文件不仅仅是配置文件
 

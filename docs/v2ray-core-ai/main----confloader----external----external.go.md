@@ -1,6 +1,6 @@
 # `v2ray-core\main\confloader\external\external.go`
 
-```
+```go
 package external
 
 //go:generate go run v2ray.com/core/common/errors/errorgen

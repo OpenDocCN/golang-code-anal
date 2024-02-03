@@ -1,6 +1,6 @@
 # `trojan-go\tunnel\http\server.go`
 
-```
+```go
 package http
 
 import (

@@ -1,6 +1,6 @@
 # `v2ray-core\common\protocol\server_picker.go`
 
-```
+```go
 package protocol
 
 import (

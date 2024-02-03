@@ -1,6 +1,6 @@
 # `grype\grype\match\explicit_ignores.go`
 
-```
+```go
 package match
 
 import (

@@ -1,6 +1,6 @@
 # `kubo\core\corerepo\gc.go`
 
-```
+```go
 package corerepo
 
 import (

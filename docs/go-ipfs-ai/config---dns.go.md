@@ -1,6 +1,6 @@
 # `kubo\config\dns.go`
 
-```
+```go
 // DNS 结构体定义了使用自定义解析器的 DNS 解析规则
 type DNS struct {
     // Resolvers 是一个 FQDN 到 URL 的映射，用于自定义 DNS 解析

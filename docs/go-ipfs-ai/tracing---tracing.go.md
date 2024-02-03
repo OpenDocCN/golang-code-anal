@@ -1,6 +1,6 @@
 # `kubo\tracing\tracing.go`
 
-```
+```go
 package tracing
 
 import (

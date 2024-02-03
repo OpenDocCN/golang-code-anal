@@ -1,6 +1,6 @@
 # `kubo\core\node\dns.go`
 
-```
+```go
 package node
 
 import (

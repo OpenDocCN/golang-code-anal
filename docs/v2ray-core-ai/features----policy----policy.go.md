@@ -1,6 +1,6 @@
 # `v2ray-core\features\policy\policy.go`
 
-```
+```go
 package policy
 
 import (

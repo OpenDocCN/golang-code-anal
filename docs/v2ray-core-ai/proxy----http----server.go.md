@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\http\server.go`
 
-```
+```go
 // +build !confonly
 
 package http

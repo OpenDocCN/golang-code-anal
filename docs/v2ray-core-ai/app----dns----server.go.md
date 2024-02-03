@@ -1,6 +1,6 @@
 # `v2ray-core\app\dns\server.go`
 
-```
+```go
 // +build !confonly
 // 该代码块表示不仅仅是配置文件
 

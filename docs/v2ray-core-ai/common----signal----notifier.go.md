@@ -1,6 +1,6 @@
 # `v2ray-core\common\signal\notifier.go`
 
-```
+```go
 // 定义一个名为 Notifier 的结构体，用于通知变化。变化生产者可以多次通知变化，消费者可以异步获取通知。
 type Notifier struct {
     c chan struct{}  // 用于通知变化的通道

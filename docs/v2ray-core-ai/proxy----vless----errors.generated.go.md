@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\vless\errors.generated.go`
 
-```
+```go
 # 定义 vless 包
 package vless
 

@@ -1,6 +1,6 @@
 # `grype\grype\version\apk_version.go`
 
-```
+```go
 package version
 
 import (

@@ -1,6 +1,6 @@
 # `v2ray-core\common\session\context.go`
 
-```
+```go
 package session
 
 import "context"

@@ -1,6 +1,6 @@
 # `kubo\cmd\ipfs\util\ulimit_unix.go`
 
-```
+```go
 // 根据操作系统构建条件编译，仅在 darwin、linux、netbsd、openbsd 下编译
 // 导入 util 包
 package util

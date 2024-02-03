@@ -1,6 +1,6 @@
 # `grype\grype\presenter\json\presenter.go`
 
-```
+```go
 package json
 
 import (

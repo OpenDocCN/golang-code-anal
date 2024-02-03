@@ -1,6 +1,6 @@
 # `grype\grype\version\deb_version.go`
 
-```
+```go
 package version
 
 import (

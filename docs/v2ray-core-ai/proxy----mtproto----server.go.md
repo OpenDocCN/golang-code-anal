@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\mtproto\server.go`
 
-```
+```go
 // +build !confonly
 // 导入所需的包
 package mtproto

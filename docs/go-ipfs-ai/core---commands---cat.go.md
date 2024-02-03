@@ -1,6 +1,6 @@
 # `kubo\core\commands\cat.go`
 
-```
+```go
 // 导入必要的包
 package commands
 

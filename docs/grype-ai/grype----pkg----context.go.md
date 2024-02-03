@@ -1,6 +1,6 @@
 # `grype\grype\pkg\context.go`
 
-```
+```go
 # 导入 pkg 包
 package pkg
 

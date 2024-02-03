@@ -17,7 +17,7 @@ Report to email: security |at| v2fly.org.
 
 GPG public key:
 
-```
+```go
 pub   rsa4096 2020-06-02 [SC] [有效至：2022-01-02]
       E2E35E27914FB007C0D4B6DDB117BA3BE8B494A7
 uid           [ 绝对 ] V2Fly Developers <dev@v2fly.org>

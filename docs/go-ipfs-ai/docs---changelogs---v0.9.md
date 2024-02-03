@@ -115,7 +115,7 @@ This work is quite new and still under development, however, the results so far 
 
 As described in the experimental features [documentation](https://github.com/ipfs/go-ipfs/blob/master/docs/experimental-features.md#accelerated-dht-client) the experimental client can be enabled using the command below (or modifying the config file).
 
-```
+```go
 ipfs config --json Experimental.AcceleratedDHTClient true
 ```
 

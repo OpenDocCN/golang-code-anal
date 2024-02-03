@@ -1,6 +1,6 @@
 # `v2ray-core\annotations.go`
 
-```
+```go
 // Annotation 是 V2Ray 中的一个概念。这个结构体仅用于文档目的，不会在任何地方被使用。
 // 注解以 "v2ray:" 开头，作为函数或类型的元数据。
 type Annotation struct {

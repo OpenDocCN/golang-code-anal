@@ -38,7 +38,7 @@ Default: `error`
 
 Example:
 
-```console
+```go
 GOLOG_LOG_LEVEL="error,core/server=debug" ipfs daemon
 ```
 
@@ -54,7 +54,7 @@ Specifies the log message format.  It supports the following values:
 
 For example, to log structured JSON (for easier parsing):
 
-```bash
+```go
 export GOLOG_LOG_FMT="json"
 ```
 The logging format defaults to `color` when the output is a terminal, and `nocolor` otherwise.
@@ -107,7 +107,7 @@ Useful for testing things like DNSLink without real DNS lookup.
 
 Example:
 
-```console
+```go
 $ IPFS_NS_MAP="dnslink-test1.example.com:/ipfs/bafkreicysg23kiwv34eg2d7qweipxwosdo2py4ldv42nbauguluen5v6am,dnslink-test2.example.com:/ipns/dnslink-test1.example.com" ipfs daemon
 ...
 $ ipfs resolve -r /ipns/dnslink-test2.example.com
@@ -122,7 +122,7 @@ Useful for testing and debugging in offline contexts.
 
 Example:
 
-```console
+```go
 $ ipfs config Routing.Type auto
 $ IPFS_HTTP_ROUTERS="http://127.0.0.1:7423" ipfs daemon
 ```

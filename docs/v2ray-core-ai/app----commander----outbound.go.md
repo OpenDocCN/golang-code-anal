@@ -1,6 +1,6 @@
 # `v2ray-core\app\commander\outbound.go`
 
-```
+```go
 // +build !confonly
 
 package commander

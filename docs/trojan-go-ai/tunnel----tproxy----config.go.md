@@ -1,6 +1,6 @@
 # `trojan-go\tunnel\tproxy\config.go`
 
-```
+```go
 // 标记该文件只在 Linux 系统下编译
 // 构建标签，指定该文件只在 Linux 系统下编译
 

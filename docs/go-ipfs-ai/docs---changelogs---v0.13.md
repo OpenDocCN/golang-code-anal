@@ -230,7 +230,7 @@ There are two ways for requesting CID specific response format:
 
 1. Downloading a single raw Block and manually importing it to the local datastore:
 
-```console
+```go
 $ curl  -H 'Accept: application/vnd.ipld.raw' "http://127.0.0.1:8080/ipfs/QmZULkCELmmk5XNfCgTnCyFgAVxBRBXyDHGGMVoLFLiXEN" --output block.bin
 $ cat block.bin | ipfs block put
 $ ipfs cat QmZULkCELmmk5XNfCgTnCyFgAVxBRBXyDHGGMVoLFLiXEN
@@ -239,7 +239,7 @@ hello
 
 2. Downloading entire DAG as a CAR file and importing it:
 
-```console
+```go
 $ ipfs resolve -r  /ipns/webui.ipfs.io
 /ipfs/bafybeiednzu62vskme5wpoj4bjjikeg3xovfpp4t7vxk5ty2jxdi4mv4bu
 $ curl  -H 'Accept: application/vnd.ipld.car' "http://127.0.0.1:8080/ipfs/bafybeiednzu62vskme5wpoj4bjjikeg3xovfpp4t7vxk5ty2jxdi4mv4bu" --output webui.car
@@ -305,7 +305,7 @@ We will continue to add tracing instrumentation throughout IPFS subcomponents ov
 
 One can use the `jaegertracing/all-in-one` Docker image to run a full Jaeger stack and configure go-ipfs to publish traces to it (here, in an ephemeral container):
 
-```console
+```go
 $ docker run --rm -it --name jaeger \
     -e COLLECTOR_ZIPKIN_HOST_PORT=:9411 \
     -p 5775:5775/udp \
@@ -320,7 +320,7 @@ $ docker run --rm -it --name jaeger \
 ```
 
 Then, in other terminal, start go-ipfs with Jaeger tracing enabled:
-```
+```go
 $ OTEL_TRACES_EXPORTER=jaeger ipfs daemon
 ```
 
@@ -345,13 +345,13 @@ It is now possible to import or export private keys wrapped in interoperable [PE
 
 This improved interop allows for key generation outside of the IPFS node:
 
-```console
+```go
 $ openssl genpkey -algorithm ED25519 > ed25519.pem
 $ ipfs key import test-openssl -f pem-pkcs8-cleartext ed25519.pem
 ```
 
 Or using external tools like the standard `openssl` to get a PEM file with the public key:
-```console
+```go
   $ ipfs key export testkey --format=pem-pkcs8-cleartext -o privkey.pem
   $ openssl pkey -in privkey.pem -pubout > pubkey.pem
 ```
@@ -377,7 +377,7 @@ https://docs.ipfs.tech/reference/kubo/rpc/ now includes separate sections for _e
 
 We also display a warning in the command line:
 
-```console
+```go
 $ ipfs name pubsub state --help
 WARNING:   EXPERIMENTAL, command may change in future releases
 ```

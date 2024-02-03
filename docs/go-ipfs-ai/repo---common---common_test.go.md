@@ -1,6 +1,6 @@
 # `kubo\repo\common\common_test.go`
 
-```
+```go
 package common
 
 import (

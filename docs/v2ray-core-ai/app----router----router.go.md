@@ -1,6 +1,6 @@
 # `v2ray-core\app\router\router.go`
 
-```
+```go
 // +build !confonly
 // 定义包名为router，不包含confonly标签
 

@@ -18,12 +18,12 @@ For information about required setup see: [Required setup](#required-setup).
 
 To capture raw tool output and store into the local `.yardstick` directory for
 further analysis:
-```
+```go
 make capture
 ```
 
 To analyze the tool output and evaluate a pass/fail result:
-```
+```go
 make validate
 ```
 
@@ -150,12 +150,12 @@ initialized, the match data from `vulnerabilty-match-labels` will be available l
 
 **TIP**: when dealing with submodules, it may be convenient to set the git config option `submodule.recurse` to `true`
 so `git checkout` will automatically update submodules to the correct commit:
-```shell
+```go
 git config submodule.recurse true
 ```
 
 To do this we need some results to begin with. As noted above, start with (this does ensure the submodule is initialized):
-```shell
+```go
 make capture
 ```
 
@@ -183,7 +183,7 @@ Failed quality gate
    - current F1 score is lower than the latest release F1 score: current=0.80 latest=0.80 image=docker.io/anchore/test_images@sha256:808f6cf3cf4473eb39ff9bb47ead639d2ed71255b75b9b140162b58c6102bcc9
    - current indeterminate matches % is greater than 10%: current=13.60% image=docker.io/anchore/test_images@sha256:808f6cf3cf4473eb39ff9bb47ead639d2ed71255b75b9b140162b58c6102bcc9
    - current false negatives is greater than the latest release false negatives: current=6 latest=3 image=docker.io/anchore/test_images@sha256:808f6cf3cf4473eb39ff9bb47ead639d2ed71255b75b9b140162b58c6102bcc9
-```
+```go
 
 This tells us some important information: which package, version, and vulnerability had a difference;
 how it was previously labeled, and most importantly: the image we need to focus on (`docker.io/anchore/test_images@sha256:808f6cf3cf4473eb39ff9bb47ead639d2ed71255b75b9b140162b58c6102bcc9`).
@@ -195,13 +195,13 @@ $ yardstick result list --result-set pr_vs_latest_via_sbom | grep 808f6cf3cf4473
 5bf0611b-183f-4525-a1ab-f268f62f48b6  docker.io/anchore/test_images:appstreams-centos-stream-8-1a287dd@sha256:808f6cf3cf4473eb39ff9bb47ead639d2ed71255b75b9b140162b58c6102bcc9          grype@v0.53.1              2022-12-09 20:49:56+00:00
 43a9650a-d5de-4687-b3ba-459105e32cb8  docker.io/anchore/test_images:appstreams-centos-stream-8-1a287dd@sha256:808f6cf3cf4473eb39ff9bb47ead639d2ed71255b75b9b140162b58c6102bcc9          grype@v0.53.1-15-gf29a32b  2022-12-09 20:49:53+00:00
 67913f57-690f-4f35-a2d9-ffccd2a0b2a1  docker.io/anchore/test_images:appstreams-centos-stream-8-1a287dd@sha256:808f6cf3cf4473eb39ff9bb47ead639d2ed71255b75b9b140162b58c6102bcc9          syft@v0.60.1               2022-11-01 20:30:52+00:00
-```
+```go
 
 We'll need to use the UUIDs to explore the labels, so copy the first UUID, which we can see was run against the last Grype release (`grype@v0.53.1`). Use the UUID to explore and edit the results with
 `yardstick label explore`:
 ```shell
 yardstick label explore 5bf0611b-183f-4525-a1ab-f268f62f48b6
-```
+```go
 
 At this point we can use the TUI to explore and modify the match data, by deleting things or labeling as
 true positives, false positives, etc.. **After making changes make sure to save the results** (`Ctrl-S`)!
@@ -211,7 +211,7 @@ just one image, for example the image we first found in the failure, so run the 
 how changes to the label data have affected the result:
 ```shell
 ./gate.py --image docker.io/anchore/test_images@sha256:808f6cf3cf4473eb39ff9bb47ead639d2ed71255b75b9b140162b58c6102bcc9
-```
+```go
 
 After iterating on all the changes we need using `yardstick label explore`, we're now ready to commit changes. Since
 we're using `git submodules`, we need to do two steps:
@@ -222,7 +222,7 @@ To create a pull request for the `vulnerability-match-labels`, make sure you are
 subdirectory and create a branch -- something like:
 ```shell
 git checkout --no-track -b my-branch-name
-```
+```go
 
 Commit the changes to this branch, push, create a pull request like normal. NOTE: you may need to add a fork
 (`git remote add ...`) and push to the fork if you don't have push permissions against the main
@@ -230,7 +230,7 @@ Commit the changes to this branch, push, create a pull request like normal. NOTE
 branch, update the submodule locally using:
 ```shell
 git submodule update --remote
-```
+```go
 
 Next, _commit the submodule change_ as part of any other changes 
 to the Grype pull request and push as part of the in-progress PR
@@ -250,14 +250,14 @@ $ pyenv install --list|grep 3.10
   ...
   3.10.7
   ...
-```
+```go
 
 In this case, we see `3.10.7` is the latest version, so we'll use that for the rest of the setup:
 
 Install this version using `pyenv`:
 ```shell
 pyenv install 3.10.7
-```
+```go
 
 NOTE: to view the specific Python versions installed use `pyenv versions`:
 ```shell
@@ -265,19 +265,19 @@ $ pyenv versions
   system
 * 3.8.13 (set by /Users/usr/.pyenv/version)
   3.10.7
-```
+```go
 
 To select the `3.10` version use the exact version number:
 ```shell
 pyenv shell 3.10.7
-```
+```go
 
 (or maybe just: `pyenv shell $(pyenv versions | grep 3.10 | tail -1)`)
 
 Verify this has worked properly by running:
 ```shell
 python --version
-```
+```go
 
 **Important:** it is also required to have `oras` installed (e.g. `brew install oras`)
 
@@ -285,19 +285,19 @@ python --version
 you need to set up a virtual environment using:
 ```shell
 make venv
-```
+```go
 
 **After** creating the virtual environment, you can now activate it to set up a
 working shell using:
 ```shell
 . venv/bin/activate
-```
+```go
 
 You should now have a shell running in the correct virtual environment, it might look something
 like this:
 ```shell
 (venv) user@HOST quality %
-```
+```go
 
 Now you should be able to run both `yardstick` and `./gate.py`.
 

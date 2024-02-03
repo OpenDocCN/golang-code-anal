@@ -1,6 +1,6 @@
 # `kubo\cmd\ipfs\kubo\add_migrations.go`
 
-```
+```go
 package kubo
 
 import (

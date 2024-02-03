@@ -1,6 +1,6 @@
 # `v2ray-core\app\proxyman\outbound\outbound.go`
 
-```
+```go
 package outbound
 
 //go:generate go run v2ray.com/core/common/errors/errorgen

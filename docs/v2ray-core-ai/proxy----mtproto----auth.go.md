@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\mtproto\auth.go`
 
-```
+```go
 package mtproto
 
 import (

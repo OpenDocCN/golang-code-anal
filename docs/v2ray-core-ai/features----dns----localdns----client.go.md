@@ -1,6 +1,6 @@
 # `v2ray-core\features\dns\localdns\client.go`
 
-```
+```go
 // 导入本地DNS包
 package localdns
 

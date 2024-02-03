@@ -1,6 +1,6 @@
 # `v2ray-core\common\bitmask\byte_test.go`
 
-```
+```go
 package bitmask_test
 
 import (

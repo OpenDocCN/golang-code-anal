@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\kcp\errors.generated.go`
 
-```
+```go
 # 定义了一个名为 kcp 的包
 package kcp
 

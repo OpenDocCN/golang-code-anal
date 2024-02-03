@@ -1,6 +1,6 @@
 # `kubo\test\dependencies\go-sleep\go-sleep.go`
 
-```
+```go
 package main
 
 import (

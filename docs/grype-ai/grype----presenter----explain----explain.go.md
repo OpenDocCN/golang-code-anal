@@ -1,6 +1,6 @@
 # `grype\grype\presenter\explain\explain.go`
 
-```
+```go
 package explain
 
 import (

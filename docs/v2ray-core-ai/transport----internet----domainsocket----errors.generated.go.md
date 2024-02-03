@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\domainsocket\errors.generated.go`
 
-```
+```go
 # 声明 domainsocket 包
 package domainsocket
 

@@ -1,6 +1,6 @@
 # `kubo\core\coreiface\options\dht.go`
 
-```
+```go
 package options
 
 // DhtProvideSettings 定义了 Dht.Provide 方法的选项

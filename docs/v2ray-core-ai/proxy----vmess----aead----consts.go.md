@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\vmess\aead\consts.go`
 
-```
+```go
 # 定义常量 KDFSaltConst_AuthIDEncryptionKey，用于身份验证 ID 加密的密钥
 const KDFSaltConst_AuthIDEncryptionKey = "AES Auth ID Encryption"
 

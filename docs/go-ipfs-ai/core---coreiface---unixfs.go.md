@@ -1,6 +1,6 @@
 # `kubo\core\coreiface\unixfs.go`
 
-```
+```go
 package iface
 
 import (

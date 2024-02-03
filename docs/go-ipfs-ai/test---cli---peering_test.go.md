@@ -1,6 +1,6 @@
 # `kubo\test\cli\peering_test.go`
 
-```
+```go
 package cli
 
 import (

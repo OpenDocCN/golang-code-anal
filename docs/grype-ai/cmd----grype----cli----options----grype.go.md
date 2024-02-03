@@ -1,6 +1,6 @@
 # `grype\cmd\grype\cli\options\grype.go`
 
-```
+```go
 package options
 
 import (

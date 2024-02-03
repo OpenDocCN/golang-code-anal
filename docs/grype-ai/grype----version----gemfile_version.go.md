@@ -1,6 +1,6 @@
 # `grype\grype\version\gemfile_version.go`
 
-```
+```go
 // 定义一个名为version的包
 
 import (

@@ -1,6 +1,6 @@
 # `kubesploit\pkg\util\tls.go`
 
-```
+```go
 // Kubesploit 是一个基于Russel Van Tuyl的Merlin构建的后渗透命令和控制框架。
 // 本文件是Kubesploit的一部分。
 // 版权所有 2021 CyberArk Software Ltd。

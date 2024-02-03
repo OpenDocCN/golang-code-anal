@@ -1,6 +1,6 @@
 # `kubo\plugin\plugin.go`
 
-```
+```go
 // 定义一个名为 Environment 的结构体，用于传递给插件的环境信息
 type Environment struct {
     // IPFS 仓库的路径

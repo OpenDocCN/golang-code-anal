@@ -1,6 +1,6 @@
 # `v2ray-core\infra\control\config.go`
 
-```
+```go
 package control
 
 import (

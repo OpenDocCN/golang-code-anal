@@ -1,6 +1,6 @@
 # `v2ray-core\app\policy\manager_test.go`
 
-```
+```go
 package policy_test
 
 import (

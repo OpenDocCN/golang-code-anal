@@ -1,6 +1,6 @@
 # `kubo\cmd\ipfs\main.go`
 
-```
+```go
 # 导入 main 包
 package main
 

@@ -1,6 +1,6 @@
 # `trojan-go\constant\constant.go`
 
-```
+```go
 # 定义常量包
 package constant
 

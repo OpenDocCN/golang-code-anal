@@ -1,6 +1,6 @@
 # `kubo\core\coreiface\options\global.go`
 
-```
+```go
 // 定义 ApiSettings 结构体，包含 Offline 和 FetchBlocks 两个布尔类型字段
 type ApiSettings struct {
     Offline     bool

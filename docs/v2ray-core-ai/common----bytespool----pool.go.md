@@ -1,6 +1,6 @@
 # `v2ray-core\common\bytespool\pool.go`
 
-```
+```go
 package bytespool
 
 import "sync"

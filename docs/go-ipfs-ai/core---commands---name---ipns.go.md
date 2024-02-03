@@ -1,6 +1,6 @@
 # `kubo\core\commands\name\ipns.go`
 
-```
+```go
 package name
 
 import (

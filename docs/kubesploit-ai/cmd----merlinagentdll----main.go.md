@@ -1,6 +1,6 @@
 # `kubesploit\cmd\merlinagentdll\main.go`
 
-```
+```go
 // +build windows,cgo
 // 指定构建约束，表示该文件只在 Windows 系统下使用 CGO 构建
 

@@ -1,6 +1,6 @@
 # `v2ray-core\proto.go`
 
-```
+```go
 // 使用go:generate指令来运行命令，安装google.golang.org/protobuf/cmd/protoc-gen-go
 // 生成protobuf的go插件
 // 使用go:generate指令来运行命令，安装google.golang.org/grpc/cmd/protoc-gen-go-grpc

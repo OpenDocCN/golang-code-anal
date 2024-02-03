@@ -1,6 +1,6 @@
 # `trojan-go\statistic\memory\memory_test.go`
 
-```
+```go
 package memory
 
 import (

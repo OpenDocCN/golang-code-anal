@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\udp\udp.go`
 
-```
+```go
 // 定义包名为 udp
 package udp
 

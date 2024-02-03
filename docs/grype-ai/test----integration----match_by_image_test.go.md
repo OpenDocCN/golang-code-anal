@@ -1,6 +1,6 @@
 # `grype\test\integration\match_by_image_test.go`
 
-```
+```go
 package integration
 
 import (

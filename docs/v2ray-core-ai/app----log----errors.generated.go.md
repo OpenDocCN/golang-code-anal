@@ -1,6 +1,6 @@
 # `v2ray-core\app\log\errors.generated.go`
 
-```
+```go
 # 定义一个名为log的包
 package log
 

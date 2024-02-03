@@ -1,6 +1,6 @@
 # `trojan-go\tunnel\shadowsocks\tunnel.go`
 
-```
+```go
 package shadowsocks
 // 导入必要的包
 import (

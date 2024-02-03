@@ -1,6 +1,6 @@
 # `grype\grype\presenter\models\descriptor.go`
 
-```
+```go
 // 定义结构体 descriptor，描述了创建文档的信息以及周围的元数据
 type descriptor struct {
     // 文档的名称

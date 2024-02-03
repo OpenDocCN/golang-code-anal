@@ -1,6 +1,6 @@
 # `v2ray-core\features\feature.go`
 
-```
+```go
 package features
 
 import "v2ray.com/core/common"

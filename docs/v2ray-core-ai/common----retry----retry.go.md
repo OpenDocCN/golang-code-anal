@@ -1,6 +1,6 @@
 # `v2ray-core\common\retry\retry.go`
 
-```
+```go
 package retry // import "v2ray.com/core/common/retry"
 
 //go:generate go run v2ray.com/core/common/errors/errorgen

@@ -1,6 +1,6 @@
 # `v2ray-core\common\errors.generated.go`
 
-```
+```go
 // 定义 common 包
 package common
 

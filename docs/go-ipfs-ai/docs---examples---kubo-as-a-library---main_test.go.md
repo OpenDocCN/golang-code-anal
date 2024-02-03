@@ -1,6 +1,6 @@
 # `kubo\docs\examples\kubo-as-a-library\main_test.go`
 
-```
+```go
 // 声明 main 包
 package main
 

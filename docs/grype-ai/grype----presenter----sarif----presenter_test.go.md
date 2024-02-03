@@ -1,6 +1,6 @@
 # `grype\grype\presenter\sarif\presenter_test.go`
 
-```
+```go
 package sarif
 
 import (

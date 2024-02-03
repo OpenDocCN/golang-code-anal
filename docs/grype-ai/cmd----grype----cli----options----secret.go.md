@@ -1,6 +1,6 @@
 # `grype\cmd\grype\cli\options\secret.go`
 
-```
+```go
 // 导入必要的包
 package options
 

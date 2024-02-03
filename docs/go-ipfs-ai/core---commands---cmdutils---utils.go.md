@@ -1,6 +1,6 @@
 # `kubo\core\commands\cmdutils\utils.go`
 
-```
+```go
 package cmdutils
 
 import (

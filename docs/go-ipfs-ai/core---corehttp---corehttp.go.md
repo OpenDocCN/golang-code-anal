@@ -1,6 +1,6 @@
 # `kubo\core\corehttp\corehttp.go`
 
-```
+```go
 /*
 Package corehttp provides utilities for the webui, gateways, and other
 high-level HTTP interfaces to IPFS.

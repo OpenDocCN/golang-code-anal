@@ -1,6 +1,6 @@
 # `grype\internal\file\tar.go`
 
-```
+```go
     // 导入所需的包
     "archive/tar"
     "compress/gzip"

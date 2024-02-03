@@ -1,6 +1,6 @@
 # `grype\internal\format\format_test.go`
 
-```
+```go
 package format
 
 import (

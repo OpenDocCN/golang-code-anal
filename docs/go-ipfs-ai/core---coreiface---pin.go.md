@@ -1,6 +1,6 @@
 # `kubo\core\coreiface\pin.go`
 
-```
+```go
 package iface
 
 import (

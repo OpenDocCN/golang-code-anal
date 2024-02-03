@@ -1,6 +1,6 @@
 # `v2ray-core\app\log\command\command.go`
 
-```
+```go
 // +build !confonly  // 标记此文件不仅仅是配置文件
 
 package command  // 声明包名为 command

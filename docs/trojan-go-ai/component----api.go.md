@@ -1,6 +1,6 @@
 # `trojan-go\component\api.go`
 
-```
+```go
 // 标记这个文件只在构建标签为 api 或 full 时才会被包含进来
 // 构建标签为 api 或 full
 // 导入 build 包

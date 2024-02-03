@@ -1,6 +1,6 @@
 # `v2ray-core\common\signal\pubsub\pubsub_test.go`
 
-```
+```go
 package pubsub_test
 
 import (

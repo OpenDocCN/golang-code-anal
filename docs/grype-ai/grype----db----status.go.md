@@ -1,6 +1,6 @@
 # `grype\grype\db\status.go`
 
-```
+```go
 # 导入时间包
 import "time"
 

@@ -1,6 +1,6 @@
 # `kubo\config\init_test.go`
 
-```
+```go
 package config
 
 import (

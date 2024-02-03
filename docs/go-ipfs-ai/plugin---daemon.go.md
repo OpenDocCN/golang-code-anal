@@ -1,6 +1,6 @@
 # `kubo\plugin\daemon.go`
 
-```
+```go
 // 导入 plugin 包
 package plugin
 

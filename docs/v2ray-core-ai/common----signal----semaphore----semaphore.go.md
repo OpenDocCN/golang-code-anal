@@ -1,6 +1,6 @@
 # `v2ray-core\common\signal\semaphore\semaphore.go`
 
-```
+```go
 // Instance 是信号量的实现
 type Instance struct {
     token chan struct{}  // 信号量的通道

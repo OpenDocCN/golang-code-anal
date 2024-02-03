@@ -1,6 +1,6 @@
 # `grype\grype\pkg\qualifier\platformcpe\qualifier.go`
 
-```
+```go
 package platformcpe
 
 import (

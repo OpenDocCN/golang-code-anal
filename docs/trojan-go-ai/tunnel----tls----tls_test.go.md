@@ -1,6 +1,6 @@
 # `trojan-go\tunnel\tls\tls_test.go`
 
-```
+```go
 package tls
 
 import (

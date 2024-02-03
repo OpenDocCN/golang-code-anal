@@ -1,6 +1,6 @@
 # `kubo\core\coreiface\options\key.go`
 
-```
+```go
 package options
 
 // 定义常量，表示 RSA 和 Ed25519 算法的密钥类型

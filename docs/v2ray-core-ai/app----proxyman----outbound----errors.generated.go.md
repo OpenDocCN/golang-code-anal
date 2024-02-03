@@ -1,6 +1,6 @@
 # `v2ray-core\app\proxyman\outbound\errors.generated.go`
 
-```
+```go
 # 定义一个名为outbound的包
 package outbound
 

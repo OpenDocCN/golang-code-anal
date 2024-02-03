@@ -1,6 +1,6 @@
 # `kubo\test\dependencies\dependencies.go`
 
-```
+```go
 // 标记为构建工具，用于构建工具包
 // 根据构建标记选择需要构建的工具包
 package tools

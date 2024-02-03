@@ -1,6 +1,6 @@
 # `grype\internal\file\exists.go`
 
-```
+```go
 // 导入 file 包和所需的依赖包
 package file
 

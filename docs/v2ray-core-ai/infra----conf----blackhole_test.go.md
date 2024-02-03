@@ -1,6 +1,6 @@
 # `v2ray-core\infra\conf\blackhole_test.go`
 
-```
+```go
 package conf_test
 
 import (

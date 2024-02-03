@@ -1,6 +1,6 @@
 # `kubo\repo\fsrepo\misc.go`
 
-```
+```go
 // 导入 fsrepo 包
 package fsrepo
 

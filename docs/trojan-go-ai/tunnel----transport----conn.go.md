@@ -1,6 +1,6 @@
 # `trojan-go\tunnel\transport\conn.go`
 
-```
+```go
 # 导入 net 包，用于网络通信
 import (
     "net"

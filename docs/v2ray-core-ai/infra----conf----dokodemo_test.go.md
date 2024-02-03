@@ -1,6 +1,6 @@
 # `v2ray-core\infra\conf\dokodemo_test.go`
 
-```
+```go
 package conf_test
 
 import (

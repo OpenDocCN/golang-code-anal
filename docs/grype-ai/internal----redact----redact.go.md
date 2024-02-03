@@ -1,6 +1,6 @@
 # `grype\internal\redact\redact.go`
 
-```
+```go
 package redact
 
 import "github.com/anchore/go-logger/adapter/redact"

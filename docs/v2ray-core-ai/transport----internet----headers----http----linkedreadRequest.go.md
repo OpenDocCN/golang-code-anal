@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\headers\http\linkedreadRequest.go`
 
-```
+```go
 // 导入 http 包
 package http
 

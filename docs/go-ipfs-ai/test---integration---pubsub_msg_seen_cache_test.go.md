@@ -1,6 +1,6 @@
 # `kubo\test\integration\pubsub_msg_seen_cache_test.go`
 
-```
+```go
 package integrationtest
 
 import (

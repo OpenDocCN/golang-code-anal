@@ -1,6 +1,6 @@
 # `kubo\core\commands\extra.go`
 
-```
+```go
 package commands
 
 import cmds "github.com/ipfs/go-ipfs-cmds"

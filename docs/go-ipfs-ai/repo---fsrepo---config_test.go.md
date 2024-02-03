@@ -1,6 +1,6 @@
 # `kubo\repo\fsrepo\config_test.go`
 
-```
+```go
 package fsrepo_test
 
 import (

@@ -154,19 +154,19 @@ codebase. To install `ipfs-update` tool, [download it here](https://dist.ipfs.te
 
 List the available versions of Kubo (go-ipfs) implementation:
 
-```console
+```go
 $ ipfs cat /ipns/dist.ipfs.tech/kubo/versions
 ```
 
 Then, to view available builds for a version from the previous command (`$VERSION`):
 
-```console
+```go
 $ ipfs ls /ipns/dist.ipfs.tech/kubo/$VERSION
 ```
 
 To download a given build of a version:
 
-```console
+```go
 $ ipfs get /ipns/dist.ipfs.tech/kubo/$VERSION/kubo_$VERSION_darwin-386.tar.gz    # darwin 32-bit build
 $ ipfs get /ipns/dist.ipfs.tech/kubo/$VERSION/kubo_$VERSION_darwin-amd64.tar.gz  # darwin 64-bit build
 $ ipfs get /ipns/dist.ipfs.tech/kubo/$VERSION/kubo_$VERSION_freebsd-amd64.tar.gz # freebsd 64-bit build
@@ -193,7 +193,7 @@ $ ipfs get /ipns/dist.ipfs.tech/kubo/$VERSION/kubo_$VERSION_windows-amd64.zip   
 
 [![kubo via Community Repo](https://img.shields.io/archlinux/v/community/x86_64/kubo?color=1793d1&label=kubo&logo=arch-linux&style=flat-square&cacheSeconds=3600)](https://wiki.archlinux.org/title/IPFS)
 
-```bash
+```go
 # pacman -S kubo
 ```
 
@@ -203,7 +203,7 @@ $ ipfs get /ipns/dist.ipfs.tech/kubo/$VERSION/kubo_$VERSION_windows-amd64.zip   
 
 With the purely functional package manager [Nix](https://nixos.org/nix/) you can install kubo (go-ipfs) like this:
 
-```
+```go
 $ nix-env -i kubo
 ```
 
@@ -213,7 +213,7 @@ You can also install the Package by using its attribute name, which is also `kub
 
 [Package for Solus](https://dev.getsol.us/source/kubo/repository/master/)
 
-```
+```go
 $ sudo eopkg install kubo
 ```
 
@@ -244,7 +244,7 @@ No longer supported, see rationale in [kubo#9341](https://github.com/ipfs/kubo/i
 
 Scoop provides kubo as `kubo` in its 'extras' bucket.
 
-```Powershell
+```go
 PS> scoop bucket add extras
 PS> scoop install kubo
 ```
@@ -259,7 +259,7 @@ PS> scoop install kubo
 
 The package [ipfs](https://ports.macports.org/port/ipfs) currently points to kubo (go-ipfs) and is being maintained.
 
-```
+```go
 $ sudo port install ipfs
 ```
 
@@ -267,7 +267,7 @@ $ sudo port install ipfs
 
 In macOS you can use the purely functional package manager [Nix](https://nixos.org/nix/):
 
-```
+```go
 $ nix-env -i kubo
 ```
 
@@ -277,7 +277,7 @@ You can also install the Package by using its attribute name, which is also `kub
 
 A Homebrew formula [ipfs](https://formulae.brew.sh/formula/ipfs) is maintained too.
 
-```
+```go
 $ brew install --formula ipfs
 ```
 
@@ -301,7 +301,7 @@ If you need to update: [Download latest version of Go](https://golang.org/dl/).
 
 You'll need to add Go's bin directories to your `$PATH` environment variable e.g., by adding these lines to your `/etc/profile` (for a system-wide installation) or `$HOME/.profile`:
 
-```
+```go
 export PATH=$PATH:/usr/local/go/bin
 export PATH=$PATH:$GOPATH/bin
 ```
@@ -310,7 +310,7 @@ export PATH=$PATH:$GOPATH/bin
 
 #### Download and Compile IPFS
 
-```
+```go
 $ git clone https://github.com/ipfs/kubo.git
 
 $ cd kubo
@@ -325,7 +325,7 @@ Alternatively, you can run `make build` to build the go-ipfs binary (storing it 
 
 Compiling for a different platform is as simple as running:
 
-```
+```go
 make build GOOS=myTargetOS GOARCH=myTargetArchitecture
 ```
 
@@ -404,7 +404,7 @@ Description: Dotted means "likely going away". The "Legacy" parts are thin wrapp
 
 ### Testing
 
-```
+```go
 make test
 ```
 

@@ -1,6 +1,6 @@
 # `kubo\client\rpc\swarm.go`
 
-```
+```go
 package rpc
 
 import (

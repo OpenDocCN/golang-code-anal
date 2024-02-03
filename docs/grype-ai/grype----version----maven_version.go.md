@@ -1,6 +1,6 @@
 # `grype\grype\version\maven_version.go`
 
-```
+```go
 package version
 
 import (

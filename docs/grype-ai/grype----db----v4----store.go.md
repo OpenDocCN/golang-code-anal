@@ -1,6 +1,6 @@
 # `grype\grype\db\v4\store.go`
 
-```
+```go
 # 定义接口类型 Store，包含 StoreReader、StoreWriter 和 DBCloser 三个接口
 type Store interface {
     StoreReader

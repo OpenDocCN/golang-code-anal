@@ -1,6 +1,6 @@
 # `trojan-go\component\nat.go`
 
-```
+```go
 // 标记该文件适用于 nat、full 或 mini 构建标记
 // +build nat full mini
 

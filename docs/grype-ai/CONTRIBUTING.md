@@ -16,7 +16,7 @@ You will also need Docker. There's no reason the system packages shouldn't work,
 
 You also need to install some Debian packages
 
-```sh
+```go
 sudo apt-get install build-essential git libxml2-utils
 ```
 
@@ -24,7 +24,7 @@ sudo apt-get install build-essential git libxml2-utils
 
 You will need to configure your git client with your name and email address. This is easily done from the command line.
 
-```text
+```go
 $ git config --global user.name "John Doe"
 $ git config --global user.email "john.doe@example.com"
 ```
@@ -59,7 +59,7 @@ The `sign-off` is an added line at the end of the explanation for the commit, ce
 
 Signing off a commit certifies the below Developer's Certificate of Origin (DCO):
 
-```text
+```go
 Developer's Certificate of Origin 1.1
 
 By making a contribution to this project, I certify that:
@@ -91,26 +91,26 @@ All contributions to this project are licensed under the [Apache License Version
 
 When committing your change, you can add the required line manually so that it looks like this:
 
-```text
+```go
 Signed-off-by: John Doe <john.doe@example.com>
 ```
 
 Alternatively, configure your Git client with your name and email to use the `-s` flag when creating a commit:
 
-```text
+```go
 $ git config --global user.name "John Doe"
 $ git config --global user.email "john.doe@example.com"
 ```
 
 Creating a signed-off commit is then possible with `-s` or `--signoff`:
 
-```text
+```go
 $ git commit -s -m "this is a commit message"
 ```
 
 To double-check if the commit was signed-off, look at the log output:
 
-```text
+```go
 $ git log -1
 commit 37ceh170e4hb283bb73d958f2036ee5k07e7fde7 (HEAD -> issue-35, origin/main, main)
 Author: John Doe <john.doe@example.com>
@@ -125,13 +125,13 @@ Date:   Mon Aug 1 11:27:13 2020 -0400
 
 This project has a `Makefile` which includes many helpers running both unit and integration tests. Although PRs will have automatic checks for these, it is useful to run them locally, ensuring they pass before submitting changes. Ensure you've bootstrapped once before running tests:
 
-```text
+```go
 $ make bootstrap
 ```
 
 You only need to bootstrap once. After the bootstrap process, you can run the tests as many times as needed:
 
-```text
+```go
 $ make unit
 $ make integration
 ```

@@ -1,6 +1,6 @@
 # `trojan-go\statistic\memory\config.go`
 
-```
+```go
 # 导入内存包
 package memory
 

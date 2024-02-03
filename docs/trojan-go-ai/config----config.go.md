@@ -1,6 +1,6 @@
 # `trojan-go\config\config.go`
 
-```
+```go
 // 导入必要的包
 package config
 

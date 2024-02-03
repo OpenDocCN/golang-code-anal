@@ -1,6 +1,6 @@
 # `kubo\core\coreiface\options\object.go`
 
-```
+```go
 package options
 
 // 定义创建对象时的设置结构体

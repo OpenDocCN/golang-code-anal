@@ -1,6 +1,6 @@
 # `kubebench-aquasecurity\cmd\master.go`
 
-```
+```go
 // 版权声明，声明代码版权归 Aqua Security Software Ltd. 所有
 // 根据 Apache 许可证 2.0 版本授权，除非符合许可证的规定，否则不得使用此文件
 // 可以在以下网址获取许可证的副本：http://www.apache.org/licenses/LICENSE-2.0

@@ -1,6 +1,6 @@
 # `kubo\fuse\readonly\ipfs_test.go`
 
-```
+```go
 // 如果不是在 nofuse、openbsd、netbsd、plan9 环境下构建，则包含此文件
 // 导入 readonly 包
 package readonly

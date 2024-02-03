@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\mtproto\errors.generated.go`
 
-```
+```go
 # 定义名为 mtproto 的包
 package mtproto
 

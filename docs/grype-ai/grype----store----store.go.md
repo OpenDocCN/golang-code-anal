@@ -1,6 +1,6 @@
 # `grype\grype\store\store.go`
 
-```
+```go
 # 导入 store 包所需的依赖包
 import (
     "github.com/anchore/grype/grype/match"  # 导入 match 包

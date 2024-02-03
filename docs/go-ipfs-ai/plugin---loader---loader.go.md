@@ -1,6 +1,6 @@
 # `kubo\plugin\loader\loader.go`
 
-```
+```go
 package loader
 
 import (

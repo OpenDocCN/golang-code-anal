@@ -1,6 +1,6 @@
 # `kubesploit\data\modules\sourcecode\go\mountBreakoutWithBlkid\main.go`
 
-```
+```go
 package main
 
 import (

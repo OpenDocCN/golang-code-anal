@@ -1,6 +1,6 @@
 # `kubo\test\cli\ping_test.go`
 
-```
+```go
 package cli
 
 import (

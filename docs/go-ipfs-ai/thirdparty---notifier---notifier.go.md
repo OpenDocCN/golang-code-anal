@@ -1,6 +1,6 @@
 # `kubo\thirdparty\notifier\notifier.go`
 
-```
+```go
 // Package notifier provides a simple notification dispatcher
 // meant to be embedded in larger structures who wish to allow
 // clients to sign up for event notifications.

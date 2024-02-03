@@ -18,7 +18,7 @@ Trojan-Go使用多路复用的方式解决这一问题。每个建立的TLS连�
 
 激活```mux```模块，只需要将```mux```选项中```enabled```字段设为true即可，下面是一个客户端的例子
 
-```json
+```go
 ...
 "mux" :{
     "enabled": true
@@ -29,7 +29,7 @@ Trojan-Go使用多路复用的方式解决这一问题。每个建立的TLS连�
 
 完整的mux配置如下
 
-```json
+```go
 "mux": {
     "enabled": false,
     "concurrency": 8,

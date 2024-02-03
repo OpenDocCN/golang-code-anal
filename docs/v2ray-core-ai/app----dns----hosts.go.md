@@ -1,6 +1,6 @@
 # `v2ray-core\app\dns\hosts.go`
 
-```
+```go
 // +build !confonly
 
 // 导入必要的包

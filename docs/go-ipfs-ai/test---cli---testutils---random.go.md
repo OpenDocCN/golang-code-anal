@@ -1,6 +1,6 @@
 # `kubo\test\cli\testutils\random.go`
 
-```
+```go
 # 导入 testutils 包
 package testutils
 

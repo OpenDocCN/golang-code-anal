@@ -1,6 +1,6 @@
 # `kubo\client\rpc\auth\auth.go`
 
-```
+```go
 package auth
 
 import "net/http"

@@ -1,6 +1,6 @@
 # `kubo\config\migration_test.go`
 
-```
+```go
 package config
 
 import (

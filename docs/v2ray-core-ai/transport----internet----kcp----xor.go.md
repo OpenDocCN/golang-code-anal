@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\kcp\xor.go`
 
-```
+```go
 // +build !amd64
 
 package kcp

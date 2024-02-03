@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\domainsocket\config.go`
 
-```
+```go
 // +build !confonly
 
 // 声明 domainsocket 包，引入必要的依赖包

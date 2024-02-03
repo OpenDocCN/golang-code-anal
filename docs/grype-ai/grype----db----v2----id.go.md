@@ -1,6 +1,6 @@
 # `grype\grype\db\v2\id.go`
 
-```
+```go
 // 定义一个包名为v2的包
 
 import (

@@ -1,6 +1,6 @@
 # `v2ray-core\app\router\condition.go`
 
-```
+```go
 // +build !confonly
 // 声明当前文件不仅仅是用于配置
 

@@ -1,6 +1,6 @@
 # `grype\grype\version\operator.go`
 
-```
+```go
 package version
 
 import "fmt"

@@ -1,6 +1,6 @@
 # `trojan-go\api\service\config.go`
 
-```
+```go
 package service
 
 import "github.com/p4gefau1t/trojan-go/config"

@@ -1,6 +1,6 @@
 # `grype\grype\db\v5\pkg\resolver\resolver.go`
 
-```
+```go
 # 声明一个名为 resolver 的包
 package resolver
 

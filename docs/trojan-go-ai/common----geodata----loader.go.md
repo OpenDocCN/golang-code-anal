@@ -1,6 +1,6 @@
 # `trojan-go\common\geodata\loader.go`
 
-```
+```go
 package geodata
 
 import (

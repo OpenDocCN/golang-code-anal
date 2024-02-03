@@ -1,6 +1,6 @@
 # `grype\internal\file\getter_test.go`
 
-```
+```go
 package file
 
 import (

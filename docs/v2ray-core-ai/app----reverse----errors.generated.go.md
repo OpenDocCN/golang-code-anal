@@ -1,6 +1,6 @@
 # `v2ray-core\app\reverse\errors.generated.go`
 
-```
+```go
 # 定义一个名为 reverse 的包
 package reverse
 

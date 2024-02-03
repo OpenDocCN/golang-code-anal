@@ -1,6 +1,6 @@
 # `kubo\thirdparty\verifbs\verifbs.go`
 
-```
+```go
 package verifbs
 
 import (

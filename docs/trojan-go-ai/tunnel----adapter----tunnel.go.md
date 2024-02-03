@@ -1,6 +1,6 @@
 # `trojan-go\tunnel\adapter\tunnel.go`
 
-```
+```go
 package adapter
 
 import (

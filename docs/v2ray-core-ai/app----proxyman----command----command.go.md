@@ -1,6 +1,6 @@
 # `v2ray-core\app\proxyman\command\command.go`
 
-```
+```go
 // +build !confonly
 
 package command

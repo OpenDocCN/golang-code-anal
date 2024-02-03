@@ -9,7 +9,7 @@ The goal of this document is to capture the code flow for adding a file (see the
 
 **Try this yourself**
 > 
-> ```
+> ```go
 > # Convert a file to the IPFS format.
 > echo "Hello World" > new-file
 > ipfs add new-file

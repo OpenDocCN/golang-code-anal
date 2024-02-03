@@ -1,6 +1,6 @@
 # `kubo\core\corehttp\redirect.go`
 
-```
+```go
 package corehttp
 
 import (

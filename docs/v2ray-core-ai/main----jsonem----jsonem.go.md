@@ -1,6 +1,6 @@
 # `v2ray-core\main\jsonem\jsonem.go`
 
-```
+```go
 package jsonem
 
 import (

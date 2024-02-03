@@ -1,6 +1,6 @@
 # `v2ray-core\common\interfaces.go`
 
-```
+```go
 // common 包包含了一些常用的接口和函数
 package common
 

@@ -1,6 +1,6 @@
 # `trojan-go\main.go`
 
-```
+```go
 // 主程序入口
 func main() {
     // 解析命令行参数

@@ -1,6 +1,6 @@
 # `v2ray-core\app\router\condition_geoip.go`
 
-```
+```go
 // +build !confonly
 // 定义了不是 confonly 的构建标签
 

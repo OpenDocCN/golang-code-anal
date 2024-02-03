@@ -1,6 +1,6 @@
 # `trojan-go\tunnel\mux\config.go`
 
-```
+```go
 package mux
 
 import "github.com/p4gefau1t/trojan-go/config"

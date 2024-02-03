@@ -1,6 +1,6 @@
 # `kubo\test\cli\testutils\pinningservice\pinning.go`
 
-```
+```go
 package pinningservice
 
 import (

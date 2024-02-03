@@ -1,6 +1,6 @@
 # `kubo\core\coreapi\dag.go`
 
-```
+```go
 package coreapi
 
 import (

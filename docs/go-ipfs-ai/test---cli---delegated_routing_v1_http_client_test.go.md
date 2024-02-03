@@ -1,6 +1,6 @@
 # `kubo\test\cli\delegated_routing_v1_http_client_test.go`
 
-```
+```go
 package cli
 
 import (

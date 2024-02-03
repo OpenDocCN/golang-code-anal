@@ -1,6 +1,6 @@
 # `v2ray-core\common\crypto\crypto.go`
 
-```
+```go
 // Package crypto 提供了 V2Ray 的常用加密库
 package crypto // import "v2ray.com/core/common/crypto"
 

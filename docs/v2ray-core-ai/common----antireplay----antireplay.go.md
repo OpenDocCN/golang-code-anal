@@ -1,6 +1,6 @@
 # `v2ray-core\common\antireplay\antireplay.go`
 
-```
+```go
 package antireplay
 
 import (

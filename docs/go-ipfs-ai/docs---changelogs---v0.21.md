@@ -106,7 +106,7 @@ target subdomain.
 The HTTP 301 body now includes human-readable `text/html` message
 for clients that do not follow redirects by default:
 
-```console
+```go
 $ curl "https://subdomain-gw.example.net/ipfs/${cid}/"
 <a href="https://${cid}.ipfs.subdomain-gw.example.net/">Moved Permanently</a>.
 ```
@@ -128,7 +128,7 @@ resolution.
 `ipfs dat stat` now accept multiple CIDs and will dump advanced statistics
 on the number of shared blocks and size of each CID.
 
-```console
+```go
 $ ipfs dag stat --progress=false QmfXuRxzyVy5H2LssLgtXrKCrNvDY8UBvMp2aoW8LS8AYA QmfZDyu2UFfUhL4VdHaw7Hofivmn5D4DdQj38Lwo86RsnB
 
 CID                                           	Blocks         	Size

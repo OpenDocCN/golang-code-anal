@@ -1,6 +1,6 @@
 # `grype\grype\db\v4\store\model\id.go`
 
-```
+```go
 package model
 
 import (

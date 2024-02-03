@@ -140,7 +140,7 @@ At the moment, go-ipfs cannot use this protocol to download content from other p
 
 To enable, run:
 
-```bash
+```go
 > ipfs config --json Experimental.GraphsyncEnabled true
 ```
 
@@ -180,7 +180,7 @@ We suggest you use Badger if:
 
 In the flatfs datastore, we've fixed an issue where temporary files could be left behind in some cases. While this release will avoid leaving behind temporary files, you may want to remove any left behind by previous releases:
 
-```bash
+```go
 > rm ~/.ipfs/blocks/*/put-*
 > rm ~/.ipfs/blocks/du-*
 ```
@@ -353,7 +353,7 @@ The `ipfs repo fsck` now does nothing but print an error message. Previously, it
 
 It's now possible to initialize an IPFS node with an existing IPFS config by running:
 
-```bash
+```go
 > ipfs init /path/to/existing/config
 ```
 
@@ -372,7 +372,7 @@ Files can now be ignored on add by passing the `--ignore` and/or
 
 For example, to add a git repo while ignoring all files git would ignore, you could run:
 
-```bash
+```go
 > cd path/to/some/repo
 > ipfs add -r --hidden=false --ignore=.git --ignore-rules-path=.gitignore .
 ```
@@ -381,7 +381,7 @@ For example, to add a git repo while ignoring all files git would ignore, you co
 
 It's now possible to add data directly from a named pipe:
 
-```bash
+```go
 > mkfifo foo
 > echo -n "hello " > foo &
 > echo -n "world" > bar &
@@ -396,7 +396,7 @@ NOTE: To avoid surprising users, IPFS will only add data from FIFOs _directly_ n
 
 IPFS now allows rapid reading and writing of blocks in [`.car` format](https://github.com/ipld/specs/blob/master/block-layer/content-addressable-archives.md#readme). The functionality is accessible via the experimental `dag import` and `dag export` commands:
 
-```
+```go
 ~$ ipfs dag export QmQPeNsJPyVWPFDVHb77w8G42Fvo15z4bG2X8D2GhfbSXc \
 | xz > welcome_to_ipfs.car.xz
 
@@ -404,7 +404,7 @@ IPFS now allows rapid reading and writing of blocks in [`.car` format](https://g
 
 ```
 Then on another `ipfs` instance, not even connected to the network:
-```
+```go
 ~$ xz -dc welcome_to_ipfs.car.xz | ipfs dag import
 
 Pinned root	QmQPeNsJPyVWPFDVHb77w8G42Fvo15z4bG2X8D2GhfbSXc	success
@@ -441,7 +441,7 @@ You can find the new systemd units in the go-ipfs repo under misc/systemd.
 
 This release supports exposing the IPFS API over a unix domain socket in the filesystem. You use this feature, run:
 
-```bash
+```go
 > ipfs config Addresses.API "/unix/path/to/socket/location"
 ```
 

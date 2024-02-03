@@ -1,6 +1,6 @@
 # `kubo\fuse\readonly\readonly_unix.go`
 
-```
+```go
 // 根据条件构建只在 linux、darwin、freebsd 平台上使用 FUSE 的包
 // +build linux darwin freebsd
 // +build !nofuse

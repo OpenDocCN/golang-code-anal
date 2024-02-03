@@ -1,6 +1,6 @@
 # `trojan-go\proxy\nat\nat.go`
 
-```
+```go
 //go:build linux
 // +build linux
 

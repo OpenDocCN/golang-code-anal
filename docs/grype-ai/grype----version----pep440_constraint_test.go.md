@@ -1,6 +1,6 @@
 # `grype\grype\version\pep440_constraint_test.go`
 
-```
+```go
 package version
 
 import (

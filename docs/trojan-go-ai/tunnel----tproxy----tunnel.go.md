@@ -1,6 +1,6 @@
 # `trojan-go\tunnel\tproxy\tunnel.go`
 
-```
+```go
 //go:build linux
 // +build linux
 // 声明该文件只在 Linux 系统下编译

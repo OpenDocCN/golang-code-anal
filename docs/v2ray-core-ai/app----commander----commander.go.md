@@ -1,6 +1,6 @@
 # `v2ray-core\app\commander\commander.go`
 
-```
+```go
 // +build !confonly
 // 定义了一个不是 confonly 的构建标签
 

@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\proxy.go`
 
-```
+```go
 // Package proxy contains all proxies used by V2Ray.
 //
 // To implement an inbound or outbound proxy, one needs to do the following:

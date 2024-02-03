@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\tls\tls.go`
 
-```
+```go
 // +build !confonly
 
 package tls

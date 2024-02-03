@@ -1,6 +1,6 @@
 # `v2ray-core\app\commander\service.go`
 
-```
+```go
 // +build !confonly
 // 设置构建标记，表示该代码块不仅仅是配置
 package commander

@@ -26,7 +26,7 @@ weight: 22
 
 下面是一份比较安全的服务器配置server.json，需要你在本地80端口配置一个HTTP服务（必要，你也可以使用其他的网站HTTP服务器，如"remote_addr": "example.com"），在1234端口配置一个HTTPS服务，或是一个展示"400 Bad Request"的静态HTTP网页服务。（可选，可以删除```fallback_port```字段，跳过这个步骤）
 
-```json
+```go
 {
     "run_type": "server",
     "local_addr": "0.0.0.0",
@@ -60,7 +60,7 @@ weight: 22
 
 配置完成后，可以使用
 
-```shell
+```go
 ./trojan-go -config ./server.json
 ```
 
@@ -70,7 +70,7 @@ weight: 22
 
 对应的客户端配置client.json
 
-```json
+```go
 {
     "run_type": "client",
     "local_addr": "127.0.0.1",
@@ -92,7 +92,7 @@ weight: 22
 
 配置完成后，可以使用
 
-```shell
+```go
 ./trojan-go -config ./client.json
 ```
 

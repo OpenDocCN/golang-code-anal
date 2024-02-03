@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\tcp\errors.generated.go`
 
-```
+```go
 # 定义一个名为tcp的包
 package tcp
 

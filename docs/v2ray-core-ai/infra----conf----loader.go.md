@@ -1,6 +1,6 @@
 # `v2ray-core\infra\conf\loader.go`
 
-```
+```go
 package conf
 
 import (

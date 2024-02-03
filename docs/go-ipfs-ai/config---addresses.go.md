@@ -1,6 +1,6 @@
 # `kubo\config\addresses.go`
 
-```
+```go
 // Addresses 结构体存储节点的（字符串）多地址地址。
 type Addresses struct {
     Swarm          []string // 用于监听的 swarm 地址

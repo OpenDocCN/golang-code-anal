@@ -1,6 +1,6 @@
 # `v2ray-core\common\buf\writer_test.go`
 
-```
+```go
 package buf_test
 
 import (

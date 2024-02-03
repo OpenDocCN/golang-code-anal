@@ -1,6 +1,6 @@
 # `kubo\test\integration\three_legged_cat_test.go`
 
-```
+```go
 // 定义一个名为 integrationtest 的包
 package integrationtest
 

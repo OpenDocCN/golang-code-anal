@@ -1,6 +1,6 @@
 # `v2ray-core\common\cmdarg\cmdarg.go`
 
-```
+```go
 // 导入字符串处理包
 import "strings"
 

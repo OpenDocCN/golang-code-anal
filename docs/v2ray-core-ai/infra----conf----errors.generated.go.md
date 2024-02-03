@@ -1,6 +1,6 @@
 # `v2ray-core\infra\conf\errors.generated.go`
 
-```
+```go
 # 定义一个名为conf的包
 package conf
 

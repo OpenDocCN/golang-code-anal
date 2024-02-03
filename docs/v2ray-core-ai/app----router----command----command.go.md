@@ -1,6 +1,6 @@
 # `v2ray-core\app\router\command\command.go`
 
-```
+```go
 // +build !confonly
 
 package command

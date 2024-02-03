@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\socks\socks.go`
 
-```
+```go
 // Package socks 提供了 Socks 协议 4、4a 和 5 的实现
 package socks
 

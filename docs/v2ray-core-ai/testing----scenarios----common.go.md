@@ -1,6 +1,6 @@
 # `v2ray-core\testing\scenarios\common.go`
 
-```
+```go
 package scenarios
 
 import (

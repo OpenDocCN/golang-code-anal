@@ -1,6 +1,6 @@
 # `trojan-go\api\control\control.go`
 
-```
+```go
 package control
 
 import (

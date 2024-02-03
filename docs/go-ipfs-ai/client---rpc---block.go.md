@@ -1,6 +1,6 @@
 # `kubo\client\rpc\block.go`
 
-```
+```go
 package rpc
 
 import (

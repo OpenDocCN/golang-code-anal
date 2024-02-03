@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\tcp\hub.go`
 
-```
+```go
 // +build !confonly
 
 package tcp

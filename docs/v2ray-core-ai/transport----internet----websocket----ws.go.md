@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\websocket\ws.go`
 
-```
+```go
 /*
 websocket 包实现了 Websocket 传输
 

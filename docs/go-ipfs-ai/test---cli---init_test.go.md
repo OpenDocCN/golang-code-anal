@@ -1,6 +1,6 @@
 # `kubo\test\cli\init_test.go`
 
-```
+```go
 package cli
 
 import (

@@ -1,6 +1,6 @@
 # `v2ray-core\app\stats\counter.go`
 
-```
+```go
 // +build !confonly
 // 声明该文件不仅仅是用于配置
 

@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\websocket\ws_test.go`
 
-```
+```go
 package websocket_test
 
 import (

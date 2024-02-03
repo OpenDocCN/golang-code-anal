@@ -1,6 +1,6 @@
 # `kubo\core\node\groups.go`
 
-```
+```go
 package node
 
 import (

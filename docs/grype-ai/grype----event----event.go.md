@@ -1,6 +1,6 @@
 # `grype\grype\event\event.go`
 
-```
+```go
 package event
 
 import (

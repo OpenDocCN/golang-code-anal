@@ -1,6 +1,6 @@
 # `grype\grype\vex\processor.go`
 
-```
+```go
 package vex
 
 import (

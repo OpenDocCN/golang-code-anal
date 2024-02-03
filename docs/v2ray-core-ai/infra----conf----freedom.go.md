@@ -1,6 +1,6 @@
 # `v2ray-core\infra\conf\freedom.go`
 
-```
+```go
 package conf
 
 import (

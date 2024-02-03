@@ -1,6 +1,6 @@
 # `v2ray-core\app\dispatcher\sniffer.go`
 
-```
+```go
 // +build !confonly
 
 package dispatcher

@@ -1,6 +1,6 @@
 # `v2ray-core\transport\pipe\reader.go`
 
-```
+```go
 // 导入必要的包
 package pipe
 

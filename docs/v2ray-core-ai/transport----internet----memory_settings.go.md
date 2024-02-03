@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\memory_settings.go`
 
-```
+```go
 // MemoryStreamConfig是StreamConfig的解析形式。这用于减少Protobuf解析的次数。
 type MemoryStreamConfig struct {
     ProtocolName     string

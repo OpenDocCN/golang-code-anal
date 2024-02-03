@@ -1,6 +1,6 @@
 # `trojan-go\config\config_test.go`
 
-```
+```go
 package config
 
 import (

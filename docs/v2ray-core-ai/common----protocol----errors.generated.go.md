@@ -1,6 +1,6 @@
 # `v2ray-core\common\protocol\errors.generated.go`
 
-```
+```go
 # 定义一个名为protocol的包
 package protocol
 

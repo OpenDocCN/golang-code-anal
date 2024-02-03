@@ -66,7 +66,7 @@ Experimental.
 ### How to enable
 
 Modify your ipfs config:
-```
+```go
 ipfs config --json Experimental.FilestoreEnabled true
 ```
 
@@ -97,7 +97,7 @@ v0.4.17
 ### How to enable
 
 Modify your ipfs config:
-```
+```go
 ipfs config --json Experimental.UrlstoreEnabled true
 ```
 
@@ -125,7 +125,7 @@ Stable but not quite ready for prime-time.
 ### How to enable
 
 Generate a pre-shared-key using [ipfs-swarm-key-gen](https://github.com/Kubuxu/go-ipfs-swarm-key-gen)):
-```
+```go
 go get github.com/Kubuxu/go-ipfs-swarm-key-gen/ipfs-swarm-key-gen
 ipfs-swarm-key-gen > ~/.ipfs/swarm.key
 ```
@@ -139,17 +139,17 @@ nodes (Since we aren't part of your private network) so you will need to set up
 your own bootstrap nodes.
 
 First, to prevent your node from even trying to connect to the default bootstrap nodes, run:
-```bash
+```go
 ipfs bootstrap rm --all
 ```
 
 Then add your own bootstrap peers with:
-```bash
+```go
 ipfs bootstrap add <multiaddr>
 ```
 
 For example:
-```
+```go
 ipfs bootstrap add /ip4/104.236.76.40/tcp/4001/p2p/QmSoLV4Bbm51jM9C4gDYZQ9Cy3U6aXMJDAbzgu2fzaDs64
 ```
 
@@ -184,7 +184,7 @@ Experimental, will be stabilized in 0.6.0
 
 The `p2p` command needs to be enabled in the config:
 
-```sh
+```go
 > ipfs config --json Experimental.Libp2pStreamMounting true
 ```
 
@@ -208,7 +208,7 @@ port `$APP_PORT`.
 
 Then, configure the p2p listener by running:
 
-```sh
+```go
 > ipfs p2p listen /x/kickass/1.0 /ip4/127.0.0.1/tcp/$APP_PORT
 ```
 
@@ -222,7 +222,7 @@ First, configure the client p2p dialer, so that it forwards all inbound
 connections on `127.0.0.1:SOME_PORT` to the server node listening
 on `/x/kickass/1.0`.
 
-```sh
+```go
 > ipfs p2p forward /x/kickass/1.0 /ip4/127.0.0.1/tcp/$SOME_PORT /p2p/$SERVER_ID
 ```
 
@@ -231,12 +231,12 @@ connection will be forwarded to the service running on `127.0.0.1:$APP_PORT` on
 the remote machine. You can test it with netcat:
 
 ***On "server" node:***
-```sh
+```go
 > nc -v -l -p $APP_PORT
 ```
 
 ***On "client" node:***
-```sh
+```go
 > nc -v 127.0.0.1 $SOME_PORT
 ```
 
@@ -257,13 +257,13 @@ _you can get `$SERVER_ID` by running `ipfs id -f "<id>\n"`_
 
 ***First, on the "server" node:***
 
-```sh
+```go
 ipfs p2p listen /x/ssh /ip4/127.0.0.1/tcp/22
 ```
 
 ***Then, on "client" node:***
 
-```sh
+```go
 ipfs p2p forward /x/ssh /ip4/127.0.0.1/tcp/2222 /p2p/$SERVER_ID
 ```
 
@@ -291,13 +291,13 @@ Experimental
 
 The `p2p` command needs to be enabled in the config:
 
-```sh
+```go
 > ipfs config --json Experimental.Libp2pStreamMounting true
 ```
 
 On the client, the p2p HTTP proxy needs to be enabled in the config:
 
-```sh
+```go
 > ipfs config --json Experimental.P2pHttpProxy true
 ```
 
@@ -321,7 +321,7 @@ port `$APP_PORT`.
 
 Then, configure the p2p listener by running:
 
-```sh
+```go
 > ipfs p2p listen --allow-custom-protocol /http /ip4/127.0.0.1/tcp/$APP_PORT
 ```
 
@@ -335,12 +335,12 @@ connection will be forwarded to the service running on `127.0.0.1:$APP_PORT` on
 the remote machine (which needs to be a http server!) with path `$FORWARDED_PATH`. You can test it with netcat:
 
 ***On "server" node:***
-```sh
+```go
 > echo -e "HTTP/1.1 200\nContent-length: 11\n\nIPFS rocks!" | nc -l -p $APP_PORT
 ```
 
 ***On "client" node:***
-```sh
+```go
 > curl http://localhost:8080/p2p/$SERVER_ID/http/
 ```
 
@@ -445,7 +445,7 @@ Users interested in this feature should upgrade to at least 0.5.0
 
 Run your daemon with the `--enable-namesys-pubsub` flag
 or modify your ipfs config and restart the daemon:
-```
+```go
 ipfs config --json Ipns.UsePubsub true
 ```
 
@@ -478,7 +478,7 @@ Automatically discovers relays and advertises relay addresses when the node is b
 
 Modify your ipfs config:
 
-```
+```go
 ipfs config --json Swarm.RelayClient.Enabled true
 ```
 
@@ -500,7 +500,7 @@ Replaces the existing provide mechanism with a robust, strategic provider system
 
 Modify your ipfs config:
 
-```
+```go
 ipfs config --json Experimental.StrategicProviding true
 ```
 
@@ -590,13 +590,13 @@ For more information, see:
 ### Configuring
 To enable:
 
-```
+```go
 ipfs config --json Experimental.OptimisticProvide true
 ```
 
 If you want to change the `OptimisticProvideJobsPoolSize` setting from its default of 60:
 
-```
+```go
 ipfs config --json Experimental.OptimisticProvideJobsPoolSize 120
 ```
 
@@ -639,7 +639,7 @@ Notes:
 
 Modify your ipfs config:
 
-```
+```go
 ipfs config --json Experimental.GatewayOverLibp2p true
 ```
 

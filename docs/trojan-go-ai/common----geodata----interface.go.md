@@ -1,6 +1,6 @@
 # `trojan-go\common\geodata\interface.go`
 
-```
+```go
 # 定义了一个名为geodata的包
 package geodata
 

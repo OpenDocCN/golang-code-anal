@@ -1,6 +1,6 @@
 # `trojan-go\tunnel\socks\tunnel.go`
 
-```
+```go
 package socks
 
 import (

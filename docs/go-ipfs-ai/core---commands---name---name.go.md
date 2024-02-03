@@ -1,6 +1,6 @@
 # `kubo\core\commands\name\name.go`
 
-```
+```go
 package name
 
 import (

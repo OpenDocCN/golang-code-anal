@@ -1,6 +1,6 @@
 # `grype\grype\match\matches.go`
 
-```
+```go
 package match
 
 import (

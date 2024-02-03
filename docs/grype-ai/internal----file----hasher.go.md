@@ -1,6 +1,6 @@
 # `grype\internal\file\hasher.go`
 
-```
+```go
 package file
 
 import (

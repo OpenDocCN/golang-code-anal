@@ -1,6 +1,6 @@
 # `kubo\test\integration\bench_cat_test.go`
 
-```
+```go
 package integrationtest
 
 import (

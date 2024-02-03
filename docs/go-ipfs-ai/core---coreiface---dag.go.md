@@ -1,6 +1,6 @@
 # `kubo\core\coreiface\dag.go`
 
-```
+```go
 // 声明 iface 包
 package iface
 

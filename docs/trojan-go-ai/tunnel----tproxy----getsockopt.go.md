@@ -1,6 +1,6 @@
 # `trojan-go\tunnel\tproxy\getsockopt.go`
 
-```
+```go
 // 根据条件编译标记，仅在 Linux 平台且不是 386 架构下构建该包
 // +build linux,!386
 

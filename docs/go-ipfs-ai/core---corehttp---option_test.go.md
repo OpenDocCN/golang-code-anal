@@ -1,6 +1,6 @@
 # `kubo\core\corehttp\option_test.go`
 
-```
+```go
 package corehttp
 
 import (

@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\xtls\xtls.go`
 
-```
+```go
 // +build !confonly
 
 package xtls

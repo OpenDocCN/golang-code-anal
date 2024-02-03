@@ -1,6 +1,6 @@
 # `kubebench-aquasecurity\internal\findings\publisher.go`
 
-```
+```go
 package findings
 
 import (

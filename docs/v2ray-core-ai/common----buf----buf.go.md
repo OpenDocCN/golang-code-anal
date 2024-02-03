@@ -1,6 +1,6 @@
 # `v2ray-core\common\buf\buf.go`
 
-```
+```go
 // 包 buf 提供了一种轻量级的内存分配机制。
 package buf // import "v2ray.com/core/common/buf"
 

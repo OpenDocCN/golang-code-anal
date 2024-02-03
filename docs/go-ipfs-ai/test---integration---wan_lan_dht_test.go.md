@@ -1,6 +1,6 @@
 # `kubo\test\integration\wan_lan_dht_test.go`
 
-```
+```go
 package integrationtest
 
 import (

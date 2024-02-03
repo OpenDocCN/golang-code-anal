@@ -1,6 +1,6 @@
 # `trojan-go\proxy\forward\forward.go`
 
-```
+```go
 package forward
 
 import (

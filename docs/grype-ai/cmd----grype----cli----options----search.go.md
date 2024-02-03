@@ -1,6 +1,6 @@
 # `grype\cmd\grype\cli\options\search.go`
 
-```
+```go
 package options
 
 import (

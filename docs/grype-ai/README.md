@@ -58,19 +58,19 @@ If you encounter an issue, please [let us know using the issue tracker](https://
 
 ### Recommended
 
-```bash
+```go
 curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
 ```
 
 You can also choose another destination directory and release version for the installation. The destination directory doesn't need to be `/usr/local/bin`, it just needs to be a location found in the user's PATH and writable by the user that's installing Grype.
 
-```
+```go
 curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b <DESTINATION_DIR> <RELEASE_VERSION>
 ```
 
 ### Homebrew
 
-```bash
+```go
 brew tap anchore/grype
 brew install grype
 ```
@@ -79,7 +79,7 @@ brew install grype
 
 On macOS, Grype can additionally be installed from the [community maintained port](https://ports.macports.org/port/grype/) via MacPorts:
 
-```bash
+```go
 sudo port install grype
 ```
 
@@ -107,7 +107,7 @@ Verification steps are as follow:
 
 2. Verify the signature:
 
-```shell
+```go
 cosign verify-blob <path to checksum.txt> \
 --certificate <path to checksums.txt.pem> \
 --signature <path to checksums.txt.sig> \
@@ -117,7 +117,7 @@ cosign verify-blob <path to checksum.txt> \
 
 3. Once the signature is confirmed as valid, you can proceed to validate that the SHA256 sums align with the downloaded artifact:
 
-```shell
+```go
 sha256sum --ignore-missing -c checksums.txt
 ```
 
@@ -125,19 +125,19 @@ sha256sum --ignore-missing -c checksums.txt
 
 [Install the binary](#installation), and make sure that `grype` is available in your path. To scan for vulnerabilities in an image:
 
-```
+```go
 grype <image>
 ```
 
 The above command scans for vulnerabilities that are visible in the container (i.e., the squashed representation of the image). To include software from all image layers in the vulnerability scan, regardless of its presence in the final image, provide `--scope all-layers`:
 
-```
+```go
 grype <image> --scope all-layers
 ```
 
 To run grype from a Docker container so it can scan a running container, use the following command:
 
-```yml
+```go
 docker run --rm \
 --volume /var/run/docker.sock:/var/run/docker.sock \
 --name Grype anchore/grype:latest \
@@ -148,7 +148,7 @@ $(ImageName):$(ImageTag)
 
 Grype can scan a variety of sources beyond those found in Docker.
 
-```
+```go
 # scan a container image archive (from the result of `docker image save ...`, `podman save ...`, or `skopeo copy` commands)
 grype path/to/image.tar
 
@@ -161,7 +161,7 @@ grype dir:path/to/dir
 
 Sources can be explicitly provided with a scheme:
 
-```
+```go
 podman:yourrepo/yourimage:tag          use images from the Podman daemon
 docker:yourrepo/yourimage:tag          use images from the Docker daemon
 docker-archive:path/to/yourimage.tar   use a tarball from disk for archives created from "docker save"
@@ -181,7 +181,7 @@ This default behavior can be overridden with the `default-image-pull-source` con
 
 Use SBOMs for even faster vulnerability scanning in Grype:
 
-```
+```go
 # Then scan for new vulnerabilities as frequently as needed
 grype sbom:./sbom.json
 
@@ -196,7 +196,7 @@ more successful are the inclusion of CPE and Linux distribution information. If 
 is possible to generate these based on package information using the `--add-cpes-if-none` flag. To specify a distribution,
 use the `--distro <distro>:<version>` flag. A full example is:
 
-```
+```go
 grype --add-cpes-if-none --distro alpine:3.10 sbom:some-alpine-3.10.spdx.json
 ```
 
@@ -210,7 +210,7 @@ to build databases for unsupported schemas.
 ### Working with attestations
 Grype supports scanning SBOMs as input via stdin. Users can use [cosign](https://github.com/sigstore/cosign) to verify attestations
 with an SBOM as its content to scan an image for vulnerabilities:
-```
+```go
 COSIGN_EXPERIMENTAL=1 cosign verify-attestation caphill4/java-spdx-tools:latest \
 | jq -r .payload \
 | base64 --decode \
@@ -222,7 +222,7 @@ COSIGN_EXPERIMENTAL=1 cosign verify-attestation caphill4/java-spdx-tools:latest 
 
 #### Basic Grype Vulnerability Data Shape
 
-```json
+```go
  {
   "vulnerability": {
     ...
@@ -250,7 +250,7 @@ COSIGN_EXPERIMENTAL=1 cosign verify-attestation caphill4/java-spdx-tools:latest 
 Grype can exclude files and paths from being scanned within a source by using glob expressions
 with one or more `--exclude` parameters:
 
-```
+```go
 grype <source> --exclude './out/**/*.json' --exclude /etc
 ```
 
@@ -269,7 +269,7 @@ may attempt to expand wildcards, so put those parameters in single quotes, like:
 Grype can be configured to incorporate external data sources for added fidelity in vulnerability matching. This
 feature is currently disabled by default. To enable this feature add the following to the grype config:
 
-```yaml
+```go
 external-sources:
   enable: true
   maven:
@@ -283,7 +283,7 @@ You can also configure the base-url if you're using another registry as your mav
 
 The output format for Grype is configurable as well:
 
-```
+```go
 grype <image> -o <format>
 ```
 
@@ -311,7 +311,7 @@ Grype lets you define custom output formats, using [Go templates](https://golang
 
 There are several example templates in the [templates](https://github.com/anchore/grype/tree/main/templates) directory in the Grype source which can serve as a starting point for a custom output format. For example, [csv.tmpl](https://github.com/anchore/grype/blob/main/templates/csv.tmpl) produces a vulnerability report in CSV (comma separated value) format:
 
-```text
+```go
 "Package","Version Installed","Vulnerability ID","Severity"
 "coreutils","8.30-3ubuntu2","CVE-2016-2781","Low"
 "libc-bin","2.31-0ubuntu9","CVE-2016-10228","Negligible"
@@ -329,7 +329,7 @@ You can have Grype exit with an error if any vulnerabilities are reported at or 
 
 For example, here's how you could trigger a CI pipeline failure if any vulnerabilities are found in the `ubuntu:latest` image with a severity of "medium" or higher:
 
-```
+```go
 grype ubuntu:latest --fail-on medium
 ```
 
@@ -350,7 +350,7 @@ Each rule can specify any combination of the following criteria:
 
 Here's an example `~/.grype.yaml` that demonstrates the expected format for ignore rules:
 
-```yaml
+```go
 ignore:
   # This is the full set of supported rule fields:
   - vulnerability: CVE-2008-4318
@@ -388,7 +388,7 @@ If you only want Grype to report vulnerabilities **that have a confirmed fix**, 
 
 For example, here's a scan of Alpine 3.10:
 
-```
+```go
 NAME          INSTALLED  FIXED-IN   VULNERABILITY   SEVERITY
 apk-tools     2.10.6-r0  2.10.7-r0  CVE-2021-36159  Critical
 libcrypto1.1  1.1.1k-r0             CVE-2021-3711   Critical
@@ -399,7 +399,7 @@ libssl1.1     1.1.1k-r0             CVE-2021-3711   Critical
 
 ...and here's the same scan, but adding the flag `--only-fixed`:
 
-```
+```go
 NAME       INSTALLED  FIXED-IN   VULNERABILITY   SEVERITY
 apk-tools  2.10.6-r0  2.10.7-r0  CVE-2021-36159  Critical
 ```
@@ -421,7 +421,7 @@ status to express an assertion of the vulnerability's impact. There are four
 Here is an example of a simple OpenVEX document. (tip: use 
 [`vexctl`](https://github.com/openvex/vexctl) to generate your own documents).
 
-```json
+```go
 {
   "@context": "https://openvex.dev/ns/v0.2.0",
   "@id": "https://openvex.dev/docs/public/vex-d4e9020b6d0d26f131d535e055902dd6ccf3e2088bce3079a8cd3588a4b14c78",
@@ -454,7 +454,7 @@ status of `not_affected` or `fixed` to move matches to the ignore set.
 Any matches ignored as a result of VEX statements are flagged when using
 `--show-suppressed`:
 
-```
+```go
 libcrypto3  3.0.8-r3   3.0.8-r4   apk   CVE-2023-1255  Medium (suppressed by VEX)  
 ```
 
@@ -468,7 +468,7 @@ considered to augment the result set when specifically requested using the
 Ignore rules can be written to control how Grype honors VEX statements. For
 example, to configure Grype to only act on VEX statements when the justification is `vulnerable_code_not_present`, you can write a rule like this:
 
-```yaml
+```go
 ---
 ignore:
   - vex-status: not_affected
@@ -507,7 +507,7 @@ The listing file contains entries for every database that's available for downlo
 
 Here's an example of an entry in the listing file:
 
-```json
+```go
 {
   "built": "2021-10-21T08:13:41Z",
   "version": 3,
@@ -576,7 +576,7 @@ For more information see the `go-containerregistry` [documentation](https://gith
 
 An example `config.json` looks something like this:
 
-```
+```go
 // config.json
 {
   "auths": {
@@ -608,7 +608,7 @@ The below section shows a simple workflow on how to mount this config file as a 
           namespace: grype
         data:
           config.json: <base64 encoded config.json>
-        ```
+        ```go
 
         `kubectl apply -f secret.yaml`
 
@@ -637,7 +637,7 @@ The below section shows a simple workflow on how to mount this config file as a 
           - name: registry-config
             secret:
               secretName: registry-config
-        ```
+        ```go
 
         `kubectl apply -f pod.yaml`
 
@@ -659,7 +659,7 @@ You can also use the `--config` / `-c` flag to provide your own configuration fi
 
 ```
 grype <image> -c /path/to/config.yaml
-```
+```go
 
 Configuration options (example values are the default):
 

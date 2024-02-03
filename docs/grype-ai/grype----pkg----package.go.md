@@ -1,6 +1,6 @@
 # `grype\grype\pkg\package.go`
 
-```
+```go
 // 声明包名为 pkg，引入所需的包
 package pkg
 

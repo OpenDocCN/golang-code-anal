@@ -1,6 +1,6 @@
 # `kubo\core\commands\object\diff.go`
 
-```
+```go
 package objectcmd
 
 import (

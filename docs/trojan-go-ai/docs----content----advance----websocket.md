@@ -12,7 +12,7 @@ Trojan协议本身不带加密，安全性依赖外层的TLS。但流量一旦�
 
 服务器和客户端配置文件中同时添加websocket选项，并将其```enabled```字段设置为true，并填写```path```字段和```host```字段即可启用Websocket支持。下面是一个完整的Websocket选项:
 
-```json
+```go
 "websocket": {
     "enabled": true,
     "path": "/your-websocket-path",
@@ -28,7 +28,7 @@ Trojan协议本身不带加密，安全性依赖外层的TLS。但流量一旦�
 
 下面是一个客户端配置文件的例子
 
-```json
+```go
 {
     "run_type": "client",
     "local_addr": "127.0.0.1",

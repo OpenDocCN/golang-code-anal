@@ -1,6 +1,6 @@
 # `v2ray-core\transport\pipe\pipe_test.go`
 
-```
+```go
 package pipe_test
 
 import (

@@ -1,6 +1,6 @@
 # `v2ray-core\common\platform\platform.go`
 
-```
+```go
 // 导入所需的包
 package platform // import "v2ray.com/core/common/platform"
 

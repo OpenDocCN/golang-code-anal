@@ -1,6 +1,6 @@
 # `grype\grype\version\deb_constraint.go`
 
-```
+```go
 // 定义一个名为 version 的包
 package version
 

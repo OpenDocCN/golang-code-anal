@@ -1,6 +1,6 @@
 # `v2ray-core\common\protocol\http\headers_test.go`
 
-```
+```go
 package http_test
 
 import (

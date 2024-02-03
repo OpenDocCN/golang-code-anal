@@ -1,6 +1,6 @@
 # `kubo\core\coreiface\options\pin.go`
 
-```
+```go
 // 导入 fmt 包
 import "fmt"
 

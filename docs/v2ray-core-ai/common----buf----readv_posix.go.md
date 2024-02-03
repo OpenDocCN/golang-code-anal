@@ -1,6 +1,6 @@
 # `v2ray-core\common\buf\readv_posix.go`
 
-```
+```go
 // 以下是针对非 Windows、非 WebAssembly 和非 Illumos 系统的构建条件
 // 定义包名为 buf
 package buf

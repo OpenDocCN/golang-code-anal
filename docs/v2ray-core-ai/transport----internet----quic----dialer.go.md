@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\quic\dialer.go`
 
-```
+```go
 // +build !confonly
 // 定义包名为 quic，表示该文件不仅仅是配置文件
 

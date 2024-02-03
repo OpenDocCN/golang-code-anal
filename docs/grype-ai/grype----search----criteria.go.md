@@ -1,6 +1,6 @@
 # `grype\grype\search\criteria.go`
 
-```
+```go
 package search
 
 import (

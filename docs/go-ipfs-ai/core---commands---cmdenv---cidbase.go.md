@@ -1,6 +1,6 @@
 # `kubo\core\commands\cmdenv\cidbase.go`
 
-```
+```go
 package cmdenv
 
 import (

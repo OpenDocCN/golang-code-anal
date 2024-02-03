@@ -1,6 +1,6 @@
 # `v2ray-core\common\mux\writer.go`
 
-```
+```go
 package mux
 
 import (

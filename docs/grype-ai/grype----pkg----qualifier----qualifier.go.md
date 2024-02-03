@@ -1,6 +1,6 @@
 # `grype\grype\pkg\qualifier\qualifier.go`
 
-```
+```go
 # 定义了一个名为qualifier的包
 package qualifier
 

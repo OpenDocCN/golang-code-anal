@@ -28,7 +28,7 @@ In order to complete this tutorial, you will need:
 
 Download Kubo and jump into the example folder:
 
-```console
+```go
 $ git clone https://github.com/ipfs/kubo.git
 $ cd kubo/docs/examples/kubo-as-a-library
 ```
@@ -37,13 +37,13 @@ $ cd kubo/docs/examples/kubo-as-a-library
 
 To run the example, simply do:
 
-```console
+```go
 $ go run main.go
 ```
 
 You should see the following as output:
 
-```
+```go
 -- Getting an IPFS node running --
 Spawning Kubo node on a temporary repo
 IPFS node is running

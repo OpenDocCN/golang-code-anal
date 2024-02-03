@@ -1,6 +1,6 @@
 # `trojan-go\log\golog\buffer\buffer_test.go`
 
-```
+```go
 // Buffer-like byte slice
 // Copyright (c) 2017 Fadhli Dzil Ikram
 //

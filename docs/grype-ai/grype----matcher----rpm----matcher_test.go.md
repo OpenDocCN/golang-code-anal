@@ -1,6 +1,6 @@
 # `grype\grype\matcher\rpm\matcher_test.go`
 
-```
+```go
 package rpm
 
 import (

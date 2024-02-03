@@ -1,6 +1,6 @@
 # `kubo\repo\repo.go`
 
-```
+```go
 package repo
 
 import (

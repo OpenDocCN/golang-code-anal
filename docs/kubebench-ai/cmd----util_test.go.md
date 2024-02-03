@@ -1,6 +1,6 @@
 # `kubebench-aquasecurity\cmd\util_test.go`
 
-```
+```go
 // 版权声明
 // 2017年版权归Aqua Security Software Ltd. <info@aquasec.com>所有
 // 根据Apache许可证2.0版（“许可证”）获得许可；

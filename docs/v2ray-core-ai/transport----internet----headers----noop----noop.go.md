@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\headers\noop\noop.go`
 
-```
+```go
 package noop
 
 import (

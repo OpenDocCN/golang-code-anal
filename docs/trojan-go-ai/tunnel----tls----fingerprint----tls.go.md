@@ -1,6 +1,6 @@
 # `trojan-go\tunnel\tls\fingerprint\tls.go`
 
-```
+```go
 package fingerprint
 
 import (

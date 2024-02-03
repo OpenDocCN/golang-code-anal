@@ -1,6 +1,6 @@
 # `kubo\core\coreunix\add.go`
 
-```
+```go
 package coreunix
 
 import (

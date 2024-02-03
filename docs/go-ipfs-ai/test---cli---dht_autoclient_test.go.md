@@ -1,6 +1,6 @@
 # `kubo\test\cli\dht_autoclient_test.go`
 
-```
+```go
 package cli
 # 导入所需的包
 

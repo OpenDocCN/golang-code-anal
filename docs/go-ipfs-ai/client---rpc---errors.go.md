@@ -1,6 +1,6 @@
 # `kubo\client\rpc\errors.go`
 
-```
+```go
 package rpc
 
 import (

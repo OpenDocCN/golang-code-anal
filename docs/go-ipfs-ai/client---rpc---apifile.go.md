@@ -1,6 +1,6 @@
 # `kubo\client\rpc\apifile.go`
 
-```
+```go
 package rpc
 
 import (

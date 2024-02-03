@@ -30,7 +30,7 @@ to a released version (e.g. `go get github.com/anchore/syft@v<semantic-version>`
 
 The currently supported database format is Sqlite3. Install `sqlite3` in your system and ensure that the `sqlite3` executable is available in your path. Ask `grype` about the location of the database, which will be different depending on the operating system:
 
-```
+```go
 $ go run ./cmd/grype db status
 Location:  /Users/alfredo/Library/Caches/grype/db
 Built:  2020-07-31 08:18:29 +0000 UTC
@@ -41,7 +41,7 @@ Status: Valid
 
 The database is located within the XDG_CACHE_HOME path. To verify the database filename, list that path:
 
-```
+```go
 # OSX-specific path
 $ ls -alh  /Users/alfredo/Library/Caches/grype/db
 total 445392
@@ -53,27 +53,27 @@ drwxr-xr-x  3 alfredo  staff    96B Jul 31 09:27 ..
 
 Next, open the `vulnerability.db` with `sqlite3`:
 
-```
+```go
 $ sqlite3 /Users/alfredo/Library/Caches/grype/db/vulnerability.db
 ```
 
 To make the reporting from Sqlite3 easier to read, enable the following:
 
-```
+```go
 sqlite> .mode column
 sqlite> .headers on
 ```
 
 List the tables:
 
-```
+```go
 sqlite> .tables
 id                      vulnerability           vulnerability_metadata
 ```
 
 In this example you retrieve a specific vulnerability from the `nvd` namespace:
 
-```
+```go
 sqlite> select * from vulnerability where (namespace="nvd" and package_name="libvncserver") limit 1;
 id             record_source  package_name  namespace   version_constraint  version_format  cpes                                                         proxy_vulnerabilities
 -------------  -------------  ------------  ----------  ------------------  --------------  -----------------------------------------------------------  ---------------------

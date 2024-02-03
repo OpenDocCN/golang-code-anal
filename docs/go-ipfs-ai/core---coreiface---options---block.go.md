@@ -1,6 +1,6 @@
 # `kubo\core\coreiface\options\block.go`
 
-```
+```go
 // 导入必要的包
 package options
 

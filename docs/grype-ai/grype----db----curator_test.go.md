@@ -1,6 +1,6 @@
 # `grype\grype\db\curator_test.go`
 
-```
+```go
 package db
 
 import (

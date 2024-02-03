@@ -1,6 +1,6 @@
 # `v2ray-core\common\serial\typed_message.go`
 
-```
+```go
 package serial
 
 import (

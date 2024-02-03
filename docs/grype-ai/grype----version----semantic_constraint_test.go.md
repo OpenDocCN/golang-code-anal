@@ -1,6 +1,6 @@
 # `grype\grype\version\semantic_constraint_test.go`
 
-```
+```go
 // 声明一个名为 version 的包
 package version
 

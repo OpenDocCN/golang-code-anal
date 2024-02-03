@@ -1,6 +1,6 @@
 # `kubo\core\builder.go`
 
-```
+```go
 package core
 
 import (

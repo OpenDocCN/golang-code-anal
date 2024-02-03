@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\kcp\config.go`
 
-```
+```go
 // +build !confonly
 
 // 声明包名为 kcp

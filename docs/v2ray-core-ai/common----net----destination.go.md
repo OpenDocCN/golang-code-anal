@@ -1,6 +1,6 @@
 # `v2ray-core\common\net\destination.go`
 
-```
+```go
 package net
 
 import (

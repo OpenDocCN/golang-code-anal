@@ -1,6 +1,6 @@
 # `v2ray-core\infra\conf\dns_proxy.go`
 
-```
+```go
 package conf
 
 import (

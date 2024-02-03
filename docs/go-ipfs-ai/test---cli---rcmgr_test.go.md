@@ -1,6 +1,6 @@
 # `kubo\test\cli\rcmgr_test.go`
 
-```
+```go
 package cli
 
 import (

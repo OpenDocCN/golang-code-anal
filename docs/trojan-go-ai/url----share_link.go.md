@@ -1,6 +1,6 @@
 # `trojan-go\url\share_link.go`
 
-```
+```go
 package url
 
 import (

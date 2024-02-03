@@ -1,6 +1,6 @@
 # `kubo\config\discovery.go`
 
-```
+```go
 # 定义一个名为 Discovery 的结构体
 type Discovery struct {
     MDNS MDNS

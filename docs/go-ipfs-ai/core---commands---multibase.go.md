@@ -1,6 +1,6 @@
 # `kubo\core\commands\multibase.go`
 
-```
+```go
 package commands
 
 import (

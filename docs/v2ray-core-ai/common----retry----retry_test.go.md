@@ -1,6 +1,6 @@
 # `v2ray-core\common\retry\retry_test.go`
 
-```
+```go
 package retry_test
 
 import (

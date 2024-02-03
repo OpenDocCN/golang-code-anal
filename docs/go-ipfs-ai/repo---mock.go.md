@@ -1,6 +1,6 @@
 # `kubo\repo\mock.go`
 
-```
+```go
 package repo
 
 import (

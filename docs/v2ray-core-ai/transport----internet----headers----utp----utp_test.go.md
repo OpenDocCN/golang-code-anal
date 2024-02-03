@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\headers\utp\utp_test.go`
 
-```
+```go
 package utp_test
 
 import (

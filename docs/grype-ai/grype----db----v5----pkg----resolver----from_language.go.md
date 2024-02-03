@@ -1,6 +1,6 @@
 # `grype\grype\db\v5\pkg\resolver\from_language.go`
 
-```
+```go
 package resolver
 
 import (

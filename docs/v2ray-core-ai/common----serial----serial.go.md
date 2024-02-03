@@ -1,6 +1,6 @@
 # `v2ray-core\common\serial\serial.go`
 
-```
+```go
 package serial
 
 import (

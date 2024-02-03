@@ -1,6 +1,6 @@
 # `v2ray-core\features\outbound\outbound.go`
 
-```
+```go
 // 导入所需的包
 package outbound
 

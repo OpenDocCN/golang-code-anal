@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\kcp\kcp.go`
 
-```
+```go
 // 包 kcp - 一个快速可靠的 ARQ 协议
 //
 // 致谢：

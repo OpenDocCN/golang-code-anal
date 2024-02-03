@@ -1,6 +1,6 @@
 # `kubo\config\bootstrap_peers.go`
 
-```
+```go
 // 引入必要的包
 package config
 

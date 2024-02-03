@@ -1,6 +1,6 @@
 # `grype\internal\stringutil\color.go`
 
-```
+```go
 # 定义名为 stringutil 的包
 package stringutil
 

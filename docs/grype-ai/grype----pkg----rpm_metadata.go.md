@@ -1,6 +1,6 @@
 # `grype\grype\pkg\rpm_metadata.go`
 
-```
+```go
 # 定义了一个名为 RpmMetadata 的结构体，用于存储 RPM 包的元数据信息
 package pkg
 

@@ -1,6 +1,6 @@
 # `v2ray-core\app\reverse\portal_test.go`
 
-```
+```go
 // 声明 reverse_test 包
 package reverse_test
 

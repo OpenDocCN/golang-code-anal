@@ -1,6 +1,6 @@
 # `v2ray-core\core.go`
 
-```
+```go
 // Package core provides an entry point to use V2Ray core functionalities.
 //
 // V2Ray makes it possible to accept incoming network connections with certain

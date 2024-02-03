@@ -1,6 +1,6 @@
 # `kubo\core\commands\mount_nofuse.go`
 
-```
+```go
 // 如果不是在 Windows 平台并且没有启用 nofuse 标志，则编译此代码
 // +build !windows,nofuse
 

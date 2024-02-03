@@ -1,6 +1,6 @@
 # `v2ray-core\common\mux\frame.go`
 
-```
+```go
 package mux
 
 import (

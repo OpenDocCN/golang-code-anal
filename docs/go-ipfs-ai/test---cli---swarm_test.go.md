@@ -1,6 +1,6 @@
 # `kubo\test\cli\swarm_test.go`
 
-```
+```go
 package cli
 
 import (

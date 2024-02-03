@@ -1,6 +1,6 @@
 # `v2ray-core\app\router\errors.generated.go`
 
-```
+```go
 # 定义一个名为router的包
 package router
 

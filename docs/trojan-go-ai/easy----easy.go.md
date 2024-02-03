@@ -1,6 +1,6 @@
 # `trojan-go\easy\easy.go`
 
-```
+```go
 package easy
 
 import (

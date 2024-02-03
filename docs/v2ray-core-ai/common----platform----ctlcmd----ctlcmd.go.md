@@ -1,6 +1,6 @@
 # `v2ray-core\common\platform\ctlcmd\ctlcmd.go`
 
-```
+```go
 package ctlcmd
 
 import (

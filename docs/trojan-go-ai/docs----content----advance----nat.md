@@ -12,7 +12,7 @@ Trojan-Go支持基于tproxy的透明TCP/UDP代理。
 
 之后需要添加iptables规则。这里假定你的网关具有两个网卡，下面这份配置将其中一个网卡（局域网）的入站包转交给Trojan-Go，由Trojan-Go通过隧道，通过另一个网卡（互联网）发送到远端Trojan-Go服务器。你需要将下面的```$SERVER_IP```，```$TROJAN_GO_PORT```，```$INTERFACE```替换为自己的配置。
 
-```shell
+```go
 # 新建TROJAN_GO链
 iptables -t mangle -N TROJAN_GO
 
@@ -44,6 +44,6 @@ ip rule add fwmark 1 lookup 100
 
 配置完成后**以root权限启动**Trojan-Go客户端：
 
-```shell
+```go
 sudo trojan-go
 ```

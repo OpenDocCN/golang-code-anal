@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\trojan\protocol_test.go`
 
-```
+```go
 package trojan_test
 
 import (

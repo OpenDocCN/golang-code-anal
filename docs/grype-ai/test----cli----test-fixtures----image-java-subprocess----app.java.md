@@ -1,6 +1,6 @@
 # `grype\test\cli\test-fixtures\image-java-subprocess\app.java`
 
-```
+```go
 # 导入 IOException 类
 import java.io.IOException;
 

@@ -1,6 +1,6 @@
 # `v2ray-core\app\proxyman\config.go`
 
-```
+```go
 package proxyman
 
 // 获取并发值，如果 AllocationStrategy 为空或者并发值为空，则返回默认值 3

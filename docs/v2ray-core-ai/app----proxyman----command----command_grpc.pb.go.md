@@ -1,6 +1,6 @@
 # `v2ray-core\app\proxyman\command\command_grpc.pb.go`
 
-```
+```go
 // 由 protoc-gen-go-grpc 生成的代码。请勿编辑。
 
 // 导入必要的包

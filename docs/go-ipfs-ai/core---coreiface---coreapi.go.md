@@ -1,6 +1,6 @@
 # `kubo\core\coreiface\coreapi.go`
 
-```
+```go
 // Package iface 定义了 IPFS 核心 API，用于与 IPFS 节点进行交互。
 package iface
 

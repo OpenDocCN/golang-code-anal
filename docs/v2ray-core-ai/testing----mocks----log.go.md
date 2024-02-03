@@ -1,6 +1,6 @@
 # `v2ray-core\testing\mocks\log.go`
 
-```
+```go
 // 由 MockGen 生成的代码。请勿编辑。
 // 来源：v2ray.com/core/common/log（接口：Handler）
 

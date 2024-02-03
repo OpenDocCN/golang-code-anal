@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\http\hub.go`
 
-```
+```go
 // +build !confonly
 
 // 声明 http 包，引入所需的依赖包

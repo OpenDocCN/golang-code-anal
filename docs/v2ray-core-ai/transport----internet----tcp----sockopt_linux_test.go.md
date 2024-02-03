@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\tcp\sockopt_linux_test.go`
 
-```
+```go
 // +build linux
 // 声明该文件只在 Linux 系统下编译
 

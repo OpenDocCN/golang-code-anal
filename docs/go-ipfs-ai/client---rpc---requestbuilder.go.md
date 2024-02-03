@@ -1,6 +1,6 @@
 # `kubo\client\rpc\requestbuilder.go`
 
-```
+```go
 package rpc
 
 import (

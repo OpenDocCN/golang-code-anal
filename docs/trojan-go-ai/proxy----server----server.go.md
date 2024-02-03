@@ -1,6 +1,6 @@
 # `trojan-go\proxy\server\server.go`
 
-```
+```go
 package server
 
 import (

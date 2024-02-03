@@ -1,6 +1,6 @@
 # `grype\internal\file\tar_test.go`
 
-```
+```go
 package file
 
 import (

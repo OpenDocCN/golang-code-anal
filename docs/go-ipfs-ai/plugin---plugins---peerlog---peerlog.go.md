@@ -1,6 +1,6 @@
 # `kubo\plugin\plugins\peerlog\peerlog.go`
 
-```
+```go
 package peerlog
 
 import (

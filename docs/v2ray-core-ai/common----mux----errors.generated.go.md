@@ -1,6 +1,6 @@
 # `v2ray-core\common\mux\errors.generated.go`
 
-```
+```go
 # 定义一个名为 mux 的包
 package mux
 

@@ -1,6 +1,6 @@
 # `grype\grype\pkg\apk_metadata.go`
 
-```
+```go
 // 定义一个名为pkg的包
 
 // 定义一个结构体ApkMetadata，包含一个名为Files的ApkFileRecord切片，使用json标签指定序列化时的字段名为files

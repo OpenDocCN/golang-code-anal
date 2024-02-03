@@ -1,6 +1,6 @@
 # `kubo\cmd\ipfs\kubo\start.go`
 
-```
+```go
 // cmd/ipfs/kubo 实现了 kubo 的主要 CLI 二进制文件
 package kubo
 

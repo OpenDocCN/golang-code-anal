@@ -1,6 +1,6 @@
 # `grype\grype\cpe\cpe.go`
 
-```
+```go
 package cpe
 
 import (

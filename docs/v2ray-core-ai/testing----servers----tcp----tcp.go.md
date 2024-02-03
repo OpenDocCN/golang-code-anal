@@ -1,6 +1,6 @@
 # `v2ray-core\testing\servers\tcp\tcp.go`
 
-```
+```go
 package tcp
 
 import (

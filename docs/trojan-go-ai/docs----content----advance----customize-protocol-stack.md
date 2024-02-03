@@ -71,7 +71,7 @@ Trojan-Go将所有协议抽象为隧道，每个隧道可能提供客户端，�
 
 客户端 client.yaml
 
-```yaml
+```go
 run-type: custom
 
 inbound:
@@ -123,7 +123,7 @@ outbound:
 
 服务端 server.yaml
 
-```yaml
+```go
 run-type: custom
 
 inbound:

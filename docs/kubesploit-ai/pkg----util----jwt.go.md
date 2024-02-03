@@ -1,6 +1,6 @@
 # `kubesploit\pkg\util\jwt.go`
 
-```
+```go
 // Kubesploit 是一个基于 Russel Van Tuyl 的 Merlin 框架构建的后渗透命令和控制框架。
 // 本文件是 Kubesploit 的一部分。
 // 版权所有 2021 CyberArk Software Ltd。

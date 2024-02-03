@@ -1,6 +1,6 @@
 # `kubo\test\cli\tracing_test.go`
 
-```
+```go
 package cli
 
 import (

@@ -1,6 +1,6 @@
 # `kubo\core\coreapi\pin.go`
 
-```
+```go
 package coreapi
 
 import (

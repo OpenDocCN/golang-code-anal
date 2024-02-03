@@ -1,6 +1,6 @@
 # `kubo\config\swarm.go`
 
-```
+```go
 package config
 
 type SwarmConfig struct {

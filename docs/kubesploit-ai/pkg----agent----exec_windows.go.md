@@ -1,6 +1,6 @@
 # `kubesploit\pkg\agent\exec_windows.go`
 
-```
+```go
 // +build windows
 
 // Kubesploit是一个基于Russel Van Tuyl的Merlin构建的后渗透命令和控制框架。

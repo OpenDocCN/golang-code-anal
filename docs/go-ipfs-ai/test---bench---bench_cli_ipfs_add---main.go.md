@@ -1,6 +1,6 @@
 # `kubo\test\bench\bench_cli_ipfs_add\main.go`
 
-```
+```go
 package main
 
 import (

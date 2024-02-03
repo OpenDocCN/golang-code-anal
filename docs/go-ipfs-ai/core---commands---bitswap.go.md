@@ -1,6 +1,6 @@
 # `kubo\core\commands\bitswap.go`
 
-```
+```go
 package commands
 
 import (

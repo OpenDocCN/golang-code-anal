@@ -1,6 +1,6 @@
 # `kubo\test\cli\testutils\asserts.go`
 
-```
+```go
 # 导入 testutils 包和所需的其他包
 package testutils
 

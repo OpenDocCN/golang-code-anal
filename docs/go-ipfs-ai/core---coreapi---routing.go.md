@@ -1,6 +1,6 @@
 # `kubo\core\coreapi\routing.go`
 
-```
+```go
 package coreapi
 
 import (

@@ -1,6 +1,6 @@
 # `kubo\fuse\ipns\ipns_test.go`
 
-```
+```go
 //go:build !nofuse && !openbsd && !netbsd && !plan9
 // +build !nofuse,!openbsd,!netbsd,!plan9
 

@@ -1,6 +1,6 @@
 # `v2ray-core\infra\conf\router.go`
 
-```
+```go
 package conf
 
 import (

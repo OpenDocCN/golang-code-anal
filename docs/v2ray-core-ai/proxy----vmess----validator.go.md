@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\vmess\validator.go`
 
-```
+```go
 // +build !confonly
 
 package vmess

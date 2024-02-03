@@ -1,6 +1,6 @@
 # `grype\cmd\grype\cli\cli_test.go`
 
-```
+```go
 # 导入 cli 包
 package cli
 

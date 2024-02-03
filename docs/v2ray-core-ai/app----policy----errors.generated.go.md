@@ -1,6 +1,6 @@
 # `v2ray-core\app\policy\errors.generated.go`
 
-```
+```go
 # 定义一个名为 policy 的包
 package policy
 

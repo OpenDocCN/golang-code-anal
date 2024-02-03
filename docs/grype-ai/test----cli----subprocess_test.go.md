@@ -1,6 +1,6 @@
 # `grype\test\cli\subprocess_test.go`
 
-```
+```go
 package cli
 
 import (

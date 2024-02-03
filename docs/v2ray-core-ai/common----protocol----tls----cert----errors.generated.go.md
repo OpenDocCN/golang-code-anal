@@ -1,6 +1,6 @@
 # `v2ray-core\common\protocol\tls\cert\errors.generated.go`
 
-```
+```go
 # 定义 cert 包
 package cert
 

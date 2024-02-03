@@ -1,6 +1,6 @@
 # `v2ray-core\common\session\session.go`
 
-```
+```go
 // Package session provides functions for sessions of incoming requests.
 package session // import "v2ray.com/core/common/session"
 

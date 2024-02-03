@@ -1,6 +1,6 @@
 # `grype\grype\presenter\models\metadata_mock.go`
 
-```
+```go
 package models
 
 import "github.com/anchore/grype/grype/vulnerability"

@@ -1,6 +1,6 @@
 # `grype\grype\distro\type.go`
 
-```
+```go
 package distro
 
 import (

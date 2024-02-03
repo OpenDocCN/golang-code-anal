@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\quic\quic.go`
 
-```
+```go
 // +build !confonly
 // 标记此文件不仅仅是配置文件
 

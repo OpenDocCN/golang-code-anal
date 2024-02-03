@@ -1,6 +1,6 @@
 # `kubo\routing\error.go`
 
-```
+```go
 // 定义 routing 包
 package routing
 

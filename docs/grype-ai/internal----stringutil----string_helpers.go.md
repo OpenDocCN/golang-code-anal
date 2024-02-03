@@ -1,6 +1,6 @@
 # `grype\internal\stringutil\string_helpers.go`
 
-```
+```go
 // 导入 strings 包，用于处理字符串相关操作
 import "strings"
 

@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\http\dialer.go`
 
-```
+```go
 // +build !confonly
 
 package http

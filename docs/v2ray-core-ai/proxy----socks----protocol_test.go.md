@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\socks\protocol_test.go`
 
-```
+```go
 package socks_test
 
 import (

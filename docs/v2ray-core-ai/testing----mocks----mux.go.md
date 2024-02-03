@@ -1,6 +1,6 @@
 # `v2ray-core\testing\mocks\mux.go`
 
-```
+```go
 // 由 MockGen 生成的代码。请勿编辑。
 // 来源：v2ray.com/core/common/mux (接口：ClientWorkerFactory)
 

@@ -1,6 +1,6 @@
 # `trojan-go\component\custom.go`
 
-```
+```go
 // 根据条件编译标记，选择构建 custom 或 full 版本
 // +build custom full
 

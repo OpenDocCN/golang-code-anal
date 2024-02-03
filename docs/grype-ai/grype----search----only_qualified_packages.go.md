@@ -1,6 +1,6 @@
 # `grype\grype\search\only_qualified_packages.go`
 
-```
+```go
 package search
 
 import (

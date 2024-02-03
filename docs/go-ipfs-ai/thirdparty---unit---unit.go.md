@@ -1,6 +1,6 @@
 # `kubo\thirdparty\unit\unit.go`
 
-```
+```go
 package unit
 
 import "fmt"

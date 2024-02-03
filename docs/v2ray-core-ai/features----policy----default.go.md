@@ -1,6 +1,6 @@
 # `v2ray-core\features\policy\default.go`
 
-```
+```go
 // 定义 DefaultManager 结构体，实现了 Manager 接口
 type DefaultManager struct{}
 

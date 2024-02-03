@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\kcp\connection_test.go`
 
-```
+```go
 package kcp_test
 
 import (

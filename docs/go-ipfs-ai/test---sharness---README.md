@@ -5,20 +5,20 @@
 Just use `make` in this directory to run all the tests.
 Run with `TEST_VERBOSE=1` to get helpful verbose output.
 
-```
+```go
 TEST_VERBOSE=1 make
 ```
 
 The usual ipfs env flags also apply:
 
-```sh
+```go
 # the output will make your eyes bleed
 IPFS_LOGGING=debug TEST_VERBOSE=1 make
 ```
 
 To make the tests abort as soon as an error occurs, use the TEST_IMMEDIATE env variable:
 
-```sh
+```go
 # this will abort as soon the first error occurs
 TEST_IMMEDIATE=1 make
 ```
@@ -28,7 +28,7 @@ TEST_IMMEDIATE=1 make
 You can run only one test script by launching it like a regular shell
 script:
 
-```
+```go
 $ ./t0010-basic-commands.sh
 ```
 
@@ -38,7 +38,7 @@ You can use the `-v` option to make it verbose and the `-i` option to
 make it stop as soon as one test fails.
 For example:
 
-```
+```go
 $ ./t0010-basic-commands.sh -v -i
 ```
 
@@ -75,7 +75,7 @@ Make your test case output helpful for when running sharness verbosely.
 This means cating certain files, or running diagnostic commands.
 For example:
 
-```
+```go
 test_expect_success ".ipfs/ has been created" '
   test -d ".ipfs" &&
   test -f ".ipfs/config" &&
@@ -98,7 +98,7 @@ Use the provided functions in `lib/test-lib.sh` to run the daemon or mount:
 
 To init, run daemon, and mount in one go:
 
-```sh
+```go
 test_launch_ipfs_daemon_and_mount
 
 test_expect_success "'ipfs add --help' succeeds" '
@@ -113,7 +113,7 @@ test_kill_ipfs_daemon
 
 To init, run daemon, and then mount separately:
 
-```sh
+```go
 test_init_ipfs
 
 # tests inited but not running here

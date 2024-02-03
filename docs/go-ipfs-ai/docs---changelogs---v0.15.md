@@ -59,7 +59,7 @@ This adds a new file in the `IPFS_PATH` folder similar to `$IPFS_PATH/api` conta
 
 This file is in URL (RFC1738) format.
 
-```console
+```go
 $ cat ~/.ipfs/gateway
 http://127.0.0.1:8080
 ```

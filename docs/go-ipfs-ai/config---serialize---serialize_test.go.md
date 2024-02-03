@@ -1,6 +1,6 @@
 # `kubo\config\serialize\serialize_test.go`
 
-```
+```go
 package fsrepo
 
 import (

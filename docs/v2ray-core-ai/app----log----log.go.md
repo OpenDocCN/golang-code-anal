@@ -1,6 +1,6 @@
 # `v2ray-core\app\log\log.go`
 
-```
+```go
 // +build !confonly
 
 package log

@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\http\config.go`
 
-```
+```go
 package http
 
 import (

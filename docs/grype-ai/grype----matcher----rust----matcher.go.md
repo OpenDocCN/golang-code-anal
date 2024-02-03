@@ -1,6 +1,6 @@
 # `grype\grype\matcher\rust\matcher.go`
 
-```
+```go
 package rust
 
 import (

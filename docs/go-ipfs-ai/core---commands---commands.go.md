@@ -1,6 +1,6 @@
 # `kubo\core\commands\commands.go`
 
-```
+```go
 // Package commands implements the ipfs command interface
 //
 // Using github.com/ipfs/kubo/commands to define the command line and HTTP

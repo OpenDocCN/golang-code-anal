@@ -1,6 +1,6 @@
 # `kubo\client\rpc\unixfs.go`
 
-```
+```go
 package rpc
 
 import (

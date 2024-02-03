@@ -1,6 +1,6 @@
 # `grype\test\cli\sbom_input_test.go`
 
-```
+```go
 package cli
 
 import (

@@ -1,6 +1,6 @@
 # `v2ray-core\infra\control\love.go`
 
-```
+```go
 package control
 
 import (

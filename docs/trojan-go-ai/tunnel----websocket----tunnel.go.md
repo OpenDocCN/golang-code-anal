@@ -1,6 +1,6 @@
 # `trojan-go\tunnel\websocket\tunnel.go`
 
-```
+```go
 package websocket
 
 import (

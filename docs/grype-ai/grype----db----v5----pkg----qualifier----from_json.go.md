@@ -1,6 +1,6 @@
 # `grype\grype\db\v5\pkg\qualifier\from_json.go`
 
-```
+```go
 package qualifier
 
 import (

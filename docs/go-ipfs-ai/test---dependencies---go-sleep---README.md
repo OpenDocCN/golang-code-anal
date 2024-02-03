@@ -9,13 +9,13 @@ specified.
 
 ### Install
 
-```sh
+```go
 go install github.com/chriscool/go-sleep
 ```
 
 ### Usage:
 
-```
+```go
 > go-sleep
 Usage: go-sleep <duration>
 Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".

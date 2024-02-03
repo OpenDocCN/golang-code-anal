@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\sockopt_other.go`
 
-```
+```go
 // +build js dragonfly netbsd openbsd solaris
 // 标记这个文件只在特定的操作系统上构建
 

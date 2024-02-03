@@ -1,6 +1,6 @@
 # `kubo\core\coreapi\pubsub.go`
 
-```
+```go
 package coreapi
 
 import (

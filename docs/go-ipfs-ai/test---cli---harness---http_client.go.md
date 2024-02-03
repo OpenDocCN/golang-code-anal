@@ -1,6 +1,6 @@
 # `kubo\test\cli\harness\http_client.go`
 
-```
+```go
 package harness
 
 import (

@@ -1,6 +1,6 @@
 # `v2ray-core\transport\pipe\writer.go`
 
-```
+```go
 // 引入名为 "pipe" 的包和 "v2ray.com/core/common/buf" 包
 package pipe
 

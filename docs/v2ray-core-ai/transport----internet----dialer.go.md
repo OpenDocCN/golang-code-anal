@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\dialer.go`
 
-```
+```go
 package internet
 
 import (

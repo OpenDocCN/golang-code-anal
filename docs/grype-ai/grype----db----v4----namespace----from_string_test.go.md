@@ -1,6 +1,6 @@
 # `grype\grype\db\v4\namespace\from_string_test.go`
 
-```
+```go
 // 导入所需的包
 package namespace
 

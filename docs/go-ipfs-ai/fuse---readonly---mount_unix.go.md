@@ -1,6 +1,6 @@
 # `kubo\fuse\readonly\mount_unix.go`
 
-```
+```go
 // 根据条件构建标签，指定在 linux、darwin、freebsd 平台上构建，并且不包括 nofuse
 // +build linux darwin freebsd
 // +build !nofuse

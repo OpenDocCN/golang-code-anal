@@ -1,6 +1,6 @@
 # `kubo\test\cli\testutils\files.go`
 
-```
+```go
 package testutils
 
 import (

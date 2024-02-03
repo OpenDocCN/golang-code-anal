@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\tcp\sockopt_other.go`
 
-```
+```go
 // +build !linux,!freebsd
 // +build !confonly
 // 该代码段是构建标签，用于指定在哪些操作系统和条件下编译该代码

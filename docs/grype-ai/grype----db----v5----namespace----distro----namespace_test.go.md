@@ -1,6 +1,6 @@
 # `grype\grype\db\v5\namespace\distro\namespace_test.go`
 
-```
+```go
 package distro
 
 import (

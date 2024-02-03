@@ -1,6 +1,6 @@
 # `trojan-go\test\scenario\proxy_test.go`
 
-```
+```go
 package scenario
 
 import (
@@ -245,7 +245,7 @@ func TestClientServerTrojanSubTree(t *testing.T) {
         enabled: true
         method: AEAD_CHACHA20_POLY1305
         password: 12345678
-    ```
+    ```go
 // 定义测试函数，用于检测客户端和服务器之间的通信是否正常
 func TestWebsocketDetection(t *testing.T) {
     // 为服务器和客户端分配端口号

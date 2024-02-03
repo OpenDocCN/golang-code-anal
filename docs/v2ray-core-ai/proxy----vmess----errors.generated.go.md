@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\vmess\errors.generated.go`
 
-```
+```go
 # 定义一个名为 vmess 的包
 package vmess
 

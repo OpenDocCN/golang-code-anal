@@ -1,6 +1,6 @@
 # `trojan-go\test\scenario\custom_test.go`
 
-```
+```go
 package scenario
 
 import (

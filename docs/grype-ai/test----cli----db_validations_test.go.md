@@ -1,6 +1,6 @@
 # `grype\test\cli\db_validations_test.go`
 
-```
+```go
 package cli
 
 import (

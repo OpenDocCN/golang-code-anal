@@ -1,6 +1,6 @@
 # `grype\grype\db\v5\pkg\resolver\python\resolver_test.go`
 
-```
+```go
 package python
 
 import (

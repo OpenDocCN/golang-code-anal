@@ -1,6 +1,6 @@
 # `kubo\core\commands\pubsub.go`
 
-```
+```go
 package commands
 
 import (

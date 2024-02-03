@@ -1,6 +1,6 @@
 # `kubo\test\cli\pinning_remote_test.go`
 
-```
+```go
 package cli
 
 import (

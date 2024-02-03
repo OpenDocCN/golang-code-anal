@@ -1,6 +1,6 @@
 # `v2ray-core\app\dns\server_test.go`
 
-```
+```go
 package dns_test
 
 import (

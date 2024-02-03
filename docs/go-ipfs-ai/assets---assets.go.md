@@ -1,6 +1,6 @@
 # `kubo\assets\assets.go`
 
-```
+```go
 package assets
 
 import (

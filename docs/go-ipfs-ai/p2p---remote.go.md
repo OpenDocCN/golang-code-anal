@@ -1,6 +1,6 @@
 # `kubo\p2p\remote.go`
 
-```
+```go
 package p2p
 
 import (

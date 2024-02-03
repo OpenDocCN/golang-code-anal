@@ -1,6 +1,6 @@
 # `v2ray-core\errors.generated.go`
 
-```
+```go
 # 定义 core 包
 package core
 

@@ -1,6 +1,6 @@
 # `trojan-go\url\option_test.go`
 
-```
+```go
 package url
 
 import (

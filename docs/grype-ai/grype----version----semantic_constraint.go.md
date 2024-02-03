@@ -1,6 +1,6 @@
 # `grype\grype\version\semantic_constraint.go`
 
-```
+```go
 // 导入必要的包
 package version
 

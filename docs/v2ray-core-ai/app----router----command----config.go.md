@@ -1,6 +1,6 @@
 # `v2ray-core\app\router\command\config.go`
 
-```
+```go
 package command
 
 import (

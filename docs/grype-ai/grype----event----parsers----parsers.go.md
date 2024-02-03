@@ -1,6 +1,6 @@
 # `grype\grype\event\parsers\parsers.go`
 
-```
+```go
 package parsers
 
 import (

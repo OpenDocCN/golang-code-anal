@@ -1,6 +1,6 @@
 # `v2ray-core\common\net\system.go`
 
-```
+```go
 // 导入 net 包，用于网络通信
 import "net"
 

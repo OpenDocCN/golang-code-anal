@@ -1,6 +1,6 @@
 # `v2ray-core\infra\control\main\main.go`
 
-```
+```go
 package main
 
 import (

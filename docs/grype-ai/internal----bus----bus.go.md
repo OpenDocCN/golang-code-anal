@@ -1,6 +1,6 @@
 # `grype\internal\bus\bus.go`
 
-```
+```go
 # 定义一个名为bus的包
 package bus
 

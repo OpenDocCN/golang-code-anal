@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\tls\errors.generated.go`
 
-```
+```go
 # 定义了一个名为tls的包
 package tls
 

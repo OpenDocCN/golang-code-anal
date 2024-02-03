@@ -1,6 +1,6 @@
 # `trojan-go\tunnel\shadowsocks\conn.go`
 
-```
+```go
 package shadowsocks
 
 import (

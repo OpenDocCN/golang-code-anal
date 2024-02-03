@@ -1,6 +1,6 @@
 # `trojan-go\test\util\util.go`
 
-```
+```go
 // CheckConn检查两个netConn是否连接并正常工作
 func CheckConn(a net.Conn, b net.Conn) bool {
     // 创建用于发送和接收数据的缓冲区

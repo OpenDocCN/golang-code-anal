@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\quic\errors.generated.go`
 
-```
+```go
 # 定义一个名为 quic 的包
 package quic
 

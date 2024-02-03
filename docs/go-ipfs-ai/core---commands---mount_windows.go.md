@@ -1,6 +1,6 @@
 # `kubo\core\commands\mount_windows.go`
 
-```
+```go
 # 导入必要的包
 package commands
 

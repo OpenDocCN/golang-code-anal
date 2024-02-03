@@ -1,6 +1,6 @@
 # `trojan-go\common\io.go`
 
-```
+```go
 package common
 
 import (

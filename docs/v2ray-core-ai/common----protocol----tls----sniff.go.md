@@ -1,6 +1,6 @@
 # `v2ray-core\common\protocol\tls\sniff.go`
 
-```
+```go
 package tls
 
 import (

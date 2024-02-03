@@ -1,6 +1,6 @@
 # `trojan-go\tunnel\socks\config.go`
 
-```
+```go
 # 声明 socks 包
 package socks
 

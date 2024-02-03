@@ -1,6 +1,6 @@
 # `kubo\core\coreiface\swarm.go`
 
-```
+```go
 package iface
 
 import (

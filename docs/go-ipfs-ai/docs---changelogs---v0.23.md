@@ -33,7 +33,7 @@ Backpressure is provided by **Yamux** and **QUIC**.
 
 In case you need compatibility with older implementations that do not ship with
 Yamux (like default's JS-IPFS) you can turned it back ON in the config with:
-```console
+```go
 $ ipfs config --json Swarm.Transports.Multiplexers.Mplex 200
 ```
 

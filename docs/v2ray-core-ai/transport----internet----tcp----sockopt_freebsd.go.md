@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\tcp\sockopt_freebsd.go`
 
-```
+```go
 // +build freebsd
 // +build !confonly
 // 声明该文件只在 freebsd 系统下编译，并且不是 confonly 模式

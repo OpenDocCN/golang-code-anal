@@ -1,6 +1,6 @@
 # `v2ray-core\infra\conf\buildable.go`
 
-```
+```go
 # 定义一个名为conf的包
 package conf
 

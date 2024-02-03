@@ -1,6 +1,6 @@
 # `kubo\core\commands\stat.go`
 
-```
+```go
 package commands
 
 import (

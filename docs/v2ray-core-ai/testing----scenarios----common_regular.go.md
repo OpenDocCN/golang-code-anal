@@ -1,6 +1,6 @@
 # `v2ray-core\testing\scenarios\common_regular.go`
 
-```
+```go
 // +build !coverage
 
 // 定义 scenarios 包，用于构建和运行 V2Ray 的测试场景

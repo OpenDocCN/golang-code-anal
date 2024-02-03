@@ -1,6 +1,6 @@
 # `kubo\config\config.go`
 
-```
+```go
 // package config implements the ipfs config file datastructures and utilities.
 // 导入所需的包
 package config

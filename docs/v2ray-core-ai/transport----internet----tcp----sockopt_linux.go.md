@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\tcp\sockopt_linux.go`
 
-```
+```go
 // 仅在 Linux 系统下编译，且不是仅用于配置
 // 定义了一个名为 tcp 的包
 package tcp

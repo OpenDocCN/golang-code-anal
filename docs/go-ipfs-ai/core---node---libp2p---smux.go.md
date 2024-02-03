@@ -1,6 +1,6 @@
 # `kubo\core\node\libp2p\smux.go`
 
-```
+```go
 package libp2p
 
 import (

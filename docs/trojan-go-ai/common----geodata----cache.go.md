@@ -1,6 +1,6 @@
 # `trojan-go\common\geodata\cache.go`
 
-```
+```go
 package geodata
 
 import (

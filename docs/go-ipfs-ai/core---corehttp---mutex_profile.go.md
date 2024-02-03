@@ -1,6 +1,6 @@
 # `kubo\core\corehttp\mutex_profile.go`
 
-```
+```go
 package corehttp
 
 import (

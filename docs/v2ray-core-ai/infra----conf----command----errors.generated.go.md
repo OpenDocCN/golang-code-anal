@@ -1,6 +1,6 @@
 # `v2ray-core\infra\conf\command\errors.generated.go`
 
-```
+```go
 # 定义一个名为 command 的包
 package command
 

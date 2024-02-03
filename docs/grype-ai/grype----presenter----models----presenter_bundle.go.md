@@ -1,6 +1,6 @@
 # `grype\grype\presenter\models\presenter_bundle.go`
 
-```
+```go
 package models
 
 import (

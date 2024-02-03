@@ -1,6 +1,6 @@
 # `v2ray-core\common\net\address.go`
 
-```
+```go
 package net
 
 import (

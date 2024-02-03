@@ -1,6 +1,6 @@
 # `kubo\config\datastore.go`
 
-```
+```go
 package config
 
 import (

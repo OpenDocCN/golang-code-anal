@@ -1,6 +1,6 @@
 # `grype\grype\pkg\java_metadata.go`
 
-```
+```go
 # 定义了一个名为 JavaMetadata 的结构体，用于存储 Java 元数据信息
 type JavaMetadata struct {
     VirtualPath    string   `json:"virtualPath"`  # 虚拟路径，用于存储文件的路径信息

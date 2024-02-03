@@ -1,6 +1,6 @@
 # `grype\cmd\grype\cli\cli.go`
 
-```
+```go
 package cli
 
 import (

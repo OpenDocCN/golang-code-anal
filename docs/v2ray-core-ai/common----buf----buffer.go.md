@@ -1,6 +1,6 @@
 # `v2ray-core\common\buf\buffer.go`
 
-```
+```go
 package buf
 
 import (

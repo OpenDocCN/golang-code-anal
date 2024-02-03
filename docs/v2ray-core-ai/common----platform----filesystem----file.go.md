@@ -1,6 +1,6 @@
 # `v2ray-core\common\platform\filesystem\file.go`
 
-```
+```go
 package filesystem
 
 import (

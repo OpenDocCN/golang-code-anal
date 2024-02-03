@@ -1,6 +1,6 @@
 # `kubo\routing\composer.go`
 
-```
+```go
 package routing
 
 import (

@@ -1,6 +1,6 @@
 # `kubebench-aquasecurity\check\check.go`
 
-```
+```go
 // 代码版权声明和许可证信息
 // 该代码受 Apache 许可证版本 2.0 的许可
 // 可以在遵守许可证的情况下使用该文件

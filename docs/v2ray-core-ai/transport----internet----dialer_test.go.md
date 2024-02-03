@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\dialer_test.go`
 
-```
+```go
 // 定义 internet_test 包
 package internet_test
 

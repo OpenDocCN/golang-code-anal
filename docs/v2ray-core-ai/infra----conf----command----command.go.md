@@ -1,6 +1,6 @@
 # `v2ray-core\infra\conf\command\command.go`
 
-```
+```go
 package command
 
 //go:generate go run v2ray.com/core/common/errors/errorgen

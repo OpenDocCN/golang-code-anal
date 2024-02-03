@@ -1,6 +1,6 @@
 # `grype\grype\internal\packagemetadata\generate\main.go`
 
-```
+```go
 package main
 
 import (

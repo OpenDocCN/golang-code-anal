@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\vless\encoding\addons.pb.go`
 
-```
+```go
 // 由 protoc-gen-gogo 生成的代码。请勿编辑。
 // 来源：proxy/vless/encoding/addons.proto
 

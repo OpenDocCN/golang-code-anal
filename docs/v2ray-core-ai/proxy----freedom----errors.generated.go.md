@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\freedom\errors.generated.go`
 
-```
+```go
 # 定义一个名为 freedom 的包
 package freedom
 

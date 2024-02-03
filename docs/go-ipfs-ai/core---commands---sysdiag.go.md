@@ -1,6 +1,6 @@
 # `kubo\core\commands\sysdiag.go`
 
-```
+```go
 package commands
 
 import (

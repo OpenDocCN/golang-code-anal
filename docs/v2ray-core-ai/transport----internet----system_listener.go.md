@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\system_listener.go`
 
-```
+```go
 package internet
 
 import (

@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\http\http_test.go`
 
-```
+```go
 package http_test
 
 import (

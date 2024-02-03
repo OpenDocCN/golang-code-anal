@@ -1,6 +1,6 @@
 # `grype\grype\db\v5\namespace\from_string.go`
 
-```
+```go
 package namespace
 
 import (

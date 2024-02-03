@@ -13,7 +13,7 @@ The shardFunc is prefixed with `/repo/flatfs/shard/v1` then followed by a descri
 - `/repo/flatfs/shard/v1/prefix/2`
   - Shards based on the two character prefix of the key
 
-```json
+```go
 {
 	"type": "flatfs",
 	"path": "<relative path within repo for flatfs root>",
@@ -27,7 +27,7 @@ NOTE: flatfs must only be used as a block store (mounted at `/blocks`) as it onl
 ## levelds
 Uses a leveldb database to store key value pairs.
 
-```json
+```go
 {
 	"type": "levelds",
 	"path": "<location of db inside repo>",
@@ -42,7 +42,7 @@ Uses [badger](https://github.com/dgraph-io/badger) as a key value store.
 * `syncWrites`: Flush every write to disk before continuing. Setting this to false is safe as kubo will automatically flush writes to disk before and after performing critical operations like pinning. However, you can set this to true to be extra-safe (at the cost of a 2-3x slowdown when adding files).
 * `truncate`: Truncate the DB if a partially written sector is found (defaults to true). There is no good reason to set this to false unless you want to manually recover partially written (and unpinned) blocks if kubo crashes half-way through a adding a file.
 
-```json
+```go
 {
 	"type": "badgerds",
 	"path": "<location of badger inside repo>",
@@ -56,7 +56,7 @@ Uses [badger](https://github.com/dgraph-io/badger) as a key value store.
 Allows specified datastores to handle keys prefixed with a given path.
 The mountpoints are added as keys within the child datastore definitions.
 
-```json
+```go
 {
 	"type": "mount",
 	"mounts": [
@@ -76,7 +76,7 @@ The mountpoints are added as keys within the child datastore definitions.
 
 This datastore is a wrapper that adds metrics tracking to any datastore.
 
-```json
+```go
 {
 	"type": "measure",
 	"prefix": "sometag.datastore",

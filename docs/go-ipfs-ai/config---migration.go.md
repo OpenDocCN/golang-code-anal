@@ -1,6 +1,6 @@
 # `kubo\config\migration.go`
 
-```
+```go
 package config
 
 // 默认迁移保留方式为"cache"

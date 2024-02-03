@@ -1,6 +1,6 @@
 # `grype\internal\format\writer.go`
 
-```
+```go
 package format
 
 import (

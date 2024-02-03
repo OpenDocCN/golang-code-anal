@@ -1,6 +1,6 @@
 # `grype\test\quality\gate.py`
 
-```
+```go
 #!/usr/bin/env python3
 # 设置脚本的解释器为 Python 3
 

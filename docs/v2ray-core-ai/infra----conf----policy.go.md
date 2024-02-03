@@ -1,6 +1,6 @@
 # `v2ray-core\infra\conf\policy.go`
 
-```
+```go
 package conf
 
 import (

@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\vmess\account.go`
 
-```
+```go
 // +build !confonly
 
 package vmess

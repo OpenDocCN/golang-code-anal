@@ -1,6 +1,6 @@
 # `kubo\plugin\plugins\badgerds\badgerds.go`
 
-```
+```go
 package badgerds
 
 import (

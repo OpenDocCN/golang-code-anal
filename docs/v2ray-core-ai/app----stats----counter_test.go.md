@@ -1,6 +1,6 @@
 # `v2ray-core\app\stats\counter_test.go`
 
-```
+```go
 package stats_test
 
 import (

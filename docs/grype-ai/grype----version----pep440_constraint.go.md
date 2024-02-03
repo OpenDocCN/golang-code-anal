@@ -1,6 +1,6 @@
 # `grype\grype\version\pep440_constraint.go`
 
-```
+```go
 package version
 
 import "fmt"

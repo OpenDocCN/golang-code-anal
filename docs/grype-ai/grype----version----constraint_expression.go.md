@@ -1,6 +1,6 @@
 # `grype\grype\version\constraint_expression.go`
 
-```
+```go
 package version
 
 import (

@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\shadowsocks\protocol_test.go`
 
-```
+```go
 package shadowsocks_test
 
 import (

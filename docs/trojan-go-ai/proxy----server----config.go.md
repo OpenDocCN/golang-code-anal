@@ -1,6 +1,6 @@
 # `trojan-go\proxy\server\config.go`
 
-```
+```go
 // 导入 server 包
 package server
 

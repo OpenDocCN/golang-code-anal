@@ -1,6 +1,6 @@
 # `kubo\thirdparty\unit\unit_test.go`
 
-```
+```go
 // 导入测试包
 import "testing"
 

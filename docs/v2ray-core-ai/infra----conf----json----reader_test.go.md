@@ -1,6 +1,6 @@
 # `v2ray-core\infra\conf\json\reader_test.go`
 
-```
+```go
 package json_test
 
 import (

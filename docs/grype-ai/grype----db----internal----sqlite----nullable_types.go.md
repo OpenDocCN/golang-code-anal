@@ -1,6 +1,6 @@
 # `grype\grype\db\internal\sqlite\nullable_types.go`
 
-```
+```go
 package sqlite
 
 import (

@@ -1,6 +1,6 @@
 # `v2ray-core\main\confloader\confloader.go`
 
-```
+```go
 package confloader
 
 import (

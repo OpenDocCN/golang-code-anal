@@ -1,6 +1,6 @@
 # `v2ray-core\common\strmatcher\domain_matcher_test.go`
 
-```
+```go
 package strmatcher_test
 
 import (

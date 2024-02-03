@@ -81,7 +81,7 @@ To build this project, run the `make` command from the root folder.
 
 ### Quick Build  
 To run quick build for Linux, you can run the following:  
-```
+```go
 export PATH=$PATH:/usr/local/go/bin
 go build -o agent cmd/merlinagent/main.go
 go build -o server cmd/merlinserver/main.go

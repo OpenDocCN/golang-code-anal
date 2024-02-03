@@ -1,6 +1,6 @@
 # `grype\cmd\grype\cli\commands\db.go`
 
-```
+```go
 package commands
 
 import (

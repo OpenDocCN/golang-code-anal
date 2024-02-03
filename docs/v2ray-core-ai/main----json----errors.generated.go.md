@@ -1,6 +1,6 @@
 # `v2ray-core\main\json\errors.generated.go`
 
-```
+```go
 # 导入 json 包和 errors 包
 import "v2ray.com/core/common/errors"
 

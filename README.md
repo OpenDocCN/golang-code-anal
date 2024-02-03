@@ -9,7 +9,7 @@
 
 ### Docker
 
-```
+```go
 docker pull apachecn0/golang-code-anal
 docker run -tid -p <port>:80 apachecn0/golang-code-anal
 # 访问 http://localhost:{port} 查看文档
@@ -17,7 +17,7 @@ docker run -tid -p <port>:80 apachecn0/golang-code-anal
 
 ### NPM
 
-```
+```go
 npm install -g golang-code-anal
 golang-code-anal <port>
 # 访问 http://localhost:{port} 查看文档

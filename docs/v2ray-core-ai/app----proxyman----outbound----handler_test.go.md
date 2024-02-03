@@ -1,6 +1,6 @@
 # `v2ray-core\app\proxyman\outbound\handler_test.go`
 
-```
+```go
 package outbound_test
 
 import (

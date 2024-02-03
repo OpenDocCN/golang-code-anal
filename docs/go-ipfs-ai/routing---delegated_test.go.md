@@ -1,6 +1,6 @@
 # `kubo\routing\delegated_test.go`
 
-```
+```go
 package routing
 
 import (

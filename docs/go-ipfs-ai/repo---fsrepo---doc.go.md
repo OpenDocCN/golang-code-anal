@@ -1,6 +1,6 @@
 # `kubo\repo\fsrepo\doc.go`
 
-```
+```go
 // package fsrepo
 //
 // TODO explain the package roadmap...

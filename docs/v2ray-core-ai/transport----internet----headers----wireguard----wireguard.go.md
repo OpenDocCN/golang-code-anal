@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\headers\wireguard\wireguard.go`
 
-```
+```go
 // 导入 wireguard 包
 package wireguard
 

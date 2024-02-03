@@ -1,6 +1,6 @@
 # `grype\grype\db\v3\store.go`
 
-```
+```go
 # 定义了一个名为 Store 的接口，包含了 StoreReader 和 StoreWriter 两个子接口
 type Store interface {
     StoreReader  # Store 接口包含了 StoreReader 接口

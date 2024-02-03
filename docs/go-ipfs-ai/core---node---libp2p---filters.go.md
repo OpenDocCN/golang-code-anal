@@ -1,6 +1,6 @@
 # `kubo\core\node\libp2p\filters.go`
 
-```
+```go
 package libp2p
 
 import (

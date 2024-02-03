@@ -1,6 +1,6 @@
 # `trojan-go\log\golog\colorful\colorful.go`
 
-```
+```go
 // go-log库的颜色引擎
 // 版权所有 2017年 Fadhli Dzil Ikram
 

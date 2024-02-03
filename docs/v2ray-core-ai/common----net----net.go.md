@@ -1,6 +1,6 @@
 # `v2ray-core\common\net\net.go`
 
-```
+```go
 // net 包是 Golang 的 net 包的一个替代品，具有一些额外的功能。
 package net // import "v2ray.com/core/common/net"
 

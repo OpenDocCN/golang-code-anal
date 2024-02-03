@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\trojan\validator.go`
 
-```
+```go
 // trojan 包声明
 package trojan
 

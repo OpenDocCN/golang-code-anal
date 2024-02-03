@@ -1,6 +1,6 @@
 # `grype\test\integration\test-fixtures\image-debian-match-coverage\golang\main.go`
 
-```
+```go
 package main
 // 声明包名为 main，表示这是一个可独立执行的程序
 

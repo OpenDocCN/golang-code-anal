@@ -1,6 +1,6 @@
 # `trojan-go\proxy\config.go`
 
-```
+```go
 # 定义了一个名为 proxy 的包
 
 # 导入了名为 config 的包，该包的路径为 "github.com/p4gefau1t/trojan-go/config"

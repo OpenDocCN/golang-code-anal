@@ -1,6 +1,6 @@
 # `trojan-go\proxy\stack.go`
 
-```
+```go
 package proxy
 
 import (

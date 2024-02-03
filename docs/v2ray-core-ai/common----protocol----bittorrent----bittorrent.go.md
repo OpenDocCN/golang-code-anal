@@ -1,6 +1,6 @@
 # `v2ray-core\common\protocol\bittorrent\bittorrent.go`
 
-```
+```go
 // 定义一个名为 bittorrent 的包
 package bittorrent
 

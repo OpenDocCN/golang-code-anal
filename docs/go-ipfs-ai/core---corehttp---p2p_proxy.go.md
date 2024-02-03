@@ -1,6 +1,6 @@
 # `kubo\core\corehttp\p2p_proxy.go`
 
-```
+```go
 package corehttp
 
 import (

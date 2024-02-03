@@ -1,6 +1,6 @@
 # `kubo\test\cli\dht_legacy_test.go`
 
-```
+```go
 package cli
 
 import (

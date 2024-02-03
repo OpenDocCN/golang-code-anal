@@ -1,6 +1,6 @@
 # `kubo\fuse\ipns\mount_unix.go`
 
-```
+```go
 // 根据条件编译指令，当操作系统为 linux、darwin、freebsd、netbsd、openbsd 且不是 nofuse 时进行编译
 // 导入所需的包
 package ipns

@@ -1,6 +1,6 @@
 # `kubo\core\commands\routing.go`
 
-```
+```go
 package commands
 
 import (

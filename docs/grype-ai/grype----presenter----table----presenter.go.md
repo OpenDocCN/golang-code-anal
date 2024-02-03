@@ -1,6 +1,6 @@
 # `grype\grype\presenter\table\presenter.go`
 
-```
+```go
 package table
 
 import (

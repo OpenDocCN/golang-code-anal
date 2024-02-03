@@ -1,6 +1,6 @@
 # `grype\grype\pkg\syft_provider.go`
 
-```
+```go
 package pkg
 
 import (

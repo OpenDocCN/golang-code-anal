@@ -1,6 +1,6 @@
 # `kubo\test\cli\harness\ipfs.go`
 
-```
+```go
 package harness
 
 import (

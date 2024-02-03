@@ -1,6 +1,6 @@
 # `grype\grype\version\maven_constraint.go`
 
-```
+```go
 package version
 
 import "fmt"

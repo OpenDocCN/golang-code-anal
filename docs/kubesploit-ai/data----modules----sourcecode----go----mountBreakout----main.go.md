@@ -1,6 +1,6 @@
 # `kubesploit\data\modules\sourcecode\go\mountBreakout\main.go`
 
-```
+```go
 package main
 
 import (

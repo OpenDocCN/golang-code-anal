@@ -1,6 +1,6 @@
 # `v2ray-core\app\dns\dns.go`
 
-```
+```go
 // Package dns is an implementation of core.DNS feature.
 // 包dns是核心DNS功能的实现。
 

@@ -1,6 +1,6 @@
 # `grype\grype\event\monitor\matching.go`
 
-```
+```go
 # 定义一个名为 monitor 的包
 package monitor
 

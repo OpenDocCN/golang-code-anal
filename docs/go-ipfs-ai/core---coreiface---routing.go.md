@@ -1,6 +1,6 @@
 # `kubo\core\coreiface\routing.go`
 
-```
+```go
 // 定义一个名为iface的包
 package iface
 

@@ -37,7 +37,7 @@ This spec defines `fs-repo` version `1`, its formats, and semantics.
 
 ![](img/ipfs-repo-contents.png?)
 
-```
+```go
 .ipfs/
 ├── api             <--- running daemon api addr
 ├── blocks/         <--- objects stored directly on disk
@@ -63,7 +63,7 @@ In the presence of an `./api` file, ipfs tools (e.g. go-ipfs `ipfs daemon`) MUST
 
 The `./api` file is used in conjunction with the `repo.lock`. Clients may opt to use the api service, or wait until the process holding `repo.lock` exits. The file's content is the api endpoint as a [multiaddr](https://github.com/jbenet/multiaddr)
 
-```
+```go
 > cat .ipfs/api
 /ip4/127.0.0.1/tcp/5001
 ```
@@ -77,7 +77,7 @@ Notes:
 
 One use case of the `api` file is to have a repo directory like:
 
-```
+```go
 > tree $IPFS_PATH
 /Users/jbenet/.ipfs
 └── api
@@ -90,7 +90,7 @@ One use case of the `api` file is to have a repo directory like:
 
 In go-ipfs, this has the same effect as:
 
-```
+```go
 ipfs --api /ip4/1.2.3.4/tcp/5001 <cmd>
 ```
 
@@ -124,7 +124,7 @@ events to alter ipfs node behavior.
 
 Currently available hooks:
 
-```
+```go
 none
 ```
 
@@ -174,7 +174,7 @@ timestamp of their creation. For example:
 PID of the process currently holding the lock. This allows clients to detect
 a failed lock and cleanup.
 
-```
+```go
 > cat .ipfs/repo.lock
 42
 > ps | grep "ipfs daemon"
@@ -187,7 +187,7 @@ a failed lock and cleanup.
 
 The `version` file contains the repo implementation name and version. This format has changed over time:
 
-```
+```go
 # in version 0
 > cat $repo-at-version-0/version
 cat: /Users/jbenet/.ipfs/version: No such file or directory
@@ -220,13 +220,13 @@ Both the `/blocks` and `/datastore` directories are controlled by the
 The `fs-repo` can be located anywhere on the filesystem. By default
 clients should search for a repo in:
 
-```
+```go
 ~/.ipfs
 ```
 
 Users can tell IPFS programs to look elsewhere with the env var:
 
-```
+```go
 IPFS_PATH=/path/to/repo
 ```
 
@@ -239,7 +239,7 @@ The files are nested in directories whose names are prefixes of the hash, as
 in `.git/objects`.
 
 For example:
-```sh
+```go
 # multihashes
 1220fe389b55ea958590769f9046b0f7268bca90a92e4a9f45cbb30930f4bf89269d # sha2
 1114f623e0ec7f8719fb14a18838d2a3ef4e550b5e53 # sha1
@@ -260,7 +260,7 @@ For example:
 
 the go-ipfs fs-repo in version 2 uses a different `blocks/` dir layout:
 
-```
+```go
 /Users/jbenet/.ipfs/blocks
 ├── 12200007
 │   └── 12200007d4e3a319cd8c7c9979280e150fc5dbaae1ce54e790f84ae5fd3c3c1a0475.data

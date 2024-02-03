@@ -1,6 +1,6 @@
 # `trojan-go\component\forward.go`
 
-```
+```go
 // 根据条件编译标记，选择构建 forward、full 或 mini 三种模式之一
 // +build forward full mini
 

@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\udp\dispatcher_test.go`
 
-```
+```go
 package udp_test
 
 import (

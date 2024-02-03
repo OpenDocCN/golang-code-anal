@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\dokodemo\errors.generated.go`
 
-```
+```go
 # 定义一个名为dokodemo的包
 package dokodemo
 

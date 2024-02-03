@@ -1,6 +1,6 @@
 # `v2ray-core\common\uuid\uuid.go`
 
-```
+```go
 package uuid // import "v2ray.com/core/common/uuid"
 
 import (

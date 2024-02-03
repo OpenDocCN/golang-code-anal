@@ -1,6 +1,6 @@
 # `v2ray-core\common\protocol\tls\cert\privateKey.go`
 
-```
+```go
 package cert
 
 import (

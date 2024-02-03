@@ -26,7 +26,7 @@ This section assumes you have a working version of `go` and `git` already setup.
 1. Install msys2 (http://www.msys2.org)  
 2. Run the following inside a normal `cmd` prompt (Not the MSYS2 prompt, we only need MSYS2's tools).  
 An explanation of this block is below.
-```
+```go
 SET PATH=%PATH%;\msys64\usr\bin
 pacman --noconfirm -S  git make unzip
 go get -u github.com/ipfs/kubo
@@ -48,14 +48,14 @@ If `ipfs.exe` executes and the version string matches, then building was success
 |`%GOPATH%\bin\ipfs.exe version --all`     |Test the built binary|
 
 To build again after making changes to the source, run:
-```
+```go
 SET PATH=%PATH%;\msys64\usr\bin
 cd %GOPATH%\src\github.com\ipfs\kubo
 make install
 ```
 
 **Tip:** To avoid setting `PATH` every time (`SET PATH=%PATH%;\msys64\usr\bin`), you can lock it in permanently using `setx` after it's been set once:
-```
+```go
 SETX PATH %PATH%
 ```
 
@@ -71,7 +71,7 @@ SETX PATH %PATH%
         - `curl`  
 3. Run the following inside a normal `cmd` prompt (Not the Cygwin prompt, we only need Cygwin's tools)  
 An explanation of this block is below.
-```
+```go
 SET PATH=%PATH%;\cygwin64\bin
 mkdir %GOPATH%\src\github.com\ipfs
 cd %GOPATH%\src\github.com\ipfs
@@ -93,14 +93,14 @@ If `ipfs.exe` executes and the version string matches, then building was success
 |`%GOPATH%\bin\ipfs.exe version --all`     |Test the built binary|
 
 To build again after making changes to the source, run:
-```
+```go
 SET PATH=%PATH%;\cygwin64\bin
 cd %GOPATH%\src\github.com\ipfs\kubo
 make install
 ```
 
 **Tip:** To avoid setting `PATH` every time (`SET PATH=%PATH%;\cygwin64\bin`), you can lock it in permanently using `setx` after it's been set once:
-```
+```go
 SETX PATH %PATH%
 ```
 
@@ -115,13 +115,13 @@ You can use whichever version of `git` you wish but we recommend the Windows bui
 Clone and change directory to the source code, if you haven't already:
 
 CMD:
-```bat
+```go
 git clone https://github.com/ipfs/kubo %GOPATH%/src/github.com/ipfs/kubo
 cd %GOPATH%/src/github.com/ipfs/kubo/cmd/ipfs
 ```
 
 PowerShell:
-```powershell
+```go
 git clone https://github.com/ipfs/kubo $env:GOPATH/src/github.com/ipfs/kubo
 cd $env:GOPATH/src/github.com/ipfs/kubo/cmd/ipfs
 ```
@@ -133,13 +133,13 @@ We need the `git` commit hash to be included in our build so that in the extreme
 Finally, we'll build and test `ipfs` itself.
 
 CMD:
-```bat
+```go
 go install -ldflags="-X "github.com/ipfs/kubo".CurrentCommit=%SHA%"
 %GOPATH%\bin\ipfs.exe version --all
 ```
 
 PowerShell:
-```powershell
+```go
 go install -ldflags="-X "github.com/ipfs/kubo".CurrentCommit=$env:SHA"
 cp ./ipfs.exe $env:GOPATH/bin/ipfs.exe -force
 . $env:GOPATH/bin/ipfs.exe version --all

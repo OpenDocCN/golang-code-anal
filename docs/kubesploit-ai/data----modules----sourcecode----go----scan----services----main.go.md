@@ -1,6 +1,6 @@
 # `kubesploit\data\modules\sourcecode\go\scan\services\main.go`
 
-```
+```go
 package main
 
 import (

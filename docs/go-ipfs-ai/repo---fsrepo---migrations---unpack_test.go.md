@@ -1,6 +1,6 @@
 # `kubo\repo\fsrepo\migrations\unpack_test.go`
 
-```
+```go
 package migrations
 
 import (

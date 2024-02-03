@@ -1,6 +1,6 @@
 # `v2ray-core\infra\control\uuid.go`
 
-```
+```go
 package control
 
 import (

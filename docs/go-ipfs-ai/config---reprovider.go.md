@@ -1,6 +1,6 @@
 # `kubo\config\reprovider.go`
 
-```
+```go
 # 定义了默认的重新提供者间隔时间，为 22 小时
 DefaultReproviderInterval = time.Hour * 22 // https://github.com/ipfs/kubo/pull/9326
 # 定义了默认的重新提供者策略为 "all"

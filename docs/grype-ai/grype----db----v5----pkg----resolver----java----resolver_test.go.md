@@ -1,6 +1,6 @@
 # `grype\grype\db\v5\pkg\resolver\java\resolver_test.go`
 
-```
+```go
 package java
 // 导入所需的包
 import (

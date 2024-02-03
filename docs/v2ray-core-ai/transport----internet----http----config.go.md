@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\http\config.go`
 
-```
+```go
 // +build !confonly  // 如果不是仅用于配置，则包含该代码
 
 package http  // 定义包名为http

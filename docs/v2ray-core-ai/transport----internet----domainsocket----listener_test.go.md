@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\domainsocket\listener_test.go`
 
-```
+```go
 // +build !windows
 // 声明该文件不适用于 Windows 平台
 

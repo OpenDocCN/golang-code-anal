@@ -5,7 +5,7 @@
 
 generated with:
 
-```sh
+```go
 # using ipfs version 0.21.0-dev (03a98280e3e642774776cd3d0435ab53e5dfa867)
 
 mkdir -p root2/root3/root4 &&

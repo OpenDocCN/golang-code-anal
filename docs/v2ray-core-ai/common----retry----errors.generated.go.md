@@ -1,6 +1,6 @@
 # `v2ray-core\common\retry\errors.generated.go`
 
-```
+```go
 # 定义了一个名为 retry 的包
 package retry
 

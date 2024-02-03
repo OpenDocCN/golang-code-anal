@@ -1,6 +1,6 @@
 # `v2ray-core\features\errors.generated.go`
 
-```
+```go
 # 定义 features 包
 package features
 

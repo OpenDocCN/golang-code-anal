@@ -1,6 +1,6 @@
 # `v2ray-core\testing\scenarios\common_coverage.go`
 
-```
+```go
 // 构建 V2Ray 程序，用于测试覆盖率
 func BuildV2Ray() error {
     // 生成测试二进制文件路径

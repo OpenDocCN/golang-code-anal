@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\udp\errors.generated.go`
 
-```
+```go
 # 定义一个名为 udp 的包
 package udp
 

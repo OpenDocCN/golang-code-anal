@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\dns\dns_test.go`
 
-```
+```go
 package dns_test
 
 import (

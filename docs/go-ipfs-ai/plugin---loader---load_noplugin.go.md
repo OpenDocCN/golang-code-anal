@@ -1,6 +1,6 @@
 # `kubo\plugin\loader\load_noplugin.go`
 
-```
+```go
 // 标记当前代码块为适用于 noplugin 构建标记的代码
 // 构建标记为 noplugin
 package loader

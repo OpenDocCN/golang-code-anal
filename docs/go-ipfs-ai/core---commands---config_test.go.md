@@ -1,6 +1,6 @@
 # `kubo\core\commands\config_test.go`
 
-```
+```go
 # 导入测试模块
 import "testing"
 

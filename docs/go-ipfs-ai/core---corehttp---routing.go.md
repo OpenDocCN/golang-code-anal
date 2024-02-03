@@ -1,6 +1,6 @@
 # `kubo\core\corehttp\routing.go`
 
-```
+```go
 package corehttp
 
 import (

@@ -1,6 +1,6 @@
 # `v2ray-core\common\buf\readv_reader.go`
 
-```
+```go
 // +build !wasm  // 标记此文件不适用于 WebAssembly 构建
 
 package buf  // 声明包名为 buf

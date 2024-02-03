@@ -1,6 +1,6 @@
 # `kubo\cmd\ipfs\util\signal.go`
 
-```
+```go
 //go:build !wasm
 // +build !wasm
 

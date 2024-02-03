@@ -1,6 +1,6 @@
 # `v2ray-core\common\crypto\chacha20.go`
 
-```
+```go
 // 导入 crypto/cipher 包
 import (
     "crypto/cipher"

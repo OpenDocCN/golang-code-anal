@@ -1,6 +1,6 @@
 # `kubo\core\corehttp\commands.go`
 
-```
+```go
 package corehttp
 
 import (

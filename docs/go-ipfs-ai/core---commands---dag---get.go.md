@@ -1,6 +1,6 @@
 # `kubo\core\commands\dag\get.go`
 
-```
+```go
 package dagcmd
 
 import (

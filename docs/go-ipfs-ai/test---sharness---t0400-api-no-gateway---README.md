@@ -5,7 +5,7 @@
 
 generated with:
 
-```sh
+```go
 # using ipfs version 0.18.1
 HASH=$(echo "testing" | ipfs add -q)
 ipfs dag export $HASH > fixtures.car

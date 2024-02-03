@@ -1,6 +1,6 @@
 # `v2ray-core\common\signal\notifier_test.go`
 
-```
+```go
 # 声明 signal_test 包
 package signal_test
 

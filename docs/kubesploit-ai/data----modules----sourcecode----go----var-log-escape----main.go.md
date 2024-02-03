@@ -1,6 +1,6 @@
 # `kubesploit\data\modules\sourcecode\go\var-log-escape\main.go`
 
-```
+```go
 package main
 
 import (

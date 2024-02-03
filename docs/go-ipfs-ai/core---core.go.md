@@ -1,6 +1,6 @@
 # `kubo\core\core.go`
 
-```
+```go
 /*
 Package core implements the IpfsNode object and related methods.
 

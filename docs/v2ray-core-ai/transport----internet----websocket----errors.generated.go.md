@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\websocket\errors.generated.go`
 
-```
+```go
 # 导入 websocket 包
 import "v2ray.com/core/common/errors"
 

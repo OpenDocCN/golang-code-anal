@@ -1,6 +1,6 @@
 # `kubo\core\coreiface\key.go`
 
-```
+```go
 // 定义了 Key 接口，包含了 Name、Path 和 ID 三个方法
 type Key interface {
     // 返回 key 的名称

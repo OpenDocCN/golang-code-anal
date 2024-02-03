@@ -13,7 +13,7 @@ node you want to get the file to node 'B'. On node A, add the file to ipfs
 using the `ipfs add` command. This will print out the multihash of the content
 you added. Now, on node B, you can fetch the content using `ipfs get <hash>`.
 
-```
+```go
 # On A
 > ipfs add myfile.txt
 added QmZJ1xT1T9KYkHhgRhbv8D7mYrbemaXwYUkg7CeHdrk1Ye myfile.txt
@@ -40,7 +40,7 @@ The first thing to do is to double check that both nodes are in fact running
 and online. To do this, run `ipfs id` on each machine. If both nodes show some
 addresses (like the example below), then your nodes are online.
 
-```json
+```go
 {
         "ID": "QmTNwsFkLAed15kQEC1ZJWPfoNbBQnMFojfJKQ9sZj1dk8",
         "PublicKey": "CAASpgIwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDZb6znj3LQZKP1+X81exf+vbnqNCMtHjZ5RKTCm7Fytnfe+AI1fhs9YbZdkgFkM1HLxmIOLQj2bMXPIGxUM+EnewN8tWurx4B3+lR/LWNwNYcCFL+jF2ltc6SE6BC8kMLEZd4zidOLPZ8lIRpd0x3qmsjhGefuRwrKeKlR4tQ3C76ziOms47uLdiVVkl5LyJ5+mn4rXOjNKt/oy2O4m1St7X7/yNt8qQgYsPfe/hCOywxCEIHEkqmil+vn7bu4RpAtsUzCcBDoLUIWuU3i6qfytD05hP8Clo+at+l//ctjMxylf3IQ5qyP+yfvazk+WHcsB0tWueEmiU5P2nfUUIR3AgMBAAE=",
@@ -90,7 +90,7 @@ return a list of addresses for node A. If it doesn't return any addresses, then
 you should try running the manual providing command from the previous steps. 
 Example output of addresses might look something like this:
 
-```
+```go
 /ip4/127.0.0.1/tcp/4001
 /ip4/127.0.0.1/udp/4001/quic-v1
 /ip4/192.168.2.133/tcp/4001

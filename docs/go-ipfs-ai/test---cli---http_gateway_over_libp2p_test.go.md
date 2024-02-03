@@ -1,6 +1,6 @@
 # `kubo\test\cli\http_gateway_over_libp2p_test.go`
 
-```
+```go
 package cli
 
 import (

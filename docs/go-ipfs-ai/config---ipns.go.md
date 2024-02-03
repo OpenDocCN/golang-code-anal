@@ -1,6 +1,6 @@
 # `kubo\config\ipns.go`
 
-```
+```go
 # 定义一个名为Ipns的结构体，用于存储IPNS配置信息
 type Ipns struct {
     RepublishPeriod string  # 存储IPNS记录重新发布的周期

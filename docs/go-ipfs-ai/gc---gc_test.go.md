@@ -1,6 +1,6 @@
 # `kubo\gc\gc_test.go`
 
-```
+```go
 package gc
 
 import (

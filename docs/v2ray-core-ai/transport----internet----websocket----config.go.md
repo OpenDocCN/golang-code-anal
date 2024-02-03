@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\websocket\config.go`
 
-```
+```go
 // +build !confonly
 
 // 导入所需的包

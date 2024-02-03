@@ -1,6 +1,6 @@
 # `kubo\test\cli\backup_bootstrap_test.go`
 
-```
+```go
 package cli
 
 import (

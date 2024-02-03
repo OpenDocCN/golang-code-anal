@@ -1,6 +1,6 @@
 # `grype\grype\matcher\java\maven_search.go`
 
-```
+```go
 package java
 
 import (

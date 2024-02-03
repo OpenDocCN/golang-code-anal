@@ -1,6 +1,6 @@
 # `kubo\p2p\local.go`
 
-```
+```go
 package p2p
 
 import (

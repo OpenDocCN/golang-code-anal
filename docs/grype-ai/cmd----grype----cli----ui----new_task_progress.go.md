@@ -1,6 +1,6 @@
 # `grype\cmd\grype\cli\ui\new_task_progress.go`
 
-```
+```go
 package ui
 
 import "github.com/anchore/bubbly/bubbles/taskprogress"

@@ -1,6 +1,6 @@
 # `trojan-go\common\net.go`
 
-```
+```go
 package common
 
 import (

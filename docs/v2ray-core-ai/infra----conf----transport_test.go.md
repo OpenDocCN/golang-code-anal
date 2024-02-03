@@ -1,6 +1,6 @@
 # `v2ray-core\infra\conf\transport_test.go`
 
-```
+```go
 package conf_test
 
 import (

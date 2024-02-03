@@ -1,6 +1,6 @@
 # `kubo\test\cli\content_routing_http_test.go`
 
-```
+```go
 package cli
 
 import (

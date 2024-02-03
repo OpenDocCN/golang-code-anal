@@ -1,6 +1,6 @@
 # `grype\grype\match\fingerprint.go`
 
-```
+```go
 package match
 
 import (

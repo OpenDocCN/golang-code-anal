@@ -1,6 +1,6 @@
 # `kubo\fuse\mount\mount.go`
 
-```
+```go
 // package mount provides a simple abstraction around a mount point
 package mount
 

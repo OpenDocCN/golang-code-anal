@@ -1,6 +1,6 @@
 # `grype\grype\matcher\java\matcher_test.go`
 
-```
+```go
 package java
 
 import (

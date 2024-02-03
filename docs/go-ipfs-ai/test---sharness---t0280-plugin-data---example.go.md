@@ -1,6 +1,6 @@
 # `kubo\test\sharness\t0280-plugin-data\example.go`
 
-```
+```go
 package main
 
 import (

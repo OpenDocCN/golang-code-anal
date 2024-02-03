@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\vmess\outbound\command.go`
 
-```
+```go
 // +build !confonly
 
 package outbound

@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\websocket\hub.go`
 
-```
+```go
 // +build !confonly
 
 package websocket

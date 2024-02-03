@@ -1,6 +1,6 @@
 # `trojan-go\component\base.go`
 
-```
+```go
 # 导入 build 包
 package build
 

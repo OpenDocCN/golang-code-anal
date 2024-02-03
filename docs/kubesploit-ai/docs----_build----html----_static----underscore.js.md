@@ -1,6 +1,6 @@
 # `kubesploit\docs\_build\html\_static\underscore.js`
 
-```
+```go
 // 使用立即执行函数创建一个闭包，避免变量污染全局作用域
 (function(){
     // 定义函数q，用于比较两个值是否相等

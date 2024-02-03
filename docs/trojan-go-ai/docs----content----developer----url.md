@@ -26,7 +26,7 @@ Trojan-Go**客户端**可以接受URL，以定位服务器资源。原则如下:
 
 基本格式如下，`$()` 代表此处需要 `encodeURIComponent`。
 
-```text
+```go
 trojan-go://
     $(trojan-password)
     @
@@ -45,19 +45,19 @@ trojan-go://
 
 例如
 
-```text
+```go
 trojan-go://password1234@google.com/?sni=microsoft.com&type=ws&host=youtube.com&path=%2Fgo&encryption=ss%3Baes-256-gcm%3Afuckgfw
 ```
 
 由于 Trojan-Go 兼容 Trojan，所以对于 Trojan 的 URL 方案
 
-```text
+```go
 trojan://password@remote_host:remote_port
 ```
 
 可以兼容接受。它等价于
 
-```text
+```go
 trojan-go://password@remote_host:remote_port
 ```
 
@@ -143,7 +143,7 @@ TLS 认证必须开启。无法使用根CA校验服务器身份的节点，不�
 
 使用 Shadowsocks 算法进行流量加密时，其格式为：
 
-```text
+```go
 ss;method:password
 ```
 

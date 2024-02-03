@@ -1,6 +1,6 @@
 # `v2ray-core\common\strmatcher\matchers_test.go`
 
-```
+```go
 package strmatcher_test
 
 import (

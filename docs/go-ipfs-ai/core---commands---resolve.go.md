@@ -1,6 +1,6 @@
 # `kubo\core\commands\resolve.go`
 
-```
+```go
 package commands
 
 import (

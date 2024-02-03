@@ -1,6 +1,6 @@
 # `v2ray-core\common\protocol\dns\errors.generated.go`
 
-```
+```go
 # 定义一个名为 dns 的包
 package dns
 

@@ -1,6 +1,6 @@
 # `grype\grype\matcher\portage\matcher_test.go`
 
-```
+```go
 package portage
 
 import (

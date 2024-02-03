@@ -1,6 +1,6 @@
 # `v2ray-core\testing\scenarios\transport_test.go`
 
-```
+```go
 package scenarios
 
 import (

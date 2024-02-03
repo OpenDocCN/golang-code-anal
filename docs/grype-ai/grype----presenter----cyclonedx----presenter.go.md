@@ -1,6 +1,6 @@
 # `grype\grype\presenter\cyclonedx\presenter.go`
 
-```
+```go
 // 导入所需的包
 package cyclonedx
 

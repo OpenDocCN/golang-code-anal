@@ -1,6 +1,6 @@
 # `v2ray-core\main\confloader\external\errors.generated.go`
 
-```
+```go
 # 定义 external 包
 package external
 

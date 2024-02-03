@@ -1,6 +1,6 @@
 # `kubo\core\corehttp\webui.go`
 
-```
+```go
 // 定义常量 WebUIPath，表示 Web UI 的路径，TODO: 后续需要移动到 IPNS
 const WebUIPath = "/ipfs/bafybeidf7cpkwsjkq6xs3r6fbbxghbugilx3jtezbza7gua3k5wjixpmba" // v4.2.0
 

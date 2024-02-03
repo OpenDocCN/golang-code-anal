@@ -1,6 +1,6 @@
 # `kubo\core\commands\dht_test.go`
 
-```
+```go
 package commands
 
 import (

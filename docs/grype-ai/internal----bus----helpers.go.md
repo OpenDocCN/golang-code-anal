@@ -1,6 +1,6 @@
 # `grype\internal\bus\helpers.go`
 
-```
+```go
 // 导入 bus 包
 package bus
 

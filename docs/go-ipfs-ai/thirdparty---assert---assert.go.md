@@ -1,6 +1,6 @@
 # `kubo\thirdparty\assert\assert.go`
 
-```
+```go
 package assert
 
 import "testing"

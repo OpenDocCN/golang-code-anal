@@ -1,6 +1,6 @@
 # `v2ray-core\common\net\port_test.go`
 
-```
+```go
 // 声明 net_test 包
 package net_test
 

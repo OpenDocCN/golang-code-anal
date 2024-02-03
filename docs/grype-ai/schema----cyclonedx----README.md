@@ -10,11 +10,11 @@ You will need to go to https://github.com/CycloneDX/specification/blob/1.5/schem
 
 Additionally, for `xmllint` to function you will need to patch the bom schema with the location to the SPDX schema by changing:
 
-```xml
+```go
 <xs:import namespace="http://cyclonedx.org/schema/spdx" schemaLocation="http://cyclonedx.org/schema/spdx"/>
 ```
 
 To:
-```xml
+```go
 <xs:import namespace="http://cyclonedx.org/schema/spdx" schemaLocation="spdx.xsd"/>
 ```

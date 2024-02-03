@@ -1,6 +1,6 @@
 # `kubo\repo\fsrepo\migrations\ipfsdir.go`
 
-```
+```go
 package migrations
 
 import (

@@ -1,6 +1,6 @@
 # `v2ray-core\app\proxyman\command\doc.go`
 
-```
+```go
 // 声明代码所属的包名为command
 package command
 

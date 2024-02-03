@@ -1,6 +1,6 @@
 # `grype\grype\version\fuzzy_version.go`
 
-```
+```go
 package version
 
 import (

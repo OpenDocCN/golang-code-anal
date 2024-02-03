@@ -1,6 +1,6 @@
 # `kubebench-aquasecurity\cmd\node.go`
 
-```
+```go
 // 版权声明，声明代码的版权信息
 // 根据 Apache 许可证 2.0 版本授权，限制了对该文件的使用条件
 // 获取 Apache 许可证 2.0 版本的副本

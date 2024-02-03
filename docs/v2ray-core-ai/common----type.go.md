@@ -1,6 +1,6 @@
 # `v2ray-core\common\type.go`
 
-```
+```go
 // common 包中包含了一些通用的函数和类型
 package common
 

@@ -1,6 +1,6 @@
 # `kubo\config\pubsub.go`
 
-```
+```go
 package config
 
 const (

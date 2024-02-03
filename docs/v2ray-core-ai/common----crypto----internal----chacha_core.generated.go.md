@@ -1,6 +1,6 @@
 # `v2ray-core\common\crypto\internal\chacha_core.generated.go`
 
-```
+```go
 package internal
 
 import "encoding/binary"

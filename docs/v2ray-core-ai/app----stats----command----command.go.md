@@ -1,6 +1,6 @@
 # `v2ray-core\app\stats\command\command.go`
 
-```
+```go
 // +build !confonly
 // 定义包名为 command
 

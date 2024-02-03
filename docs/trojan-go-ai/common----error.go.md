@@ -1,6 +1,6 @@
 # `trojan-go\common\error.go`
 
-```
+```go
 // common 包，包含了一些通用的函数和类型
 package common
 

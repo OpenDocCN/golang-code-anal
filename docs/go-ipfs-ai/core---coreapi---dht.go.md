@@ -1,6 +1,6 @@
 # `kubo\core\coreapi\dht.go`
 
-```
+```go
 package coreapi
 
 import (

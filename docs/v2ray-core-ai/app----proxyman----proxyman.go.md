@@ -1,6 +1,6 @@
 # `v2ray-core\app\proxyman\proxyman.go`
 
-```
+```go
 // Package proxyman 定义了用于管理入站和出站代理的应用程序。
 package proxyman
 

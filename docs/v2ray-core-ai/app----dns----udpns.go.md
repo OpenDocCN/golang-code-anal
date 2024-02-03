@@ -1,6 +1,6 @@
 # `v2ray-core\app\dns\udpns.go`
 
-```
+```go
 // +build !confonly
 // 设置构建标签，表示此代码不仅仅是配置文件
 

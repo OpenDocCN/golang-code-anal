@@ -1,6 +1,6 @@
 # `grype\grype\vex\openvex\implementation.go`
 
-```
+```go
 package openvex
 
 import (

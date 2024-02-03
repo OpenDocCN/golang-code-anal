@@ -1,6 +1,6 @@
 # `kubo\test\cli\must.go`
 
-```
+```go
 # 定义一个名为MustVal的函数，用于获取值并处理错误
 package cli
 

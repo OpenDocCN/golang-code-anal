@@ -1,6 +1,6 @@
 # `kubo\test\cli\pins_test.go`
 
-```
+```go
 package cli
 
 import (

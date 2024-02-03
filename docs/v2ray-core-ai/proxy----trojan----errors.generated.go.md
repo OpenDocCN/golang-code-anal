@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\trojan\errors.generated.go`
 
-```
+```go
 # 定义名为 trojan 的包
 package trojan
 

@@ -1,6 +1,6 @@
 # `kubo\cmd\ipfs\util\ulimit_test.go`
 
-```
+```go
 //go:build !windows && !plan9
 // +build !windows,!plan9
 

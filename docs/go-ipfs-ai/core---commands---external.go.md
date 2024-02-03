@@ -1,6 +1,6 @@
 # `kubo\core\commands\external.go`
 
-```
+```go
 # 导入所需的包
 package commands
 

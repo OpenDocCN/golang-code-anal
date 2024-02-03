@@ -1,6 +1,6 @@
 # `trojan-go\tunnel\router\router_test.go`
 
-```
+```go
 package router
 
 import (

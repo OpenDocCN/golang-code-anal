@@ -1,6 +1,6 @@
 # `kubo\test\cli\daemon_test.go`
 
-```
+```go
 package cli
 
 import (

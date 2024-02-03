@@ -1,6 +1,6 @@
 # `grype\grype\db\v4\pkg\resolver\stock\resolver.go`
 
-```
+```go
 # 导入 stock 包和必要的依赖包
 package stock
 

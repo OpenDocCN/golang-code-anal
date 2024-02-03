@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\sockopt_darwin.go`
 
-```
+```go
 package internet
 
 import (

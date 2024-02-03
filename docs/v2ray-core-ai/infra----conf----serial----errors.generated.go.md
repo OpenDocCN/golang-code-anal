@@ -1,6 +1,6 @@
 # `v2ray-core\infra\conf\serial\errors.generated.go`
 
-```
+```go
 # 定义了一个名为 serial 的包
 package serial
 

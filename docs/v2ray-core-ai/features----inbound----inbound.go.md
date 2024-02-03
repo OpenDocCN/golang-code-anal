@@ -1,6 +1,6 @@
 # `v2ray-core\features\inbound\inbound.go`
 
-```
+```go
 // 定义了一个名为inbound的包，用于处理入站连接
 package inbound
 

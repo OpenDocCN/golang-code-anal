@@ -1,6 +1,6 @@
 # `kubo\config\internal.go`
 
-```
+```go
 package config
 
 type Internal struct {

@@ -1,6 +1,6 @@
 # `grype\grype\differ\differ.go`
 
-```
+```go
 package differ
 
 import (

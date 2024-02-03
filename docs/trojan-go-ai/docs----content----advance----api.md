@@ -20,7 +20,7 @@ Trojan-Go本身集成了API控制功能，也即可以使用一个Trojan-Go实�
 
 你需要在你需要被控制的服务端配置添加API设置，例如：
 
-```json
+```go
 {
     ...
     "api": {
@@ -33,13 +33,13 @@ Trojan-Go本身集成了API控制功能，也即可以使用一个Trojan-Go实�
 
 然后启动Trojan-Go服务器
 
-```shell
+```go
 ./trojan-go -config ./server.json
 ```
 
 然后可以使用另一个Trojan-Go连接该服务器进行管理，基本命令格式为
 
-```shell
+```go
 ./trojan-go -api-addr SERVER_API_ADDRESS -api COMMAND
 ```
 
@@ -57,13 +57,13 @@ Trojan-Go本身集成了API控制功能，也即可以使用一个Trojan-Go实�
 
 1. 列出所有用户信息
 
-    ```shell
+    ```go
     ./trojan-go -api-addr 127.0.0.1:10000 -api list
     ```
 
     所有的用户信息将以json的形式导出，信息包括在线IP数量，实时速度，总上传和下载流量等。下面是一个返回的结果的例子
 
-    ```json
+    ```go
     [{"user":{"hash":"d63dc919e201d7bc4c825630d2cf25fdc93d4b2f0d46706d29038d01"},"status":{"traffic_total":{"upload_traffic":36393,"download_traffic":186478},"speed_current":{"upload_speed":25210,"download_speed":72384},"speed_limit":{"upload_speed":5242880,"download_speed":5242880},"ip_limit":50}}]
     ```
 
@@ -73,13 +73,13 @@ Trojan-Go本身集成了API控制功能，也即可以使用一个Trojan-Go实�
 
     可以使用 -target-password 指定密码，也可以使用 -target-hash 指定目标用户密码的SHA224散列值。格式和list命令相同
 
-    ```shell
+    ```go
     ./trojan-go -api-addr 127.0.0.1:10000 -api get -target-password password
     ```
 
     或者
 
-    ```shell
+    ```go
     ./trojan-go -api-addr 127.0.0.1:10000 -api get -target-hash d63dc919e201d7bc4c825630d2cf25fdc93d4b2f0d46706d29038d01
     ```
 
@@ -87,25 +87,25 @@ Trojan-Go本身集成了API控制功能，也即可以使用一个Trojan-Go实�
 
     该用户信息将以json的形式导出，格式与list命令类似。下面是一个返回的结果的例子
 
-    ```json
+    ```go
     {"user":{"hash":"d63dc919e201d7bc4c825630d2cf25fdc93d4b2f0d46706d29038d01"},"status":{"traffic_total":{"upload_traffic":36393,"download_traffic":186478},"speed_current":{"upload_speed":25210,"download_speed":72384},"speed_limit":{"upload_speed":5242880,"download_speed":5242880},"ip_limit":50}}
     ```
 
 3. 添加一个用户信息
 
-    ```shell
+    ```go
     ./trojan-go -api-addr 127.0.0.1:10000 -api set -add-profile -target-password password
     ```
 
 4. 删除一个用户信息
 
-    ```shell
+    ```go
     ./trojan-go -api-addr 127.0.0.1:10000 -api set -delete-profile -target-password password
     ```
 
 5. 修改一个用户信息
 
-    ```shell
+    ```go
     ./trojan-go -api-addr 127.0.0.1:10000 -api set -modify-profile -target-password password \
         -ip-limit 3 \
         -upload-speed-limit 5242880 \

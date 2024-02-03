@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\errors.generated.go`
 
-```
+```go
 # 定义一个名为internet的包
 package internet
 

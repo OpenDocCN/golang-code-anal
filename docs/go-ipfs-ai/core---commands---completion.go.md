@@ -1,6 +1,6 @@
 # `kubo\core\commands\completion.go`
 
-```
+```go
 package commands
 
 import (

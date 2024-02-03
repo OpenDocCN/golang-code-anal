@@ -1,6 +1,6 @@
 # `grype\grype\version\comparator.go`
 
-```
+```go
 # 定义名为 version 的包
 package version
 

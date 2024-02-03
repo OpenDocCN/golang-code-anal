@@ -1,6 +1,6 @@
 # `grype\test\validate-grype-db-schema.py`
 
-```
+```go
 #!/usr/bin/env python
 # 设置脚本的解释器为 Python
 

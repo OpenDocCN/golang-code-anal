@@ -5,7 +5,7 @@ sub-commands.
 
 The simplest way to "eval" the completions logic:
 
-```bash
+```go
 > eval "$(ipfs commands completion bash)"
 ```
 
@@ -18,7 +18,7 @@ The fish shell is also supported:
 
 The simplest way to use the completions logic:
 
-```bash
+```go
 > ipfs commands completion fish | source
 ```
 
@@ -31,7 +31,7 @@ The zsh shell is also supported:
 
 The simplest way to "eval" the completions logic:
 
-```bash
+```go
 > eval "$(ipfs commands completion zsh)"
 ```
 

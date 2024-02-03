@@ -1,6 +1,6 @@
 # `v2ray-core\functions_test.go`
 
-```
+```go
 package core_test
 
 import (

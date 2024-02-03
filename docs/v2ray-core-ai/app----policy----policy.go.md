@@ -1,6 +1,6 @@
 # `v2ray-core\app\policy\policy.go`
 
-```
+```go
 // 包策略是策略管理器功能的实现
 package policy
 

@@ -54,7 +54,7 @@ cases, the defaults provided with the latest Kubo release should be sufficient.
 
 To remove any custom limits and switch to the implicit defaults managed by Kubo:
 
-```console
+```go
 $ ipfs config --json Swarm.ConnMgr '{}'
 ```
 
@@ -68,7 +68,7 @@ support for requesting deserialized UnixFS directory as a TAR stream.
 HTTP clients can request TAR response by passing the `?format=tar` URL
 parameter, or setting `Accept: application/x-tar` HTTP header:
 
-```console
+```go
 $ export DIR_CID=bafybeigccimv3zqm5g4jt363faybagywkvqbrismoquogimy7kvz2sj7sq
 $ curl -H "Accept: application/x-tar" "http://127.0.0.1:8080/ipfs/$DIR_CID" > dir.tar
 $ curl "http://127.0.0.1:8080/ipfs/$DIR_CID?format=tar" | tar xv

@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\sockopt.go`
 
-```
+```go
 # 判断给定的网络类型是否为 TCP 类型的套接字
 func isTCPSocket(network string) bool:
     # 使用 switch 语句判断网络类型

@@ -1,6 +1,6 @@
 # `v2ray-core\common\serial\typed_message_test.go`
 
-```
+```go
 // 定义包名为 serial_test
 package serial_test
 

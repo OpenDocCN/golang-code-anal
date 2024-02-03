@@ -1,6 +1,6 @@
 # `grype\grype\db\v3\fix.go`
 
-```
+```go
 // 定义一个名为 FixState 的自定义类型
 type FixState string
 

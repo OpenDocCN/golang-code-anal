@@ -1,6 +1,6 @@
 # `kubo\cmd\ipfs\kubo\daemon_linux.go`
 
-```
+```go
 // 如果是在 Linux 系统下编译该包
 // 构建标签为 linux
 package kubo

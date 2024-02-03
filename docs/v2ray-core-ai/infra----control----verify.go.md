@@ -1,6 +1,6 @@
 # `v2ray-core\infra\control\verify.go`
 
-```
+```go
 package control
 
 import (

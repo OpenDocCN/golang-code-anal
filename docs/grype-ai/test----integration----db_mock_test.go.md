@@ -1,6 +1,6 @@
 # `grype\test\integration\db_mock_test.go`
 
-```
+```go
 package integration
 
 import (

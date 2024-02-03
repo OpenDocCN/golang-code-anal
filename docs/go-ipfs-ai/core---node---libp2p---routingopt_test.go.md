@@ -1,6 +1,6 @@
 # `kubo\core\node\libp2p\routingopt_test.go`
 
-```
+```go
 package libp2p
 
 import (

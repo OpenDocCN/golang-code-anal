@@ -1,6 +1,6 @@
 # `v2ray-core\testing\scenarios\vmess_test.go`
 
-```
+```go
 package scenarios
 
 import (

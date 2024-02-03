@@ -1,6 +1,6 @@
 # `v2ray-core\common\crypto\internal\chacha_core_gen.go`
 
-```
+```go
 // +build generate
 
 package main

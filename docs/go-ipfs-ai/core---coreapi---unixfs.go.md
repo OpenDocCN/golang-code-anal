@@ -1,6 +1,6 @@
 # `kubo\core\coreapi\unixfs.go`
 
-```
+```go
 package coreapi
 
 import (

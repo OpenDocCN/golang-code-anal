@@ -1,6 +1,6 @@
 # `trojan-go\tunnel\dokodemo\server.go`
 
-```
+```go
 package dokodemo
 
 import (

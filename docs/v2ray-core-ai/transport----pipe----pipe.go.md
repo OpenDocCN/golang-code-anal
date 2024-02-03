@@ -1,6 +1,6 @@
 # `v2ray-core\transport\pipe\pipe.go`
 
-```
+```go
 package pipe
 
 import (

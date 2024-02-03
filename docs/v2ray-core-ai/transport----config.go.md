@@ -1,6 +1,6 @@
 # `v2ray-core\transport\config.go`
 
-```
+```go
 // 导入 transport 包和 internet 包
 package transport
 

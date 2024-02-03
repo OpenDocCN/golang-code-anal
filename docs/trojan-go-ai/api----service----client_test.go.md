@@ -1,6 +1,6 @@
 # `trojan-go\api\service\client_test.go`
 
-```
+```go
 package service
 
 import (

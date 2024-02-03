@@ -1,6 +1,6 @@
 # `v2ray-core\infra\control\errors.generated.go`
 
-```
+```go
 # 定义一个名为 control 的包
 package control
 

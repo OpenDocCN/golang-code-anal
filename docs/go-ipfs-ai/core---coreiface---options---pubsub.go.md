@@ -1,6 +1,6 @@
 # `kubo\core\coreiface\options\pubsub.go`
 
-```
+```go
 package options
 
 // 定义 PubSubPeersSettings 结构体，包含 Topic 字段

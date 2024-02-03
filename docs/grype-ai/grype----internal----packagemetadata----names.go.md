@@ -1,6 +1,6 @@
 # `grype\grype\internal\packagemetadata\names.go`
 
-```
+```go
 package packagemetadata
 
 import (

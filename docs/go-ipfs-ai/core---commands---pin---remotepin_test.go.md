@@ -1,6 +1,6 @@
 # `kubo\core\commands\pin\remotepin_test.go`
 
-```
+```go
 package pin
 
 import (

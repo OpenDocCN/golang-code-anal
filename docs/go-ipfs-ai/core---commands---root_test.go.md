@@ -1,6 +1,6 @@
 # `kubo\core\commands\root_test.go`
 
-```
+```go
 // 导入 commands 包和 testing 包
 package commands
 

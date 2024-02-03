@@ -1,6 +1,6 @@
 # `trojan-go\tunnel\tproxy\server.go`
 
-```
+```go
 // 仅在构建目标为 Linux 时才编译该文件
 // 构建标签为 linux
 package tproxy

@@ -1,6 +1,6 @@
 # `v2ray-core\common\net\port.go`
 
-```
+```go
 // 定义 net 包，导入必要的包
 package net
 

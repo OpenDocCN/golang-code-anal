@@ -1,6 +1,6 @@
 # `v2ray-core\app\stats\channel.go`
 
-```
+```go
 // +build !confonly  // 标记此文件不仅仅是配置文件
 
 package stats  // 声明 stats 包

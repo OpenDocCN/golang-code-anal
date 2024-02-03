@@ -6,7 +6,7 @@ This is the [ipfs](http://ipfs.io) command line tool. It contains a full ipfs no
 
 To install it, move the binary somewhere in your `$PATH`:
 
-```sh
+```go
 sudo mv ipfs /usr/local/bin/ipfs
 ```
 
@@ -16,13 +16,13 @@ Or run `sudo ./install.sh` which does this for you.
 
 First, you must initialize your local ipfs node:
 
-```sh
+```go
 ipfs init
 ```
 
 This will give you directions to get started with ipfs.
 You can always get help with:
 
-```sh
+```go
 ipfs --help
 ```

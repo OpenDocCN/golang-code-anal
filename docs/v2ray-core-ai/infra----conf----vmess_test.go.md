@@ -1,6 +1,6 @@
 # `v2ray-core\infra\conf\vmess_test.go`
 
-```
+```go
 package conf_test
 
 import (

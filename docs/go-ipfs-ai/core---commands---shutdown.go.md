@@ -1,6 +1,6 @@
 # `kubo\core\commands\shutdown.go`
 
-```
+```go
 package commands
 
 import (

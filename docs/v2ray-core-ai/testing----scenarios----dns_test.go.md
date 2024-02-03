@@ -1,6 +1,6 @@
 # `v2ray-core\testing\scenarios\dns_test.go`
 
-```
+```go
 # 导入所需的包
 package scenarios
 

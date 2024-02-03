@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\headers\http\resp.go`
 
-```
+```go
 # 定义一个名为resp400的指针类型的ResponseConfig结构体变量，表示HTTP 400错误响应
 var resp400 = &ResponseConfig{
     # 设置HTTP版本号为1.1

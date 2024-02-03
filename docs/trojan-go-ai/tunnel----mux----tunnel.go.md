@@ -1,6 +1,6 @@
 # `trojan-go\tunnel\mux\tunnel.go`
 
-```
+```go
 package mux
 
 import (

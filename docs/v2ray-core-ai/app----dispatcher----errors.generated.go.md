@@ -1,6 +1,6 @@
 # `v2ray-core\app\dispatcher\errors.generated.go`
 
-```
+```go
 # 定义一个名为 dispatcher 的包
 package dispatcher
 

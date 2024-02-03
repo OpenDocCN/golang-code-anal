@@ -1,6 +1,6 @@
 # `kubesploit\data\modules\sourcecode\go\dockerSockBreakout\main.go`
 
-```
+```go
 package main
 
 import (

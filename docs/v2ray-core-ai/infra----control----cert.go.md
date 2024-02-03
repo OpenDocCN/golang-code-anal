@@ -1,6 +1,6 @@
 # `v2ray-core\infra\control\cert.go`
 
-```
+```go
 package control
 
 import (

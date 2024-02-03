@@ -1,6 +1,6 @@
 # `kubo\core\coreapi\coreapi.go`
 
-```
+```go
 /*
 **NOTE: this package is experimental.**
 

@@ -1,6 +1,6 @@
 # `kubo\thirdparty\notifier\notifier_test.go`
 
-```
+```go
 package notifier
 
 import (

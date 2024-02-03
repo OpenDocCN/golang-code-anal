@@ -1,6 +1,6 @@
 # `grype\grype\matcher\python\matcher.go`
 
-```
+```go
 package python
 
 import (

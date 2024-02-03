@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\blackhole\config.go`
 
-```
+```go
 package blackhole
 
 import (

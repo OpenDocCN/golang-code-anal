@@ -1,6 +1,6 @@
 # `trojan-go\tunnel\freedom\conn.go`
 
-```
+```go
 package freedom
 
 import (

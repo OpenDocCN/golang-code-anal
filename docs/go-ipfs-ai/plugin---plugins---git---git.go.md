@@ -1,6 +1,6 @@
 # `kubo\plugin\plugins\git\git.go`
 
-```
+```go
 // 导入必要的包
 package git
 

@@ -1,6 +1,6 @@
 # `kubo\test\dependencies\pollEndpoint\main.go`
 
-```
+```go
 // pollEndpoint是一个辅助工具，用于等待http端点可达并返回http.StatusOK
 package main
 

@@ -1,6 +1,6 @@
 # `grype\grype\grypeerr\expected_error.go`
 
-```
+```go
 // 定义 grypeerr 包
 package grypeerr
 

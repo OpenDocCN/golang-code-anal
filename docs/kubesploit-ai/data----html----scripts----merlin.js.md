@@ -1,6 +1,6 @@
 # `kubesploit\data\html\scripts\merlin.js`
 
-```
+```go
 // Kubesploit是基于Russel Van Tuyl的Merlin构建的后渗透命令和控制框架的一部分。
 // 本文件是Kubesploit的一部分。
 // 版权所有© 2021 CyberArk Software Ltd。

@@ -1,6 +1,6 @@
 # `kubo\coverage\main\main.go`
 
-```
+```go
 //go:build testrunmain
 // +build testrunmain
 

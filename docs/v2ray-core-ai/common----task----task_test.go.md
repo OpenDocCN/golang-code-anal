@@ -1,6 +1,6 @@
 # `v2ray-core\common\task\task_test.go`
 
-```
+```go
 package task_test
 
 import (

@@ -19,7 +19,7 @@ For background information about how Thunderdome works, see: https://github.com/
 
 Create a new release configuration JSON in the `experiments/` directory, based on the most recent `kubo-release` configuration, and tweak as necessary. Generally we setup the targets to run a commit against the tag of the last release, such as:
 
-```json
+```go
 	"targets": [
 		{
 			"name": "kubo190-4283b9",
@@ -42,7 +42,7 @@ Create a new release configuration JSON in the `experiments/` directory, based o
   
 Run the experiment (where `$EXPERIMENT_CONFIG_JSON` is a path to the config JSON created above):
 
-```shell
+```go
 AWS_PROFILE=thunderdome ./thunderdome deploy --verbose --duration 120 $EXPERIMENT_CONFIG_JSON
 ```
 

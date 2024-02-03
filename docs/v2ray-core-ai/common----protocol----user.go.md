@@ -1,6 +1,6 @@
 # `v2ray-core\common\protocol\user.go`
 
-```
+```go
 package protocol
 
 // GetTypedAccount returns the typed account of the user, or an error if the account is missing or of an unknown type

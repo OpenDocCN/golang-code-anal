@@ -1,6 +1,6 @@
 # `grype\grype\db\v5\pkg\resolver\stock\resolver.go`
 
-```
+```go
 # 声明一个名为 stock 的包
 package stock
 

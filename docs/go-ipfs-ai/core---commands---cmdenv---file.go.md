@@ -1,6 +1,6 @@
 # `kubo\core\commands\cmdenv\file.go`
 
-```
+```go
 // 导入 cmdenv 包
 package cmdenv
 

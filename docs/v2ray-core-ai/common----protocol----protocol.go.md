@@ -1,6 +1,6 @@
 # `v2ray-core\common\protocol\protocol.go`
 
-```
+```go
 // 定义包名为 protocol，用于导入 v2ray.com/core/common/protocol
 package protocol // import "v2ray.com/core/common/protocol"
 

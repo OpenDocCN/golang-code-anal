@@ -1,6 +1,6 @@
 # `kubo\core\commands\cid_test.go`
 
-```
+```go
 package commands
 
 import (

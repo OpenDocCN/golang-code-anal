@@ -1,6 +1,6 @@
 # `kubo\config\api.go`
 
-```
+```go
 package config
 
 import (

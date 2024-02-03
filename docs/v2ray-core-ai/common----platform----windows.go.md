@@ -1,6 +1,6 @@
 # `v2ray-core\common\platform\windows.go`
 
-```
+```go
 // +build windows
 
 package platform

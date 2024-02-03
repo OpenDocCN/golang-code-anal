@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\shadowsocks\errors.generated.go`
 
-```
+```go
 # 导入 shadowsocks 包和 errors 包
 package shadowsocks
 

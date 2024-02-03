@@ -1,6 +1,6 @@
 # `grype\internal\stringutil\string_helpers_test.go`
 
-```
+```go
 package stringutil
 
 import (

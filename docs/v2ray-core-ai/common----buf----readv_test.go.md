@@ -1,6 +1,6 @@
 # `v2ray-core\common\buf\readv_test.go`
 
-```
+```go
 // +build !wasm
 
 // 声明包名为 buf_test

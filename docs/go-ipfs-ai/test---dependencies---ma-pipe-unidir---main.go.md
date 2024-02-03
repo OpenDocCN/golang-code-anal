@@ -1,6 +1,6 @@
 # `kubo\test\dependencies\ma-pipe-unidir\main.go`
 
-```
+```go
 package main
 
 import (

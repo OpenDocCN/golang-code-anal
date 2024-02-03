@@ -1,6 +1,6 @@
 # `v2ray-core\common\signal\timer.go`
 
-```
+```go
 package signal
 
 import (

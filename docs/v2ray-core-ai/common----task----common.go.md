@@ -1,6 +1,6 @@
 # `v2ray-core\common\task\common.go`
 
-```
+```go
 // 声明一个名为 task 的包
 package task
 

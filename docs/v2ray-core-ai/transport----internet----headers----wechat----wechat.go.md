@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\headers\wechat\wechat.go`
 
-```
+```go
 package wechat
 
 import (

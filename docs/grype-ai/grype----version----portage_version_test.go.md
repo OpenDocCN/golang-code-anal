@@ -1,6 +1,6 @@
 # `grype\grype\version\portage_version_test.go`
 
-```
+```go
 // 导入测试包
 import (
     "testing"

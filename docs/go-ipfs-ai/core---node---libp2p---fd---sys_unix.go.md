@@ -1,6 +1,6 @@
 # `kubo\core\node\libp2p\fd\sys_unix.go`
 
-```
+```go
 // 根据条件编译指令，当操作系统为 Linux 或 Darwin 时，进行编译
 // +build linux darwin
 

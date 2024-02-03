@@ -1,6 +1,6 @@
 # `kubo\test\dependencies\iptb\iptb.go`
 
-```
+```go
 package main
 // 导入所需的包
 import (

@@ -1,6 +1,6 @@
 # `v2ray-core\common\protocol\time.go`
 
-```
+```go
 # 定义 protocol 包
 package protocol
 

@@ -31,7 +31,7 @@ documentation, including a list of common [gateway recipes](https://github.com/i
 
 ### Debug
 The gateway's log level can be changed with this command:
-```
+```go
 > ipfs log level core/server debug
 ```
 

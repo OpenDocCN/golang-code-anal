@@ -1,6 +1,6 @@
 # `kubo\repo\onlyone.go`
 
-```
+```go
 package repo
 
 import (

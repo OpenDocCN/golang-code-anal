@@ -1,6 +1,6 @@
 # `kubo\client\rpc\dag.go`
 
-```
+```go
 package rpc
 
 import (

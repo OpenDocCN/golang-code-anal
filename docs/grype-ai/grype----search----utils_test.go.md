@@ -1,6 +1,6 @@
 # `grype\grype\search\utils_test.go`
 
-```
+```go
 package search
 
 import (

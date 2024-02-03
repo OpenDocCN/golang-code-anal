@@ -1,6 +1,6 @@
 # `kubo\repo\fsrepo\migrations\ipfsfetcher\ipfsfetcher_test.go`
 
-```
+```go
 package ipfsfetcher
 
 import (

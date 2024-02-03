@@ -1,6 +1,6 @@
 # `kubesploit\docs\_build\html\_static\doctools.js`
 
-```
+```go
 /**
  * select a different prefix for underscore
  */

@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\dns\dns.go`
 
-```
+```go
 // +build !confonly
 
 package dns

@@ -2,7 +2,7 @@
 
 TestGatewayHAMTDirectory.car generated with:
 
-```bash
+```go
 ipfs version
 # ipfs version 0.19.0
 
@@ -41,7 +41,7 @@ ipfs dag export $FIXTURE_CID > TestGatewayHAMTDirectory.car
 TestGatewayMultiRange.car generated with:
 
 
-```sh
+```go
 ipfs version
 # ipfs version 0.19.0
 

@@ -1,6 +1,6 @@
 # `kubo\test\cli\dht_opt_prov_test.go`
 
-```
+```go
 package cli
 
 import (

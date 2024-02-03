@@ -1,6 +1,6 @@
 # `v2ray-core\common\signal\done\done.go`
 
-```
+```go
 // 包名为 done
 package done
 

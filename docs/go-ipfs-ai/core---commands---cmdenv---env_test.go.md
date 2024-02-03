@@ -1,6 +1,6 @@
 # `kubo\core\commands\cmdenv\env_test.go`
 
-```
+```go
 package cmdenv
 
 import (

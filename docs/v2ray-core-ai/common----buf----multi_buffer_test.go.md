@@ -1,6 +1,6 @@
 # `v2ray-core\common\buf\multi_buffer_test.go`
 
-```
+```go
 package buf_test
 
 import (

@@ -1,6 +1,6 @@
 # `v2ray-core\common\task\task.go`
 
-```
+```go
 // 定义一个函数 OnSuccess，该函数接受两个参数 f 和 g，分别为执行函数，当 f 返回 nil 时执行 g
 func OnSuccess(f func() error, g func() error) func() error {
     // 返回一个函数，该函数执行 f，如果 f 返回错误则直接返回错误，否则执行 g 并返回其结果

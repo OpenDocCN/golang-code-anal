@@ -1,6 +1,6 @@
 # `kubo\core\coreiface\tests\pin.go`
 
-```
+```go
 package tests
 
 import (

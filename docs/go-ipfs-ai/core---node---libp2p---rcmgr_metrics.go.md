@@ -1,6 +1,6 @@
 # `kubo\core\node\libp2p\rcmgr_metrics.go`
 
-```
+```go
 package libp2p
 
 import (

@@ -1,6 +1,6 @@
 # `trojan-go\statistic\statistics.go`
 
-```
+```go
 package statistic
 
 import (

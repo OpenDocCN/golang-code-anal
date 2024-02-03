@@ -1,6 +1,6 @@
 # `kubo\test\integration\bitswap_wo_routing_test.go`
 
-```
+```go
 package integrationtest
 
 import (

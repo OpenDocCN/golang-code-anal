@@ -1,6 +1,6 @@
 # `kubo\core\node\libp2p\nat.go`
 
-```
+```go
 // 导入必要的包
 package libp2p
 

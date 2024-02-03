@@ -1,6 +1,6 @@
 # `kubo\fuse\node\mount_unix.go`
 
-```
+```go
 //go:build !windows && !openbsd && !netbsd && !plan9 && !nofuse
 // +build !windows,!openbsd,!netbsd,!plan9,!nofuse
 

@@ -1,6 +1,6 @@
 # `kubo\plugin\plugins\fxtest\fxtest.go`
 
-```
+```go
 package fxtest
 
 import (

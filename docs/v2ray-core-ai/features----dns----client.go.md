@@ -1,6 +1,6 @@
 # `v2ray-core\features\dns\client.go`
 
-```
+```go
 package dns
 
 import (

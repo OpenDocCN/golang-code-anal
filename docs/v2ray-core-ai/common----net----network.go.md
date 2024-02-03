@@ -1,6 +1,6 @@
 # `v2ray-core\common\net\network.go`
 
-```
+```go
 // SystemString 方法返回网络类型的字符串表示
 func (n Network) SystemString() string {
     // 使用 switch 语句根据不同的网络类型返回对应的字符串

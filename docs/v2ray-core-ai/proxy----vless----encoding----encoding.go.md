@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\vless\encoding\encoding.go`
 
-```
+```go
 // +build !confonly
 // 声明当前文件不仅仅是配置文件
 

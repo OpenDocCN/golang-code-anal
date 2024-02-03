@@ -1,6 +1,6 @@
 # `v2ray-core\app\commander\errors.generated.go`
 
-```
+```go
 # 定义名为commander的包
 package commander
 

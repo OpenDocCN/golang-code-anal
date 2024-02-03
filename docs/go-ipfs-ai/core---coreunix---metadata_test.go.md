@@ -1,6 +1,6 @@
 # `kubo\core\coreunix\metadata_test.go`
 
-```
+```go
 package coreunix
 
 import (

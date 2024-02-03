@@ -1,6 +1,6 @@
 # `kubebench-aquasecurity\check\test.go`
 
-```
+```go
 // 版权声明
 // 该代码版权归 Aqua Security Software Ltd. 所有
 // 根据 Apache 许可证 2.0 版本授权

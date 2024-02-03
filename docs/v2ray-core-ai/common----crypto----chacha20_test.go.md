@@ -1,6 +1,6 @@
 # `v2ray-core\common\crypto\chacha20_test.go`
 
-```
+```go
 package crypto_test
 
 import (

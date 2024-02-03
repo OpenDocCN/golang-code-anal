@@ -1,6 +1,6 @@
 # `kubo\core\commands\e\error.go`
 
-```
+```go
 // 导入必要的包
 package e
 

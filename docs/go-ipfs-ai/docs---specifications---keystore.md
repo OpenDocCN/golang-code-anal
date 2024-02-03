@@ -33,7 +33,7 @@ Storage layout and format is defined in the [`repository_fs`](repository_fs.md) 
 
 #### ipfs key
 
-```
+```go
 USAGE
   ipfs key - Create and list IPNS name keypairs
 
@@ -69,7 +69,7 @@ SUBCOMMANDS
 
 **NOTE:** as of 2023 Q4, `ipfs crypt` commands are not implemented yet.
 
-```
+```go
     ipfs crypt - Perform cryptographic operations using ipfs keypairs
 
 SUBCOMMANDS:
@@ -90,7 +90,7 @@ DESCRIPTION:
 ##### ipfs key Gen
 
 
-```
+```go
 USAGE
   ipfs key gen <name> - Create a new keypair
 
@@ -116,7 +116,7 @@ OPTIONS
 
 ##### Key Send
 
-```
+```go
 USAGE
   ipfs key - Create and list IPNS name keypairs
 
@@ -159,7 +159,7 @@ Ensure that the user knows the implications of sending a key.
 
 ##### Crypt Encrypt
 
-```
+```go
     ipfs crypt encrypt <data> - Encrypt the given data with a specified key
 
 ARGUMENTS:
@@ -261,7 +261,7 @@ Note: One option is to simply add it to the key interface.
 Some tentative mockups (in json) of the new DAG structures for signing and encrypting
 
 Signed DAG:
-```
+```go
 {
     "Links" : [
         {
@@ -278,7 +278,7 @@ Signed DAG:
 ```
 
 Encrypted DAG:
-```
+```go
 {
     "Links" : [
         {

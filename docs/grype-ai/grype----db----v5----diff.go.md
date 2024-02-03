@@ -1,6 +1,6 @@
 # `grype\grype\db\v5\diff.go`
 
-```
+```go
 # 定义一个名为 v5 的包
 package v5
 

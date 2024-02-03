@@ -1,6 +1,6 @@
 # `kubo\repo\fsrepo\migrations\migrations_test.go`
 
-```
+```go
 package migrations
 # 导入所需的包
 

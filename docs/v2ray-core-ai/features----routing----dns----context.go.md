@@ -1,6 +1,6 @@
 # `v2ray-core\features\routing\dns\context.go`
 
-```
+```go
 // 生成错误代码
 //go:generate go run v2ray.com/core/common/errors/errorgen
 

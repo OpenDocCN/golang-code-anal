@@ -1,6 +1,6 @@
 # `v2ray-core\common\mux\session_test.go`
 
-```
+```go
 package mux_test
 
 import (

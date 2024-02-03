@@ -1,6 +1,6 @@
 # `kubo\core\coreapi\object.go`
 
-```
+```go
 package coreapi
 
 import (

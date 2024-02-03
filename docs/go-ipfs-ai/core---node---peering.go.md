@@ -1,6 +1,6 @@
 # `kubo\core\node\peering.go`
 
-```
+```go
 package node
 
 import (

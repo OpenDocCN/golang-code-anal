@@ -1,6 +1,6 @@
 # `trojan-go\tunnel\adapter\config.go`
 
-```
+```go
 # 导入 adapter 包和 config 包
 import "github.com/p4gefau1t/trojan-go/config"
 

@@ -1,6 +1,6 @@
 # `grype\internal\input.go`
 
-```
+```go
 package internal
 
 import (

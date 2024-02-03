@@ -1,6 +1,6 @@
 # `v2ray-core\app\reverse\config.go`
 
-```
+```go
 // +build !confonly
 // 定义了一个构建标签，表示该文件不仅仅是用于配置
 

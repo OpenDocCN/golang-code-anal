@@ -5,7 +5,7 @@
 
 generated with:
 
-```sh
+```go
 # using ipfs version 0.18.1
 mkdir -p rootDir/ipfs &&
 mkdir -p rootDir/ipns &&

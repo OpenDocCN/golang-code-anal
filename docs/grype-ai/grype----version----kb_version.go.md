@@ -1,6 +1,6 @@
 # `grype\grype\version\kb_version.go`
 
-```
+```go
 // 定义一个名为 version 的包
 package version
 

@@ -1,6 +1,6 @@
 # `grype\grype\db\v1\store.go`
 
-```
+```go
 # 定义了一个接口类型 Store，包含了 StoreReader 和 StoreWriter 两个接口
 type Store interface {
     # 定义了一个接口类型 StoreReader，包含了 IDReader、VulnerabilityStoreReader 和 VulnerabilityMetadataStoreReader 三个接口

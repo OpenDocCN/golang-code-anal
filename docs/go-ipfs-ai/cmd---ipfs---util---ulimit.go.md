@@ -1,6 +1,6 @@
 # `kubo\cmd\ipfs\util\ulimit.go`
 
-```
+```go
 package util
 
 import (

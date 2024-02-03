@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\kcp\receiving.go`
 
-```
+```go
 // +build !confonly
 // 定义了 kcp 包，不包含 confonly 标签
 

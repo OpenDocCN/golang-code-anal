@@ -1,6 +1,6 @@
 # `grype\cmd\grype\cli\options\registry_test.go`
 
-```
+```go
 package options
 
 import (

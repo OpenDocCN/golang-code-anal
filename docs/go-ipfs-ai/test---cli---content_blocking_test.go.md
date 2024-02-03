@@ -1,6 +1,6 @@
 # `kubo\test\cli\content_blocking_test.go`
 
-```
+```go
 package cli
 
 import (

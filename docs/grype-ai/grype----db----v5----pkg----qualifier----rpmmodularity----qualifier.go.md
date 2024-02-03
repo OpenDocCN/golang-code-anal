@@ -1,6 +1,6 @@
 # `grype\grype\db\v5\pkg\qualifier\rpmmodularity\qualifier.go`
 
-```
+```go
 package rpmmodularity
 
 import (

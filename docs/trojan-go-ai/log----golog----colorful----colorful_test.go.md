@@ -1,6 +1,6 @@
 # `trojan-go\log\golog\colorful\colorful_test.go`
 
-```
+```go
 // The color engine for the go-log library
 // 版权所有 2017 年 Fadhli Dzil Ikram
 //

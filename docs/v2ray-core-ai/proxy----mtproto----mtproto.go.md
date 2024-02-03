@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\mtproto\mtproto.go`
 
-```
+```go
 // 声明当前文件所属的包为 mtproto
 package mtproto
 

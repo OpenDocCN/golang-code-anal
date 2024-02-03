@@ -1,6 +1,6 @@
 # `grype\internal\log\log.go`
 
-```
+```go
 /*
 Package log contains the singleton object and helper functions for facilitating logging within the syft library.
 */

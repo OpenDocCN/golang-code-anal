@@ -1,6 +1,6 @@
 # `grype\cmd\grype\cli\commands\explain.go`
 
-```
+```go
 package commands
 
 import (

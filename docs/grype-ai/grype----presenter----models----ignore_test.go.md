@@ -1,6 +1,6 @@
 # `grype\grype\presenter\models\ignore_test.go`
 
-```
+```go
 package models
 
 import (

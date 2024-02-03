@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\vmess\inbound\errors.generated.go`
 
-```
+```go
 # 定义一个名为inbound的包
 package inbound
 

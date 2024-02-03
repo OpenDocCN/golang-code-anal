@@ -1,6 +1,6 @@
 # `v2ray-core\proxy\trojan\client.go`
 
-```
+```go
 // +build !confonly
 
 package trojan

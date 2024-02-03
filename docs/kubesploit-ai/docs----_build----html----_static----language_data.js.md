@@ -1,6 +1,6 @@
 # `kubesploit\docs\_build\html\_static\language_data.js`
 
-```
+```go
 /*
  * language_data.js
  * ~~~~~~~~~~~~~~~~

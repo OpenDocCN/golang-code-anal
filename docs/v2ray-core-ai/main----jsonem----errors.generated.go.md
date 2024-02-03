@@ -1,6 +1,6 @@
 # `v2ray-core\main\jsonem\errors.generated.go`
 
-```
+```go
 # 定义了一个名为jsonem的包
 package jsonem
 

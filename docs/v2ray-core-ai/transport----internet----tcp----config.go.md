@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\tcp\config.go`
 
-```
+```go
 // +build !confonly
 // 声明该文件不仅仅是配置文件
 

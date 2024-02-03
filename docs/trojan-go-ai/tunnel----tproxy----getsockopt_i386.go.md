@@ -1,6 +1,6 @@
 # `trojan-go\tunnel\tproxy\getsockopt_i386.go`
 
-```
+```go
 // 根据条件编译标记，当操作系统为 Linux 且架构为 386 时，才会编译该文件
 // +build linux,386
 

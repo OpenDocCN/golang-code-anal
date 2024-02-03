@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\kcp\io.go`
 
-```
+```go
 // +build !confonly
 
 package kcp

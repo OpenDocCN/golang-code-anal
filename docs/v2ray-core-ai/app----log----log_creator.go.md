@@ -1,6 +1,6 @@
 # `v2ray-core\app\log\log_creator.go`
 
-```
+```go
 // +build !confonly
 // 设置构建标签，表示该文件不仅仅是配置文件
 

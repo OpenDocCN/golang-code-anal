@@ -1,6 +1,6 @@
 # `grype\grype\presenter\template\presenter_test.go`
 
-```
+```go
 package template
 
 import (

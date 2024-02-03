@@ -1,6 +1,6 @@
 # `kubo\core\coreapi\key.go`
 
-```
+```go
 package coreapi
 
 import (

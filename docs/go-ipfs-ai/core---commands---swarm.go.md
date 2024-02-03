@@ -1,6 +1,6 @@
 # `kubo\core\commands\swarm.go`
 
-```
+```go
 package commands
 
 import (

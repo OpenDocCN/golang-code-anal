@@ -1,6 +1,6 @@
 # `v2ray-core\transport\internet\tls\config_other.go`
 
-```
+```go
 // +build !windows
 // +build !confonly
 

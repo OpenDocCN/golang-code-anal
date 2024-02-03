@@ -1,6 +1,6 @@
 # `grype\grype\distro\distro.go`
 
-```
+```go
 // 导入必要的包
 package distro
 

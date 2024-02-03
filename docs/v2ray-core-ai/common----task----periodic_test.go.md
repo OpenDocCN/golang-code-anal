@@ -1,6 +1,6 @@
 # `v2ray-core\common\task\periodic_test.go`
 
-```
+```go
 // 定义一个名为 task_test 的包
 package task_test
 

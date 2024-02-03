@@ -1,6 +1,6 @@
 # `grype\grype\presenter\explain\explain_snapshot_test.go`
 
-```
+```go
 package explain_test
 
 import (
